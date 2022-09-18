@@ -21,8 +21,7 @@ fun StandardScaffold(
     items: List<BottomNavItem> = listOf(
         BottomNavItem.Home,
         BottomNavItem.Search,
-        BottomNavItem.Favorites,
-        BottomNavItem.Settings,
+        BottomNavItem.Favorites
     ),
     content: @Composable (paddingValues: PaddingValues) -> Unit,
 ) {
