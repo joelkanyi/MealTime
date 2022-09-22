@@ -5,14 +5,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.GridItemSpan
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,8 +24,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kanyideveloper.mealtime.R
+import com.kanyideveloper.mealtime.model.MealCategory
 import com.kanyideveloper.mealtime.screens.components.StandardToolbar
-import com.kanyideveloper.mealtime.ui.theme.*
+import com.kanyideveloper.mealtime.ui.theme.LightGrey
+import com.kanyideveloper.mealtime.ui.theme.MainOrange
+import com.kanyideveloper.mealtime.ui.theme.MyLightBlue
+import com.kanyideveloper.mealtime.ui.theme.MyLightOrange
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -37,116 +39,306 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 fun HomeScreen(
     navigator: DestinationsNavigator
 ) {
-    Column(
-        Modifier.fillMaxSize()
-    ) {
-        StandardToolbar(
-            navigator = navigator,
-            title = {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_meal_time_banner),
-                    contentDescription = null
-                )
-            },
-            modifier = Modifier.fillMaxWidth(),
-            showBackArrow = false,
-            navActions = {
 
-            }
-        )
+    var showRandomMeal by remember {
+        mutableStateOf(false)
+    }
 
-        LazyVerticalGrid(
-            cells = GridCells.Fixed(2),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            item(span = { GridItemSpan(2) }) {
-                CustomTabs()
-            }
-            item(span = { GridItemSpan(2) }) {
-                Text(
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    text = "Categories",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            item(span = { GridItemSpan(2) }) {
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(10) {
-                        Box(
-                            modifier = Modifier
-                                .size(100.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(MyLightOrange),
-                            contentAlignment = Alignment.Center
+    var isMyMeal by remember {
+        mutableStateOf(true)
+    }
+    
+    Scaffold(
+        floatingActionButton = {
+            if (isMyMeal) {
+                FloatingActionButton(
+                    modifier = Modifier
+                        .height(50.dp),
+                    shape = RoundedCornerShape(24.dp),
+                    backgroundColor = MainOrange,
+                    content = {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Icon(
-                                    modifier = Modifier.size(32.dp),
-                                    tint = MainOrange,
-                                    painter = painterResource(id = R.drawable.ic_pizza_thin),
+                            Icon(
+                                painter = painterResource(id = R.drawable.fork_knife_thin),
+                                contentDescription = null
+                            )
+                            Spacer(modifier = Modifier.width(5.dp))
+                            Text(text = "Add Meal")
+                        }
+                    },
+                    onClick = {
 
-                                    contentDescription = null
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Text(
-                                    text = "Pizza",
-                                    textAlign = TextAlign.Center,
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Spacer(modifier = Modifier.height(5.dp))
-                                Text(
-                                    text = "191 items",
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.ExtraLight
-                                )
+                    },
+                )
+            }
+        }
+    ) {
+        Column(
+            Modifier.fillMaxSize()
+        ) {
+            StandardToolbar(
+                navigator = navigator,
+                title = {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_meal_time_banner),
+                        contentDescription = null
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+                showBackArrow = false,
+                navActions = {
+
+                }
+            )
+
+            LazyVerticalGrid(
+                cells = GridCells.Fixed(2),
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                item(span = { GridItemSpan(2) }) {
+                    CustomTabs()
+                }
+                item(span = { GridItemSpan(2) }) {
+                    Text(
+                        modifier = Modifier.padding(vertical = 5.dp),
+                        text = "Categories",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                item(span = { GridItemSpan(2) }) {
+
+                    val mealCategories = listOf(
+                        MealCategory(
+                            "Food",
+                            R.drawable.ic_food
+                        ),
+                        MealCategory(
+                            "Breakfast",
+                            R.drawable.ic_breakfast
+                        ),
+                        MealCategory(
+                            "Drinks",
+                            R.drawable.ic_drinks
+                        ),
+                        MealCategory(
+                            "Fruits",
+                            R.drawable.ic_fruit
+                        ),
+                        MealCategory(
+                            "Fast Food",
+                            R.drawable.ic_pizza_thin
+                        )
+                    )
+
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(mealCategories) { meal ->
+                            Box(
+                                modifier = Modifier
+                                    .size(70.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(MyLightOrange),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Icon(
+                                        modifier = Modifier.size(32.dp),
+                                        tint = MainOrange,
+                                        painter = painterResource(id = meal.icon),
+
+                                        contentDescription = null
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Text(
+                                        text = meal.name,
+                                        textAlign = TextAlign.Center,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
                             }
                         }
                     }
                 }
-            }
-            item(span = { GridItemSpan(2) }) {
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-            item(span = { GridItemSpan(2) }) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                        .height(220.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    elevation = 0.dp
-                ) {
-                    Box(Modifier.fillMaxSize()) {
-                        Image(
-                            modifier = Modifier.fillMaxSize(),
-                            painter = painterResource(id = R.drawable.meal_banner),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop
-                        )
+                item(span = { GridItemSpan(2) }) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+                item(span = { GridItemSpan(2) }) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                            .height(200.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        elevation = 0.dp
+                    ) {
+                        Box(Modifier.fillMaxSize()) {
+                            Image(
+                                modifier = Modifier.fillMaxSize(),
+                                painter = painterResource(id = R.drawable.randomize_meals),
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop
+                            )
+                            Column(
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .padding(16.dp),
+                            ) {
+                                Text(
+                                    text = "What to cook for lunch?",
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                                Button(onClick = {
+                                    showRandomMeal = true
+                                }) {
+                                    Text(
+                                        text = "Get a Random Meal",
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Normal
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
-            }
-            item(span = { GridItemSpan(2) }) {
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-            item(span = { GridItemSpan(2) }) {
-                Text(
-                    modifier = Modifier.padding(vertical = 3.dp),
-                    text = "Meals",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            items(10) {
-                MealItem()
+
+                if (showRandomMeal) {
+                    item(span = { GridItemSpan(2) }) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp)
+                                .height(180.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            elevation = 0.dp
+                        ) {
+                            Box(Modifier.fillMaxSize()) {
+                                Image(
+                                    modifier = Modifier.fillMaxSize(),
+                                    painter = painterResource(id = R.drawable.meal_banner),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop
+                                )
+
+                                Card(
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .padding(8.dp)
+                                        .clickable {
+                                            showRandomMeal = false
+                                        },
+                                    shape = RoundedCornerShape(8.dp),
+                                    elevation = 0.dp,
+                                    backgroundColor = Color.Red.copy(alpha = 0.8f)
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .padding(vertical = 3.dp, horizontal = 12.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            modifier = Modifier.size(18.dp),
+                                            imageVector = Icons.Default.Close,
+                                            tint = Color.White,
+                                            contentDescription = null
+                                        )
+                                        Spacer(modifier = Modifier.width(5.dp))
+                                        Text(
+                                            modifier = Modifier.padding(vertical = 3.dp),
+                                            text = "Dismiss",
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White
+                                        )
+                                    }
+                                }
+
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .align(Alignment.BottomEnd)
+                                        .background(Color.Black.copy(alpha = 0.6f))
+                                        .padding(5.dp),
+                                ) {
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        text = "Rice Chicken with Chapati",
+                                        textAlign = TextAlign.Center,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                    )
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(30.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Row(
+                                            modifier = Modifier
+                                                .padding(vertical = 3.dp, horizontal = 3.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Icon(
+                                                modifier = Modifier.size(24.dp),
+                                                painter = painterResource(id = R.drawable.ic_clock),
+                                                tint = MainOrange,
+                                                contentDescription = null
+                                            )
+                                            Spacer(modifier = Modifier.width(5.dp))
+                                            Text(
+                                                modifier = Modifier.padding(vertical = 3.dp),
+                                                text = "3 Mins",
+                                                fontSize = 12.sp,
+                                                fontWeight = FontWeight.Light,
+                                                color = Color.White
+                                            )
+                                        }
+                                        IconButton(onClick = { /*TODO*/ }) {
+                                            Icon(
+                                                modifier = Modifier
+                                                    .clickable {
+
+                                                    },
+                                                imageVector = Icons.Default.Favorite,
+                                                tint = MainOrange,
+                                                contentDescription = null
+                                            )
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                }
+
+                item(span = { GridItemSpan(2) }) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+                item(span = { GridItemSpan(2) }) {
+                    Text(
+                        modifier = Modifier.padding(vertical = 3.dp),
+                        text = "Meals",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                items(10) {
+                    MealItem()
+                }
             }
         }
     }
