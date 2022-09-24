@@ -42,7 +42,7 @@ fun MealTimeTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composab
 
     SideEffect {
         systemUiController.setSystemBarsColor(
-            color = if (darkTheme) LightGrey else LightGrey
+            color = if (darkTheme) MainOrange else MainOrange
         )
     }
 

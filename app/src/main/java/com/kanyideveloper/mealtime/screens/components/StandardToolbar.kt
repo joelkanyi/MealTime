@@ -3,7 +3,6 @@ package com.kanyideveloper.mealtime.screens.components
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -19,11 +18,13 @@ fun StandardToolbar(
     modifier: Modifier = Modifier,
     navigator: DestinationsNavigator,
     showBackArrow: Boolean = false,
+    backgroundColor: Color = Color.White,
     navActions: @Composable RowScope.() -> Unit = {},
     title: @Composable () -> Unit = {}
 ) {
     TopAppBar(
         title = title,
+        backgroundColor = backgroundColor,
         navigationIcon = if (showBackArrow) {
             {
                 IconButton(onClick = {
@@ -38,7 +39,6 @@ fun StandardToolbar(
             }
         } else null,
         actions = navActions,
-        backgroundColor = Color.White,
         elevation = 2.dp
     )
 }

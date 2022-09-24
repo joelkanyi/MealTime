@@ -34,7 +34,6 @@ fun FavoritesScreen(
             title = {
                 Text(text = "Favorite meals", fontSize = 18.sp)
             },
-            modifier = Modifier.fillMaxWidth(),
             showBackArrow = false,
             navActions = {
 

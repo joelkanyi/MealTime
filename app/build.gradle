@@ -47,6 +47,7 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    namespace 'com.kanyideveloper.mealtime'
 
     applicationVariants.all { variant ->
         kotlin.sourceSets {
@@ -134,4 +135,7 @@ dependencies {
 
     // Livedata
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
+
+// collapsing Toolbar
+    implementation "me.onebone:toolbar-compose:2.3.2"
 }

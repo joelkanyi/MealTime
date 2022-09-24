@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.systemuicontroller.SystemUiController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kanyideveloper.mealtime.screens.NavGraphs
 import com.kanyideveloper.mealtime.screens.components.StandardScaffold
 import com.kanyideveloper.mealtime.screens.destinations.FavoritesScreenDestination
@@ -27,6 +29,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private lateinit var systemUiController: SystemUiController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -35,6 +40,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
+                    systemUiController = rememberSystemUiController()
+
                     val navController = rememberNavController()
 
                     val navHostEngine = rememberNavHostEngine()

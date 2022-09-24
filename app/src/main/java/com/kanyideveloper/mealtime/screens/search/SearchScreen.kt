@@ -2,13 +2,27 @@ package com.kanyideveloper.mealtime.screens.search
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
@@ -38,17 +52,11 @@ fun SearchScreen(
     navigator: DestinationsNavigator
 ) {
     Column(Modifier.fillMaxSize()) {
-        StandardToolbar(
-            navigator = navigator,
-            title = {
-                Text(text = "Search", fontSize = 18.sp)
-            },
-            modifier = Modifier.fillMaxWidth(),
-            showBackArrow = false,
-            navActions = {
+        StandardToolbar(navigator = navigator, title = {
+            Text(text = "Search", fontSize = 18.sp)
+        }, showBackArrow = false, navActions = {
 
-            }
-        )
+        })
 
         SearchBar(
             //viewModel = viewModel,
@@ -59,8 +67,7 @@ fun SearchScreen(
             onSearch = { searchParam ->
                 /*viewModel.searchAll(searchParam)
                 keyboardController?.hide()*/
-            }
-        )
+            })
 
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -90,15 +97,11 @@ fun SearchScreen(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "Food",
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold
+                                text = "Food", fontSize = 14.sp, fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(5.dp))
                             Text(
-                                text = "191 items",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Light
+                                text = "191 items", fontSize = 11.sp, fontWeight = FontWeight.Light
                             )
                         }
                     }
@@ -111,8 +114,7 @@ fun SearchScreen(
 @Composable
 fun SearchBar(
     //viewModel: SearchViewModel,
-    modifier: Modifier = Modifier,
-    onSearch: (String) -> Unit = {}
+    modifier: Modifier = Modifier, onSearch: (String) -> Unit = {}
 ) {
 
     val searchTerm = ""
@@ -124,8 +126,7 @@ fun SearchBar(
         },
         placeholder = {
             Text(
-                text = "Search...",
-                color = Color.Black
+                text = "Search...", color = Color.Black
             )
         },
         modifier = modifier

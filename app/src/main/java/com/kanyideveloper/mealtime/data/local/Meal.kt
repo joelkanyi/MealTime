@@ -10,6 +10,7 @@ data class Meal(
     val imageUrl: String,
     val cookingTime: Int,
     val category: String,
+    val cookingDifficulty: String,
     val ingredients: List<String>,
     val cookingDirections: List<String>,
     val isFavorite: Boolean = false,
