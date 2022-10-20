@@ -98,7 +98,7 @@ fun HomeScreen(
                         }
                     },
                     onClick = {
-
+                        // navigator.navigate(AddMealsScreenDestination)
                     },
                 )
             }
