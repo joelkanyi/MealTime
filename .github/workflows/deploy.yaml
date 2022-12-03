@@ -21,7 +21,7 @@ jobs:
           java-version: 11
 
       - name: Grant rights
-        run: chmod +x build.gradle
+        run: chmod +x build.gradle.kts
 
       - name: Build with Gradle
         id: build
