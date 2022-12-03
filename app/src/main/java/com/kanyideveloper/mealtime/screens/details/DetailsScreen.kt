@@ -245,7 +245,9 @@ fun DetailsScreen(
                                                 .size(24.dp)
                                                 .align(Alignment.Center)
                                                 .padding(0.dp),
-                                            painter = painterResource(id = R.drawable.users_three_light),
+                                            painter = painterResource(
+                                                id = R.drawable.users_three_light
+                                            ),
                                             contentDescription = null,
                                             tint = Color.Black
                                         )
@@ -324,7 +326,9 @@ fun DetailsScreen(
                                                 .size(24.dp)
                                                 .align(Alignment.Center)
                                                 .padding(0.dp),
-                                            painter = painterResource(id = R.drawable.fire_simple_bold),
+                                            painter = painterResource(
+                                                id = R.drawable.fire_simple_bold
+                                            ),
                                             contentDescription = null,
                                             tint = Color.Black
                                         )
@@ -431,7 +435,7 @@ fun DetailsScreen(
                                 )
                                 Text(
                                     modifier = Modifier.padding(3.dp),
-                                    text = "Put a glass full of water djsj sksk sakak saoso aoao soao aoao sai aoaio aiai aiaio aiai dksi siosoi sosao ",
+                                    text = "Put a glass full of water",
                                     fontWeight = FontWeight.Light,
                                     fontSize = 16.sp
                                 )
