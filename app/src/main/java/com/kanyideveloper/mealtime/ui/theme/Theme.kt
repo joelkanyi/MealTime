@@ -12,9 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ // ktlint-disable filename
-
-package com.kanyideveloper.mealtime.ui.theme
+ */
+package com.kanyideveloper.mealtime.ui.theme // ktlint-disable filename
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
