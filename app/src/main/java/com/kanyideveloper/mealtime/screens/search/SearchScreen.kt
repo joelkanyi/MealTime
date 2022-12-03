@@ -1,6 +1,5 @@
 package com.kanyideveloper.mealtime.screens.search
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,8 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -45,11 +44,10 @@ import com.kanyideveloper.mealtime.ui.theme.MyLightBlue
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
-@OptIn(ExperimentalFoundationApi::class)
 @Destination
 @Composable
 fun SearchScreen(
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
 ) {
     Column(Modifier.fillMaxSize()) {
         StandardToolbar(navigator = navigator, title = {
@@ -73,7 +71,7 @@ fun SearchScreen(
             modifier = Modifier.fillMaxSize(),
         ) {
             LazyVerticalGrid(
-                cells = GridCells.Fixed(2),
+                columns = GridCells.Fixed(2),
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -114,7 +112,7 @@ fun SearchScreen(
 @Composable
 fun SearchBar(
     //viewModel: SearchViewModel,
-    modifier: Modifier = Modifier, onSearch: (String) -> Unit = {}
+    modifier: Modifier = Modifier, onSearch: (String) -> Unit = {},
 ) {
 
     val searchTerm = ""
