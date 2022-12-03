@@ -16,7 +16,11 @@
 package com.kanyideveloper.mealtime.model
 
 import com.kanyideveloper.mealtime.R
-import com.kanyideveloper.mealtime.screens.destinations.*
+import com.kanyideveloper.mealtime.screens.destinations.Destination
+import com.kanyideveloper.mealtime.screens.destinations.FavoritesScreenDestination
+import com.kanyideveloper.mealtime.screens.destinations.HomeScreenDestination
+import com.kanyideveloper.mealtime.screens.destinations.SearchScreenDestination
+import com.kanyideveloper.mealtime.screens.destinations.SettingsScreenDestination
 
 sealed class BottomNavItem(var title: String, var icon: Int, var destination: Destination) {
     object Home : BottomNavItem(
@@ -24,17 +28,20 @@ sealed class BottomNavItem(var title: String, var icon: Int, var destination: De
         icon = R.drawable.ic_home,
         destination = HomeScreenDestination
     )
-    object Search: BottomNavItem(
+
+    object Search : BottomNavItem(
         title = "Search",
         icon = R.drawable.ic_search,
         destination = SearchScreenDestination
     )
-    object Favorites: BottomNavItem(
+
+    object Favorites : BottomNavItem(
         title = "Favorites",
         icon = R.drawable.ic_favorites,
         destination = FavoritesScreenDestination
     )
-    object Settings: BottomNavItem(
+
+    object Settings : BottomNavItem(
         title = "Settings",
         icon = R.drawable.ic_settings,
         destination = SettingsScreenDestination

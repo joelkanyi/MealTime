@@ -42,9 +42,11 @@ fun StandardToolbar(
         backgroundColor = backgroundColor,
         navigationIcon = if (showBackArrow) {
             {
-                IconButton(onClick = {
-                    navigator.navigateUp()
-                }) {
+                IconButton(
+                    onClick = {
+                        navigator.navigateUp()
+                    }
+                ) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = null,

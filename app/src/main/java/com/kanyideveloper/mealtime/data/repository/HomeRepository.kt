@@ -19,5 +19,4 @@ import com.kanyideveloper.mealtime.data.local.MealTimeDatabase
 
 class HomeRepository(
     private val mealTimeDatabase: MealTimeDatabase
-) {
-}
+)

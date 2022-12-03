@@ -44,7 +44,7 @@ object AppModule {
     @Singleton
     fun provideMealTimeDatabase(
         @ApplicationContext context: Context,
-        converters: Converters,
+        converters: Converters
     ): MealTimeDatabase {
         return Room.databaseBuilder(
             context.applicationContext,
@@ -58,7 +58,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideHomeRepository(
-        mealTimeDatabase: MealTimeDatabase,
+        mealTimeDatabase: MealTimeDatabase
     ): HomeRepository {
         return HomeRepository(mealTimeDatabase)
     }

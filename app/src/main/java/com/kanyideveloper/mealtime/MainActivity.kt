@@ -70,7 +70,7 @@ class MainActivity : ComponentActivity() {
                             HomeScreenDestination.route,
                             SearchScreenDestination.route,
                             FavoritesScreenDestination.route,
-                            SettingsScreenDestination.route,
+                            SettingsScreenDestination.route
                         )
                     ) { innerPadding ->
                         Box(modifier = Modifier.padding(innerPadding)) {
@@ -87,11 +87,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     MealTimeTheme {
-
     }
 }

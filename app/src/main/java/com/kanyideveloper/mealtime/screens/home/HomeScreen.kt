@@ -84,9 +84,8 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Composable
 fun HomeScreen(
     navigator: DestinationsNavigator,
-    homeViewModel: HomeViewModel = hiltViewModel(),
+    homeViewModel: HomeViewModel = hiltViewModel()
 ) {
-
     var showRandomMeal by remember {
         mutableStateOf(false)
     }
@@ -117,8 +116,8 @@ fun HomeScreen(
                         }
                     },
                     onClick = {
-                        //navigator.navigate(AddMealScreenDestination)
-                    },
+                        // navigator.navigate(AddMealScreenDestination)
+                    }
                 )
             }
         },
@@ -142,22 +141,19 @@ fun HomeScreen(
                         modifier = Modifier.fillMaxWidth(),
                         showBackArrow = false,
                         navActions = {
-
                         }
                     )
                     CustomTabs(navigator, viewModel = homeViewModel)
                 }
             }
-
         }
     )
 }
 
-
 @Composable
 fun CustomTabs(
     navigator: DestinationsNavigator,
-    viewModel: HomeViewModel,
+    viewModel: HomeViewModel
 ) {
     var selectedIndex by remember { mutableStateOf(0) }
 
@@ -241,7 +237,6 @@ fun MyMeals(navigator: DestinationsNavigator) {
             )
         }
         item(span = { GridItemSpan(2) }) {
-
             val mealCategories = listOf(
                 MealCategory(
                     "Food",
@@ -321,7 +316,7 @@ fun MyMeals(navigator: DestinationsNavigator) {
                     Column(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
-                            .padding(16.dp),
+                            .padding(16.dp)
                     ) {
                         Text(
                             text = "What to cook for lunch?",
@@ -329,9 +324,11 @@ fun MyMeals(navigator: DestinationsNavigator) {
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
-                        Button(onClick = {
-                            showRandomMeal = true
-                        }) {
+                        Button(
+                            onClick = {
+                                showRandomMeal = true
+                            }
+                        ) {
                             Text(
                                 text = "Get a Random Meal",
                                 fontSize = 12.sp,
@@ -399,7 +396,7 @@ fun MyMeals(navigator: DestinationsNavigator) {
                                 .fillMaxWidth()
                                 .align(Alignment.BottomEnd)
                                 .background(Color.Black.copy(alpha = 0.6f))
-                                .padding(5.dp),
+                                .padding(5.dp)
                         ) {
                             Text(
                                 modifier = Modifier
@@ -418,8 +415,10 @@ fun MyMeals(navigator: DestinationsNavigator) {
                             ) {
                                 Row(
                                     modifier = Modifier
-                                        .padding(vertical = 3.dp,
-                                            horizontal = 3.dp),
+                                        .padding(
+                                            vertical = 3.dp,
+                                            horizontal = 3.dp
+                                        ),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
@@ -438,7 +437,6 @@ fun MyMeals(navigator: DestinationsNavigator) {
                                     )
                                 }
                             }
-
                         }
                     }
                 }
@@ -478,7 +476,7 @@ fun OnlineMeals(viewModel: HomeViewModel) {
 
 @Composable
 fun MealItem(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
@@ -553,7 +551,6 @@ fun MealItem(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-
                         },
                     imageVector = Icons.Default.Favorite,
                     tint = MainOrange,
@@ -666,7 +663,6 @@ fun OnlineMealCard(meal: FeaturedMeal) {
                     fontWeight = FontWeight.Bold
                 )
             }
-
         }
     }
 }
@@ -676,7 +672,9 @@ fun MealCategorySelection() {
     val categories = listOf(
         "Breakfast Eatings",
         "Lunch Combo",
-        "Late Evening Dinner ", "Snacks Time", "Dessert to Finish Up"
+        "Late Evening Dinner ",
+        "Snacks Time",
+        "Dessert to Finish Up"
     )
     var selectedIndex by remember { mutableStateOf(0) }
     val onItemClick = { index: Int -> selectedIndex = index }
@@ -700,7 +698,7 @@ fun CategoryItem(
     categories: List<String>,
     index: Int,
     selected: Boolean,
-    onClick: (Int) -> Unit,
+    onClick: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -712,23 +710,25 @@ fun CategoryItem(
                 .clip(RoundedCornerShape(10.dp))
                 .clickable {
                     onClick.invoke(index)
-                }) {
+                }
+        ) {
             Text(
                 text = categories[index],
                 Modifier
                     .padding(1.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(if (selected) Color(0xFFfa4a0c) else Color(
-                        0xfff0f5f4))
+                    .background(
+                        if (selected) Color(0xFFfa4a0c) else Color(
+                            0xfff0f5f4
+                        )
+                    )
                     .padding(10.dp),
                 textAlign = TextAlign.Center,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = if (selected) Color(0xffe2f1f3) else Color(0xff121212)
             )
-
         }
-
     }
 }
 
@@ -765,13 +765,15 @@ fun MealCard(featuredMeal: FeaturedMeal) {
         ) {
             val painter = painterResource(id = featuredMeal.imageUrl)
             Image(
-                painter = painter, contentDescription = "",
+                painter = painter,
+                contentDescription = "",
                 Modifier
                     .width(300.dp)
                     .height(250.dp)
                     .padding(5.dp)
                     .clip(RoundedCornerShape(25.dp))
-                    .fillMaxSize(), contentScale = ContentScale.Crop
+                    .fillMaxSize(),
+                contentScale = ContentScale.Crop
             )
 
             Column(

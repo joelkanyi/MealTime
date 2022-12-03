@@ -22,25 +22,30 @@ import com.kanyideveloper.mealtime.model.FeaturedMeal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val homeRepository: HomeRepository
 ) : ViewModel() {
 
     val featuredMeals = listOf(
-        FeaturedMeal("Beef Steak & Cheese",
+        FeaturedMeal(
+            "Beef Steak & Cheese",
             R.drawable.beef_steak_with_cheese,
             50,
-            "Favy Fay"),
-        FeaturedMeal("Chicken Asian Cuisine",
+            "Favy Fay"
+        ),
+        FeaturedMeal(
+            "Chicken Asian Cuisine",
             R.drawable.chicken_asian_cusine,
             40,
-            "Nyar Mkamba"),
-        FeaturedMeal("Japanese Chicken",
+            "Nyar Mkamba"
+        ),
+        FeaturedMeal(
+            "Japanese Chicken",
             R.drawable.japanese_chicken,
             45,
-            "Jerim Kaura"),
+            "Jerim Kaura"
+        ),
         FeaturedMeal(
             "Rice Egg with Chicken Salad",
             R.drawable.rice_egg_with_chicken_salad,

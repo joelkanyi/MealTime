@@ -42,12 +42,11 @@ fun SettingsScreen(
             modifier = Modifier.fillMaxWidth(),
             showBackArrow = false,
             navActions = {
-
             }
         )
 
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
         ) {
             Text(
                 modifier = Modifier.align(Alignment.Center),

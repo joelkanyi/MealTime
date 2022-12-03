@@ -52,11 +52,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kanyideveloper.mealtime.R
-import com.kanyideveloper.mealtime.ui.theme.DarkGrey
 import com.kanyideveloper.mealtime.ui.theme.LightGrey
 import com.kanyideveloper.mealtime.ui.theme.MainOrange
 import com.kanyideveloper.mealtime.ui.theme.MealTimeTheme
-import com.kanyideveloper.mealtime.ui.theme.MyLightBlue
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import me.onebone.toolbar.CollapsingToolbarScaffold
@@ -103,7 +101,6 @@ fun DetailsScreen(
                     alpha = if (textSize.value == 18f) 0f else 1f
                 )
 
-
                 Box(
                     Modifier
                         .fillMaxWidth()
@@ -117,7 +114,7 @@ fun DetailsScreen(
                         .road(
                             whenCollapsed = Alignment.TopStart,
                             whenExpanded = Alignment.BottomStart
-                        ),
+                        )
                 ) {
                     Row(
                         Modifier
@@ -151,7 +148,7 @@ fun DetailsScreen(
                             Text(
                                 modifier = Modifier.fillMaxWidth(0.85f),
                                 text = "Rice Chicken Rice Chicken Rice Chicken Rice Chicken",
-                                style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
+                                style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
                             )
                             Box(
                                 modifier = Modifier
@@ -168,11 +165,7 @@ fun DetailsScreen(
                                         .padding(0.dp),
                                     imageVector = Icons.Default.Favorite,
                                     contentDescription = null,
-                                    tint = if (true){
-                                        MainOrange
-                                    }else{
-                                        DarkGrey
-                                    }
+                                    tint = MainOrange
                                 )
                             }
                         }
@@ -183,19 +176,23 @@ fun DetailsScreen(
                             Modifier
                                 .fillMaxWidth()
                                 .padding(top = 8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                            horizontalArrangement = Arrangement.spacedBy(
+                                8.dp,
+                                Alignment.CenterHorizontally
+                            ),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-
-                            // Time
-                            Box(modifier = Modifier
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(
-                                    MainOrange
-                                )) {
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(
+                                        MainOrange
+                                    )
+                            ) {
                                 Column(
                                     modifier = Modifier.padding(5.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally) {
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
                                     Box(
                                         modifier = Modifier
                                             .size(50.dp)
@@ -221,18 +218,20 @@ fun DetailsScreen(
                                         color = Color.White
                                     )
                                 }
-
                             }
 
                             // Cooking level
-                            Box(modifier = Modifier
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(
-                                    MainOrange
-                                )) {
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(
+                                        MainOrange
+                                    )
+                            ) {
                                 Column(
                                     modifier = Modifier.padding(5.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally) {
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
                                     Box(
                                         modifier = Modifier
                                             .size(50.dp)
@@ -258,19 +257,21 @@ fun DetailsScreen(
                                         color = Color.White
                                     )
                                 }
-
                             }
 
                             // To be served to
-                            Box(modifier = Modifier
-                                .width(60.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(
-                                    MainOrange
-                                )) {
+                            Box(
+                                modifier = Modifier
+                                    .width(60.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(
+                                        MainOrange
+                                    )
+                            ) {
                                 Column(
                                     modifier = Modifier.padding(5.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally) {
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
                                     Box(
                                         modifier = Modifier
                                             .size(50.dp)
@@ -296,18 +297,20 @@ fun DetailsScreen(
                                         color = Color.White
                                     )
                                 }
-
                             }
 
-                            Box(modifier = Modifier
-                                .width(60.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(
-                                    MainOrange
-                                )) {
+                            Box(
+                                modifier = Modifier
+                                    .width(60.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(
+                                        MainOrange
+                                    )
+                            ) {
                                 Column(
                                     modifier = Modifier.padding(5.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally) {
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
                                     Box(
                                         modifier = Modifier
                                             .size(50.dp)
@@ -333,20 +336,20 @@ fun DetailsScreen(
                                         color = Color.White
                                     )
                                 }
-
                             }
 
-
-
-                            Box(modifier = Modifier
-                                .width(60.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(
-                                    MainOrange
-                                )) {
+                            Box(
+                                modifier = Modifier
+                                    .width(60.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(
+                                        MainOrange
+                                    )
+                            ) {
                                 Column(
                                     modifier = Modifier.padding(5.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally) {
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
                                     Box(
                                         modifier = Modifier
                                             .size(50.dp)
@@ -372,7 +375,6 @@ fun DetailsScreen(
                                         color = Color.White
                                     )
                                 }
-
                             }
                         }
                     }
@@ -382,7 +384,7 @@ fun DetailsScreen(
                         Text(
                             text = "Ingredients",
                             fontWeight = FontWeight.ExtraBold,
-                            fontSize = 18.sp,
+                            fontSize = 18.sp
                         )
 
                         for (i in 1..5) {
@@ -401,7 +403,7 @@ fun DetailsScreen(
                                     modifier = Modifier.padding(3.dp),
                                     text = "50g sugar",
                                     fontWeight = FontWeight.Light,
-                                    fontSize = 16.sp,
+                                    fontSize = 16.sp
                                 )
                             }
                         }
@@ -412,7 +414,7 @@ fun DetailsScreen(
                         Text(
                             text = "Cooking Directions",
                             fontWeight = FontWeight.ExtraBold,
-                            fontSize = 18.sp,
+                            fontSize = 18.sp
                         )
 
                         for (i in 1..7) {
@@ -431,7 +433,7 @@ fun DetailsScreen(
                                     modifier = Modifier.padding(3.dp),
                                     text = "Put a glass full of water djsj sksk sakak saoso aoao soao aoao sai aoaio aiai aiaio aiai dksi siosoi sosao ",
                                     fontWeight = FontWeight.Light,
-                                    fontSize = 16.sp,
+                                    fontSize = 16.sp
                                 )
                             }
                         }
@@ -442,13 +444,11 @@ fun DetailsScreen(
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     MealTimeTheme {
         Column(Modifier.fillMaxSize()) {
-
         }
     }
 }

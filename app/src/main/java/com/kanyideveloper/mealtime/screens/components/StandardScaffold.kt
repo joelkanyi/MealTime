@@ -16,7 +16,11 @@
 package com.kanyideveloper.mealtime.screens.components
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material.*
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
@@ -38,7 +42,7 @@ fun StandardScaffold(
         BottomNavItem.Search,
         BottomNavItem.Favorites
     ),
-    content: @Composable (paddingValues: PaddingValues) -> Unit,
+    content: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
     Scaffold(
         bottomBar = {

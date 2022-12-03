@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.mealtime.screens.add_meal
+package com.kanyideveloper.mealtime.screens.addmeal
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kanyideveloper.mealtime.R
 import com.kanyideveloper.mealtime.screens.components.StandardToolbar
-import com.kanyideveloper.mealtime.screens.favorites.FoodItem
 import com.kanyideveloper.mealtime.ui.theme.LightGrey
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -50,22 +49,23 @@ fun AddMealScreen(
             },
             showBackArrow = false,
             navActions = {
-
             }
         )
 
         LazyColumn {
             item {
-                Box(modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .background(LightGrey),
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .background(LightGrey),
                     contentAlignment = Alignment.Center
-                ){
+                ) {
                     Image(
                         modifier = Modifier.fillMaxSize(),
                         painter = painterResource(id = R.drawable.ic_launcher_background),
-                        contentDescription = null)
+                        contentDescription = null
+                    )
                 }
             }
         }
