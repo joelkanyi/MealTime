@@ -1,6 +1,5 @@
 package com.kanyideveloper.mealtime.screens.home
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,12 +16,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.GridItemSpan
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Card
@@ -50,9 +48,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.mealtime.R
 import com.kanyideveloper.mealtime.model.MealCategory
 import com.kanyideveloper.mealtime.screens.components.StandardToolbar
+import com.kanyideveloper.mealtime.screens.destinations.AddMealScreenDestination
 import com.kanyideveloper.mealtime.screens.destinations.DetailsScreenDestination
 import com.kanyideveloper.mealtime.ui.theme.LightGrey
 import com.kanyideveloper.mealtime.ui.theme.MainOrange
@@ -61,11 +61,11 @@ import com.kanyideveloper.mealtime.ui.theme.MyLightOrange
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
-@OptIn(ExperimentalFoundationApi::class)
 @Destination(start = true)
 @Composable
 fun HomeScreen(
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
+    homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
 
     var showRandomMeal by remember {
@@ -98,7 +98,7 @@ fun HomeScreen(
                         }
                     },
                     onClick = {
-                        // navigator.navigate(AddMealsScreenDestination)
+                        navigator.navigate(AddMealScreenDestination)
                     },
                 )
             }
@@ -123,7 +123,7 @@ fun HomeScreen(
             )
 
             LazyVerticalGrid(
-                cells = GridCells.Fixed(2),
+                columns = GridCells.Fixed(2),
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -367,7 +367,7 @@ fun HomeScreen(
 
 @Composable
 fun MealItem(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier
