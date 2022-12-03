@@ -3,5 +3,6 @@
 
     <style name="Theme.MealTime" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">@color/lightGrey</item>
+        <item name="android:colorPrimary">#fa4a0c</item>
     </style>
 </resources>
