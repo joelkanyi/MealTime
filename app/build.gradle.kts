@@ -8,12 +8,12 @@ plugins {
 }
 
 android {
-    compileSdk = 33
+    compileSdk = AndroidConfig.compileSDK
 
     defaultConfig {
         applicationId = "com.kanyideveloper.mealtime"
-        minSdk = 21
-        targetSdk = 33
+        minSdk = AndroidConfig.minSDK
+        targetSdk = AndroidConfig.targetSDK
         versionCode = 1
         versionName = "1.0.0"
 
@@ -42,7 +42,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.3.1"
+        kotlinCompilerExtensionVersion = Versions.composeCompiler
     }
     packagingOptions {
         resources {
@@ -62,17 +62,17 @@ android {
 
 dependencies {
     implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.compose.ui:ui:1.3.1")
-    implementation("androidx.compose.material:material:1.3.1")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.3.1")
+    implementation("androidx.compose.ui:ui:${Versions.composeCompiler}")
+    implementation("androidx.compose.material:material:${Versions.composeCompiler}")
+    implementation("androidx.compose.ui:ui-tooling-preview:${Versions.composeCompiler}")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
     implementation("androidx.activity:activity-compose:1.6.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.4")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.3.1")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.3.1")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.3.1")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:${Versions.composeCompiler}")
+    debugImplementation("androidx.compose.ui:ui-tooling:${Versions.composeCompiler}")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:${Versions.composeCompiler}")
 
     // Room
     val room_version = "2.4.2"
@@ -135,7 +135,7 @@ dependencies {
     implementation("com.google.accompanist:accompanist-swiperefresh:0.27.1")
 
     // Livedata
-    implementation("androidx.compose.runtime:runtime-livedata:1.3.1")
+    implementation("androidx.compose.runtime:runtime-livedata:${Versions.composeCompiler}")
 
     // collapsing Toolbar
     implementation("me.onebone:toolbar-compose:2.3.2")
