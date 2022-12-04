@@ -15,19 +15,40 @@
  */
 package com.kanyideveloper.mealtime.screens.addmeal
 
+import android.net.Uri
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.kanyideveloper.mealtime.data.repository.HomeRepository
+import androidx.lifecycle.viewModelScope
+import com.kanyideveloper.mealtime.data.repository.UploadImageRepository
+import com.kanyideveloper.mealtime.screens.addmeal.state.SaveMealState
 import com.kanyideveloper.mealtime.screens.state.TextFieldState
+import com.kanyideveloper.mealtime.util.Resource
+import com.kanyideveloper.mealtime.util.UiEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @HiltViewModel
 class AddMealsViewModel @Inject constructor(
-    private val repository: HomeRepository
+    private val uploadImageRepository: UploadImageRepository
 ) : ViewModel() {
+
+    private val _saveMeal = mutableStateOf(SaveMealState())
+    val saveMeal: State<SaveMealState> = _saveMeal
+
+    private val _eventFlow = MutableSharedFlow<UiEvents>()
+    val eventFlow = _eventFlow.asSharedFlow()
+
+    private val _imageUri = mutableStateOf<Uri?>(null)
+    val imageUri: State<Uri?> = _imageUri
+    fun setProductImageUri(value: Uri?) {
+        _imageUri.value = value
+    }
 
     private val _ingredient = mutableStateOf(TextFieldState())
     val ingredient: State<TextFieldState> = _ingredient
@@ -81,5 +102,47 @@ class AddMealsViewModel @Inject constructor(
 
     fun removeDirections(value: String) {
         _directionsList.remove(value)
+    }
+
+    fun saveMeal(imageUri: Uri) {
+        // TODO("Add Validations")
+
+        _saveMeal.value = saveMeal.value.copy(
+            isLoading = true
+        )
+
+        viewModelScope.launch {
+            when (val uploadResult = uploadImageRepository.uploadImage(imageUri = imageUri)) {
+                is Resource.Error -> {
+                    _saveMeal.value = saveMeal.value.copy(
+                        isLoading = false,
+                        error = uploadResult.message
+                    )
+
+                    _eventFlow.emit(
+                        UiEvents.SnackbarEvent(
+                            message = uploadResult.message ?: "Unknown Error Occurred"
+                        )
+                    )
+                }
+                is Resource.Success -> {
+                    Timber.d("Image Url: ${uploadResult.data}")
+
+                    _saveMeal.value = saveMeal.value.copy(
+                        isLoading = false,
+                        data = uploadResult.data.toString()
+                    )
+
+                    _eventFlow.emit(
+                        UiEvents.SnackbarEvent(
+                            message = uploadResult.data ?: "Image Uploaded Successful"
+                        )
+                    )
+                }
+                else -> {
+                    saveMeal
+                }
+            }
+        }
     }
 }

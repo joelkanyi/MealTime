@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "185726691445",
+    "project_id": "mealtime-7a501",
+    "storage_bucket": "mealtime-7a501.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:185726691445:android:14bf9387d254e83282b03c",
+        "android_client_info": {
+          "package_name": "com.kanyideveloper.mealtime"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "185726691445-ke95p4s6bk7315ni58ek2m718nkk6bal.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD325Q8HnJsKoq330Yql-MBvmrehjsXiPw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "185726691445-ke95p4s6bk7315ni58ek2m718nkk6bal.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

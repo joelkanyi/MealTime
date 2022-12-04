@@ -16,6 +16,7 @@
 package com.kanyideveloper.mealtime.screens.addmeal
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,11 +26,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -41,7 +44,9 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -61,22 +66,36 @@ import com.kanyideveloper.mealtime.R
 import com.kanyideveloper.mealtime.screens.components.StandardToolbar
 import com.kanyideveloper.mealtime.screens.state.TextFieldState
 import com.kanyideveloper.mealtime.ui.theme.MainOrange
+import com.kanyideveloper.mealtime.util.UiEvents
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Destination
 @Composable
 fun NextAddMealScreen(
+    imageUri: Uri,
     navigator: DestinationsNavigator,
     viewModel: AddMealsViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    val scaffoldState = rememberScaffoldState()
 
     val direction = viewModel.direction.value
     val ingredient = viewModel.ingredient.value
+
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is UiEvents.SnackbarEvent -> {
+                    scaffoldState.snackbarHostState.showSnackbar(message = event.message)
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -88,14 +107,24 @@ fun NextAddMealScreen(
                 },
                 showBackArrow = true,
                 navActions = {
-                    TextButton(onClick = {
-                    }) {
-                        Text(
-                            text = "Save",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MainOrange
-                        )
+                    TextButton(
+                        onClick = {
+                            viewModel.saveMeal(imageUri = imageUri)
+                        },
+                        enabled = !viewModel.saveMeal.value.isLoading
+                    ) {
+                        if (viewModel.saveMeal.value.isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp)
+                            )
+                        } else {
+                            Text(
+                                text = "Save",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MainOrange
+                            )
+                        }
                     }
                 }
             )
@@ -309,6 +338,7 @@ fun DirectionItem(
         ) {
             Text(
                 modifier = Modifier
+                    .fillMaxWidth(.6f)
                     .padding(8.dp),
                 text = direction
             )
