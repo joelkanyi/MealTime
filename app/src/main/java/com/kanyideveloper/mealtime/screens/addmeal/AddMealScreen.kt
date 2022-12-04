@@ -16,8 +16,11 @@
 package com.kanyideveloper.mealtime.screens.addmeal
 
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,8 +38,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -48,9 +55,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -58,12 +66,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyidev.searchable_dropdown.SearchableExpandedDropDownMenu
-import com.kanyideveloper.mealtime.R
 import com.kanyideveloper.mealtime.screens.components.StandardToolbar
 import com.kanyideveloper.mealtime.screens.destinations.NextAddMealScreenDestination
-import com.kanyideveloper.mealtime.ui.theme.LightGrey
 import com.kanyideveloper.mealtime.ui.theme.MainOrange
+import com.kanyideveloper.mealtime.util.imageUriToImageBitmap
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -71,9 +79,15 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Destination
 @Composable
 fun AddMealScreen(
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
+    viewModel: AddMealsViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+
+    val galleryLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            viewModel.setProductImageUri(uri)
+        }
 
     Column(Modifier.fillMaxSize()) {
         StandardToolbar(
@@ -92,19 +106,34 @@ fun AddMealScreen(
         ) {
             item {
                 Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(LightGrey),
-                    contentAlignment = Alignment.Center
+                        .background(Color.LightGray)
+                        .height(210.dp)
+                        .clickable {
+                            galleryLauncher.launch("image/*")
+                        }
                 ) {
-                    Image(
-                        modifier = Modifier.fillMaxSize(),
-                        painter = painterResource(id = R.drawable.ic_launcher_background),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop
-                    )
+                    if (viewModel.imageUri.value == null) {
+                        IconButton(onClick = {
+                            galleryLauncher.launch("image/*")
+                        }) {
+                            Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                        }
+                    }
+
+                    // Selected Image
+                    viewModel.imageUri.value?.let { uri ->
+                        Image(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            bitmap = context.imageUriToImageBitmap(uri).asImageBitmap(),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 }
             }
 
@@ -340,9 +369,9 @@ data class Sport(
  * Select Image -DONE
  * Enter Food Title - DONE
  * Cooking Time - DONE
- * Serving People
+ * Serving People - DONE
  * Cooking Complexity - DONE
  * Category - DONE
- * Ingredients
- * Cooking Directions
+ * Ingredients - DONE
+ * Cooking Directions - DONE
  */

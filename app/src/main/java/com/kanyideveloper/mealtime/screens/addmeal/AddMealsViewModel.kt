@@ -15,6 +15,7 @@
  */
 package com.kanyideveloper.mealtime.screens.addmeal
 
+import android.net.Uri
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +29,12 @@ import javax.inject.Inject
 class AddMealsViewModel @Inject constructor(
     private val repository: HomeRepository
 ) : ViewModel() {
+
+    private val _imageUri = mutableStateOf<Uri?>(null)
+    val imageUri: State<Uri?> = _imageUri
+    fun setProductImageUri(value: Uri?) {
+        _imageUri.value = value
+    }
 
     private val _ingredient = mutableStateOf(TextFieldState())
     val ingredient: State<TextFieldState> = _ingredient

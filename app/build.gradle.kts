@@ -5,6 +5,7 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("kotlin-parcelize")
     id("com.google.devtools.ksp") version ("1.7.10-1.0.6")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -153,4 +154,11 @@ dependencies {
     // Material 3
     implementation("androidx.compose.material3:material3:1.0.1")
     implementation("androidx.compose.material3:material3-window-size-class:1.0.1")
+
+    // Firebase Storage
+    implementation(platform("com.google.firebase:firebase-bom:31.1.0"))
+    implementation("com.google.firebase:firebase-storage-ktx")
+
+    // Firebase Coroutine
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
 }
