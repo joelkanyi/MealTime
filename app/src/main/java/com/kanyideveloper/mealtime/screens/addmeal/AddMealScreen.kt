@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.sp
 import com.kanyidev.searchable_dropdown.SearchableExpandedDropDownMenu
 import com.kanyideveloper.mealtime.R
 import com.kanyideveloper.mealtime.screens.components.StandardToolbar
+import com.kanyideveloper.mealtime.screens.destinations.NextAddMealScreenDestination
 import com.kanyideveloper.mealtime.ui.theme.LightGrey
 import com.kanyideveloper.mealtime.ui.theme.MainOrange
 import com.ramcosta.composedestinations.annotation.Destination
@@ -296,6 +297,7 @@ fun AddMealScreen(
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
+                        navigator.navigate(NextAddMealScreenDestination)
                     },
                     shape = RoundedCornerShape(4.dp)
                 ) {
