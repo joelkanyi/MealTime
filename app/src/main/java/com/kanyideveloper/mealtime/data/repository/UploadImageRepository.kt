@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.mealtime.data.remote
+package com.kanyideveloper.mealtime.data.repository
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -50,7 +50,7 @@ class UploadImageRepository(
                     fileStorageReference.downloadUrl
                 }.await().toString()
 
-                Resource.Success("Image Uploaded Successfully")
+                Resource.Success(result)
             }
         }
     }

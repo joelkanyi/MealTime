@@ -326,7 +326,15 @@ fun AddMealScreen(
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        navigator.navigate(NextAddMealScreenDestination)
+                        if (viewModel.imageUri.value == null) {
+                            Toast.makeText(
+                                context,
+                                "Please select an image so as to proceed",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            return@Button
+                        }
+                        navigator.navigate(NextAddMealScreenDestination(viewModel.imageUri.value!!))
                     },
                     shape = RoundedCornerShape(4.dp)
                 ) {

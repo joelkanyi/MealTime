@@ -16,6 +16,7 @@
 package com.kanyideveloper.mealtime.screens.addmeal
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,11 +26,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -69,6 +72,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Destination
 @Composable
 fun NextAddMealScreen(
+    imageUri: Uri,
     navigator: DestinationsNavigator,
     viewModel: AddMealsViewModel = hiltViewModel()
 ) {
@@ -88,14 +92,24 @@ fun NextAddMealScreen(
                 },
                 showBackArrow = true,
                 navActions = {
-                    TextButton(onClick = {
-                    }) {
-                        Text(
-                            text = "Save",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MainOrange
-                        )
+                    TextButton(
+                        onClick = {
+                            viewModel.saveMeal(imageUri = imageUri)
+                        },
+                        enabled = !viewModel.saveMeal.value.isLoading
+                    ) {
+                        if (viewModel.saveMeal.value.isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp)
+                            )
+                        } else {
+                            Text(
+                                text = "Save",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MainOrange
+                            )
+                        }
                     }
                 }
             )
