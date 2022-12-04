@@ -146,4 +146,11 @@ dependencies {
 
     // If using indicators, also depend on
     implementation("com.google.accompanist:accompanist-pager-indicators:0.28.0")
+
+    // Searchable Dropdown
+    implementation("com.github.Breens-Mbaka:Searchable-Dropdown-Menu-Jetpack-Compose:0.2.4")
+
+    // Material 3
+    implementation("androidx.compose.material3:material3:1.0.1")
+    implementation("androidx.compose.material3:material3-window-size-class:1.0.1")
 }
