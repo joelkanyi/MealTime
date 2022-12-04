@@ -69,9 +69,8 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Destination
 @Composable
 fun MyMealScreen(
-    navigator: DestinationsNavigator,
+    navigator: DestinationsNavigator
 ) {
-
     var showRandomMeal by remember {
         mutableStateOf(false)
     }
@@ -90,7 +89,6 @@ fun MyMealScreen(
             )
         }
         item(span = { GridItemSpan(2) }) {
-
             val mealCategories = listOf(
                 MealCategory(
                     "Food",
@@ -170,7 +168,7 @@ fun MyMealScreen(
                     Column(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
-                            .padding(16.dp),
+                            .padding(16.dp)
                     ) {
                         Text(
                             text = "What to cook for lunch?",
@@ -250,7 +248,7 @@ fun MyMealScreen(
                                 .fillMaxWidth()
                                 .align(Alignment.BottomEnd)
                                 .background(Color.Black.copy(alpha = 0.6f))
-                                .padding(5.dp),
+                                .padding(5.dp)
                         ) {
                             Text(
                                 modifier = Modifier

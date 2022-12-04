@@ -39,9 +39,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun Tabs(
     tabs: List<TabItem>,
-    pagerState: PagerState,
+    pagerState: PagerState
 ) {
-
     val scope = rememberCoroutineScope()
 
     TabRow(

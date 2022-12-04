@@ -55,7 +55,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Composable
 fun HomeScreen(
     navigator: DestinationsNavigator,
-    viewModel: HomeViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     Scaffold(
         topBar = {
@@ -112,7 +112,7 @@ fun HomeScreen(
 @Composable
 fun MainContent(
     navigator: DestinationsNavigator,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val listOfTabs = listOf(
         TabItem.Outgoing(navigator = navigator),
@@ -140,7 +140,7 @@ fun TabContent(
     tabs: List<TabItem>,
     pagerState: PagerState,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     HorizontalPager(
         count = tabs.size,

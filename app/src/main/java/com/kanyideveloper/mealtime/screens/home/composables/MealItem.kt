@@ -49,7 +49,7 @@ import com.kanyideveloper.mealtime.ui.theme.MyLightBlue
 
 @Composable
 fun MealItem(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier

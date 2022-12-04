@@ -59,6 +59,6 @@ class HomeViewModel @Inject constructor(
             R.drawable.rice_egg_with_chicken_salad,
             35,
             "Royal Mum"
-        ),
+        )
     )
 }
