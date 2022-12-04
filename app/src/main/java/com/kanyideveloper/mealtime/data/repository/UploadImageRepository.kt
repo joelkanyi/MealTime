@@ -32,7 +32,7 @@ class UploadImageRepository(
     private val storageReference: StorageReference,
     private val context: Context
 ) {
-    suspend fun uploadImage(imageUri: Uri): Resource<Any> {
+    suspend fun uploadImage(imageUri: Uri): Resource<String> {
         return withContext(Dispatchers.IO) {
             safeCall {
                 val fileStorageReference =

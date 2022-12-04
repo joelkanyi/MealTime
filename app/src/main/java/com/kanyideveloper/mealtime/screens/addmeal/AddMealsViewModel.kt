@@ -31,6 +31,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @HiltViewModel
 class AddMealsViewModel @Inject constructor(
@@ -125,6 +126,8 @@ class AddMealsViewModel @Inject constructor(
                     )
                 }
                 is Resource.Success -> {
+                    Timber.d("Image Url: ${uploadResult.data}")
+
                     _saveMeal.value = saveMeal.value.copy(
                         isLoading = false,
                         data = uploadResult.data.toString()
@@ -132,7 +135,7 @@ class AddMealsViewModel @Inject constructor(
 
                     _eventFlow.emit(
                         UiEvents.SnackbarEvent(
-                            message = uploadResult.message ?: "Image Uploaded Successful"
+                            message = uploadResult.data ?: "Image Uploaded Successful"
                         )
                     )
                 }

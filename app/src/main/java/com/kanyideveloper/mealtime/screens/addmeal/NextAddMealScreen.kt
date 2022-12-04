@@ -44,7 +44,9 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -64,8 +66,10 @@ import com.kanyideveloper.mealtime.R
 import com.kanyideveloper.mealtime.screens.components.StandardToolbar
 import com.kanyideveloper.mealtime.screens.state.TextFieldState
 import com.kanyideveloper.mealtime.ui.theme.MainOrange
+import com.kanyideveloper.mealtime.util.UiEvents
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -78,9 +82,20 @@ fun NextAddMealScreen(
 ) {
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    val scaffoldState = rememberScaffoldState()
 
     val direction = viewModel.direction.value
     val ingredient = viewModel.ingredient.value
+
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is UiEvents.SnackbarEvent -> {
+                    scaffoldState.snackbarHostState.showSnackbar(message = event.message)
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -323,6 +338,7 @@ fun DirectionItem(
         ) {
             Text(
                 modifier = Modifier
+                    .fillMaxWidth(.6f)
                     .padding(8.dp),
                 text = direction
             )
