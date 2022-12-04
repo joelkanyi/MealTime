@@ -15,6 +15,8 @@
  */
 package com.kanyideveloper.mealtime.screens.home
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.kanyideveloper.mealtime.R
 import com.kanyideveloper.mealtime.data.repository.HomeRepository
@@ -26,6 +28,12 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val homeRepository: HomeRepository
 ) : ViewModel() {
+
+    private val _isMyMeal = mutableStateOf(true)
+    val isMyMeal: State<Boolean> = _isMyMeal
+    fun setIsMyMeal(value: Boolean) {
+        _isMyMeal.value = value
+    }
 
     val featuredMeals = listOf(
         FeaturedMeal(

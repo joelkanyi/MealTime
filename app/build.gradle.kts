@@ -140,4 +140,10 @@ dependencies {
 
     // collapsing Toolbar
     implementation("me.onebone:toolbar-compose:2.3.2")
+
+    // Pager
+    implementation("com.google.accompanist:accompanist-pager:0.28.0")
+
+    // If using indicators, also depend on
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.28.0")
 }
