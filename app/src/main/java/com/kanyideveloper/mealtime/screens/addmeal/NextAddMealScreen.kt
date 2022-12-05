@@ -62,11 +62,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.kanyideveloper.core.UiEvents
 import com.kanyideveloper.mealtime.R
 import com.kanyideveloper.mealtime.screens.components.StandardToolbar
 import com.kanyideveloper.mealtime.screens.state.TextFieldState
 import com.kanyideveloper.mealtime.ui.theme.MainOrange
-import com.kanyideveloper.mealtime.util.UiEvents
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.flow.collectLatest

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.mealtime.util
+package com.kanyideveloper.core
 
 import android.content.Context
 import android.graphics.Bitmap

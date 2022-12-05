@@ -161,4 +161,8 @@ dependencies {
 
     // Firebase Coroutine
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
+
+    // Modules
+    implementation(project(Modules.core))
+
 }

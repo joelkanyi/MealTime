@@ -19,11 +19,11 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import com.google.firebase.storage.StorageReference
-import com.kanyideveloper.mealtime.util.Resource
-import com.kanyideveloper.mealtime.util.imageUriToImageBitmap
-import com.kanyideveloper.mealtime.util.safeCall
+import com.kanyideveloper.core.Resource
+import com.kanyideveloper.core.imageUriToImageBitmap
+import com.kanyideveloper.core.safeCall
 import java.io.ByteArrayOutputStream
-import java.util.*
+import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext

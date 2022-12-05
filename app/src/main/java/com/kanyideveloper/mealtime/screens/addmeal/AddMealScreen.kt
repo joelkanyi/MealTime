@@ -68,10 +68,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyidev.searchable_dropdown.SearchableExpandedDropDownMenu
+import com.kanyideveloper.core.imageUriToImageBitmap
 import com.kanyideveloper.mealtime.screens.components.StandardToolbar
 import com.kanyideveloper.mealtime.screens.destinations.NextAddMealScreenDestination
 import com.kanyideveloper.mealtime.ui.theme.MainOrange
-import com.kanyideveloper.mealtime.util.imageUriToImageBitmap
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
