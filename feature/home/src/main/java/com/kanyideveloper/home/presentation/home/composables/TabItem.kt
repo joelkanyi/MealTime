@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core.presentation.components
+package com.kanyideveloper.home.presentation.home.composables
 
 import androidx.compose.runtime.Composable
-import com.kanyideveloper.mealtime.screens.home.mymeal.MyMealScreen
-import com.kanyideveloper.mealtime.screens.home.onlinemeal.OnlineMealScreen
+import com.kanyideveloper.home.presentation.home.mymeal.MyMealScreen
+import com.kanyideveloper.home.presentation.home.onlinemeal.OnlineMealScreen
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 typealias ComposableFun = @Composable (onClick: () -> Unit) -> Unit

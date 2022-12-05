@@ -40,13 +40,11 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
-import com.kanyideveloper.mealtime.R
-import com.kanyideveloper.core.presentation.components.StandardToolbar
-import com.kanyideveloper.core.presentation.components.TabItem
-import com.kanyideveloper.core.presentation.components.Tabs
-import com.kanyideveloper.mealtime.screens.destinations.AddMealScreenDestination
-import com.kanyideveloper.mealtime.screens.destinations.DetailsScreenDestination
-import com.kanyideveloper.mealtime.ui.theme.MainOrange
+import com.kanyideveloper.compose_ui.components.StandardToolbar
+import com.kanyideveloper.compose_ui.theme.MainOrange
+import com.kanyideveloper.home.presentation.home.composables.TabItem
+import com.kanyideveloper.home.presentation.home.composables.Tabs
+import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -55,7 +53,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Composable
 fun HomeScreen(
     navigator: DestinationsNavigator,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
     Scaffold(
         topBar = {
@@ -93,7 +91,7 @@ fun HomeScreen(
                         }
                     },
                     onClick = {
-                        navigator.navigate(AddMealScreenDestination)
+                        //navigator.navigate(AddMealScreenDestination)
                     }
                 )
             }
@@ -112,7 +110,7 @@ fun HomeScreen(
 @Composable
 fun MainContent(
     navigator: DestinationsNavigator,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val listOfTabs = listOf(
         TabItem.Outgoing(navigator = navigator),
@@ -128,7 +126,9 @@ fun MainContent(
         TabContent(
             tabs = listOfTabs,
             pagerState = pagerState,
-            onClick = { navigator.navigate(DetailsScreenDestination) },
+            onClick = {
+                // navigator.navigate(DetailsScreenDestination)
+            },
             modifier = modifier
         )
     }
@@ -140,7 +140,7 @@ fun TabContent(
     tabs: List<TabItem>,
     pagerState: PagerState,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     HorizontalPager(
         count = tabs.size,

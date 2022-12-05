@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core.presentation.components
+package com.kanyideveloper.compose_ui.components
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.BottomNavigation
@@ -29,23 +29,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.kanyideveloper.mealtime.model.BottomNavItem
-import com.kanyideveloper.mealtime.ui.theme.DarkGrey
-import com.kanyideveloper.mealtime.ui.theme.MainOrange
+import com.kanyideveloper.compose_ui.theme.DarkGrey
+import com.kanyideveloper.compose_ui.theme.MainOrange
+import com.kanyideveloper.core.domain.model.BottomNavItem
 
 @Composable
 fun StandardScaffold(
     navController: NavController,
     showBottomBar: Boolean = true,
     items: List<BottomNavItem> = listOf(
-        BottomNavItem.Home,
+       /* BottomNavItem.Home,
         BottomNavItem.Search,
-        BottomNavItem.Favorites
+        BottomNavItem.Favorites*/
     ),
     content: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
     Scaffold(
-        bottomBar = {
+        /*bottomBar = {
             if (showBottomBar) {
                 BottomNavigation(
                     backgroundColor = Color.White,
@@ -87,7 +87,7 @@ fun StandardScaffold(
                     }
                 }
             }
-        }
+        }*/
     ) { paddingValues ->
         content(paddingValues)
     }

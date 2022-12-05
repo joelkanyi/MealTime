@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core.presentation.components
+package com.kanyideveloper.home.presentation.home.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -32,7 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
-import com.kanyideveloper.mealtime.ui.theme.MainOrange
+import com.kanyideveloper.compose_ui.theme.MainOrange
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)

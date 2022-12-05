@@ -21,11 +21,11 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kanyideveloper.addmeal.domain.repository.UploadImageRepository
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.UiEvents
-import com.kanyideveloper.mealtime.data.repository.UploadImageRepository
 import com.kanyideveloper.addmeal.presentation.addmeal.state.SaveMealState
-import com.kanyideveloper.mealtime.screens.state.TextFieldState
+import com.kanyideveloper.core.presentation.state.TextFieldState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow

@@ -63,10 +63,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.core.util.UiEvents
-import com.kanyideveloper.mealtime.R
-import com.kanyideveloper.core.presentation.components.StandardToolbar
-import com.kanyideveloper.mealtime.screens.state.TextFieldState
-import com.kanyideveloper.mealtime.ui.theme.MainOrange
+import com.kanyideveloper.mealtime.core.R
+import com.kanyideveloper.compose_ui.components.StandardToolbar
+import com.kanyideveloper.compose_ui.theme.MainOrange
+import com.kanyideveloper.core.presentation.state.TextFieldState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.flow.collectLatest
@@ -215,7 +215,7 @@ private fun DirectionComponent(
 
         if (direction.error != null) {
             Text(
-                text = direction.error,
+                text = direction.error ?: "",
                 style = MaterialTheme.typography.body2,
                 color = MaterialTheme.colors.error,
                 textAlign = TextAlign.End,
@@ -270,7 +270,7 @@ private fun IngredientComponent(
         )
         if (ingredient.error != null) {
             Text(
-                text = ingredient.error,
+                text = ingredient.error ?: "",
                 style = MaterialTheme.typography.body2,
                 color = MaterialTheme.colors.error,
                 textAlign = TextAlign.End,

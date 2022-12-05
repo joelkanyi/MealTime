@@ -54,8 +54,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kanyideveloper.compose_ui.theme.LightGrey
 import com.kanyideveloper.compose_ui.theme.MyLightBlue
-import com.kanyideveloper.core.presentation.components.StandardToolbar
-import com.kanyideveloper.mealtime.R
+import com.kanyideveloper.compose_ui.components.StandardToolbar
+import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 

@@ -69,9 +69,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyidev.searchable_dropdown.SearchableExpandedDropDownMenu
 import com.kanyideveloper.core.util.imageUriToImageBitmap
-import com.kanyideveloper.core.presentation.components.StandardToolbar
-import com.kanyideveloper.mealtime.screens.destinations.NextAddMealScreenDestination
-import com.kanyideveloper.mealtime.ui.theme.MainOrange
+import com.kanyideveloper.compose_ui.components.StandardToolbar
+import com.kanyideveloper.compose_ui.theme.MainOrange
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -334,7 +333,7 @@ fun AddMealScreen(
                             ).show()
                             return@Button
                         }
-                        navigator.navigate(NextAddMealScreenDestination(viewModel.imageUri.value!!))
+                        //navigator.navigate(NextAddMealScreenDestination(viewModel.imageUri.value!!))
                     },
                     shape = RoundedCornerShape(4.dp)
                 ) {

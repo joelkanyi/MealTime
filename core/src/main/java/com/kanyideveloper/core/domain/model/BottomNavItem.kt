@@ -15,15 +15,11 @@
  */
 package com.kanyideveloper.core.domain.model
 
-import com.kanyideveloper.mealtime.R
-import com.kanyideveloper.mealtime.screens.destinations.Destination
-import com.kanyideveloper.mealtime.screens.destinations.FavoritesScreenDestination
-import com.kanyideveloper.mealtime.screens.destinations.HomeScreenDestination
-import com.kanyideveloper.mealtime.screens.destinations.SearchScreenDestination
-import com.kanyideveloper.mealtime.screens.destinations.SettingsScreenDestination
+import com.kanyideveloper.mealtime.core.R
 
-sealed class BottomNavItem(var title: String, var icon: Int, var destination: Destination) {
-    object Home : BottomNavItem(
+
+sealed class BottomNavItem(var title: String, var icon: Int, /*var destination: Destination*/) {
+    /*object Home : BottomNavItem(
         title = "Home",
         icon = R.drawable.ic_home,
         destination = HomeScreenDestination
@@ -45,5 +41,5 @@ sealed class BottomNavItem(var title: String, var icon: Int, var destination: De
         title = "Settings",
         icon = R.drawable.ic_settings,
         destination = SettingsScreenDestination
-    )
+    )*/
 }

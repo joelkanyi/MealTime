@@ -57,12 +57,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kanyideveloper.mealtime.R
-import com.kanyideveloper.mealtime.model.MealCategory
-import com.kanyideveloper.mealtime.screens.destinations.DetailsScreenDestination
+import com.kanyideveloper.compose_ui.theme.MainOrange
+import com.kanyideveloper.compose_ui.theme.MyLightOrange
+import com.kanyideveloper.core.domain.model.MealCategory
+import com.kanyideveloper.mealtime.core.R
 import com.kanyideveloper.home.presentation.home.composables.MealItem
-import com.kanyideveloper.mealtime.ui.theme.MainOrange
-import com.kanyideveloper.mealtime.ui.theme.MyLightOrange
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -306,7 +305,7 @@ fun MyMealScreen(
         items(10) {
             MealItem(
                 modifier = Modifier.clickable {
-                    navigator.navigate(DetailsScreenDestination)
+                    //navigator.navigate(DetailsScreenDestination)
                 }
             )
         }

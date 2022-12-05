@@ -18,15 +18,12 @@ package com.kanyideveloper.home.presentation.home
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.kanyideveloper.mealtime.R
-import com.kanyideveloper.mealtime.data.repository.HomeRepository
-import com.kanyideveloper.mealtime.model.FeaturedMeal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val homeRepository: HomeRepository
+    //private val homeRepository: HomeRepository
 ) : ViewModel() {
 
     private val _isMyMeal = mutableStateOf(true)
@@ -35,7 +32,7 @@ class HomeViewModel @Inject constructor(
         _isMyMeal.value = value
     }
 
-    val featuredMeals = listOf(
+/*    val featuredMeals = listOf(
         FeaturedMeal(
             "Beef Steak & Cheese",
             R.drawable.beef_steak_with_cheese,
@@ -60,5 +57,5 @@ class HomeViewModel @Inject constructor(
             35,
             "Royal Mum"
         )
-    )
+    )*/
 }

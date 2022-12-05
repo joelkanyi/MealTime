@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core.presentation.components
+package com.kanyideveloper.compose_ui.components
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.Icon
@@ -25,7 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.kanyideveloper.mealtime.ui.theme.MainOrange
+import com.kanyideveloper.compose_ui.theme.MainOrange
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable

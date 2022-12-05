@@ -30,14 +30,14 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kanyideveloper.compose_ui.theme.MealTimeTheme
-import com.kanyideveloper.core.presentation.components.StandardScaffold
-import com.kanyideveloper.mealtime.screens.NavGraphs
+import com.kanyideveloper.compose_ui.components.StandardScaffold
+/*import com.kanyideveloper.mealtime.screens.NavGraphs
 import com.kanyideveloper.mealtime.screens.destinations.FavoritesScreenDestination
 import com.kanyideveloper.mealtime.screens.destinations.HomeScreenDestination
 import com.kanyideveloper.mealtime.screens.destinations.SearchScreenDestination
 import com.kanyideveloper.mealtime.screens.destinations.SettingsScreenDestination
 import com.ramcosta.composedestinations.DestinationsNavHost
-import com.ramcosta.composedestinations.rememberNavHostEngine
+import com.ramcosta.composedestinations.rememberNavHostEngine*/
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -57,7 +57,7 @@ class MainActivity : ComponentActivity() {
 
                     val navController = rememberNavController()
 
-                    val navHostEngine = rememberNavHostEngine()
+                    //val navHostEngine = rememberNavHostEngine()
 
                     val newBackStackEntry by navController.currentBackStackEntryAsState()
                     val route = newBackStackEntry?.destination?.route
@@ -65,18 +65,19 @@ class MainActivity : ComponentActivity() {
                     StandardScaffold(
                         navController = navController,
                         showBottomBar = route in listOf(
-                            HomeScreenDestination.route,
+                            ""
+                           /* HomeScreenDestination.route,
                             SearchScreenDestination.route,
                             FavoritesScreenDestination.route,
-                            SettingsScreenDestination.route
+                            SettingsScreenDestination.route*/
                         )
                     ) { innerPadding ->
                         Box(modifier = Modifier.padding(innerPadding)) {
-                            DestinationsNavHost(
+                            /*DestinationsNavHost(
                                 navGraph = NavGraphs.root,
                                 navController = navController,
                                 engine = navHostEngine
-                            )
+                            )*/
                         }
                     }
                 }
