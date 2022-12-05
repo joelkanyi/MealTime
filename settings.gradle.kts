@@ -16,3 +16,9 @@ dependencyResolutionManagement {
 }
 rootProject.name = "MealTime"
 include(":app")
+include(":feature:addmeal")
+include(":core")
+include(":feature:favorites")
+include(":feature:home")
+include(":feature:settings")
+include(":feature:search")
