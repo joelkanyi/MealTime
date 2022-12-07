@@ -1,4 +1,4 @@
-package com.kanyideveloper.mealtime
+package com.kanyideveloper.mealtime.navigation
 
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination

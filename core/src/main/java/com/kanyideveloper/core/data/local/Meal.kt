@@ -15,10 +15,13 @@
  */
 package com.kanyideveloper.core.data.local
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.kanyideveloper.core.util.Constants.MEAL_TABLE
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 @Entity(tableName = MEAL_TABLE)
 data class Meal(
     val name: String,
@@ -30,4 +33,4 @@ data class Meal(
     val cookingDirections: List<String>,
     val isFavorite: Boolean = false,
     @PrimaryKey(autoGenerate = true) val id: Int? = 0
-)
+): Parcelable

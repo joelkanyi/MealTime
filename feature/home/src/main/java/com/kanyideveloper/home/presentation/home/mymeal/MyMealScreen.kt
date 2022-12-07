@@ -305,7 +305,7 @@ fun MyMealScreen(
         items(10) {
             MealItem(
                 modifier = Modifier.clickable {
-                    //navigator.navigate(DetailsScreenDestination)
+                    navigator.openMealDetails()
                 }
             )
         }

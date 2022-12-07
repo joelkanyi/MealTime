@@ -36,11 +36,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import com.kanyideveloper.mealtime.BottomNavItem
+import androidx.navigation.NavOptionsBuilder
 import com.kanyideveloper.compose_ui.theme.DarkGrey
 import com.kanyideveloper.compose_ui.theme.MainOrange
-import com.kanyideveloper.mealtime.NavGraphs
-import com.ramcosta.composedestinations.navigation.navigateTo
+import com.kanyideveloper.mealtime.BottomNavItem
+import com.kanyideveloper.mealtime.navigation.NavGraphs
+import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.spec.NavGraphSpec
 
 @Composable
@@ -85,14 +86,14 @@ fun StandardScaffold(
                             alwaysShowLabel = true,
                             selected = currentSelectedItem == item.screen,
                             onClick = {
-                                navController.navigateTo(item.screen) {
+                                navController.navigate(item.screen, fun NavOptionsBuilder.() {
                                     launchSingleTop = true
                                     restoreState = true
 
                                     popUpTo(navController.graph.findStartDestination().id) {
                                         saveState = true
                                     }
-                                }
+                                })
                             }
                         )
                     }
@@ -111,7 +112,7 @@ fun StandardScaffold(
  */
 @Stable
 @Composable
-private fun NavController.currentScreenAsState(): State<NavGraphSpec> {
+fun NavController.currentScreenAsState(): State<NavGraphSpec> {
     val selectedItem = remember { mutableStateOf(NavGraphs.home) }
 
     DisposableEffect(this) {

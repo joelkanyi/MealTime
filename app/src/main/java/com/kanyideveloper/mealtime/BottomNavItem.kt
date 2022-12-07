@@ -15,11 +15,8 @@
  */
 package com.kanyideveloper.mealtime
 
-import com.kanyideveloper.destinations.HomeScreenDestination
-import com.kanyideveloper.favorites.presentation.favorites.destinations.FavoritesScreenDestination
 import com.kanyideveloper.mealtime.core.R
-import com.kanyideveloper.search.presentation.search.destinations.SearchScreenDestination
-import com.kanyideveloper.settings.presentation.destinations.SettingsScreenDestination
+import com.kanyideveloper.mealtime.navigation.NavGraphs
 import com.ramcosta.composedestinations.spec.NavGraphSpec
 
 
