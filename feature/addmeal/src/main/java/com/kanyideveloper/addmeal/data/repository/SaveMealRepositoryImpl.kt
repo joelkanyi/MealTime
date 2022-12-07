@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core.data.local
+package com.kanyideveloper.addmeal.data.repository
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
-import com.kanyideveloper.core.data.converters.Converters
+import com.kanyideveloper.addmeal.domain.repository.SaveMealRepository
+import com.kanyideveloper.core_database.MealTimeDatabase
+import com.kanyideveloper.core_database.model.Meal
 
-@TypeConverters(Converters::class)
-@Database(entities = [Meal::class], version = 1)
-abstract class MealTimeDatabase : RoomDatabase() {
-    abstract val mealDao: MealDao
+class SaveMealRepositoryImpl(
+    private val mealTimeDatabase: MealTimeDatabase
+) : SaveMealRepository {
+    override suspend fun saveMeal(meal: Meal) {
+        mealTimeDatabase.mealDao.insertMeal(meal)
+    }
 }

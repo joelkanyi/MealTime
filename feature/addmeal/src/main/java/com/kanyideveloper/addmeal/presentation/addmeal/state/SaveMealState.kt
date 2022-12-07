@@ -18,5 +18,5 @@ package com.kanyideveloper.addmeal.presentation.addmeal.state
 data class SaveMealState(
     val isLoading: Boolean = false,
     val error: String? = null,
-    val data: String = ""
+    val mealIsSaved: Boolean = false
 )

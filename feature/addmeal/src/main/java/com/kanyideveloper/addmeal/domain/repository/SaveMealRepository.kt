@@ -13,15 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core.data.local
+package com.kanyideveloper.addmeal.domain.repository
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import com.kanyideveloper.core.util.Constants.CATEGORIES_TABLE
+import com.kanyideveloper.core_database.model.Meal
 
-@Entity(tableName = CATEGORIES_TABLE)
-data class Category(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int? = null,
-    val name: String
-)
+interface SaveMealRepository {
+    suspend fun saveMeal(meal: Meal)
+}

@@ -21,21 +21,26 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kanyideveloper.addmeal.domain.repository.SaveMealRepository
 import com.kanyideveloper.addmeal.domain.repository.UploadImageRepository
 import com.kanyideveloper.addmeal.presentation.addmeal.state.SaveMealState
-import com.kanyideveloper.core.presentation.state.TextFieldState
+import com.kanyideveloper.core.state.TextFieldState
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.UiEvents
+import com.kanyideveloper.core_database.model.Meal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.newSingleThreadContext
 import timber.log.Timber
 
 @HiltViewModel
 class AddMealsViewModel @Inject constructor(
-    private val uploadImageRepository: UploadImageRepository
+    private val uploadImageRepository: UploadImageRepository,
+    private val saveMealRepository: SaveMealRepository
 ) : ViewModel() {
 
     private val _saveMeal = mutableStateOf(SaveMealState())
@@ -104,14 +109,14 @@ class AddMealsViewModel @Inject constructor(
         _directionsList.remove(value)
     }
 
-    fun saveMeal(imageUri: Uri) {
+    fun uploadMealImage(imageUri: Uri) {
         // TODO("Add Validations")
 
         _saveMeal.value = saveMeal.value.copy(
             isLoading = true
         )
 
-        viewModelScope.launch {
+        viewModelScope.launch(SINGLE_THREAD) {
             when (val uploadResult = uploadImageRepository.uploadImage(imageUri = imageUri)) {
                 is Resource.Error -> {
                     _saveMeal.value = saveMeal.value.copy(
@@ -128,14 +133,26 @@ class AddMealsViewModel @Inject constructor(
                 is Resource.Success -> {
                     Timber.d("Image Url: ${uploadResult.data}")
 
+                    val meal = Meal(
+                        name = "Ugali Sukuma Wiki",
+                        imageUrl = uploadResult.data.toString(),
+                        cookingTime = 0,
+                        cookingDirections = directionsList,
+                        cookingDifficulty = "Medium",
+                        category = "Lunch",
+                        ingredients = ingredientsList
+                    )
+
+                    saveMeal(meal = meal)
+
                     _saveMeal.value = saveMeal.value.copy(
                         isLoading = false,
-                        data = uploadResult.data.toString()
+                        mealIsSaved = true
                     )
 
                     _eventFlow.emit(
                         UiEvents.SnackbarEvent(
-                            message = uploadResult.data ?: "Image Uploaded Successful"
+                            message = "Meal Saved Successful"
                         )
                     )
                 }
@@ -144,5 +161,16 @@ class AddMealsViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun saveMeal(meal: Meal) {
+        viewModelScope.launch(SINGLE_THREAD) {
+            saveMealRepository.saveMeal(meal = meal)
+        }
+    }
+
+    companion object {
+        @OptIn(DelicateCoroutinesApi::class)
+        val SINGLE_THREAD = newSingleThreadContext("ContactCreation")
     }
 }

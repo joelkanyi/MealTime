@@ -13,9 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core.domain.model
+package com.kanyideveloper.core_database
 
-data class MealCategory(
-    val name: String,
-    val icon: Int
-)
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.kanyideveloper.core_database.converters.Converters
+import com.kanyideveloper.core_database.dao.MealDao
+import com.kanyideveloper.core_database.model.Meal
+
+@TypeConverters(Converters::class)
+@Database(entities = [Meal::class], version = 1)
+abstract class MealTimeDatabase : RoomDatabase() {
+    abstract val mealDao: MealDao
+}

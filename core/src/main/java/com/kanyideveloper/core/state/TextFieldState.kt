@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core.presentation.state
+package com.kanyideveloper.core.state
 
 data class TextFieldState(
     val text: String = "",

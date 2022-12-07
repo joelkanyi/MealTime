@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.addmeal.di
+package com.kanyideveloper.core_database.di
 
 import android.content.Context
-import com.google.firebase.storage.StorageReference
-import com.kanyideveloper.addmeal.data.repository.UploadImageRepositoryImpl
-import com.kanyideveloper.addmeal.domain.repository.UploadImageRepository
+import androidx.room.Room
+import com.google.gson.Gson
+import com.kanyideveloper.core.util.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,17 +28,25 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DataModule {
+object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideUploadImageRepository(
-        storageReference: StorageReference,
-        @ApplicationContext context: Context
-    ): UploadImageRepository {
-        return UploadImageRepositoryImpl(
-            storageReference = storageReference,
-            context = context
+    fun provideTypeConverters(gson: Gson) =
+        com.kanyideveloper.core_database.converters.Converters(gson)
+
+    @Provides
+    @Singleton
+    fun provideMealTimeDatabase(
+        @ApplicationContext context: Context,
+        converters: com.kanyideveloper.core_database.converters.Converters
+    ): com.kanyideveloper.core_database.MealTimeDatabase {
+        return Room.databaseBuilder(
+            context.applicationContext,
+            com.kanyideveloper.core_database.MealTimeDatabase::class.java,
+            Constants.MEALTIME_DATABASE
         )
+            .addTypeConverter(converters)
+            .build()
     }
 }

@@ -13,27 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core.data.local
+package com.kanyideveloper.core_database
 
-import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy.REPLACE
-import androidx.room.Query
+import org.junit.Assert.*
+import org.junit.Test
 
-@Dao
-interface MealDao {
-
-    @Insert(onConflict = REPLACE)
-    suspend fun insertMeal(meal: Meal)
-
-    @Query("SELECT * FROM meal_table ORDER BY id DESC")
-    fun getAllMeals(): LiveData<List<Meal>>
-
-    @Query("SELECT * FROM meal_table WHERE id = :id")
-    fun getSingleMeals(id: Int): LiveData<List<Meal>>
-
-    @Delete
-    suspend fun deleteMeal(meal: Meal)
+/**
+ * Example local unit test, which will execute on the development machine (host).
+ *
+ * See [testing documentation](http://d.android.com/tools/testing).
+ */
+class ExampleUnitTest {
+    @Test
+    fun addition_isCorrect() {
+        assertEquals(4, 2 + 2)
+    }
 }

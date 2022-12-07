@@ -13,19 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core.di
+package com.kanyideveloper.core_database.model
 
-import com.google.gson.Gson
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.kanyideveloper.core.util.Constants.CATEGORIES_TABLE
 
-@Module
-@InstallIn(SingletonComponent::class)
-object AppModule {
-    @Provides
-    @Singleton
-    fun provideGson() = Gson()
-}
+@Entity(tableName = CATEGORIES_TABLE)
+data class Category(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int? = null,
+    val name: String
+)
