@@ -15,13 +15,9 @@
  */
 package com.kanyideveloper.home.presentation.home.onlinemeal
 
-import androidx.compose.material.Button
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import com.kanyideveloper.destinations.OnlineMealScreenDestination
 import com.kanyideveloper.home.presentation.home.HomeNavigator
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Destination
 @Composable

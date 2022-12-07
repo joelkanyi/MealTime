@@ -52,14 +52,13 @@ fun StandardScaffold(
         BottomNavItem.Home,
         BottomNavItem.Search,
         BottomNavItem.Favorites,
-        BottomNavItem.Settings,
+        BottomNavItem.Settings
     ),
-    content: @Composable (paddingValues: PaddingValues) -> Unit,
+    content: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
     Scaffold(
         bottomBar = {
             if (showBottomBar) {
-
                 val currentSelectedItem by navController.currentScreenAsState()
 
                 BottomNavigation(
@@ -104,7 +103,6 @@ fun StandardScaffold(
         content(paddingValues)
     }
 }
-
 
 /**
  * Adds an [NavController.OnDestinationChangedListener] to this [NavController] and updates the

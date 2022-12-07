@@ -55,13 +55,10 @@ interface FavoritesNavigator {
 @Destination
 @Composable
 fun FavoritesScreen(
-    navigator: FavoritesNavigator,
+    navigator: FavoritesNavigator
 ) {
-
     FavoritesScreenDestination
     Column(Modifier.fillMaxSize()) {
-
-
         StandardToolbar(
             navigate = {},
             title = {
@@ -82,7 +79,7 @@ fun FavoritesScreen(
 
 @Composable
 fun FoodItem(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier

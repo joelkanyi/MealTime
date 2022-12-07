@@ -11,7 +11,6 @@ apply {
     from("$rootDir/base-module.gradle")
 }
 
-
 android {
     compileSdk = AndroidConfig.compileSDK
 

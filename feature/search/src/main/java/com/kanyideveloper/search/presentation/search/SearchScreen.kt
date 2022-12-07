@@ -58,7 +58,6 @@ import com.kanyideveloper.compose_ui.theme.MyLightBlue
 import com.kanyideveloper.mealtime.search.R
 import com.ramcosta.composedestinations.annotation.Destination
 
-
 interface SearchNavigator {
     fun openSearch(showId: Long)
 }
@@ -66,12 +65,11 @@ interface SearchNavigator {
 @Destination
 @Composable
 fun SearchScreen(
-    navigator: SearchNavigator,
+    navigator: SearchNavigator
 ) {
     Column(Modifier.fillMaxSize()) {
         StandardToolbar(
             navigate = {
-
             },
             title = {
                 Text(text = "Search", fontSize = 18.sp)
@@ -80,7 +78,6 @@ fun SearchScreen(
             navActions = {
             }
         )
-
 
         SearchBar(
             // viewModel = viewModel,
@@ -92,7 +89,6 @@ fun SearchScreen(
 
                 /* viewModel.searchAll(searchParam)
                  keyboardController?.hide()*/
-
             }
         )
 
@@ -140,21 +136,20 @@ fun SearchScreen(
             }
         }
     }
-
 }
 
 @Composable
 fun SearchBar(
     // viewModel: SearchViewModel,
     modifier: Modifier = Modifier,
-    onSearch: (String) -> Unit = {},
+    onSearch: (String) -> Unit = {}
 ) {
     val searchTerm = ""
 
     TextField(
         value = searchTerm,
         onValueChange = {
-            //viewModel.setSearchTerm(it)
+            // viewModel.setSearchTerm(it)
         },
         placeholder = {
             Text(

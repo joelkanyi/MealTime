@@ -34,7 +34,7 @@ object DataModule {
     @Singleton
     fun provideUploadImageRepository(
         storageReference: StorageReference,
-        @ApplicationContext context: Context,
+        @ApplicationContext context: Context
     ): UploadImageRepository {
         return UploadImageRepositoryImpl(
             storageReference = storageReference,

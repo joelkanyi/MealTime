@@ -83,7 +83,7 @@ interface AddMealNavigator {
 @Composable
 fun AddMealScreen(
     navigator: AddMealNavigator,
-    viewModel: AddMealsViewModel = hiltViewModel(),
+    viewModel: AddMealsViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
 
@@ -371,7 +371,7 @@ fun DropDownItem(test: Sport) {
 
 data class Sport(
     val name: String,
-    val emoji: String,
+    val emoji: String
 ) {
     override fun toString(): String {
         return "$emoji $name"
@@ -387,8 +387,3 @@ data class Sport(
  * Ingredients - DONE
  * Cooking Directions - DONE
  */
-
-
-
-
-

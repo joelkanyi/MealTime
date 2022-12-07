@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kanyideveloper.compose_ui.theme.MainOrange
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable
 fun StandardToolbar(

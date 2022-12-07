@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import com.kanyideveloper.home.presentation.home.HomeNavigator
 import com.kanyideveloper.home.presentation.home.mymeal.MyMealScreen
 import com.kanyideveloper.home.presentation.home.onlinemeal.OnlineMealScreen
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 typealias ComposableFun = @Composable (onClick: () -> Unit) -> Unit
 

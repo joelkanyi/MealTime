@@ -1,5 +1,4 @@
-import AndroidConfig.versionCode
-import AndroidConfig.versionName
+
 
 plugins {
     id(Plugins.androidLibrary)

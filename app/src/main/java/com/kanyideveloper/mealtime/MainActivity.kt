@@ -82,7 +82,7 @@ class MainActivity : ComponentActivity() {
                             AppNavigation(
                                 navController = navController,
                                 modifier = Modifier
-                                    .fillMaxSize(),
+                                    .fillMaxSize()
                             )
                         }
                     }
@@ -96,7 +96,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 internal fun AppNavigation(
     navController: NavHostController,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     DestinationsNavHost(
         engine = rememberNavHostEngine(),

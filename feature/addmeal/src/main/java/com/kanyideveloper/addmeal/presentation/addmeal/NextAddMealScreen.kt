@@ -78,9 +78,8 @@ import kotlinx.coroutines.flow.collectLatest
 fun NextAddMealScreen(
     imageUri: Uri,
     navigator: AddMealNavigator,
-    viewModel: AddMealsViewModel = hiltViewModel(),
+    viewModel: AddMealsViewModel = hiltViewModel()
 ) {
-
     NextAddMealScreenDestination
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -167,13 +166,12 @@ fun NextAddMealScreen(
     }
 }
 
-
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun DirectionComponent(
     direction: TextFieldState,
     viewModel: AddMealsViewModel,
-    keyboardController: SoftwareKeyboardController?,
+    keyboardController: SoftwareKeyboardController?
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -233,7 +231,7 @@ private fun DirectionComponent(
 private fun IngredientComponent(
     ingredient: TextFieldState,
     viewModel: AddMealsViewModel,
-    keyboardController: SoftwareKeyboardController?,
+    keyboardController: SoftwareKeyboardController?
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -286,7 +284,7 @@ private fun IngredientComponent(
 @Composable
 fun IngredientItem(
     ingredient: String,
-    viewModel: AddMealsViewModel,
+    viewModel: AddMealsViewModel
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -323,7 +321,7 @@ fun IngredientItem(
 fun DirectionItem(
     direction: String,
     viewModel: AddMealsViewModel,
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),

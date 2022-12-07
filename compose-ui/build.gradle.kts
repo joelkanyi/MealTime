@@ -97,8 +97,6 @@ dependencies {
     // Accompanist System UI controller
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
 
-
-
     // RamCosta Navigation
     implementation("io.github.raamcosta.compose-destinations:animations-core:1.7.27-beta")
     ksp("io.github.raamcosta.compose-destinations:ksp:1.7.27-beta")

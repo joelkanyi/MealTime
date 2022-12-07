@@ -43,7 +43,7 @@ object AppModule {
     @Singleton
     fun provideMealTimeDatabase(
         @ApplicationContext context: Context,
-        converters: Converters,
+        converters: Converters
     ): MealTimeDatabase {
         return Room.databaseBuilder(
             context.applicationContext,

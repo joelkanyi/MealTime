@@ -23,15 +23,15 @@ import com.kanyideveloper.addmeal.domain.repository.UploadImageRepository
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.imageUriToImageBitmap
 import com.kanyideveloper.core.util.safeCall
+import java.io.ByteArrayOutputStream
+import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import java.io.ByteArrayOutputStream
-import java.util.*
 
 class UploadImageRepositoryImpl(
     private val storageReference: StorageReference,
-    private val context: Context,
+    private val context: Context
 ) : UploadImageRepository {
     override suspend fun uploadImage(imageUri: Uri): Resource<String> {
         return withContext(Dispatchers.IO) {

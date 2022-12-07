@@ -19,7 +19,6 @@ import com.kanyideveloper.mealtime.core.R
 import com.kanyideveloper.mealtime.navigation.NavGraphs
 import com.ramcosta.composedestinations.spec.NavGraphSpec
 
-
 sealed class BottomNavItem(var title: String, var icon: Int, var screen: NavGraphSpec) {
     object Home : BottomNavItem(
         title = "Home",

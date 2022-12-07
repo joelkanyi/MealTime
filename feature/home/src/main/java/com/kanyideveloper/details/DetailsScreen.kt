@@ -52,7 +52,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kanyideveloper.compose_ui.theme.LightGrey
 import com.kanyideveloper.compose_ui.theme.MainOrange
-import com.kanyideveloper.core.data.local.Meal
 import com.kanyideveloper.destinations.DetailsScreenDestination
 import com.kanyideveloper.home.presentation.home.HomeNavigator
 import com.kanyideveloper.mealtime.core.R
@@ -61,21 +60,17 @@ import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 
-
 @Destination
 @Composable
 fun DetailsScreen(
-    navigator: HomeNavigator,
+    navigator: HomeNavigator
 ) {
     val state = rememberCollapsingToolbarScaffoldState()
     val textSize = (18 + (4) * state.toolbarState.progress).sp
 
-
     DetailsScreenDestination
 
     Column(Modifier.fillMaxSize()) {
-
-
         if (textSize == 18.sp) {
             Box(
                 modifier = Modifier
@@ -129,7 +124,7 @@ fun DetailsScreen(
                     ) {
                         if (textSize.value == 18f) {
                             IconButton(onClick = {
-                                //navigator.popBackStack()
+                                // navigator.popBackStack()
                             }) {
                                 Icon(
                                     imageVector = Icons.Default.ArrowBack,
@@ -455,4 +450,3 @@ fun DetailsScreen(
         )
     }
 }
-
