@@ -42,7 +42,6 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.compose_ui.theme.MainOrange
-import com.kanyideveloper.core.data.local.Meal
 import com.kanyideveloper.destinations.HomeScreenDestination
 import com.kanyideveloper.home.presentation.home.composables.TabItem
 import com.kanyideveloper.home.presentation.home.composables.Tabs
@@ -50,7 +49,7 @@ import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
 
 interface HomeNavigator {
-    fun openMealDetails(meal: Meal? = null)
+    fun openMealDetails()
     fun openAddMeal()
 }
 

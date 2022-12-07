@@ -13,24 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core.data.local
+package com.kanyideveloper.domain.model
 
-import android.os.Parcelable
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import com.kanyideveloper.core.util.Constants.MEAL_TABLE
-import kotlinx.parcelize.Parcelize
-
-@Parcelize
-@Entity(tableName = MEAL_TABLE)
-data class Meal(
+data class FeaturedMeal(
     val name: String,
-    val imageUrl: String,
+    val imageUrl: Int,
     val cookingTime: Int,
-    val category: String,
-    val cookingDifficulty: String,
-    val ingredients: List<String>,
-    val cookingDirections: List<String>,
-    val isFavorite: Boolean = false,
-    @PrimaryKey(autoGenerate = true) val id: Int? = 0
-) : Parcelable
+    val chef: String
+)

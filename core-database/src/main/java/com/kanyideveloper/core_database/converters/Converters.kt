@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core.data.converters
+package com.kanyideveloper.core_database.converters
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter

@@ -15,8 +15,4 @@
  */
 package com.kanyideveloper.home.data.repository
 
-import com.kanyideveloper.core.data.local.MealTimeDatabase
-
-class HomeRepositoryImpl(
-    private val mealTimeDatabase: MealTimeDatabase
-)
+class HomeRepositoryImpl()

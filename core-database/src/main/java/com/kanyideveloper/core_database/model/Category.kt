@@ -13,9 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core.domain.model
+package com.kanyideveloper.core_database.model
 
-data class MealCategory(
-    val name: String,
-    val icon: Int
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.kanyideveloper.core.util.Constants.CATEGORIES_TABLE
+
+@Entity(tableName = CATEGORIES_TABLE)
+data class Category(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int? = null,
+    val name: String
 )

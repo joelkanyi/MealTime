@@ -15,16 +15,10 @@
  */
 package com.kanyideveloper.core.di
 
-import android.content.Context
-import androidx.room.Room
 import com.google.gson.Gson
-import com.kanyideveloper.core.data.converters.Converters
-import com.kanyideveloper.core.data.local.MealTimeDatabase
-import com.kanyideveloper.core.util.Constants.MEALTIME_DATABASE
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -34,23 +28,4 @@ object AppModule {
     @Provides
     @Singleton
     fun provideGson() = Gson()
-
-    @Provides
-    @Singleton
-    fun provideTypeConverters(gson: Gson) = Converters(gson)
-
-    @Provides
-    @Singleton
-    fun provideMealTimeDatabase(
-        @ApplicationContext context: Context,
-        converters: Converters
-    ): MealTimeDatabase {
-        return Room.databaseBuilder(
-            context.applicationContext,
-            MealTimeDatabase::class.java,
-            MEALTIME_DATABASE
-        )
-            .addTypeConverter(converters)
-            .build()
-    }
 }

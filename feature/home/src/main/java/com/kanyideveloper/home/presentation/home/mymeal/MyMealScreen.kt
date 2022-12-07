@@ -59,7 +59,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kanyideveloper.compose_ui.theme.MainOrange
 import com.kanyideveloper.compose_ui.theme.MyLightOrange
-import com.kanyideveloper.core.domain.model.MealCategory
+import com.kanyideveloper.domain.model.MealCategory
 import com.kanyideveloper.home.presentation.home.HomeNavigator
 import com.kanyideveloper.home.presentation.home.composables.MealItem
 import com.kanyideveloper.mealtime.core.R
