@@ -5,6 +5,8 @@ import androidx.navigation.NavController
 import com.kanyideveloper.addmeal.presentation.addmeal.AddMealNavigator
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
+import com.kanyideveloper.core.data.local.Meal
+import com.kanyideveloper.destinations.DetailsScreenDestination
 import com.kanyideveloper.favorites.presentation.favorites.FavoritesNavigator
 import com.kanyideveloper.home.presentation.home.HomeNavigator
 import com.kanyideveloper.search.presentation.search.SearchNavigator
@@ -22,7 +24,7 @@ class CoreFeatureNavigator(
         Timber.d("Favorites")
     }
 
-    override fun openAddMeal(showId: Long) {
+    override fun openAddMeal() {
         navController.navigateTo(AddMealScreenDestination within navGraph)
     }
 
@@ -36,5 +38,9 @@ class CoreFeatureNavigator(
 
     override fun openNextAddMealScreen(imageUri: Uri) {
         navController.navigateTo(NextAddMealScreenDestination(imageUri = imageUri) within navGraph)
+    }
+
+    override fun openMealDetails(meal: Meal?) {
+        navController.navigateTo(DetailsScreenDestination within navGraph)
     }
 }

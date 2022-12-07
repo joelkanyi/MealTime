@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kanyideveloper.compose_ui.theme.LightGrey
 import com.kanyideveloper.compose_ui.theme.MainOrange
+import com.kanyideveloper.core.data.local.Meal
 import com.kanyideveloper.destinations.DetailsScreenDestination
 import com.kanyideveloper.home.presentation.home.HomeNavigator
 import com.kanyideveloper.mealtime.core.R
