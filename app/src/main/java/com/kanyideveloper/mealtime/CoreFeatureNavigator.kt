@@ -1,8 +1,10 @@
 package com.kanyideveloper.mealtime
 
+import android.net.Uri
 import androidx.navigation.NavController
 import com.kanyideveloper.addmeal.presentation.addmeal.AddMealNavigator
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
+import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
 import com.kanyideveloper.favorites.presentation.favorites.FavoritesNavigator
 import com.kanyideveloper.home.presentation.home.HomeNavigator
 import com.kanyideveloper.search.presentation.search.SearchNavigator
@@ -30,5 +32,9 @@ class CoreFeatureNavigator(
 
     override fun openSettings(showId: Long) {
         Timber.d("Settings")
+    }
+
+    override fun openNextAddMealScreen(imageUri: Uri) {
+        navController.navigateTo(NextAddMealScreenDestination(imageUri = imageUri) within navGraph)
     }
 }

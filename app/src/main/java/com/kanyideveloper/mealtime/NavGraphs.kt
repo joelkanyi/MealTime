@@ -1,6 +1,7 @@
 package com.kanyideveloper.mealtime
 
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
+import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
 import com.kanyideveloper.destinations.DetailsScreenDestination
 import com.kanyideveloper.destinations.HomeScreenDestination
 import com.kanyideveloper.destinations.MyMealScreenDestination
@@ -24,7 +25,8 @@ object NavGraphs {
             MyMealScreenDestination,
             OnlineMealScreenDestination,
             DetailsScreenDestination,
-            AddMealScreenDestination
+            AddMealScreenDestination,
+            NextAddMealScreenDestination
         ).routedIn(this)
             .associateBy { it.route }
     }
