@@ -17,8 +17,11 @@ package com.kanyideveloper.addmeal.di
 
 import android.content.Context
 import com.google.firebase.storage.StorageReference
+import com.kanyideveloper.addmeal.data.repository.SaveMealRepositoryImpl
 import com.kanyideveloper.addmeal.data.repository.UploadImageRepositoryImpl
+import com.kanyideveloper.addmeal.domain.repository.SaveMealRepository
 import com.kanyideveloper.addmeal.domain.repository.UploadImageRepository
+import com.kanyideveloper.core_database.MealTimeDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,7 +31,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DataModule {
+object AddMealModule {
 
     @Provides
     @Singleton
@@ -40,5 +43,11 @@ object DataModule {
             storageReference = storageReference,
             context = context
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideSaveMealRepository(mealTimeDatabase: MealTimeDatabase): SaveMealRepository {
+        return SaveMealRepositoryImpl(mealTimeDatabase = mealTimeDatabase)
     }
 }

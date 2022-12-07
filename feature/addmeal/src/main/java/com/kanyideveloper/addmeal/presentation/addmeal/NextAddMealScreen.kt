@@ -109,7 +109,7 @@ fun NextAddMealScreen(
                 navActions = {
                     TextButton(
                         onClick = {
-                            viewModel.saveMeal(imageUri = imageUri)
+                            viewModel.uploadMealImage(imageUri = imageUri)
                         },
                         enabled = !viewModel.saveMeal.value.isLoading
                     ) {

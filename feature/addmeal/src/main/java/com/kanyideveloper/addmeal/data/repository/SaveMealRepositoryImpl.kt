@@ -13,10 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.addmeal.presentation.addmeal.state
+package com.kanyideveloper.addmeal.data.repository
 
-data class SaveMealState(
-    val isLoading: Boolean = false,
-    val error: String? = null,
-    val mealIsSaved: Boolean = false
-)
+import com.kanyideveloper.addmeal.domain.repository.SaveMealRepository
+import com.kanyideveloper.core_database.MealTimeDatabase
+import com.kanyideveloper.core_database.model.Meal
+
+class SaveMealRepositoryImpl(
+    private val mealTimeDatabase: MealTimeDatabase
+) : SaveMealRepository {
+    override suspend fun saveMeal(meal: Meal) {
+        mealTimeDatabase.mealDao.insertMeal(meal)
+    }
+}
