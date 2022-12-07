@@ -1,4 +1,4 @@
-package com.kanyideveloper.mealtime
+package com.kanyideveloper.mealtime.navigation
 
 import android.net.Uri
 import androidx.navigation.NavController
@@ -12,7 +12,7 @@ import com.kanyideveloper.home.presentation.home.HomeNavigator
 import com.kanyideveloper.search.presentation.search.SearchNavigator
 import com.kanyideveloper.settings.presentation.SettingsNavigator
 import com.ramcosta.composedestinations.dynamic.within
-import com.ramcosta.composedestinations.navigation.navigateTo
+import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.spec.NavGraphSpec
 import timber.log.Timber
 
@@ -25,7 +25,7 @@ class CoreFeatureNavigator(
     }
 
     override fun openAddMeal() {
-        navController.navigateTo(AddMealScreenDestination within navGraph)
+        navController.navigate(AddMealScreenDestination within navGraph)
     }
 
     override fun openSearch(showId: Long) {
@@ -37,10 +37,10 @@ class CoreFeatureNavigator(
     }
 
     override fun openNextAddMealScreen(imageUri: Uri) {
-        navController.navigateTo(NextAddMealScreenDestination(imageUri = imageUri) within navGraph)
+        navController.navigate(NextAddMealScreenDestination(imageUri = imageUri) within navGraph)
     }
 
     override fun openMealDetails(meal: Meal?) {
-        navController.navigateTo(DetailsScreenDestination within navGraph)
+        navController.navigate(DetailsScreenDestination within navGraph)
     }
 }
