@@ -13,33 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core.domain.model
+package com.kanyideveloper.mealtime
 
+import com.kanyideveloper.destinations.HomeScreenDestination
+import com.kanyideveloper.favorites.presentation.favorites.destinations.FavoritesScreenDestination
 import com.kanyideveloper.mealtime.core.R
+import com.kanyideveloper.search.presentation.search.destinations.SearchScreenDestination
+import com.kanyideveloper.settings.presentation.destinations.SettingsScreenDestination
+import com.ramcosta.composedestinations.spec.NavGraphSpec
 
 
-sealed class BottomNavItem(var title: String, var icon: Int, /*var destination: Destination*/) {
-    /*object Home : BottomNavItem(
+sealed class BottomNavItem(var title: String, var icon: Int, var screen: NavGraphSpec) {
+    object Home : BottomNavItem(
         title = "Home",
         icon = R.drawable.ic_home,
-        destination = HomeScreenDestination
+        screen = NavGraphs.home
     )
 
     object Search : BottomNavItem(
         title = "Search",
         icon = R.drawable.ic_search,
-        destination = SearchScreenDestination
+        screen = NavGraphs.search
     )
 
     object Favorites : BottomNavItem(
         title = "Favorites",
         icon = R.drawable.ic_favorites,
-        destination = FavoritesScreenDestination
+        screen = NavGraphs.favorites
     )
 
     object Settings : BottomNavItem(
         title = "Settings",
         icon = R.drawable.ic_settings,
-        destination = SettingsScreenDestination
-    )*/
+        screen = NavGraphs.settings
+    )
 }

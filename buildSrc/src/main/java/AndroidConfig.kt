@@ -1,3 +1,5 @@
+import org.gradle.api.JavaVersion
+
 /**
  * A collection of configuration properties for Android modules.
  */
@@ -7,4 +9,6 @@ object AndroidConfig {
     const val compileSDK = 33
     const val versionCode = 1
     const val versionName = "1.0.0"
+
+    val javaVersion = JavaVersion.VERSION_11
 }

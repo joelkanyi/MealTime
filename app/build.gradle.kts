@@ -70,4 +70,14 @@ dependencies {
     // Modules
     implementation(project(Modules.core))
     implementation(project(Modules.composeUi))
+
+    implementation(project(Modules.home))
+    implementation(project(Modules.search))
+    implementation(project(Modules.favorites))
+    implementation(project(Modules.settings))
+    implementation(project(Modules.addMeal))
+
+    // RamCosta Navigation
+    implementation("io.github.raamcosta.compose-destinations:animations-core:1.7.27-beta")
+    ksp("io.github.raamcosta.compose-destinations:ksp:1.7.27-beta")
 }

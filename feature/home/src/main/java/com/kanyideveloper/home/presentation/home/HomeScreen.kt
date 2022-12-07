@@ -42,23 +42,30 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.compose_ui.theme.MainOrange
+import com.kanyideveloper.destinations.HomeScreenDestination
 import com.kanyideveloper.home.presentation.home.composables.TabItem
 import com.kanyideveloper.home.presentation.home.composables.Tabs
 import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+
+interface HomeNavigator {
+    fun openAddMeal(showId: Long)
+}
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-@Destination(start = true)
+@Destination
 @Composable
 fun HomeScreen(
-    navigator: DestinationsNavigator,
+    navigator: HomeNavigator,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     Scaffold(
         topBar = {
+            HomeScreenDestination
+
+
             StandardToolbar(
-                navigator = navigator,
+                navigate = {},
                 title = {
                     Image(
                         painter = painterResource(id = R.drawable.ic_meal_time_banner),
@@ -91,6 +98,7 @@ fun HomeScreen(
                         }
                     },
                     onClick = {
+                        navigator.openAddMeal(1)
                         //navigator.navigate(AddMealScreenDestination)
                     }
                 )
@@ -109,7 +117,7 @@ fun HomeScreen(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun MainContent(
-    navigator: DestinationsNavigator,
+    navigator: HomeNavigator,
     modifier: Modifier = Modifier,
 ) {
     val listOfTabs = listOf(

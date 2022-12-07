@@ -42,20 +42,28 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kanyideveloper.mealtime.core.R
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.compose_ui.theme.MainOrange
+import com.kanyideveloper.favorites.presentation.favorites.destinations.FavoritesScreenDestination
+import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+
+interface FavoritesNavigator {
+    fun openFavorites(showId: Long)
+}
 
 @Destination
 @Composable
 fun FavoritesScreen(
-    navigator: DestinationsNavigator
+    navigator: FavoritesNavigator,
 ) {
+
+    FavoritesScreenDestination
     Column(Modifier.fillMaxSize()) {
+
+
         StandardToolbar(
-            navigator = navigator,
+            navigate = {},
             title = {
                 Text(text = "Favorite meals", fontSize = 18.sp)
             },
@@ -74,7 +82,7 @@ fun FavoritesScreen(
 
 @Composable
 fun FoodItem(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier

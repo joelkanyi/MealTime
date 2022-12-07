@@ -16,6 +16,7 @@
 package com.kanyideveloper.home.presentation.home.composables
 
 import androidx.compose.runtime.Composable
+import com.kanyideveloper.home.presentation.home.HomeNavigator
 import com.kanyideveloper.home.presentation.home.mymeal.MyMealScreen
 import com.kanyideveloper.home.presentation.home.onlinemeal.OnlineMealScreen
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -23,9 +24,9 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 typealias ComposableFun = @Composable (onClick: () -> Unit) -> Unit
 
 sealed class TabItem(val title: String, val screen: ComposableFun) {
-    data class Outgoing(val navigator: DestinationsNavigator) :
+    data class Outgoing(val navigator: HomeNavigator) :
         TabItem("My Meals", screen = { MyMealScreen(navigator = navigator) })
 
-    data class Incoming(val navigator: DestinationsNavigator) :
+    data class Incoming(val navigator: HomeNavigator) :
         TabItem("Online Meals", screen = { OnlineMealScreen(navigator = navigator) })
 }

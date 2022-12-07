@@ -31,7 +31,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Composable
 fun StandardToolbar(
     modifier: Modifier = Modifier,
-    navigator: DestinationsNavigator,
+    navigate: () -> Unit = {},
     showBackArrow: Boolean = false,
     backgroundColor: Color = Color.White,
     navActions: @Composable RowScope.() -> Unit = {},
@@ -44,7 +44,7 @@ fun StandardToolbar(
             {
                 IconButton(
                     onClick = {
-                        navigator.navigateUp()
+                        navigate()
                     }
                 ) {
                     Icon(

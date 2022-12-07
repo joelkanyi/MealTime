@@ -24,18 +24,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
+import com.kanyideveloper.settings.presentation.destinations.SettingsScreenDestination
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+
+
+interface SettingsNavigator {
+    fun openSettings(showId: Long)
+}
 
 @Destination
 @Composable
 fun SettingsScreen(
-    navigator: DestinationsNavigator,
+    navigator: SettingsNavigator
 ) {
     Column(Modifier.fillMaxSize()) {
         StandardToolbar(
-            navigator = navigator,
+            navigate = {
+
+            },
             title = {
                 Text(text = "Settings", fontSize = 16.sp)
             },
@@ -44,7 +51,7 @@ fun SettingsScreen(
             navActions = {
             }
         )
-
+        
         Box(
             modifier = Modifier.fillMaxSize()
         ) {

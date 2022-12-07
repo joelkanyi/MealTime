@@ -60,20 +60,20 @@ import androidx.compose.ui.unit.sp
 import com.kanyideveloper.compose_ui.theme.MainOrange
 import com.kanyideveloper.compose_ui.theme.MyLightOrange
 import com.kanyideveloper.core.domain.model.MealCategory
-import com.kanyideveloper.mealtime.core.R
+import com.kanyideveloper.destinations.MyMealScreenDestination
+import com.kanyideveloper.home.presentation.home.HomeNavigator
 import com.kanyideveloper.home.presentation.home.composables.MealItem
+import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Destination
 @Composable
 fun MyMealScreen(
-    navigator: DestinationsNavigator
+    navigator: HomeNavigator,
 ) {
     var showRandomMeal by remember {
         mutableStateOf(false)
     }
-
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(horizontal = 16.dp),

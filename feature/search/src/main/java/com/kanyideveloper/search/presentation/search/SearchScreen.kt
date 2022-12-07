@@ -52,21 +52,27 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.compose_ui.theme.LightGrey
 import com.kanyideveloper.compose_ui.theme.MyLightBlue
-import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.mealtime.core.R
+import com.kanyideveloper.mealtime.search.R
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+
+
+interface SearchNavigator {
+    fun openSearch(showId: Long)
+}
 
 @Destination
 @Composable
 fun SearchScreen(
-    navigator: DestinationsNavigator,
+    navigator: SearchNavigator,
 ) {
     Column(Modifier.fillMaxSize()) {
         StandardToolbar(
-            navigator = navigator,
+            navigate = {
+
+            },
             title = {
                 Text(text = "Search", fontSize = 18.sp)
             },
@@ -75,6 +81,7 @@ fun SearchScreen(
             }
         )
 
+
         SearchBar(
             // viewModel = viewModel,
             modifier = Modifier
@@ -82,8 +89,10 @@ fun SearchScreen(
                 .height(67.dp)
                 .padding(8.dp),
             onSearch = { searchParam ->
-                /*viewModel.searchAll(searchParam)
-                keyboardController?.hide()*/
+
+                /* viewModel.searchAll(searchParam)
+                 keyboardController?.hide()*/
+
             }
         )
 
@@ -131,6 +140,7 @@ fun SearchScreen(
             }
         }
     }
+
 }
 
 @Composable
@@ -144,7 +154,7 @@ fun SearchBar(
     TextField(
         value = searchTerm,
         onValueChange = {
-            /*viewModel.setSearchTerm(it)*/
+            //viewModel.setSearchTerm(it)
         },
         placeholder = {
             Text(

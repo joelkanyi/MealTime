@@ -62,13 +62,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.kanyideveloper.core.util.UiEvents
-import com.kanyideveloper.mealtime.core.R
+import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.compose_ui.theme.MainOrange
 import com.kanyideveloper.core.presentation.state.TextFieldState
+import com.kanyideveloper.core.util.UiEvents
+import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -77,9 +77,11 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun NextAddMealScreen(
     imageUri: Uri,
-    navigator: DestinationsNavigator,
-    viewModel: AddMealsViewModel = hiltViewModel()
+    navigator: AddMealNavigator,
+    viewModel: AddMealsViewModel = hiltViewModel(),
 ) {
+
+    NextAddMealScreenDestination
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val scaffoldState = rememberScaffoldState()
@@ -100,8 +102,7 @@ fun NextAddMealScreen(
     Scaffold(
         topBar = {
             StandardToolbar(
-
-                navigator = navigator,
+                navigate = {},
                 title = {
                     Text(text = "Add meal", fontSize = 18.sp)
                 },
@@ -166,12 +167,13 @@ fun NextAddMealScreen(
     }
 }
 
+
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun DirectionComponent(
     direction: TextFieldState,
     viewModel: AddMealsViewModel,
-    keyboardController: SoftwareKeyboardController?
+    keyboardController: SoftwareKeyboardController?,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -231,7 +233,7 @@ private fun DirectionComponent(
 private fun IngredientComponent(
     ingredient: TextFieldState,
     viewModel: AddMealsViewModel,
-    keyboardController: SoftwareKeyboardController?
+    keyboardController: SoftwareKeyboardController?,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -284,7 +286,7 @@ private fun IngredientComponent(
 @Composable
 fun IngredientItem(
     ingredient: String,
-    viewModel: AddMealsViewModel
+    viewModel: AddMealsViewModel,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -321,7 +323,7 @@ fun IngredientItem(
 fun DirectionItem(
     direction: String,
     viewModel: AddMealsViewModel,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),

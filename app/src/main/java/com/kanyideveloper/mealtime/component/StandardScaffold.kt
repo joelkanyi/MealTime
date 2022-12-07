@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.compose_ui.components
+package com.kanyideveloper.mealtime.component
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.BottomNavigation
@@ -22,38 +22,50 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.kanyideveloper.mealtime.BottomNavItem
 import com.kanyideveloper.compose_ui.theme.DarkGrey
 import com.kanyideveloper.compose_ui.theme.MainOrange
-import com.kanyideveloper.core.domain.model.BottomNavItem
+import com.kanyideveloper.mealtime.NavGraphs
+import com.ramcosta.composedestinations.navigation.navigateTo
+import com.ramcosta.composedestinations.spec.NavGraphSpec
 
 @Composable
 fun StandardScaffold(
     navController: NavController,
     showBottomBar: Boolean = true,
     items: List<BottomNavItem> = listOf(
-       /* BottomNavItem.Home,
+        BottomNavItem.Home,
         BottomNavItem.Search,
-        BottomNavItem.Favorites*/
+        BottomNavItem.Favorites,
+        BottomNavItem.Settings,
     ),
-    content: @Composable (paddingValues: PaddingValues) -> Unit
+    content: @Composable (paddingValues: PaddingValues) -> Unit,
 ) {
     Scaffold(
-        /*bottomBar = {
+        bottomBar = {
             if (showBottomBar) {
+
+                val currentSelectedItem by navController.currentScreenAsState()
+
                 BottomNavigation(
                     backgroundColor = Color.White,
                     contentColor = Color.Black,
                     elevation = 5.dp
                 ) {
-                    val navBackStackEntry by navController.currentBackStackEntryAsState()
-                    val currentDestination = navBackStackEntry?.destination
                     items.forEach { item ->
                         BottomNavigationItem(
                             icon = {
@@ -71,24 +83,59 @@ fun StandardScaffold(
                             selectedContentColor = MainOrange,
                             unselectedContentColor = DarkGrey,
                             alwaysShowLabel = true,
-                            selected = currentDestination?.route?.contains(item.destination.route) == true,
+                            selected = currentSelectedItem == item.screen,
                             onClick = {
-                                navController.navigate(item.destination.route) {
-                                    navController.graph.startDestinationRoute?.let { screen_route ->
-                                        popUpTo(screen_route) {
-                                            saveState = true
-                                        }
-                                    }
+                                navController.navigateTo(item.screen) {
                                     launchSingleTop = true
                                     restoreState = true
+
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
                                 }
                             }
                         )
                     }
                 }
             }
-        }*/
+        }
     ) { paddingValues ->
         content(paddingValues)
     }
+}
+
+
+/**
+ * Adds an [NavController.OnDestinationChangedListener] to this [NavController] and updates the
+ * returned [State] which is updated as the destination changes.
+ */
+@Stable
+@Composable
+private fun NavController.currentScreenAsState(): State<NavGraphSpec> {
+    val selectedItem = remember { mutableStateOf(NavGraphs.home) }
+
+    DisposableEffect(this) {
+        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+            selectedItem.value = destination.navGraph()
+        }
+        addOnDestinationChangedListener(listener)
+
+        onDispose {
+            removeOnDestinationChangedListener(listener)
+        }
+    }
+
+    return selectedItem
+}
+
+fun NavDestination.navGraph(): NavGraphSpec {
+    hierarchy.forEach { destination ->
+        NavGraphs.root.nestedNavGraphs.forEach { navGraph ->
+            if (destination.route == navGraph.route) {
+                return navGraph
+            }
+        }
+    }
+
+    throw RuntimeException("Unknown nav graph for destination $route")
 }

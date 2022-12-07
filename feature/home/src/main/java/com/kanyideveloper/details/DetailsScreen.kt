@@ -48,27 +48,33 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kanyideveloper.compose_ui.theme.LightGrey
 import com.kanyideveloper.compose_ui.theme.MainOrange
+import com.kanyideveloper.destinations.DetailsScreenDestination
+import com.kanyideveloper.home.presentation.home.HomeNavigator
 import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 
+
 @Destination
 @Composable
 fun DetailsScreen(
-    navigator: DestinationsNavigator
+    navigator: HomeNavigator,
 ) {
     val state = rememberCollapsingToolbarScaffoldState()
     val textSize = (18 + (4) * state.toolbarState.progress).sp
 
+
+    DetailsScreenDestination
+
     Column(Modifier.fillMaxSize()) {
+
+
         if (textSize == 18.sp) {
             Box(
                 modifier = Modifier
@@ -121,7 +127,9 @@ fun DetailsScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         if (textSize.value == 18f) {
-                            IconButton(onClick = { navigator.popBackStack() }) {
+                            IconButton(onClick = {
+                                //navigator.popBackStack()
+                            }) {
                                 Icon(
                                     imageVector = Icons.Default.ArrowBack,
                                     contentDescription = null,
