@@ -180,7 +180,7 @@ fun MyMealScreen(
                             }
                         ) {
                             Text(
-                                text = "Get a Random Meal",
+                                text = "Get a Random MealEntity",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Normal
                             )

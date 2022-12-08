@@ -46,6 +46,7 @@ object DatabaseModule {
             com.kanyideveloper.core_database.MealTimeDatabase::class.java,
             Constants.MEALTIME_DATABASE
         )
+            .fallbackToDestructiveMigration()
             .addTypeConverter(converters)
             .build()
     }

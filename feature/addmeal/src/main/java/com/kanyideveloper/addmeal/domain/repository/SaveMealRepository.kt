@@ -15,7 +15,7 @@
  */
 package com.kanyideveloper.addmeal.domain.repository
 
-import com.kanyideveloper.core_database.model.Meal
+import com.kanyideveloper.addmeal.domain.model.Meal
 
 interface SaveMealRepository {
     suspend fun saveMeal(meal: Meal)

@@ -13,15 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core_database.model
+package com.kanyideveloper.addmeal.data.mapper
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import com.kanyideveloper.core.util.Constants.CATEGORIES_TABLE
+import com.kanyideveloper.addmeal.domain.model.Meal
+import com.kanyideveloper.core_database.model.MealEntity
 
-@Entity(tableName = CATEGORIES_TABLE)
-data class Category(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int? = null,
-    val name: String
-)
+internal fun Meal.toMealEntity(): MealEntity {
+    return MealEntity(
+        name = name,
+        imageUrl = imageUrl,
+        cookingTime = cookingTime,
+        category = category,
+        cookingDifficulty = cookingDifficulty,
+        ingredients = ingredients,
+        cookingDirections = cookingDirections,
+        isFavorite = isFavorite,
+        servingPeople = servingPeople
+    )
+}

@@ -19,22 +19,21 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
-import com.kanyideveloper.core_database.model.Meal
+import com.kanyideveloper.core_database.model.MealEntity
 
 @Dao
 interface MealDao {
 
-    @Insert(onConflict = REPLACE)
-    suspend fun insertMeal(meal: Meal)
+    @Insert
+    suspend fun insertMeal(mealEntity: MealEntity)
 
     @Query("SELECT * FROM meal_table ORDER BY id DESC")
-    fun getAllMeals(): LiveData<List<Meal>>
+    fun getAllMeals(): LiveData<List<MealEntity>>
 
     @Query("SELECT * FROM meal_table WHERE id = :id")
-    fun getSingleMeals(id: Int): LiveData<List<Meal>>
+    fun getSingleMeals(id: Int): LiveData<List<MealEntity>>
 
     @Delete
-    suspend fun deleteMeal(meal: Meal)
+    suspend fun deleteMeal(mealEntity: MealEntity)
 }

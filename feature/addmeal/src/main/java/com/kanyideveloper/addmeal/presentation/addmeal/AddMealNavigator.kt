@@ -13,19 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.addmeal.data.repository
+package com.kanyideveloper.addmeal.presentation.addmeal
 
-import com.kanyideveloper.addmeal.data.mapper.toMealEntity
-import com.kanyideveloper.addmeal.domain.model.Meal
-import com.kanyideveloper.addmeal.domain.repository.SaveMealRepository
-import com.kanyideveloper.core_database.MealTimeDatabase
+import android.net.Uri
 
-class SaveMealRepositoryImpl(
-    private val mealTimeDatabase: MealTimeDatabase
-) : SaveMealRepository {
-    override suspend fun saveMeal(meal: Meal) {
-        mealTimeDatabase.mealDao.insertMeal(
-            mealEntity = meal.toMealEntity()
-        )
-    }
+interface AddMealNavigator {
+    fun openNextAddMealScreen(
+        imageUri: Uri,
+        mealName: String,
+        category: String,
+        complexity: String,
+        cookingTime: Int,
+        servingPeople: Int
+    )
+
+    fun popBackStack()
+
+    fun navigateBackToHome()
 }

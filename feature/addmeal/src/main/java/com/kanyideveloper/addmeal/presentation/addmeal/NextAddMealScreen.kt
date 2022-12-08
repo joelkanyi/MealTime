@@ -77,6 +77,11 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun NextAddMealScreen(
     imageUri: Uri,
+    mealName: String,
+    category: String,
+    complexity: String,
+    cookingTime: Int,
+    servingPeople: Int,
     navigator: AddMealNavigator,
     viewModel: AddMealsViewModel = hiltViewModel()
 ) {
@@ -99,9 +104,12 @@ fun NextAddMealScreen(
     }
 
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = {
             StandardToolbar(
-                navigate = {},
+                navigate = {
+                    navigator.popBackStack()
+                },
                 title = {
                     Text(text = "Add meal", fontSize = 18.sp)
                 },
@@ -109,27 +117,28 @@ fun NextAddMealScreen(
                 navActions = {
                     TextButton(
                         onClick = {
-                            viewModel.uploadMealImage(imageUri = imageUri)
+                            keyboardController?.hide()
+                            viewModel.saveMeal(
+                                imageUri = imageUri,
+                                mealName = mealName,
+                                cookingTime = cookingTime,
+                                servingPeople = servingPeople,
+                                complexity = complexity,
+                                category = category
+                            )
                         },
                         enabled = !viewModel.saveMeal.value.isLoading
                     ) {
-                        if (viewModel.saveMeal.value.isLoading) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp)
-                            )
-                        } else {
-                            Text(
-                                text = "Save",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MainOrange
-                            )
-                        }
+                        SaveTextButtonContent(viewModel)
                     }
                 }
             )
         }
     ) {
+        if (viewModel.saveMeal.value.mealIsSaved) {
+            navigator.navigateBackToHome()
+        }
+
         LazyColumn(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -163,6 +172,22 @@ fun NextAddMealScreen(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun SaveTextButtonContent(viewModel: AddMealsViewModel) {
+    if (viewModel.saveMeal.value.isLoading) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(24.dp)
+        )
+    } else {
+        Text(
+            text = "Save",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            color = MainOrange
+        )
     }
 }
 
