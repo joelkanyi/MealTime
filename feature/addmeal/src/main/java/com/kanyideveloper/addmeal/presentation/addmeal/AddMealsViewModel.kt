@@ -30,11 +30,9 @@ import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.core_database.model.Meal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.newSingleThreadContext
 import timber.log.Timber
 
 @HiltViewModel
@@ -116,7 +114,7 @@ class AddMealsViewModel @Inject constructor(
             isLoading = true
         )
 
-        viewModelScope.launch(SINGLE_THREAD) {
+        viewModelScope.launch {
             when (val uploadResult = uploadImageRepository.uploadImage(imageUri = imageUri)) {
                 is Resource.Error -> {
                     _saveMeal.value = saveMeal.value.copy(
@@ -140,10 +138,11 @@ class AddMealsViewModel @Inject constructor(
                         cookingDirections = directionsList,
                         cookingDifficulty = "Medium",
                         category = "Lunch",
-                        ingredients = ingredientsList
+                        ingredients = ingredientsList,
+                        id = 0
                     )
 
-                    saveMeal(meal = meal)
+                    saveMealRepository.saveMeal(meal = meal)
 
                     _saveMeal.value = saveMeal.value.copy(
                         isLoading = false,
@@ -161,16 +160,5 @@ class AddMealsViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    private fun saveMeal(meal: Meal) {
-        viewModelScope.launch(SINGLE_THREAD) {
-            saveMealRepository.saveMeal(meal = meal)
-        }
-    }
-
-    companion object {
-        @OptIn(DelicateCoroutinesApi::class)
-        val SINGLE_THREAD = newSingleThreadContext("ContactCreation")
     }
 }

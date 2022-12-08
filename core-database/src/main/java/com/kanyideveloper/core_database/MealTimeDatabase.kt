@@ -23,7 +23,7 @@ import com.kanyideveloper.core_database.dao.MealDao
 import com.kanyideveloper.core_database.model.Meal
 
 @TypeConverters(Converters::class)
-@Database(entities = [Meal::class], version = 1)
+@Database(entities = [Meal::class], version = 2)
 abstract class MealTimeDatabase : RoomDatabase() {
     abstract val mealDao: MealDao
 }

@@ -32,5 +32,5 @@ data class Meal(
     val ingredients: List<String>,
     val cookingDirections: List<String>,
     val isFavorite: Boolean = false,
-    @PrimaryKey(autoGenerate = true) val id: Int? = 0
+    @PrimaryKey(autoGenerate = true) val id: Int
 ) : Parcelable

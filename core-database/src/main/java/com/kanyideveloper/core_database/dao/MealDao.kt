@@ -19,14 +19,13 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 import com.kanyideveloper.core_database.model.Meal
 
 @Dao
 interface MealDao {
 
-    @Insert(onConflict = REPLACE)
+    @Insert
     suspend fun insertMeal(meal: Meal)
 
     @Query("SELECT * FROM meal_table ORDER BY id DESC")
