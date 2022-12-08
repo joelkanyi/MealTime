@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core_database
+package com.kanyideveloper.core_database.dao
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
-import com.kanyideveloper.core_database.converters.Converters
-import com.kanyideveloper.core_database.dao.CategoryDao
-import com.kanyideveloper.core_database.dao.MealDao
+import androidx.lifecycle.LiveData
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
 import com.kanyideveloper.core_database.model.CategoryEntity
-import com.kanyideveloper.core_database.model.MealEntity
 
-@TypeConverters(Converters::class)
-@Database(entities = [MealEntity::class, CategoryEntity::class], version = 2)
-abstract class MealTimeDatabase : RoomDatabase() {
-    abstract val mealDao: MealDao
-    abstract val categoryDao: CategoryDao
+@Dao
+interface CategoryDao {
+    @Insert
+    suspend fun insertCategory(categoryEntity: CategoryEntity)
+
+    @Query("SELECT * FROM meal_table ORDER BY id DESC")
+    fun getAllMealCategories(): LiveData<List<CategoryEntity>>
 }

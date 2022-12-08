@@ -19,6 +19,7 @@ import android.net.Uri
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kanyideveloper.addmeal.domain.model.Meal
@@ -28,7 +29,6 @@ import com.kanyideveloper.addmeal.presentation.addmeal.state.SaveMealState
 import com.kanyideveloper.core.state.TextFieldState
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.UiEvents
-import com.kanyideveloper.core_database.model.MealEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -39,8 +39,18 @@ import timber.log.Timber
 @HiltViewModel
 class AddMealsViewModel @Inject constructor(
     private val uploadImageRepository: UploadImageRepository,
-    private val saveMealRepository: SaveMealRepository
+    private val saveMealRepository: SaveMealRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    private val _mealName = mutableStateOf(TextFieldState())
+    val mealName: State<TextFieldState> = _mealName
+    fun setMealNameState(value: String, error: String? = null) {
+        _mealName.value = mealName.value.copy(
+            text = value,
+            error = error
+        )
+    }
 
     private val _saveMeal = mutableStateOf(SaveMealState())
     val saveMeal: State<SaveMealState> = _saveMeal
@@ -151,7 +161,7 @@ class AddMealsViewModel @Inject constructor(
 
                     _eventFlow.emit(
                         UiEvents.SnackbarEvent(
-                            message = "MealEntity Saved Successful"
+                            message = "Meal Saved Successful"
                         )
                     )
                 }

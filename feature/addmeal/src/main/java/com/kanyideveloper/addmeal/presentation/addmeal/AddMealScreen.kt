@@ -85,6 +85,7 @@ fun AddMealScreen(
     navigator: AddMealNavigator,
     viewModel: AddMealsViewModel = hiltViewModel()
 ) {
+    val mealName = viewModel.mealName.value
     val context = LocalContext.current
 
     val galleryLauncher =
@@ -145,11 +146,12 @@ fun AddMealScreen(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Text(text = "MealEntity Name", fontSize = 12.sp)
+                    Text(text = "Meal Name", fontSize = 12.sp)
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        value = "",
+                        value = mealName.text,
                         onValueChange = {
+                            viewModel.setMealNameState(value = it)
                         },
                         placeholder = {
                             Text(text = "MealEntity Name")
