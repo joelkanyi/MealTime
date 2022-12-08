@@ -21,6 +21,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kanyideveloper.addmeal.domain.model.Meal
 import com.kanyideveloper.addmeal.domain.repository.SaveMealRepository
 import com.kanyideveloper.addmeal.domain.repository.UploadImageRepository
 import com.kanyideveloper.addmeal.presentation.addmeal.state.SaveMealState
@@ -131,18 +132,17 @@ class AddMealsViewModel @Inject constructor(
                 is Resource.Success -> {
                     Timber.d("Image Url: ${uploadResult.data}")
 
-                    val mealEntity = MealEntity(
+                    val meal = Meal(
                         name = "Ugali Sukuma Wiki",
                         imageUrl = uploadResult.data.toString(),
                         cookingTime = 0,
                         cookingDirections = directionsList,
                         cookingDifficulty = "Medium",
                         category = "Lunch",
-                        ingredients = ingredientsList,
-                        id = 0
+                        ingredients = ingredientsList
                     )
 
-                    saveMealRepository.saveMeal(mealEntity = mealEntity)
+                    saveMealRepository.saveMeal(meal = meal)
 
                     _saveMeal.value = saveMeal.value.copy(
                         isLoading = false,
