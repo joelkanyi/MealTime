@@ -98,4 +98,7 @@ dependencies {
 
     // Accompanist System UI controller
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
+
+    // debugImplementation because LeakCanary should only run in debug builds.
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.10")
 }
