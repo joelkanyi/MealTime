@@ -112,6 +112,26 @@ class AddMealsViewModel @Inject constructor(
         servingPeople: Int
     ) {
         viewModelScope.launch {
+            if (ingredientsList.isEmpty()) {
+                _eventFlow.emit(
+                    UiEvents.SnackbarEvent(
+                        message = "Please key in some ingredients"
+                    )
+                )
+
+                return@launch
+            }
+
+            if (directionsList.isEmpty()) {
+                _eventFlow.emit(
+                    UiEvents.SnackbarEvent(
+                        message = "Please key in some preparation instructions"
+                    )
+                )
+
+                return@launch
+            }
+
             _saveMeal.value = saveMeal.value.copy(
                 isLoading = true
             )

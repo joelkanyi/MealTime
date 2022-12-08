@@ -104,6 +104,7 @@ fun NextAddMealScreen(
     }
 
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = {
             StandardToolbar(
                 navigate = {
@@ -116,6 +117,7 @@ fun NextAddMealScreen(
                 navActions = {
                     TextButton(
                         onClick = {
+                            keyboardController?.hide()
                             viewModel.saveMeal(
                                 imageUri = imageUri,
                                 mealName = mealName,
@@ -127,23 +129,16 @@ fun NextAddMealScreen(
                         },
                         enabled = !viewModel.saveMeal.value.isLoading
                     ) {
-                        if (viewModel.saveMeal.value.isLoading) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp)
-                            )
-                        } else {
-                            Text(
-                                text = "Save",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MainOrange
-                            )
-                        }
+                        SaveTextButtonContent(viewModel)
                     }
                 }
             )
         }
     ) {
+        if (viewModel.saveMeal.value.mealIsSaved) {
+            navigator.navigateBackToHome()
+        }
+
         LazyColumn(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -177,6 +172,22 @@ fun NextAddMealScreen(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun SaveTextButtonContent(viewModel: AddMealsViewModel) {
+    if (viewModel.saveMeal.value.isLoading) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(24.dp)
+        )
+    } else {
+        Text(
+            text = "Save",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            color = MainOrange
+        )
     }
 }
 

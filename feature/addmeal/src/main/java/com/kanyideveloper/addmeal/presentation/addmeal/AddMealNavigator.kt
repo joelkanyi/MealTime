@@ -28,4 +28,6 @@ interface AddMealNavigator {
     )
 
     fun popBackStack()
+
+    fun navigateBackToHome()
 }
