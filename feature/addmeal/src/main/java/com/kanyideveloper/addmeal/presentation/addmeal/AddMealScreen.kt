@@ -145,14 +145,14 @@ fun AddMealScreen(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Text(text = "Meal Name", fontSize = 12.sp)
+                    Text(text = "MealEntity Name", fontSize = 12.sp)
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = "",
                         onValueChange = {
                         },
                         placeholder = {
-                            Text(text = "Meal Name")
+                            Text(text = "MealEntity Name")
                         },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Text,
@@ -181,7 +181,7 @@ fun AddMealScreen(
                         modifier = Modifier.fillMaxWidth(.5f),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Text(text = "Category", fontSize = 12.sp)
+                        Text(text = "CategoryEntity", fontSize = 12.sp)
 
                         SearchableExpandedDropDownMenu(
                             listOfItems = sports,
@@ -383,7 +383,7 @@ data class Sport(
  * Cooking Time - DONE
  * Serving People - DONE
  * Cooking Complexity - DONE
- * Category - DONE
+ * CategoryEntity - DONE
  * Ingredients - DONE
  * Cooking Directions - DONE
  */

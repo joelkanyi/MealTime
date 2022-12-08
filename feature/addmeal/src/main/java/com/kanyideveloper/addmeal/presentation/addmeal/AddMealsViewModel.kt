@@ -27,7 +27,7 @@ import com.kanyideveloper.addmeal.presentation.addmeal.state.SaveMealState
 import com.kanyideveloper.core.state.TextFieldState
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.UiEvents
-import com.kanyideveloper.core_database.model.Meal
+import com.kanyideveloper.core_database.model.MealEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -131,7 +131,7 @@ class AddMealsViewModel @Inject constructor(
                 is Resource.Success -> {
                     Timber.d("Image Url: ${uploadResult.data}")
 
-                    val meal = Meal(
+                    val mealEntity = MealEntity(
                         name = "Ugali Sukuma Wiki",
                         imageUrl = uploadResult.data.toString(),
                         cookingTime = 0,
@@ -142,7 +142,7 @@ class AddMealsViewModel @Inject constructor(
                         id = 0
                     )
 
-                    saveMealRepository.saveMeal(meal = meal)
+                    saveMealRepository.saveMeal(mealEntity = mealEntity)
 
                     _saveMeal.value = saveMeal.value.copy(
                         isLoading = false,
@@ -151,7 +151,7 @@ class AddMealsViewModel @Inject constructor(
 
                     _eventFlow.emit(
                         UiEvents.SnackbarEvent(
-                            message = "Meal Saved Successful"
+                            message = "MealEntity Saved Successful"
                         )
                     )
                 }
