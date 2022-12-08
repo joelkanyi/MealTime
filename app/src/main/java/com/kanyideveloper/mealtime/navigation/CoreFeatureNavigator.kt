@@ -73,4 +73,8 @@ class CoreFeatureNavigator(
             ) within navGraph
         )
     }
+
+    override fun popBackStack() {
+        navController.popBackStack()
+    }
 }

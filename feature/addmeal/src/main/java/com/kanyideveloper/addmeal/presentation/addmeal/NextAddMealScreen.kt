@@ -106,7 +106,9 @@ fun NextAddMealScreen(
     Scaffold(
         topBar = {
             StandardToolbar(
-                navigate = {},
+                navigate = {
+                    navigator.popBackStack()
+                },
                 title = {
                     Text(text = "Add meal", fontSize = 18.sp)
                 },

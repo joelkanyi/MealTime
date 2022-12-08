@@ -15,7 +15,6 @@
  */
 package com.kanyideveloper.addmeal.presentation.addmeal
 
-import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -39,6 +38,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -47,10 +47,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -72,17 +68,6 @@ import com.kanyideveloper.compose_ui.theme.MainOrange
 import com.kanyideveloper.core.util.imageUriToImageBitmap
 import com.ramcosta.composedestinations.annotation.Destination
 
-interface AddMealNavigator {
-    fun openNextAddMealScreen(
-        imageUri: Uri,
-        mealName: String,
-        category: String,
-        complexity: String,
-        cookingTime: Int,
-        servingPeople: Int
-    )
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
@@ -91,7 +76,15 @@ fun AddMealScreen(
     viewModel: AddMealsViewModel = hiltViewModel()
 ) {
     val mealName = viewModel.mealName.value
+    val category = viewModel.category.value
+    val complexity = viewModel.cookingComplexity.value
+    val peopleServing = viewModel.peopleServing.value
+    val cookingTime = viewModel.cookingTime.value
+
     val context = LocalContext.current
+
+    val sliderInteractionSource = MutableInteractionSource()
+    val sliderColors = SliderDefaults.colors(thumbColor = MainOrange, activeTrackColor = MainOrange)
 
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -100,7 +93,9 @@ fun AddMealScreen(
 
     Column(Modifier.fillMaxSize()) {
         StandardToolbar(
-            navigate = {},
+            navigate = {
+                navigator.popBackStack()
+            },
             title = {
                 Text(text = "Add meal", fontSize = 18.sp)
             },
@@ -164,8 +159,19 @@ fun AddMealScreen(
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Text,
                             capitalization = KeyboardCapitalization.Words
-                        )
+                        ),
+                        isError = mealName.error != null
                     )
+                    if (mealName.error != null) {
+                        Text(
+                            text = mealName.error ?: "",
+                            style = MaterialTheme.typography.body2,
+                            color = MaterialTheme.colors.error,
+                            textAlign = TextAlign.End,
+                            modifier = Modifier.fillMaxWidth(),
+                            fontSize = 10.sp
+                        )
+                    }
                 }
             }
 
@@ -187,10 +193,22 @@ fun AddMealScreen(
                                 viewModel.setCategory(item)
                             },
                             dropdownItem = { category ->
-                                Text(text = category)
+                                Text(text = category, color = Color.Black)
                             },
-                            parentTextFieldCornerRadius = 4.dp
+                            parentTextFieldCornerRadius = 4.dp,
+                            isError = category.error != null
                         )
+
+                        if (category.error != null) {
+                            Text(
+                                text = category.error ?: "",
+                                style = MaterialTheme.typography.body2,
+                                color = MaterialTheme.colors.error,
+                                textAlign = TextAlign.End,
+                                modifier = Modifier.fillMaxWidth(),
+                                fontSize = 10.sp
+                            )
+                        }
                     }
 
                     Column(
@@ -206,19 +224,27 @@ fun AddMealScreen(
                                 viewModel.setCookingComplexity(item)
                             },
                             dropdownItem = { complexity ->
-                                Text(text = complexity)
+                                Text(text = complexity, color = Color.Black)
                             },
-                            parentTextFieldCornerRadius = 4.dp
+                            parentTextFieldCornerRadius = 4.dp,
+                            isError = complexity.error != null
                         )
+
+                        if (complexity.error != null) {
+                            Text(
+                                text = complexity.error ?: "",
+                                style = MaterialTheme.typography.body2,
+                                color = MaterialTheme.colors.error,
+                                textAlign = TextAlign.End,
+                                modifier = Modifier.fillMaxWidth(),
+                                fontSize = 10.sp
+                            )
+                        }
                     }
                 }
             }
 
             item {
-                var sliderPosition by remember { mutableStateOf(0f) }
-                val interactionSource = MutableInteractionSource()
-                val colors =
-                    SliderDefaults.colors(thumbColor = MainOrange, activeTrackColor = MainOrange)
                 Column {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -226,7 +252,7 @@ fun AddMealScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Cooking Time - ${sliderPosition.toInt()} Minutes",
+                            text = "Cooking Time - ${cookingTime.toInt()} Minutes",
                             fontSize = 14.sp
                         )
                     }
@@ -234,26 +260,26 @@ fun AddMealScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .semantics {
-                                contentDescription = "Localized Description"
+                                contentDescription = "Cooking Time Slider"
                             },
-                        value = sliderPosition,
+                        value = cookingTime,
                         onValueChange = {
-                            sliderPosition = it
+                            viewModel.setCookingTime(it)
                         },
                         valueRange = 0f..300f,
                         onValueChangeFinished = {
-                            viewModel.setCookingTime(sliderPosition.toInt())
+                            viewModel.setCookingTime(cookingTime)
                         },
-                        interactionSource = interactionSource,
+                        interactionSource = sliderInteractionSource,
                         thumb = {
                             SliderDefaults.Thumb(
-                                interactionSource = interactionSource,
-                                colors = colors
+                                interactionSource = sliderInteractionSource,
+                                colors = sliderColors
                             )
                         },
                         track = { sliderPositions ->
                             SliderDefaults.Track(
-                                colors = colors,
+                                colors = sliderColors,
                                 sliderPositions = sliderPositions
                             )
                         }
@@ -262,10 +288,6 @@ fun AddMealScreen(
             }
 
             item {
-                var sliderPosition by remember { mutableStateOf(0f) }
-                val interactionSource = MutableInteractionSource()
-                val colors =
-                    SliderDefaults.colors(thumbColor = MainOrange, activeTrackColor = MainOrange)
                 Column {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -273,7 +295,7 @@ fun AddMealScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Serving - ${sliderPosition.toInt()} People",
+                            text = "Serving - ${peopleServing.toInt()} People",
                             fontSize = 14.sp
                         )
                     }
@@ -283,24 +305,24 @@ fun AddMealScreen(
                             .semantics {
                                 contentDescription = "Localized Description"
                             },
-                        value = sliderPosition,
+                        value = peopleServing,
                         onValueChange = {
-                            sliderPosition = it
+                            viewModel.setPeopleServing(it)
                         },
                         valueRange = 0f..300f,
                         onValueChangeFinished = {
-                            viewModel.setPeopleServing(sliderPosition.toInt())
+                            viewModel.setPeopleServing(peopleServing)
                         },
-                        interactionSource = interactionSource,
+                        interactionSource = sliderInteractionSource,
                         thumb = {
                             SliderDefaults.Thumb(
-                                interactionSource = interactionSource,
-                                colors = colors
+                                interactionSource = sliderInteractionSource,
+                                colors = sliderColors
                             )
                         },
                         track = { sliderPositions ->
                             SliderDefaults.Track(
-                                colors = colors,
+                                colors = sliderColors,
                                 sliderPositions = sliderPositions
                             )
                         }
@@ -323,15 +345,44 @@ fun AddMealScreen(
                                 Toast.LENGTH_SHORT
                             ).show()
                             return@Button
+                        } else if (mealName.text.isEmpty()) {
+                            viewModel.setMealNameState(error = "Meal name cannot be empty")
+                            return@Button
+                        } else if (category.text.isEmpty()) {
+                            viewModel.setCategory(error = "Meal category cannot be empty")
+                            return@Button
+                        } else if (complexity.text.isEmpty()) {
+                            viewModel.setCookingComplexity(
+                                error = "Cooking complexity cannot be empty"
+                            )
+                            return@Button
+                        }
+
+                        if (cookingTime.toInt() <= 0) {
+                            Toast.makeText(
+                                context,
+                                "Please use the slider to select cooking time",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            return@Button
+                        }
+
+                        if (peopleServing.toInt() <= 0) {
+                            Toast.makeText(
+                                context,
+                                "Please use the slider to select people serving",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            return@Button
                         }
 
                         navigator.openNextAddMealScreen(
                             imageUri = viewModel.mealImageUri.value!!,
                             mealName = viewModel.mealName.value.text,
-                            cookingTime = viewModel.cookingTime.value,
-                            servingPeople = viewModel.peopleServing.value,
-                            complexity = viewModel.cookingComplexity.value,
-                            category = viewModel.category.value
+                            cookingTime = viewModel.cookingTime.value.toInt(),
+                            servingPeople = viewModel.peopleServing.value.toInt(),
+                            complexity = complexity.text,
+                            category = category.text
                         )
                     },
                     shape = RoundedCornerShape(4.dp)

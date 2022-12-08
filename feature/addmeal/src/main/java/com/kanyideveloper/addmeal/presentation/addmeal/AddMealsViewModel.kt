@@ -48,34 +48,40 @@ class AddMealsViewModel @Inject constructor(
 
     private val _mealName = mutableStateOf(TextFieldState())
     val mealName: State<TextFieldState> = _mealName
-    fun setMealNameState(value: String, error: String? = null) {
+    fun setMealNameState(value: String = "", error: String? = null) {
         _mealName.value = mealName.value.copy(
             text = value,
             error = error
         )
     }
 
-    private val _category = mutableStateOf("")
-    val category: State<String> = _category
-    fun setCategory(value: String) {
-        _category.value = value
+    private val _category = mutableStateOf(TextFieldState())
+    val category: State<TextFieldState> = _category
+    fun setCategory(value: String = "", error: String? = null) {
+        _category.value = category.value.copy(
+            text = value,
+            error = error
+        )
     }
 
-    private val _cookingComplexity = mutableStateOf("")
-    val cookingComplexity: State<String> = _cookingComplexity
-    fun setCookingComplexity(value: String) {
-        _cookingComplexity.value = value
+    private val _cookingComplexity = mutableStateOf(TextFieldState())
+    val cookingComplexity: State<TextFieldState> = _cookingComplexity
+    fun setCookingComplexity(value: String = "", error: String? = null) {
+        _cookingComplexity.value = cookingComplexity.value.copy(
+            text = value,
+            error = error
+        )
     }
 
-    private val _cookingTime = mutableStateOf(0)
-    val cookingTime: State<Int> = _cookingTime
-    fun setCookingTime(value: Int) {
+    private val _cookingTime = mutableStateOf(0f)
+    val cookingTime: State<Float> = _cookingTime
+    fun setCookingTime(value: Float) {
         _cookingTime.value = value
     }
 
-    private val _peopleServing = mutableStateOf(0)
-    val peopleServing: State<Int> = _peopleServing
-    fun setPeopleServing(value: Int) {
+    private val _peopleServing = mutableStateOf(0f)
+    val peopleServing: State<Float> = _peopleServing
+    fun setPeopleServing(value: Float) {
         _peopleServing.value = value
     }
 
@@ -105,13 +111,11 @@ class AddMealsViewModel @Inject constructor(
         cookingTime: Int,
         servingPeople: Int
     ) {
-        // TODO("Add Validations")
-
-        _saveMeal.value = saveMeal.value.copy(
-            isLoading = true
-        )
-
         viewModelScope.launch {
+            _saveMeal.value = saveMeal.value.copy(
+                isLoading = true
+            )
+
             when (val uploadResult = uploadImageRepository.uploadImage(imageUri = imageUri)) {
                 is Resource.Error -> {
                     _saveMeal.value = saveMeal.value.copy(
