@@ -21,7 +21,7 @@ import com.kanyideveloper.addmeal.domain.repository.SaveMealRepository
 import com.kanyideveloper.core_database.MealTimeDatabase
 
 class SaveMealRepositoryImpl(
-    private val mealTimeDatabase: MealTimeDatabase,
+    private val mealTimeDatabase: MealTimeDatabase
 ) : SaveMealRepository {
     override suspend fun saveMeal(meal: Meal) {
         mealTimeDatabase.mealDao.insertMeal(
