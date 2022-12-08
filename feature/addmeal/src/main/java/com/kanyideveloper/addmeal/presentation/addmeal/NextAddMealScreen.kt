@@ -77,6 +77,11 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun NextAddMealScreen(
     imageUri: Uri,
+    mealName: String,
+    category: String,
+    complexity: String,
+    cookingTime: Int,
+    servingPeople: Int,
     navigator: AddMealNavigator,
     viewModel: AddMealsViewModel = hiltViewModel()
 ) {
@@ -109,7 +114,14 @@ fun NextAddMealScreen(
                 navActions = {
                     TextButton(
                         onClick = {
-                            viewModel.uploadMealImage(imageUri = imageUri)
+                            viewModel.saveMeal(
+                                imageUri = imageUri,
+                                mealName = mealName,
+                                cookingTime = cookingTime,
+                                servingPeople = servingPeople,
+                                complexity = complexity,
+                                category = category
+                            )
                         },
                         enabled = !viewModel.saveMeal.value.isLoading
                     ) {

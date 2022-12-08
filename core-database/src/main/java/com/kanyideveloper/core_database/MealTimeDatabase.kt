@@ -19,14 +19,11 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.kanyideveloper.core_database.converters.Converters
-import com.kanyideveloper.core_database.dao.CategoryDao
 import com.kanyideveloper.core_database.dao.MealDao
-import com.kanyideveloper.core_database.model.CategoryEntity
 import com.kanyideveloper.core_database.model.MealEntity
 
 @TypeConverters(Converters::class)
-@Database(entities = [MealEntity::class, CategoryEntity::class], version = 2)
+@Database(entities = [MealEntity::class], version = 2)
 abstract class MealTimeDatabase : RoomDatabase() {
     abstract val mealDao: MealDao
-    abstract val categoryDao: CategoryDao
 }

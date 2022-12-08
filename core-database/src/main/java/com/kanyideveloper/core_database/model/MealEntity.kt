@@ -27,6 +27,7 @@ data class MealEntity(
     val name: String,
     val imageUrl: String,
     val cookingTime: Int,
+    val servingPeople: Int,
     val category: String,
     val cookingDifficulty: String,
     val ingredients: List<String>,

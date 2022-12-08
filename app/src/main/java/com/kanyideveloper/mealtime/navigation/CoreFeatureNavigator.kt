@@ -50,11 +50,27 @@ class CoreFeatureNavigator(
         Timber.d("Settings")
     }
 
-    override fun openNextAddMealScreen(imageUri: Uri) {
-        navController.navigate(NextAddMealScreenDestination(imageUri = imageUri) within navGraph)
-    }
-
     override fun openMealDetails() {
         navController.navigate(DetailsScreenDestination within navGraph)
+    }
+
+    override fun openNextAddMealScreen(
+        imageUri: Uri,
+        mealName: String,
+        category: String,
+        complexity: String,
+        cookingTime: Int,
+        servingPeople: Int
+    ) {
+        navController.navigate(
+            NextAddMealScreenDestination(
+                imageUri = imageUri,
+                mealName = mealName,
+                cookingTime = cookingTime,
+                servingPeople = servingPeople,
+                complexity = complexity,
+                category = category
+            ) within navGraph
+        )
     }
 }

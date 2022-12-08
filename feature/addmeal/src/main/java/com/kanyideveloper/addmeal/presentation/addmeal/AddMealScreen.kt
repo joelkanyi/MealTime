@@ -33,8 +33,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -75,7 +73,14 @@ import com.kanyideveloper.core.util.imageUriToImageBitmap
 import com.ramcosta.composedestinations.annotation.Destination
 
 interface AddMealNavigator {
-    fun openNextAddMealScreen(imageUri: Uri)
+    fun openNextAddMealScreen(
+        imageUri: Uri,
+        mealName: String,
+        category: String,
+        complexity: String,
+        cookingTime: Int,
+        servingPeople: Int
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -90,7 +95,7 @@ fun AddMealScreen(
 
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            viewModel.setProductImageUri(uri)
+            viewModel.setMealImageUri(uri)
         }
 
     Column(Modifier.fillMaxSize()) {
@@ -120,7 +125,7 @@ fun AddMealScreen(
                             galleryLauncher.launch("image/*")
                         }
                 ) {
-                    if (viewModel.imageUri.value == null) {
+                    if (viewModel.mealImageUri.value == null) {
                         IconButton(onClick = {
                             galleryLauncher.launch("image/*")
                         }) {
@@ -129,7 +134,7 @@ fun AddMealScreen(
                     }
 
                     // Selected Image
-                    viewModel.imageUri.value?.let { uri ->
+                    viewModel.mealImageUri.value?.let { uri ->
                         Image(
                             modifier = Modifier
                                 .fillMaxSize(),
@@ -154,7 +159,7 @@ fun AddMealScreen(
                             viewModel.setMealNameState(value = it)
                         },
                         placeholder = {
-                            Text(text = "MealEntity Name")
+                            Text(text = "Meal Name")
                         },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Text,
@@ -169,34 +174,20 @@ fun AddMealScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    val sports = mutableListOf(
-                        Sport("Basketball", "🏀"),
-                        Sport("Rugby", "🏉"),
-                        Sport("Football", "⚽️"),
-                        Sport("MMA", "🤼‍♂️"),
-                        Sport("Motorsport", "🏁"),
-                        Sport("Snooker", "🎱"),
-                        Sport("Tennis", "🎾")
-                    )
-
                     Column(
                         modifier = Modifier.fillMaxWidth(.5f),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Text(text = "CategoryEntity", fontSize = 12.sp)
+                        Text(text = "Category", fontSize = 12.sp)
 
                         SearchableExpandedDropDownMenu(
-                            listOfItems = sports,
+                            listOfItems = viewModel.categories,
                             modifier = Modifier.fillMaxWidth(),
                             onDropDownItemSelected = { item ->
-                                Toast.makeText(
-                                    context,
-                                    item.name,
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                viewModel.setCategory(item)
                             },
-                            dropdownItem = { test ->
-                                DropDownItem(test = test)
+                            dropdownItem = { category ->
+                                Text(text = category)
                             },
                             parentTextFieldCornerRadius = 4.dp
                         )
@@ -209,17 +200,13 @@ fun AddMealScreen(
                         Text(text = "Cooking Complexity", fontSize = 12.sp)
 
                         SearchableExpandedDropDownMenu(
-                            listOfItems = sports,
+                            listOfItems = viewModel.cookingComplexities,
                             modifier = Modifier.fillMaxWidth(),
                             onDropDownItemSelected = { item ->
-                                Toast.makeText(
-                                    context,
-                                    item.name,
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                viewModel.setCookingComplexity(item)
                             },
-                            dropdownItem = { test ->
-                                DropDownItem(test = test)
+                            dropdownItem = { complexity ->
+                                Text(text = complexity)
                             },
                             parentTextFieldCornerRadius = 4.dp
                         )
@@ -255,8 +242,7 @@ fun AddMealScreen(
                         },
                         valueRange = 0f..300f,
                         onValueChangeFinished = {
-                            // launch some business logic update with the state you hold
-                            // viewModel.updateSelectedSliderValue(sliderPosition)
+                            viewModel.setCookingTime(sliderPosition.toInt())
                         },
                         interactionSource = interactionSource,
                         thumb = {
@@ -303,8 +289,7 @@ fun AddMealScreen(
                         },
                         valueRange = 0f..300f,
                         onValueChangeFinished = {
-                            // launch some business logic update with the state you hold
-                            // viewModel.updateSelectedSliderValue(sliderPosition)
+                            viewModel.setPeopleServing(sliderPosition.toInt())
                         },
                         interactionSource = interactionSource,
                         thumb = {
@@ -331,7 +316,7 @@ fun AddMealScreen(
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        if (viewModel.imageUri.value == null) {
+                        if (viewModel.mealImageUri.value == null) {
                             Toast.makeText(
                                 context,
                                 "Please select an image so as to proceed",
@@ -340,7 +325,14 @@ fun AddMealScreen(
                             return@Button
                         }
 
-                        navigator.openNextAddMealScreen(viewModel.imageUri.value!!)
+                        navigator.openNextAddMealScreen(
+                            imageUri = viewModel.mealImageUri.value!!,
+                            mealName = viewModel.mealName.value.text,
+                            cookingTime = viewModel.cookingTime.value,
+                            servingPeople = viewModel.peopleServing.value,
+                            complexity = viewModel.cookingComplexity.value,
+                            category = viewModel.category.value
+                        )
                     },
                     shape = RoundedCornerShape(4.dp)
                 ) {
@@ -358,27 +350,6 @@ fun AddMealScreen(
     }
 }
 
-@Composable
-fun DropDownItem(test: Sport) {
-    Row(
-        modifier = Modifier
-            .padding(8.dp)
-            .wrapContentSize()
-    ) {
-        Text(text = test.emoji)
-        Spacer(modifier = Modifier.width(12.dp))
-        Text(test.name)
-    }
-}
-
-data class Sport(
-    val name: String,
-    val emoji: String
-) {
-    override fun toString(): String {
-        return "$emoji $name"
-    }
-}
 /**
  * Select Image -DONE
  * Enter Food Title - DONE
