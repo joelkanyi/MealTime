@@ -16,7 +16,7 @@ android {
     compileSdk = AndroidConfig.compileSDK
 
     defaultConfig {
-        applicationId = "com.kanyideveloper.mealtime"
+        applicationId = AndroidConfig.applicationId
         minSdk = AndroidConfig.minSDK
         targetSdk = AndroidConfig.targetSDK
         versionCode = 1

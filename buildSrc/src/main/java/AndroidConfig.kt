@@ -9,6 +9,7 @@ object AndroidConfig {
     const val compileSDK = 33
     const val versionCode = 1
     const val versionName = "1.0.0"
+    const val applicationId = "com.kanyideveloper.mealtime"
 
     val javaVersion = JavaVersion.VERSION_11
 }
