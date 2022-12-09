@@ -32,8 +32,11 @@ interface MealDao {
     fun getAllMeals(): LiveData<List<MealEntity>>
 
     @Query("SELECT * FROM meal_table WHERE id = :id")
-    fun getSingleMeals(id: Int): LiveData<List<MealEntity>>
+    fun getSingleMeal(id: Int): LiveData<MealEntity>
 
     @Delete
     suspend fun deleteMeal(mealEntity: MealEntity)
+
+    @Query("DELETE FROM meal_table WHERE id = :id")
+    suspend fun deleteMealById(id: Int)
 }
