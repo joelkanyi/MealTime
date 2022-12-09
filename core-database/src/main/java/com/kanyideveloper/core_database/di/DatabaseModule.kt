@@ -19,6 +19,7 @@ import android.content.Context
 import androidx.room.Room
 import com.google.gson.Gson
 import com.kanyideveloper.core.util.Constants
+import com.kanyideveloper.core_database.MealTimeDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -50,4 +51,8 @@ object DatabaseModule {
             .addTypeConverter(converters)
             .build()
     }
+
+    @Provides
+    @Singleton
+    fun provideMealDao(database: MealTimeDatabase) = database.mealDao
 }
