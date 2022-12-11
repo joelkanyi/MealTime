@@ -1,27 +1,28 @@
 plugins {
-    id("com.android.library")
+    id(Plugins.androidLibrary)
+    id("kotlin-android")
+    id("kotlin-kapt")
+    id("kotlin-parcelize")
     id("org.jetbrains.kotlin.android")
 }
 
+apply {
+    from("$rootDir/base-module.gradle")
+}
+
 android {
-    namespace = "com.kanyideveloper.core_network"
-    compileSdk = 32
+    compileSdk = AndroidConfig.compileSDK
 
     defaultConfig {
-        minSdk = 21
-        targetSdk = 32
+        minSdk = AndroidConfig.minSDK
+        targetSdk = AndroidConfig.targetSDK
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro")
+        vectorDrawables {
+            useSupportLibrary = true
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -29,14 +30,24 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = Versions.composeCompiler
+    }
+    packagingOptions {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
 }
 
 dependencies {
+    implementation(project(Modules.core))
 
-    implementation("androidx.core:core-ktx:1.7.0")
-    implementation("androidx.appcompat:appcompat:1.5.1")
-    implementation("com.google.android.material:material:1.7.0")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.4")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
+    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2")
 }

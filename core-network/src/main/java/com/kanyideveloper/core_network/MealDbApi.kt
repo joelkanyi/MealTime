@@ -15,17 +15,23 @@
  */
 package com.kanyideveloper.core_network
 
-import org.junit.Assert.*
-import org.junit.Test
+import com.kanyideveloper.core_network.model.CategoriesResponse
+import com.kanyideveloper.core_network.model.MealDetailsResponse
+import com.kanyideveloper.core_network.model.MealsResponse
+import retrofit2.http.GET
+import retrofit2.http.Query
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
-class ExampleUnitTest {
-    @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
-    }
+interface MealDbApi {
+    @GET("categories.php")
+    suspend fun getCategories(): CategoriesResponse
+
+    @GET("filter.php?c={strCategory}")
+    suspend fun getMeals(
+        @Query("strCategory") category: String
+    ): MealsResponse
+
+    @GET("lookup.php?i={idMeal}")
+    suspend fun getMealDetails(
+        @Query("idMeal") mealId: Int
+    ): MealDetailsResponse
 }
