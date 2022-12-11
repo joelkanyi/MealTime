@@ -13,19 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.addmeal.data.repository
+package com.kanyideveloper.presentation.home.onlinemeal
 
-import com.kanyideveloper.addmeal.data.mapper.toMealEntity
-import com.kanyideveloper.addmeal.domain.repository.SaveMealRepository
-import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core_database.MealTimeDatabase
+import androidx.compose.runtime.Composable
+import com.kanyideveloper.presentation.home.HomeNavigator
+import com.ramcosta.composedestinations.annotation.Destination
 
-class SaveMealRepositoryImpl(
-    private val mealTimeDatabase: MealTimeDatabase
-) : SaveMealRepository {
-    override suspend fun saveMeal(meal: Meal) {
-        mealTimeDatabase.mealDao.insertMeal(
-            mealEntity = meal.toMealEntity()
-        )
-    }
+@Destination
+@Composable
+fun OnlineMealScreen(
+    navigator: HomeNavigator
+) {
 }

@@ -17,11 +17,11 @@ package com.kanyideveloper.mealtime.navigation
 
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
-import com.kanyideveloper.destinations.DetailsScreenDestination
-import com.kanyideveloper.destinations.HomeScreenDestination
-import com.kanyideveloper.destinations.MyMealScreenDestination
-import com.kanyideveloper.destinations.OnlineMealScreenDestination
 import com.kanyideveloper.favorites.presentation.favorites.destinations.FavoritesScreenDestination
+import com.kanyideveloper.presentation.destinations.DetailsScreenDestination
+import com.kanyideveloper.presentation.destinations.HomeScreenDestination
+import com.kanyideveloper.presentation.destinations.MyMealScreenDestination
+import com.kanyideveloper.presentation.destinations.OnlineMealScreenDestination
 import com.kanyideveloper.search.presentation.search.destinations.SearchScreenDestination
 import com.kanyideveloper.settings.presentation.destinations.SettingsScreenDestination
 import com.ramcosta.composedestinations.dynamic.routedIn

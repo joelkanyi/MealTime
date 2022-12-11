@@ -13,19 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.addmeal.data.repository
+package com.kanyideveloper.domain.repository
 
-import com.kanyideveloper.addmeal.data.mapper.toMealEntity
-import com.kanyideveloper.addmeal.domain.repository.SaveMealRepository
-import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core_database.MealTimeDatabase
+import androidx.lifecycle.LiveData
+import com.kanyideveloper.core_database.model.MealEntity
 
-class SaveMealRepositoryImpl(
-    private val mealTimeDatabase: MealTimeDatabase
-) : SaveMealRepository {
-    override suspend fun saveMeal(meal: Meal) {
-        mealTimeDatabase.mealDao.insertMeal(
-            mealEntity = meal.toMealEntity()
-        )
-    }
+interface HomeRepository {
+    fun getMyMeals(): LiveData<List<MealEntity>>
 }
