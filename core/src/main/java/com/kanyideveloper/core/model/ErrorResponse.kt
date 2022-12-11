@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core.util
+package com.kanyideveloper.core.model
 
-sealed class Resource<T>(
-    val data: T? = null,
+import com.google.gson.annotations.SerializedName
+
+data class ErrorResponse(
+    @field:SerializedName("message")
     val message: String? = null,
-    val error: Throwable? = null
-) {
-    class Success<T>(data: T) : Resource<T>(data)
-    class Loading<T>(data: T? = null) : Resource<T>(data)
-    class Error<T>(message: String? = null, throwable: Throwable? = null, data: T? = null) :
-        Resource<T>(data, message, throwable)
-}
+
+    @field:SerializedName("errors")
+    val errors: List<String?>? = null,
+
+    @field:SerializedName("status")
+    val status: String? = null
+)

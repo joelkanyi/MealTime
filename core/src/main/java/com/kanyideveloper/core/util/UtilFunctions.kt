@@ -21,6 +21,13 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import com.google.gson.Gson
+import com.kanyideveloper.core.model.ErrorResponse
+import java.io.IOException
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
+import retrofit2.HttpException
+import timber.log.Timber
 
 fun Context.imageUriToImageBitmap(uri: Uri): Bitmap {
     return if (Build.VERSION.SDK_INT < 28) {
@@ -33,10 +40,59 @@ fun Context.imageUriToImageBitmap(uri: Uri): Bitmap {
     }
 }
 
-inline fun <T> safeCall(action: () -> Resource<T>): Resource<T> {
-    return try {
-        action()
-    } catch (e: Exception) {
-        Resource.Error(e.message ?: "Unknown Error Occurred")
+suspend fun <T> safeApiCall(
+    dispatcher: CoroutineDispatcher,
+    apiCall: suspend () -> T
+): Resource<T> {
+    return withContext(dispatcher) {
+        try {
+            Timber.e("Success ")
+            Resource.Success(apiCall.invoke())
+        } catch (throwable: Throwable) {
+            Timber.e(throwable)
+            when (throwable) {
+                is IOException -> {
+                    Timber.e("IO exception occured! $throwable")
+                    Resource.Error(
+                        message = "Please check your internet connection and try again later",
+                        throwable = throwable
+                    )
+                }
+                is HttpException -> {
+                    val stringErrorBody = errorBodyAsString(throwable)
+                    Timber.e("stringErrorBody $stringErrorBody")
+                    if (stringErrorBody != null) {
+                        val errorResponse = convertStringErrorResponseToJsonObject(stringErrorBody)
+                        Timber.e("errorResponse $errorResponse")
+                        Resource.Error(
+                            message = errorResponse?.message,
+                            throwable = throwable
+                        )
+                    } else {
+                        Resource.Error(
+                            message = "Unknown failure occurred, please try again later",
+                            throwable = throwable
+                        )
+                    }
+                }
+                else -> {
+                    Timber.e("In else statement $throwable")
+                    Resource.Error(
+                        message = "Unknown failure occurred, please try again later",
+                        throwable = throwable
+                    )
+                }
+            }
+        }
     }
+}
+
+private fun convertStringErrorResponseToJsonObject(jsonString: String): ErrorResponse? {
+    val gson = Gson()
+    return gson.fromJson(jsonString, ErrorResponse::class.java)
+}
+
+fun errorBodyAsString(throwable: HttpException): String? {
+    val reader = throwable.response()?.errorBody()?.charStream()
+    return reader?.use { it.readText() }
 }

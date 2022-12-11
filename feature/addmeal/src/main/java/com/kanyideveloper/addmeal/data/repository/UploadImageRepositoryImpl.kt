@@ -22,37 +22,34 @@ import com.google.firebase.storage.StorageReference
 import com.kanyideveloper.addmeal.domain.repository.UploadImageRepository
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.imageUriToImageBitmap
-import com.kanyideveloper.core.util.safeCall
+import com.kanyideveloper.core.util.safeApiCall
 import java.io.ByteArrayOutputStream
 import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 class UploadImageRepositoryImpl(
     private val storageReference: StorageReference,
     private val context: Context
 ) : UploadImageRepository {
     override suspend fun uploadImage(imageUri: Uri): Resource<String> {
-        return withContext(Dispatchers.IO) {
-            safeCall {
-                val fileStorageReference =
-                    storageReference.child("${UUID.randomUUID()}${imageUri.lastPathSegment}")
+        return safeApiCall(Dispatchers.IO) {
+            val fileStorageReference =
+                storageReference.child("${UUID.randomUUID()}${imageUri.lastPathSegment}")
 
-                val bmp = context.imageUriToImageBitmap(imageUri)
+            val bmp = context.imageUriToImageBitmap(imageUri)
 
-                val byteArrayOutputStream = ByteArrayOutputStream()
-                bmp.compress(Bitmap.CompressFormat.JPEG, 25, byteArrayOutputStream)
-                val fileInBytes: ByteArray = byteArrayOutputStream.toByteArray()
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            bmp.compress(Bitmap.CompressFormat.JPEG, 25, byteArrayOutputStream)
+            val fileInBytes: ByteArray = byteArrayOutputStream.toByteArray()
 
-                val uploadTask = fileStorageReference.putBytes(fileInBytes)
+            val uploadTask = fileStorageReference.putBytes(fileInBytes)
 
-                val result = uploadTask.continueWithTask {
-                    fileStorageReference.downloadUrl
-                }.await().toString()
+            val result = uploadTask.continueWithTask {
+                fileStorageReference.downloadUrl
+            }.await().toString()
 
-                Resource.Success(result)
-            }
+            result
         }
     }
 }
