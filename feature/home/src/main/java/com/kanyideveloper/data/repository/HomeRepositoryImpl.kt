@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.addmeal.domain.model
+package com.kanyideveloper.data.repository
 
-data class Meal(
-    val name: String,
-    val imageUrl: String,
-    val cookingTime: Int,
-    val servingPeople: Int,
-    val category: String,
-    val cookingDifficulty: String,
-    val ingredients: List<String>,
-    val cookingDirections: List<String>,
-    val isFavorite: Boolean = false
-)
+import androidx.lifecycle.LiveData
+import com.kanyideveloper.core_database.dao.MealDao
+import com.kanyideveloper.core_database.model.MealEntity
+import com.kanyideveloper.domain.repository.HomeRepository
+
+class HomeRepositoryImpl(
+    private val mealDao: MealDao
+) : HomeRepository {
+    override fun getMyMeals(): LiveData<List<MealEntity>> {
+        return mealDao.getAllMeals()
+    }
+}

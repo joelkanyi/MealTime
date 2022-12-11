@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.home.presentation.home
+package com.kanyideveloper.presentation.home
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -42,10 +42,9 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.compose_ui.theme.MainOrange
-import com.kanyideveloper.destinations.HomeScreenDestination
-import com.kanyideveloper.home.presentation.home.composables.TabItem
-import com.kanyideveloper.home.presentation.home.composables.Tabs
 import com.kanyideveloper.mealtime.core.R
+import com.kanyideveloper.presentation.home.composables.TabItem
+import com.kanyideveloper.presentation.home.composables.Tabs
 import com.ramcosta.composedestinations.annotation.Destination
 
 interface HomeNavigator {
@@ -62,8 +61,6 @@ fun HomeScreen(
 ) {
     Scaffold(
         topBar = {
-            HomeScreenDestination
-
             StandardToolbar(
                 navigate = {},
                 title = {

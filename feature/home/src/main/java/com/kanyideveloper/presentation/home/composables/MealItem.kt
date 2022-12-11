@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.home.presentation.home.composables
+package com.kanyideveloper.presentation.home.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -37,18 +37,24 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.kanyideveloper.compose_ui.theme.LightGrey
 import com.kanyideveloper.compose_ui.theme.MainOrange
 import com.kanyideveloper.compose_ui.theme.MyLightBlue
+import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.mealtime.core.R
 
 @Composable
 fun MealItem(
+    meal: Meal,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -66,7 +72,13 @@ fun MealItem(
                     .fillMaxWidth()
                     .fillMaxHeight(0.75f),
                 contentDescription = null,
-                painter = painterResource(id = R.drawable.meal_banner),
+                painter = rememberAsyncImagePainter(
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(data = meal.imageUrl)
+                        .apply(block = fun ImageRequest.Builder.() {
+                            crossfade(true)
+                        }).build()
+                ),
                 contentScale = ContentScale.Crop
             )
             Row(
@@ -97,7 +109,7 @@ fun MealItem(
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
                             modifier = Modifier.padding(vertical = 3.dp),
-                            text = "3 Mins",
+                            text = "${meal.cookingTime} Mins",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -115,7 +127,7 @@ fun MealItem(
                     modifier = Modifier
                         .fillMaxWidth(0.8f)
                         .padding(vertical = 3.dp),
-                    text = "Very Long Food Name To Be Here",
+                    text = meal.name,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -126,7 +138,11 @@ fun MealItem(
                         .clickable {
                         },
                     imageVector = Icons.Default.Favorite,
-                    tint = MainOrange,
+                    tint = if (meal.isFavorite) {
+                        MainOrange
+                    } else {
+                        Color.LightGray
+                    },
                     contentDescription = null
                 )
             }

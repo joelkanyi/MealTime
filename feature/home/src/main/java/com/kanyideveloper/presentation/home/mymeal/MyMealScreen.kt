@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.home.presentation.home.mymeal
+package com.kanyideveloper.presentation.home.mymeal
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,6 +34,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
@@ -44,6 +45,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -57,19 +59,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.compose_ui.theme.MainOrange
 import com.kanyideveloper.compose_ui.theme.MyLightOrange
+import com.kanyideveloper.data.mapper.toMeal
 import com.kanyideveloper.domain.model.MealCategory
-import com.kanyideveloper.home.presentation.home.HomeNavigator
-import com.kanyideveloper.home.presentation.home.composables.MealItem
 import com.kanyideveloper.mealtime.core.R
+import com.kanyideveloper.presentation.home.HomeNavigator
+import com.kanyideveloper.presentation.home.HomeViewModel
+import com.kanyideveloper.presentation.home.composables.MealItem
 import com.ramcosta.composedestinations.annotation.Destination
 
 @Destination
 @Composable
 fun MyMealScreen(
-    navigator: HomeNavigator
+    navigator: HomeNavigator,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
+    val myMeals = viewModel.myMeals.observeAsState().value?.map { it.toMeal() }
+
     var showRandomMeal by remember {
         mutableStateOf(false)
     }
@@ -301,11 +309,12 @@ fun MyMealScreen(
                 fontWeight = FontWeight.Bold
             )
         }
-        items(10) {
+        items(myMeals ?: emptyList()) { meal ->
             MealItem(
                 modifier = Modifier.clickable {
                     navigator.openMealDetails()
-                }
+                },
+                meal = meal
             )
         }
     }

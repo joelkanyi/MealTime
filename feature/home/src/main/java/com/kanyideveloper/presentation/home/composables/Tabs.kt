@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.home.presentation.home.composables
+package com.kanyideveloper.presentation.home.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

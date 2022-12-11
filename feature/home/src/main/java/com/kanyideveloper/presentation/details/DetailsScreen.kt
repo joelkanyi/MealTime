@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.details
+package com.kanyideveloper.presentation.details
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -52,9 +52,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kanyideveloper.compose_ui.theme.LightGrey
 import com.kanyideveloper.compose_ui.theme.MainOrange
-import com.kanyideveloper.destinations.DetailsScreenDestination
-import com.kanyideveloper.home.presentation.home.HomeNavigator
 import com.kanyideveloper.mealtime.core.R
+import com.kanyideveloper.presentation.home.HomeNavigator
 import com.ramcosta.composedestinations.annotation.Destination
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
@@ -67,8 +66,6 @@ fun DetailsScreen(
 ) {
     val state = rememberCollapsingToolbarScaffoldState()
     val textSize = (18 + (4) * state.toolbarState.progress).sp
-
-    DetailsScreenDestination
 
     Column(Modifier.fillMaxSize()) {
         if (textSize == 18.sp) {

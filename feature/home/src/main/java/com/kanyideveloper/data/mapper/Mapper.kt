@@ -13,6 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.home.data.repository
+package com.kanyideveloper.data.mapper
 
-class HomeRepositoryImpl()
+import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core_database.model.MealEntity
+
+internal fun MealEntity.toMeal(): Meal {
+    return Meal(
+        name = name,
+        imageUrl = imageUrl,
+        cookingTime = cookingTime,
+        category = category,
+        cookingDifficulty = cookingDifficulty,
+        ingredients = ingredients,
+        cookingDirections = cookingDirections,
+        isFavorite = isFavorite,
+        servingPeople = servingPeople
+    )
+}

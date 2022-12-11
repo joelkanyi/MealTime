@@ -13,19 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.addmeal.data.repository
+package com.kanyideveloper.di
 
-import com.kanyideveloper.addmeal.data.mapper.toMealEntity
-import com.kanyideveloper.addmeal.domain.repository.SaveMealRepository
-import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core_database.MealTimeDatabase
+import com.kanyideveloper.core_database.dao.MealDao
+import com.kanyideveloper.data.repository.HomeRepositoryImpl
+import com.kanyideveloper.domain.repository.HomeRepository
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-class SaveMealRepositoryImpl(
-    private val mealTimeDatabase: MealTimeDatabase
-) : SaveMealRepository {
-    override suspend fun saveMeal(meal: Meal) {
-        mealTimeDatabase.mealDao.insertMeal(
-            mealEntity = meal.toMealEntity()
-        )
+@Module
+@InstallIn(SingletonComponent::class)
+object HomeModule {
+
+    @Provides
+    @Singleton
+    fun provideHomeRepository(mealDao: MealDao): HomeRepository {
+        return HomeRepositoryImpl(mealDao = mealDao)
     }
 }

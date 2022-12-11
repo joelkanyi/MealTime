@@ -15,7 +15,7 @@
  */
 package com.kanyideveloper.addmeal.data.mapper
 
-import com.kanyideveloper.addmeal.domain.model.Meal
+import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core_database.model.MealEntity
 
 internal fun Meal.toMealEntity(): MealEntity {

@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.home.presentation.home.onlinemeal
+package com.kanyideveloper.core.model
 
-import androidx.compose.runtime.Composable
-import com.kanyideveloper.home.presentation.home.HomeNavigator
-import com.ramcosta.composedestinations.annotation.Destination
-
-@Destination
-@Composable
-fun OnlineMealScreen(
-    navigator: HomeNavigator
-) {
-}
+data class Meal(
+    val name: String,
+    val imageUrl: String,
+    val cookingTime: Int,
+    val servingPeople: Int,
+    val category: String,
+    val cookingDifficulty: String,
+    val ingredients: List<String>,
+    val cookingDirections: List<String>,
+    val isFavorite: Boolean = false
+)
