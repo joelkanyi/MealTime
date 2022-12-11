@@ -15,8 +15,10 @@
  */
 package com.kanyideveloper.presentation.details
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +32,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -38,20 +41,24 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.kanyideveloper.compose_ui.theme.LightGrey
 import com.kanyideveloper.compose_ui.theme.MainOrange
+import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.mealtime.core.R
 import com.kanyideveloper.presentation.home.HomeNavigator
 import com.ramcosta.composedestinations.annotation.Destination
@@ -59,391 +66,389 @@ import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Destination
 @Composable
 fun DetailsScreen(
+    meal: Meal,
     navigator: HomeNavigator
 ) {
     val state = rememberCollapsingToolbarScaffoldState()
-    val textSize = (18 + (4) * state.toolbarState.progress).sp
+    val textSize = (18 + (30 - 18) * state.toolbarState.progress).sp
 
-    Column(Modifier.fillMaxSize()) {
-        if (textSize == 18.sp) {
+    CollapsingToolbarScaffold(
+        modifier = Modifier.fillMaxSize(),
+        state = state,
+        scrollStrategy = ScrollStrategy.ExitUntilCollapsed,
+        toolbarModifier = Modifier.background(MaterialTheme.colors.primary),
+        enabled = true,
+        toolbar = {
             Box(
                 modifier = Modifier
+                    .background(MaterialTheme.colors.primary)
                     .fillMaxWidth()
-                    .height(56.dp)
-                    .background(color = Color.Transparent)
+                    .height(150.dp)
+                    .pin()
             )
-        }
-        CollapsingToolbarScaffold(
-            modifier = Modifier,
-            state = state,
-            scrollStrategy = ScrollStrategy.EnterAlways,
-            toolbar = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp)
-                        .pin()
-                        .background(color = MaterialTheme.colors.primary)
-                )
 
-                Image(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(280.dp),
-                    painter = painterResource(id = R.drawable.meal_banner),
+            Image(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp)
+                    .parallax(ratio = 0.5f)
+                    .graphicsLayer {
+                        alpha = if (textSize.value == 18f) 0f else 1f
+                    },
+                painter = rememberAsyncImagePainter(
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(data = meal.imageUrl)
+                        .apply(block = fun ImageRequest.Builder.() {
+                            crossfade(true)
+                        }).build()
+                ),
+                contentDescription = null,
+                contentScale = ContentScale.Crop
+            )
+
+            Text(
+                text = meal.name,
+                modifier = Modifier
+                    .road(Alignment.CenterStart, Alignment.BottomEnd)
+                    .padding(60.dp, 16.dp, 16.dp, 16.dp),
+                color = if (textSize.value >= 19) {
+                    Color.Transparent
+                } else {
+                    Color.White
+                },
+                fontSize = textSize
+            )
+
+            IconButton(onClick = {
+                navigator.popBackStack()
+            }) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
                     contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    alpha = if (textSize.value == 18f) 0f else 1f
+                    tint = Color.White
                 )
-
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .background(
-                            if (textSize == 22.sp) {
-                                Color.Black.copy(alpha = 0.3f)
-                            } else {
-                                Color.Transparent
-                            }
-                        )
-                        .road(
-                            whenCollapsed = Alignment.TopStart,
-                            whenExpanded = Alignment.BottomStart
-                        )
+            }
+        }
+    ) {
+        LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)) {
+            item {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        Modifier
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        if (textSize.value == 18f) {
-                            IconButton(onClick = {
-                                // navigator.popBackStack()
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Default.ArrowBack,
-                                    contentDescription = null,
-                                    tint = Color.White
-                                )
-                            }
-                        }
-                        if (textSize == 18.sp) {
-                            Text(
-                                "Rice Chicken Rice Chicken Rice Chicken Rice Chicken",
-                                style = TextStyle(color = Color.White, fontSize = textSize),
-                                modifier = Modifier
-                                    .padding(10.dp)
+                    Text(
+                        modifier = Modifier.fillMaxWidth(0.85f),
+                        text = meal.name,
+                        style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .size(50.dp)
+                            .clip(CircleShape)
+                            .background(
+                                LightGrey.copy(alpha = .6f)
                             )
-                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .align(Alignment.Center)
+                                .padding(0.dp)
+                                .clickable {
+                                },
+                            painter = painterResource(
+                                id = if (meal.isFavorite) {
+                                    R.drawable.filled_favorite
+                                } else {
+                                    R.drawable.unfilled_favorite
+                                }
+                            ),
+                            contentDescription = null
+                        )
                     }
                 }
-            },
-            body = {
-                LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)) {
-                    item {
-                        Row(Modifier.fillMaxWidth()) {
-                            Text(
-                                modifier = Modifier.fillMaxWidth(0.85f),
-                                text = "Rice Chicken Rice Chicken Rice Chicken Rice Chicken",
-                                style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .size(50.dp)
-                                    .clip(CircleShape)
-                                    .background(
-                                        LightGrey
-                                    )
-                            ) {
-                                Icon(
-                                    modifier = Modifier
-                                        .size(24.dp)
-                                        .align(Alignment.Center)
-                                        .padding(0.dp),
-                                    imageVector = Icons.Default.Favorite,
-                                    contentDescription = null,
-                                    tint = MainOrange
-                                )
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(24.dp))
-                    }
-                    item {
-                        Row(
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(top = 8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(
-                                8.dp,
-                                Alignment.CenterHorizontally
-                            ),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(
-                                        MainOrange
-                                    )
-                            ) {
-                                Column(
-                                    modifier = Modifier.padding(5.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(50.dp)
-                                            .clip(CircleShape)
-                                            .background(
-                                                Color.White
-                                            )
-                                    ) {
-                                        Icon(
-                                            modifier = Modifier
-                                                .size(24.dp)
-                                                .align(Alignment.Center)
-                                                .padding(0.dp),
-                                            painter = painterResource(id = R.drawable.ic_clock),
-                                            contentDescription = null,
-                                            tint = Color.Black
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.height(12.dp))
-                                    Text(
-                                        text = "30 mins",
-                                        fontSize = 14.sp,
-                                        color = Color.White
-                                    )
-                                }
-                            }
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+            item {
+                MealProperties(meal)
+            }
 
-                            // Cooking level
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(
-                                        MainOrange
-                                    )
-                            ) {
-                                Column(
-                                    modifier = Modifier.padding(5.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(50.dp)
-                                            .clip(CircleShape)
-                                            .background(
-                                                Color.White
-                                            )
-                                    ) {
-                                        Icon(
-                                            modifier = Modifier
-                                                .size(24.dp)
-                                                .align(Alignment.Center)
-                                                .padding(0.dp),
-                                            painter = painterResource(
-                                                id = R.drawable.users_three_light
-                                            ),
-                                            contentDescription = null,
-                                            tint = Color.Black
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.height(12.dp))
-                                    Text(
-                                        text = "3 Serving",
-                                        fontSize = 14.sp,
-                                        color = Color.White
-                                    )
-                                }
-                            }
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Ingredients",
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 18.sp
+                )
+            }
 
-                            // To be served to
-                            Box(
-                                modifier = Modifier
-                                    .width(60.dp)
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(
-                                        MainOrange
-                                    )
-                            ) {
-                                Column(
-                                    modifier = Modifier.padding(5.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(50.dp)
-                                            .clip(CircleShape)
-                                            .background(
-                                                Color.White
-                                            )
-                                    ) {
-                                        Icon(
-                                            modifier = Modifier
-                                                .size(24.dp)
-                                                .align(Alignment.Center)
-                                                .padding(0.dp),
-                                            painter = painterResource(id = R.drawable.noun_easy),
-                                            contentDescription = null,
-                                            tint = Color.Black
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.height(12.dp))
-                                    Text(
-                                        text = "Easy",
-                                        fontSize = 14.sp,
-                                        color = Color.White
-                                    )
-                                }
-                            }
-
-                            Box(
-                                modifier = Modifier
-                                    .width(60.dp)
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(
-                                        MainOrange
-                                    )
-                            ) {
-                                Column(
-                                    modifier = Modifier.padding(5.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(50.dp)
-                                            .clip(CircleShape)
-                                            .background(
-                                                Color.White
-                                            )
-                                    ) {
-                                        Icon(
-                                            modifier = Modifier
-                                                .size(24.dp)
-                                                .align(Alignment.Center)
-                                                .padding(0.dp),
-                                            painter = painterResource(
-                                                id = R.drawable.fire_simple_bold
-                                            ),
-                                            contentDescription = null,
-                                            tint = Color.Black
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.height(12.dp))
-                                    Text(
-                                        text = "30 kcal",
-                                        fontSize = 14.sp,
-                                        color = Color.White
-                                    )
-                                }
-                            }
-
-                            Box(
-                                modifier = Modifier
-                                    .width(60.dp)
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(
-                                        MainOrange
-                                    )
-                            ) {
-                                Column(
-                                    modifier = Modifier.padding(5.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(50.dp)
-                                            .clip(CircleShape)
-                                            .background(
-                                                Color.White
-                                            )
-                                    ) {
-                                        Icon(
-                                            modifier = Modifier
-                                                .size(24.dp)
-                                                .align(Alignment.Center)
-                                                .padding(0.dp),
-                                            painter = painterResource(id = R.drawable.ic_food),
-                                            contentDescription = null,
-                                            tint = Color.Black
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.height(12.dp))
-                                    Text(
-                                        text = "Drink",
-                                        fontSize = 14.sp,
-                                        color = Color.White
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    item {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "Ingredients",
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = 18.sp
-                        )
-
-                        for (i in 1..5) {
-                            Row(
-                                modifier = Modifier.padding(start = 12.dp),
-                                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(6.dp)
-                                        .clip(CircleShape)
-                                        .background(Color.Black)
-                                )
-                                Text(
-                                    modifier = Modifier.padding(3.dp),
-                                    text = "50g sugar",
-                                    fontWeight = FontWeight.Light,
-                                    fontSize = 16.sp
-                                )
-                            }
-                        }
-                    }
-
-                    item {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "Cooking Directions",
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = 18.sp
-                        )
-
-                        for (i in 1..7) {
-                            Row(
-                                modifier = Modifier.padding(start = 12.dp),
-                                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(6.dp)
-                                        .clip(CircleShape)
-                                        .background(Color.Black)
-                                )
-                                Text(
-                                    modifier = Modifier.padding(3.dp),
-                                    text = "Put a glass full of water",
-                                    fontWeight = FontWeight.Light,
-                                    fontSize = 16.sp
-                                )
-                            }
-                        }
-                    }
+            items(meal.ingredients) { ingredient ->
+                Row(
+                    modifier = Modifier.padding(start = 12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(6.dp)
+                            .clip(CircleShape)
+                            .background(Color.Black)
+                    )
+                    Text(
+                        modifier = Modifier.padding(3.dp),
+                        text = ingredient,
+                        fontWeight = FontWeight.Light,
+                        fontSize = 16.sp
+                    )
                 }
             }
-        )
+
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Cooking Instructions",
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 18.sp
+                )
+            }
+
+            items(meal.cookingDirections) { instruction ->
+                Row(
+                    modifier = Modifier.padding(start = 12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(6.dp)
+                            .clip(CircleShape)
+                            .background(Color.Black)
+                    )
+                    Text(
+                        modifier = Modifier.padding(3.dp),
+                        text = instruction,
+                        fontWeight = FontWeight.Light,
+                        fontSize = 16.sp
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MealProperties(meal: Meal) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(
+            8.dp,
+            Alignment.CenterHorizontally
+        ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(12.dp))
+                .background(
+                    MainOrange
+                )
+        ) {
+            Column(
+                modifier = Modifier.padding(5.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(CircleShape)
+                        .background(
+                            Color.White
+                        )
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .align(Alignment.Center)
+                            .padding(0.dp),
+                        painter = painterResource(id = R.drawable.ic_clock),
+                        contentDescription = null,
+                        tint = Color.Black
+                    )
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = "${meal.cookingTime} mins",
+                    fontSize = 14.sp,
+                    color = Color.White
+                )
+            }
+        }
+
+        // Cooking level
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(12.dp))
+                .background(
+                    MainOrange
+                )
+        ) {
+            Column(
+                modifier = Modifier.padding(5.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(CircleShape)
+                        .background(
+                            Color.White
+                        )
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .align(Alignment.Center)
+                            .padding(0.dp),
+                        painter = painterResource(
+                            id = R.drawable.users_three_light
+                        ),
+                        contentDescription = null,
+                        tint = Color.Black
+                    )
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = "${meal.servingPeople} Serving",
+                    fontSize = 14.sp,
+                    color = Color.White
+                )
+            }
+        }
+
+        // To be served to
+        Box(
+            modifier = Modifier
+                .width(60.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(
+                    MainOrange
+                )
+        ) {
+            Column(
+                modifier = Modifier.padding(5.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(CircleShape)
+                        .background(
+                            Color.White
+                        )
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .size(80.dp)
+                            .align(Alignment.Center)
+                            .padding(0.dp),
+                        painter = painterResource(id = R.drawable.noun_easy),
+                        contentDescription = null,
+                        tint = Color.Black
+                    )
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = meal.cookingDifficulty,
+                    fontSize = 14.sp,
+                    color = Color.White
+                )
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .width(60.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(
+                    MainOrange
+                )
+        ) {
+            Column(
+                modifier = Modifier.padding(5.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(CircleShape)
+                        .background(
+                            Color.White
+                        )
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .align(Alignment.Center)
+                            .padding(0.dp),
+                        painter = painterResource(
+                            id = R.drawable.fire_simple_bold
+                        ),
+                        contentDescription = null,
+                        tint = Color.Black
+                    )
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = "30 kcal",
+                    fontSize = 14.sp,
+                    color = Color.White
+                )
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .width(60.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(
+                    MainOrange
+                )
+        ) {
+            Column(
+                modifier = Modifier.padding(5.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(CircleShape)
+                        .background(
+                            Color.White
+                        )
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .align(Alignment.Center)
+                            .padding(0.dp),
+                        painter = painterResource(id = R.drawable.ic_food),
+                        contentDescription = null,
+                        tint = Color.Black
+                    )
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = meal.category,
+                    fontSize = 14.sp,
+                    color = Color.White
+                )
+            }
+        }
     }
 }

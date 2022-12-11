@@ -15,6 +15,10 @@
  */
 package com.kanyideveloper.core.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Meal(
     val name: String,
     val imageUrl: String,
@@ -25,4 +29,4 @@ data class Meal(
     val ingredients: List<String>,
     val cookingDirections: List<String>,
     val isFavorite: Boolean = false
-)
+) : Parcelable

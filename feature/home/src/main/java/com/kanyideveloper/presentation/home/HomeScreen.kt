@@ -42,14 +42,16 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.compose_ui.theme.MainOrange
+import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.mealtime.core.R
 import com.kanyideveloper.presentation.home.composables.TabItem
 import com.kanyideveloper.presentation.home.composables.Tabs
 import com.ramcosta.composedestinations.annotation.Destination
 
 interface HomeNavigator {
-    fun openMealDetails()
+    fun openMealDetails(meal: Meal)
     fun openAddMeal()
+    fun popBackStack()
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")

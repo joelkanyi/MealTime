@@ -312,7 +312,7 @@ fun MyMealScreen(
         items(myMeals ?: emptyList()) { meal ->
             MealItem(
                 modifier = Modifier.clickable {
-                    navigator.openMealDetails()
+                    navigator.openMealDetails(meal = meal)
                 },
                 meal = meal
             )
