@@ -3,7 +3,6 @@ plugins {
     id("kotlin-android")
     id("kotlin-kapt")
     id("kotlin-parcelize")
-    id("com.google.devtools.ksp") version ("1.7.10-1.0.6")
     id("org.jetbrains.kotlin.android")
 }
 
@@ -45,28 +44,10 @@ android {
 }
 
 dependencies {
-    // RamCosta Navigation
-    implementation("io.github.raamcosta.compose-destinations:animations-core:1.7.27-beta")
-    ksp("io.github.raamcosta.compose-destinations:ksp:1.7.27-beta")
-
-    implementation(project(Modules.composeUi))
     implementation(project(Modules.core))
-    implementation(project(Modules.coreDatabase))
-    implementation(project(Modules.coreNetwork))
-}
 
-kotlin {
-    sourceSets {
-        debug {
-            kotlin.srcDir("build/generated/ksp/debug/kotlin")
-        }
-        release {
-            kotlin.srcDir("build/generated/ksp/release/kotlin")
-        }
-    }
-}
-
-ksp {
-    arg("compose-destinations.mode", "destinations")
-    arg("compose-destinations.moduleName", "home")
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
+    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2")
 }
