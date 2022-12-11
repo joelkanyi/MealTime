@@ -1,4 +1,4 @@
-package com.kanyideveloper.testmodule
+package com.kanyideveloper.core_network
 
 import org.junit.Test
 
