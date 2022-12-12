@@ -38,6 +38,12 @@ class OnlineMealViewModel @Inject constructor(
         getCategories()
     }
 
+    private val _selectedCategory = mutableStateOf("Beef")
+    val selectedCategory: State<String> = _selectedCategory
+    fun setSelectedCategory(value: String) {
+        _selectedCategory.value = value
+    }
+
     private fun getCategories() {
         _categories.value = categories.value.copy(
             isLoading = true

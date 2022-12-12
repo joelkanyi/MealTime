@@ -134,8 +134,7 @@ fun MainContent(
             pagerState = pagerState,
             onClick = {
                 // navigator.navigate(DetailsScreenDestination)
-            },
-            modifier = modifier
+            }
         )
     }
 }
@@ -145,13 +144,12 @@ fun MainContent(
 fun TabContent(
     tabs: List<TabItem>,
     pagerState: PagerState,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onClick: () -> Unit
 ) {
     HorizontalPager(
         count = tabs.size,
         state = pagerState,
-        modifier = modifier
+        modifier = Modifier
     ) { page ->
         tabs[page].screen(
             onClick = {
