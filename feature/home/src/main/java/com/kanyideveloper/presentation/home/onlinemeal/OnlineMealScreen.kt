@@ -58,19 +58,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.compose_ui.theme.LightGrey
 import com.kanyideveloper.compose_ui.theme.MainOrange
+import com.kanyideveloper.domain.model.Category
 import com.kanyideveloper.domain.model.FeaturedMeal
 import com.kanyideveloper.mealtime.core.R
 import com.kanyideveloper.presentation.home.HomeNavigator
+import com.kanyideveloper.presentation.home.onlinemeal.state.CategoriesState
 import com.ramcosta.composedestinations.annotation.Destination
 
 @Destination
 @Composable
 fun OnlineMealScreen(
-    navigator: HomeNavigator
+    navigator: HomeNavigator,
+    viewModel: OnlineMealViewModel = hiltViewModel()
 ) {
     val meals = remember { featuredMeals }
+    val categoriesState = viewModel.categories.value
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -86,7 +91,7 @@ fun OnlineMealScreen(
             Spacer(modifier = Modifier.height(16.dp))
         }
         item(span = { GridItemSpan(2) }) {
-            MealCategorySelection()
+            MealCategorySelection(state = categoriesState)
         }
         item(span = { GridItemSpan(2) }) {
             Spacer(modifier = Modifier.height(8.dp))
@@ -193,25 +198,18 @@ fun OnlineMealCard(meal: FeaturedMeal) {
 }
 
 @Composable
-fun MealCategorySelection() {
-    val categories = listOf(
-        "Breakfast Eatings",
-        "Lunch Combo",
-        "Late Evening Dinner ",
-        "Snacks Time",
-        "Dessert to Finish Up"
-    )
+fun MealCategorySelection(
+    state: CategoriesState
+) {
     var selectedIndex by remember { mutableStateOf(0) }
     val onItemClick = { index: Int -> selectedIndex = index }
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Start
     ) {
-        items(categories.size) { index ->
+        items(state.categories) { category ->
             CategoryItem(
-                categories,
-                index = index,
-                selected = selectedIndex == index,
+                category = category,
                 onClick = onItemClick
             )
         }
@@ -219,7 +217,8 @@ fun MealCategorySelection() {
 }
 
 @Composable
-fun CategoryItem(categories: List<String>, index: Int, selected: Boolean, onClick: (Int) -> Unit) {
+fun CategoryItem(category: Category, onClick: (Int) -> Unit = {}) {
+    val selected = true
     Column(
         modifier = Modifier
             .wrapContentWidth()
@@ -231,11 +230,11 @@ fun CategoryItem(categories: List<String>, index: Int, selected: Boolean, onClic
             modifier = Modifier
                 .clip(RoundedCornerShape(10.dp))
                 .clickable {
-                    onClick.invoke(index)
+                    // onClick()
                 }
         ) {
             Text(
-                text = categories[index],
+                text = category.categoryName,
                 Modifier
                     .wrapContentWidth()
                     .wrapContentHeight()

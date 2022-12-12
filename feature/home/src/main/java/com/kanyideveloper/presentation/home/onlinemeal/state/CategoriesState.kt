@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core.util
+package com.kanyideveloper.presentation.home.onlinemeal.state
 
-sealed class Resource<T>(
-    val data: T? = null,
-    val message: String? = null,
-    val error: Throwable? = null
-) {
-    class Success<T>(data: T) : Resource<T>(data)
-    class Loading<T>(data: T? = null) : Resource<T>(data)
-    class Error<T>(message: String? = null, throwable: Throwable? = null, data: T? = null) :
-        Resource<T>(data, message, throwable)
-}
+import com.kanyideveloper.domain.model.Category
+
+data class CategoriesState(
+    val isLoading: Boolean = false,
+    val error: String? = null,
+    val categories: List<Category> = emptyList()
+)
