@@ -32,7 +32,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -44,23 +43,25 @@ import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.kanyideveloper.compose_ui.theme.LightGrey
 import com.kanyideveloper.compose_ui.theme.MainOrange
+import com.kanyideveloper.compose_ui.theme.MyLightOrange
 import com.kanyideveloper.domain.model.Category
 import com.kanyideveloper.domain.model.FeaturedMeal
 import com.kanyideveloper.mealtime.core.R
@@ -82,19 +83,13 @@ fun OnlineMealScreen(
         contentPadding = PaddingValues(16.dp)
     ) {
         item(span = { GridItemSpan(2) }) {
-            SectionHeader("Feature Meals")
-        }
-        item(span = { GridItemSpan(2) }) {
-            FeaturedMeals()
+            CategorySelection(
+                state = categoriesState,
+                viewModel = viewModel
+            )
         }
         item(span = { GridItemSpan(2) }) {
             Spacer(modifier = Modifier.height(16.dp))
-        }
-        item(span = { GridItemSpan(2) }) {
-            MealCategorySelection(state = categoriesState)
-        }
-        item(span = { GridItemSpan(2) }) {
-            Spacer(modifier = Modifier.height(8.dp))
         }
         items(meals.size) {
             OnlineMealCard(meals[it])
@@ -198,76 +193,79 @@ fun OnlineMealCard(meal: FeaturedMeal) {
 }
 
 @Composable
-fun MealCategorySelection(
-    state: CategoriesState
+fun CategorySelection(
+    state: CategoriesState,
+    viewModel: OnlineMealViewModel
 ) {
-    var selectedIndex by remember { mutableStateOf(0) }
-    val onItemClick = { index: Int -> selectedIndex = index }
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Start
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         items(state.categories) { category ->
             CategoryItem(
                 category = category,
-                onClick = onItemClick
+                viewModel = viewModel
             )
         }
     }
 }
 
 @Composable
-fun CategoryItem(category: Category, onClick: (Int) -> Unit = {}) {
-    val selected = true
-    Column(
-        modifier = Modifier
-            .wrapContentWidth()
-            .padding(5.dp)
+fun CategoryItem(
+    category: Category,
+    viewModel: OnlineMealViewModel
+) {
+    val selected = viewModel.selectedCategory.value == category.categoryName
+    Card(
+        Modifier
+            .width(100.dp)
             .wrapContentHeight()
+            .clickable {
+                viewModel.setSelectedCategory(category.categoryName)
+            },
+        shape = RoundedCornerShape(8.dp),
+        elevation = 0.dp,
+        backgroundColor = if (selected) {
+            MainOrange.copy(alpha = .6f)
+        } else {
+            MyLightOrange
+        }
     ) {
-        Box(
-            contentAlignment = Alignment.TopEnd,
-            modifier = Modifier
-                .clip(RoundedCornerShape(10.dp))
-                .clickable {
-                    // onClick()
-                }
+        Column(
+            modifier = Modifier.padding(8.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Image(
+                modifier = Modifier
+                    .width(100.dp)
+                    .height(50.dp),
+                contentDescription = null,
+                painter = rememberAsyncImagePainter(
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(data = category.categoryImageUrl)
+                        .apply(block = fun ImageRequest.Builder.() {
+                            crossfade(true)
+                        }).build()
+                ),
+                contentScale = ContentScale.Inside
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+
             Text(
                 text = category.categoryName,
-                Modifier
-                    .wrapContentWidth()
-                    .wrapContentHeight()
-                    .padding(1.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(if (selected) Color(0xFFfa4a0c) else Color(0xfff0f5f4))
-                    .padding(10.dp),
                 textAlign = TextAlign.Center,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.ExtraBold,
-                color = if (selected) Color(0xffe2f1f3) else Color(0xff121212)
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = if (selected) {
+                    Color.White
+                } else {
+                    Color.Black
+                }
             )
         }
-    }
-}
-
-@Composable
-fun SectionHeader(title: String) {
-    Text(
-        modifier = Modifier.padding(vertical = 5.dp),
-        text = title,
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Bold
-    )
-}
-
-@Composable
-fun FeaturedMeals() {
-    val featuredMeals = remember { featuredMeals }
-    LazyRow {
-        items(items = featuredMeals, itemContent = { meal ->
-            MealCard(meal)
-        })
     }
 }
 

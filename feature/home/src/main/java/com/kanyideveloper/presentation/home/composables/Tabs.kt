@@ -47,7 +47,7 @@ fun Tabs(
         selectedTabIndex = pagerState.currentPage,
         backgroundColor = MainOrange,
         modifier = Modifier
-            .padding(vertical = 8.dp, horizontal = 16.dp)
+            .padding(vertical = 4.dp, horizontal = 16.dp)
             .clip(RoundedCornerShape(50)),
         indicator = {
             Box {}
