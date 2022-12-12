@@ -15,9 +15,8 @@
  */
 package com.kanyideveloper.domain.model
 
-data class FeaturedMeal(
+data class OnlineMeal(
     val name: String,
-    val imageUrl: Int,
-    val cookingTime: Int,
-    val chef: String
+    val imageUrl: String,
+    val mealId: String
 )

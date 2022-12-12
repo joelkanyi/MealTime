@@ -25,13 +25,13 @@ interface MealDbApi {
     @GET("categories.php")
     suspend fun getCategories(): CategoriesResponse
 
-    @GET("filter.php?c={strCategory}")
+    @GET("filter.php")
     suspend fun getMeals(
-        @Query("strCategory") category: String
+        @Query("c") category: String = "Beef"
     ): MealsResponse
 
-    @GET("lookup.php?i={idMeal}")
+    @GET("lookup.php}")
     suspend fun getMealDetails(
-        @Query("idMeal") mealId: Int
+        @Query("i") mealId: Int
     ): MealDetailsResponse
 }
