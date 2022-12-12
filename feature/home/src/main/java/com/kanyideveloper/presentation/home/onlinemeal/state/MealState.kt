@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.domain.repository
+package com.kanyideveloper.presentation.home.onlinemeal.state
 
-import com.kanyideveloper.core.util.Resource
-import com.kanyideveloper.domain.model.Category
 import com.kanyideveloper.domain.model.OnlineMeal
 
-interface OnlineMealsRepository {
-    suspend fun getMealCategories(): Resource<List<Category>>
-    suspend fun getMeals(category: String): Resource<List<OnlineMeal>>
-}
+data class MealState(
+    val isLoading: Boolean = false,
+    val error: String? = null,
+    val meals: List<OnlineMeal> = emptyList()
+)

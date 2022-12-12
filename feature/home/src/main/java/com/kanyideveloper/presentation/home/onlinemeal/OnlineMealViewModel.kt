@@ -22,6 +22,7 @@ import androidx.lifecycle.viewModelScope
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.domain.repository.OnlineMealsRepository
 import com.kanyideveloper.presentation.home.onlinemeal.state.CategoriesState
+import com.kanyideveloper.presentation.home.onlinemeal.state.MealState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -34,14 +35,18 @@ class OnlineMealViewModel @Inject constructor(
     private val _categories = mutableStateOf(CategoriesState())
     val categories: State<CategoriesState> = _categories
 
-    init {
-        getCategories()
-    }
+    private val _meals = mutableStateOf(MealState())
+    val meals: State<MealState> = _meals
 
     private val _selectedCategory = mutableStateOf("Beef")
     val selectedCategory: State<String> = _selectedCategory
     fun setSelectedCategory(value: String) {
         _selectedCategory.value = value
+    }
+
+    init {
+        getCategories()
+        getMeals(category = selectedCategory.value)
     }
 
     private fun getCategories() {
@@ -60,6 +65,31 @@ class OnlineMealViewModel @Inject constructor(
                     _categories.value = categories.value.copy(
                         isLoading = false,
                         categories = result.data ?: emptyList()
+                    )
+                }
+                else -> {
+                    categories
+                }
+            }
+        }
+    }
+
+    fun getMeals(category: String) {
+        _meals.value = meals.value.copy(
+            isLoading = true
+        )
+        viewModelScope.launch {
+            when (val result = onlineMealsRepository.getMeals(category = category)) {
+                is Resource.Error -> {
+                    _meals.value = meals.value.copy(
+                        isLoading = false,
+                        error = result.message
+                    )
+                }
+                is Resource.Success -> {
+                    _meals.value = meals.value.copy(
+                        isLoading = false,
+                        meals = result.data ?: emptyList()
                     )
                 }
                 else -> {

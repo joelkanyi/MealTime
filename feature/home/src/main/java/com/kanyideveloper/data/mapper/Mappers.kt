@@ -18,7 +18,9 @@ package com.kanyideveloper.data.mapper
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core_database.model.MealEntity
 import com.kanyideveloper.core_network.model.CategoriesResponse
+import com.kanyideveloper.core_network.model.MealsResponse
 import com.kanyideveloper.domain.model.Category
+import com.kanyideveloper.domain.model.OnlineMeal
 
 internal fun MealEntity.toMeal(): Meal {
     return Meal(
@@ -40,5 +42,13 @@ internal fun CategoriesResponse.Category.toCategory(): Category {
         categoryName = strCategory,
         categoryDescription = strCategoryDescription,
         categoryImageUrl = strCategoryThumb
+    )
+}
+
+internal fun MealsResponse.Meal.toMeal(): OnlineMeal {
+    return OnlineMeal(
+        name = strMeal,
+        imageUrl = strMealThumb,
+        mealId = idMeal
     )
 }

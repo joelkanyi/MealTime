@@ -16,7 +16,6 @@
 package com.kanyideveloper.presentation.home.onlinemeal
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,17 +35,16 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -59,11 +57,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.kanyideveloper.compose_ui.theme.LightGrey
 import com.kanyideveloper.compose_ui.theme.MainOrange
 import com.kanyideveloper.compose_ui.theme.MyLightOrange
 import com.kanyideveloper.domain.model.Category
-import com.kanyideveloper.domain.model.FeaturedMeal
+import com.kanyideveloper.domain.model.OnlineMeal
 import com.kanyideveloper.mealtime.core.R
 import com.kanyideveloper.presentation.home.HomeNavigator
 import com.kanyideveloper.presentation.home.onlinemeal.state.CategoriesState
@@ -75,12 +72,13 @@ fun OnlineMealScreen(
     navigator: HomeNavigator,
     viewModel: OnlineMealViewModel = hiltViewModel()
 ) {
-    val meals = remember { featuredMeals }
+    val meals = viewModel.meals.value
     val categoriesState = viewModel.categories.value
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(16.dp)
+        contentPadding = PaddingValues(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         item(span = { GridItemSpan(2) }) {
             CategorySelection(
@@ -91,20 +89,24 @@ fun OnlineMealScreen(
         item(span = { GridItemSpan(2) }) {
             Spacer(modifier = Modifier.height(16.dp))
         }
-        items(meals.size) {
-            OnlineMealCard(meals[it])
+        items(meals.meals) { meal ->
+            OnlineMealItem(meal = meal)
         }
     }
 }
 
 @Composable
-fun OnlineMealCard(meal: FeaturedMeal) {
+fun OnlineMealItem(
+    meal: OnlineMeal,
+    isFavorite: Boolean = false
+) {
     Card(
         modifier = Modifier
             .fillMaxSize()
             .height(220.dp)
-            .padding(5.dp),
+            .padding(vertical = 5.dp),
         shape = RoundedCornerShape(12.dp),
+        backgroundColor = Color.White,
         elevation = 2.dp
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -113,71 +115,22 @@ fun OnlineMealCard(meal: FeaturedMeal) {
                     .fillMaxWidth()
                     .fillMaxHeight(0.75f),
                 contentDescription = null,
-                painter = painterResource(id = meal.imageUrl),
+                painter = rememberAsyncImagePainter(
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(data = meal.imageUrl)
+                        .apply(block = fun ImageRequest.Builder.() {
+                            crossfade(true)
+                        }).build()
+                ),
                 contentScale = ContentScale.Crop
             )
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .align(Alignment.TopStart),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Card(
-                    modifier = Modifier
-                        .padding(8.dp),
-                    shape = RoundedCornerShape(8.dp),
-                    elevation = 0.dp,
-                    backgroundColor = LightGrey.copy(alpha = 0.8f)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .padding(vertical = 3.dp, horizontal = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(18.dp),
-                            painter = painterResource(id = R.drawable.ic_clock),
-                            tint = MainOrange,
-                            contentDescription = null
-                        )
-                        Spacer(modifier = Modifier.width(5.dp))
-                        Text(
-                            modifier = Modifier.padding(vertical = 3.dp),
-                            text = "${meal.cookingTime} Mins",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-
-                Card(
-                    modifier = Modifier
-                        .padding(8.dp),
-                    shape = RoundedCornerShape(8.dp),
-                    elevation = 0.dp,
-                    backgroundColor = LightGrey.copy(alpha = 0.8f)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .padding(vertical = 3.dp, horizontal = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(18.dp),
-                            painter = painterResource(id = R.drawable.ic_favorites),
-                            tint = MainOrange,
-                            contentDescription = null
-                        )
-                    }
-                }
-            }
-            Row(
-                Modifier
-                    .fillMaxWidth()
                     .padding(vertical = 8.dp, horizontal = 12.dp)
                     .align(Alignment.BottomStart),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     modifier = Modifier
@@ -185,8 +138,25 @@ fun OnlineMealCard(meal: FeaturedMeal) {
                         .padding(vertical = 3.dp),
                     text = meal.name,
                     fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
+                IconButton(onClick = {
+                }) {
+                    Icon(
+                        modifier = Modifier
+                            .size(24.dp),
+                        painter = painterResource(
+                            id = if (isFavorite) {
+                                R.drawable.filled_favorite
+                            } else {
+                                R.drawable.unfilled_favorite
+                            }
+                        ),
+                        contentDescription = null
+                    )
+                }
             }
         }
     }
@@ -222,6 +192,7 @@ fun CategoryItem(
             .wrapContentHeight()
             .clickable {
                 viewModel.setSelectedCategory(category.categoryName)
+                viewModel.getMeals(viewModel.selectedCategory.value)
             },
         shape = RoundedCornerShape(8.dp),
         elevation = 0.dp,
@@ -268,126 +239,3 @@ fun CategoryItem(
         }
     }
 }
-
-@Composable
-fun MealCard(featuredMeal: FeaturedMeal) {
-    Column(
-        modifier = Modifier
-            .width(300.dp)
-            .height(200.dp),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            val painter = painterResource(id = featuredMeal.imageUrl)
-            Image(
-                painter = painter,
-                contentDescription = "",
-                Modifier
-                    .width(300.dp)
-                    .height(250.dp)
-                    .padding(5.dp)
-                    .clip(RoundedCornerShape(25.dp))
-                    .fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(5.dp)
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(Color(0xff000000).copy(alpha = 0.70F))
-                    .padding(horizontal = 15.dp),
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.Bottom
-            ) {
-                Text(
-                    modifier = Modifier.padding(vertical = 10.dp),
-                    text = featuredMeal.name,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = Color.White
-                )
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Card(
-                            modifier = Modifier
-                                .padding(horizontal = 1.dp)
-                                .size(40.dp)
-                                .clip(CircleShape)
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.meal_banner),
-                                contentDescription = "",
-                                Modifier
-                                    .fillMaxSize()
-                                    .size(90.dp)
-                                    .clip(CircleShape),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-
-                        Text(
-                            modifier = Modifier.padding(horizontal = 10.dp),
-                            text = featuredMeal.chef,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Light,
-                            color = Color.White
-                        )
-                    }
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_clock),
-                            contentDescription = "",
-                            modifier = Modifier
-                                .padding(5.dp)
-                                .clip(CircleShape)
-                                .padding(5.dp),
-                            tint = Color(0xFFfa4a0c)
-                        )
-                        Text(
-                            modifier = Modifier.padding(horizontal = 5.dp),
-                            text = "${featuredMeal.cookingTime} Mins",
-                            fontWeight = FontWeight.Light,
-                            fontSize = 15.sp,
-                            color = Color.White
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-private val featuredMeals = listOf(
-    FeaturedMeal(
-        "Beef Steak & Cheese",
-        com.kanyideveloper.mealtime.core.R.drawable.meal_banner,
-        50,
-        "Favy Fay"
-    ),
-    FeaturedMeal("Chicken Asian Cuisine", R.drawable.meal_banner, 40, "Nyar Mkamba"),
-    FeaturedMeal("Japanese Chicken", R.drawable.meal_banner, 45, "Jerim Kaura"),
-    FeaturedMeal(
-        "Rice Egg with Chicken Salad",
-        R.drawable.meal_banner,
-        35,
-        "Royal Mum"
-    )
-)

@@ -19,7 +19,9 @@ import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.safeApiCall
 import com.kanyideveloper.core_network.MealDbApi
 import com.kanyideveloper.data.mapper.toCategory
+import com.kanyideveloper.data.mapper.toMeal
 import com.kanyideveloper.domain.model.Category
+import com.kanyideveloper.domain.model.OnlineMeal
 import com.kanyideveloper.domain.repository.OnlineMealsRepository
 import kotlinx.coroutines.Dispatchers
 
@@ -31,6 +33,13 @@ class OnlineMealsRepositoryImpl(
         return safeApiCall(Dispatchers.IO) {
             val response = mealDbApi.getCategories()
             response.categories.map { it.toCategory() }
+        }
+    }
+
+    override suspend fun getMeals(category: String): Resource<List<OnlineMeal>> {
+        return safeApiCall(Dispatchers.IO) {
+            val response = mealDbApi.getMeals(category)
+            response.meals.map { it.toMeal() }
         }
     }
 }
