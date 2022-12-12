@@ -138,7 +138,9 @@ fun OnlineMealItem(
                         .padding(vertical = 3.dp),
                     text = meal.name,
                     fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
                 IconButton(onClick = {
                 }) {
