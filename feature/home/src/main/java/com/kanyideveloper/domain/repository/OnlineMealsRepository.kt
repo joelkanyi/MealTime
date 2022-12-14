@@ -15,6 +15,7 @@
  */
 package com.kanyideveloper.domain.repository
 
+import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.domain.model.Category
 import com.kanyideveloper.domain.model.OnlineMeal
@@ -22,4 +23,5 @@ import com.kanyideveloper.domain.model.OnlineMeal
 interface OnlineMealsRepository {
     suspend fun getMealCategories(): Resource<List<Category>>
     suspend fun getMeals(category: String): Resource<List<OnlineMeal>>
+    suspend fun getMealDetails(mealId: String): Resource<List<Meal>>
 }

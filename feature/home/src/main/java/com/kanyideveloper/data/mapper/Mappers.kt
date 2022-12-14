@@ -18,7 +18,9 @@ package com.kanyideveloper.data.mapper
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core_database.model.MealEntity
 import com.kanyideveloper.core_network.model.CategoriesResponse
+import com.kanyideveloper.core_network.model.MealDetailsResponse
 import com.kanyideveloper.core_network.model.MealsResponse
+import com.kanyideveloper.data.util.stringToList
 import com.kanyideveloper.domain.model.Category
 import com.kanyideveloper.domain.model.OnlineMeal
 
@@ -50,5 +52,40 @@ internal fun MealsResponse.Meal.toMeal(): OnlineMeal {
         name = strMeal,
         imageUrl = strMealThumb,
         mealId = idMeal
+    )
+}
+
+internal fun MealDetailsResponse.Meal.toMeal(): Meal {
+    return Meal(
+        name = strMeal,
+        imageUrl = strMealThumb,
+        cookingTime = 0,
+        category = strCategory,
+        cookingDifficulty = "",
+        ingredients = listOf(
+            strIngredient1,
+            strIngredient2,
+            strIngredient3,
+            strIngredient4,
+            strIngredient5,
+            strIngredient6,
+            strIngredient7,
+            strIngredient8,
+            strIngredient9,
+            strIngredient10,
+            strIngredient11,
+            strIngredient12,
+            strIngredient13,
+            strIngredient14,
+            strIngredient15,
+            strIngredient16,
+            strIngredient17,
+            strIngredient18,
+            strIngredient19,
+            strIngredient20
+        ).filter { it.isNotEmpty() },
+        cookingDirections = strInstructions.stringToList(),
+        isFavorite = false,
+        servingPeople = 0
     )
 }

@@ -32,6 +32,6 @@ interface MealDbApi {
 
     @GET("lookup.php}")
     suspend fun getMealDetails(
-        @Query("i") mealId: Int
+        @Query("i") mealId: String
     ): MealDetailsResponse
 }
