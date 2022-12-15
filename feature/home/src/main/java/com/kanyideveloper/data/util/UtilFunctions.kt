@@ -13,15 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.domain.repository
+package com.kanyideveloper.data.util
 
-import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core.util.Resource
-import com.kanyideveloper.domain.model.Category
-import com.kanyideveloper.domain.model.OnlineMeal
-
-interface OnlineMealsRepository {
-    suspend fun getMealCategories(): Resource<List<Category>>
-    suspend fun getMeals(category: String): Resource<List<OnlineMeal>>
-    suspend fun getMealDetails(mealId: String): Resource<List<Meal>>
+internal fun String.stringToList(): List<String> {
+    return this.split("\r\n")
 }

@@ -15,6 +15,7 @@
  */
 package com.kanyideveloper.data.repository
 
+import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.safeApiCall
 import com.kanyideveloper.core_network.MealDbApi
@@ -38,7 +39,14 @@ class OnlineMealsRepositoryImpl(
 
     override suspend fun getMeals(category: String): Resource<List<OnlineMeal>> {
         return safeApiCall(Dispatchers.IO) {
-            val response = mealDbApi.getMeals(category)
+            val response = mealDbApi.getMeals(category = category)
+            response.meals.map { it.toMeal() }
+        }
+    }
+
+    override suspend fun getMealDetails(mealId: String): Resource<List<Meal>> {
+        return safeApiCall(Dispatchers.IO) {
+            val response = mealDbApi.getMealDetails(mealId = mealId)
             response.meals.map { it.toMeal() }
         }
     }

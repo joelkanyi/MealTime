@@ -21,6 +21,16 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.gson.Gson
 import com.kanyideveloper.core.model.ErrorResponse
 import java.io.IOException
@@ -95,4 +105,19 @@ private fun convertStringErrorResponseToJsonObject(jsonString: String): ErrorRes
 fun errorBodyAsString(throwable: HttpException): String? {
     val reader = throwable.response()?.errorBody()?.charStream()
     return reader?.use { it.readText() }
+}
+
+@Composable
+fun LottieAnim(
+    resId: Int,
+    modifier: Modifier = Modifier
+) {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(resId = resId))
+    LottieAnimation(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(250.dp),
+        iterations = LottieConstants.IterateForever,
+        composition = composition
+    )
 }

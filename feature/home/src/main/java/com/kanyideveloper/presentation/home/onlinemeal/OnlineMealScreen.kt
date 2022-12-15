@@ -90,7 +90,12 @@ fun OnlineMealScreen(
             Spacer(modifier = Modifier.height(16.dp))
         }
         items(meals.meals) { meal ->
-            OnlineMealItem(meal = meal)
+            OnlineMealItem(
+                meal = meal,
+                onClick = { mealId ->
+                    navigator.openOnlineMealDetails(mealId = mealId)
+                }
+            )
         }
     }
 }
@@ -98,13 +103,17 @@ fun OnlineMealScreen(
 @Composable
 fun OnlineMealItem(
     meal: OnlineMeal,
-    isFavorite: Boolean = false
+    isFavorite: Boolean = false,
+    onClick: (String) -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxSize()
             .height(220.dp)
-            .padding(vertical = 5.dp),
+            .padding(vertical = 5.dp)
+            .clickable {
+                onClick(meal.mealId)
+            },
         shape = RoundedCornerShape(12.dp),
         backgroundColor = Color.White,
         elevation = 2.dp

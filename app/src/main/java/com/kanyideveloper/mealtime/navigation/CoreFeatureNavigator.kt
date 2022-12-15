@@ -24,6 +24,7 @@ import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.favorites.presentation.favorites.FavoritesNavigator
 import com.kanyideveloper.presentation.destinations.DetailsScreenDestination
 import com.kanyideveloper.presentation.destinations.HomeScreenDestination
+import com.kanyideveloper.presentation.destinations.OnlineMealDetailsScreenDestination
 import com.kanyideveloper.presentation.home.HomeNavigator
 import com.kanyideveloper.search.presentation.search.SearchNavigator
 import com.kanyideveloper.settings.presentation.SettingsNavigator
@@ -78,6 +79,10 @@ class CoreFeatureNavigator(
 
     override fun popBackStack() {
         navController.popBackStack()
+    }
+
+    override fun openOnlineMealDetails(mealId: String) {
+        navController.navigate(OnlineMealDetailsScreenDestination(mealId = mealId) within navGraph)
     }
 
     override fun navigateBackToHome() {
