@@ -27,7 +27,7 @@ import com.kanyideveloper.domain.repository.OnlineMealsRepository
 import kotlinx.coroutines.Dispatchers
 
 class OnlineMealsRepositoryImpl(
-    private val mealDbApi: MealDbApi,
+    private val mealDbApi: MealDbApi
 ) : OnlineMealsRepository {
 
     override suspend fun getMealCategories(): Resource<List<Category>> {
