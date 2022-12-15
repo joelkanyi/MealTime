@@ -52,6 +52,7 @@ interface HomeNavigator {
     fun openMealDetails(meal: Meal)
     fun openAddMeal()
     fun popBackStack()
+    fun openOnlineMealDetails(mealId: String)
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")

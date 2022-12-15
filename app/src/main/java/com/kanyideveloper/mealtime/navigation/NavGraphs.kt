@@ -21,6 +21,7 @@ import com.kanyideveloper.favorites.presentation.favorites.destinations.Favorite
 import com.kanyideveloper.presentation.destinations.DetailsScreenDestination
 import com.kanyideveloper.presentation.destinations.HomeScreenDestination
 import com.kanyideveloper.presentation.destinations.MyMealScreenDestination
+import com.kanyideveloper.presentation.destinations.OnlineMealDetailsScreenDestination
 import com.kanyideveloper.presentation.destinations.OnlineMealScreenDestination
 import com.kanyideveloper.search.presentation.search.destinations.SearchScreenDestination
 import com.kanyideveloper.settings.presentation.destinations.SettingsScreenDestination
@@ -39,6 +40,7 @@ object NavGraphs {
             HomeScreenDestination,
             MyMealScreenDestination,
             OnlineMealScreenDestination,
+            OnlineMealDetailsScreenDestination,
             DetailsScreenDestination,
             AddMealScreenDestination,
             NextAddMealScreenDestination
