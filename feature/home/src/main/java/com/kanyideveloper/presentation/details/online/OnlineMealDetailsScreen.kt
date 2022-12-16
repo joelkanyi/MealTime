@@ -21,6 +21,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -61,6 +62,9 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.kanyideveloper.compose_ui.theme.LightGrey
 import com.kanyideveloper.compose_ui.theme.MainOrange
+import com.kanyideveloper.core.components.EmptyStateComponent
+import com.kanyideveloper.core.components.ErrorStateComponent
+import com.kanyideveloper.core.components.LoadingStateComponent
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.util.LottieAnim
 import com.kanyideveloper.mealtime.core.R
@@ -89,35 +93,8 @@ fun OnlineMealDetailsScreen(
     val mealState = viewModel.details.value
 
     Box(modifier = Modifier.fillMaxSize()) {
-        if (mealState.isLoading) {
-            LottieAnim(
-                resId = R.raw.loading_anim,
-                modifier = Modifier.align(
-                    Alignment.Center
-                )
-            )
-        }
 
-        if (!mealState.isLoading && mealState.mealDetails.isEmpty()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(
-                        Alignment.Center
-                    )
-            ) {
-                LottieAnim(resId = R.raw.empty_state)
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    text = "Nothing found here!",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    textAlign = TextAlign.Center
-                )
-            }
-        }
-
+        // Data has been loaded successfully
         if (!mealState.isLoading && mealState.mealDetails.isNotEmpty()) {
             val meal = mealState.mealDetails.first()
             CollapsingToolbarScaffold(
@@ -282,6 +259,21 @@ fun OnlineMealDetailsScreen(
                     }
                 }
             }
+        }
+
+        // Loading data
+        if (mealState.isLoading) {
+            LoadingStateComponent()
+        }
+
+        // An Error has occurred
+        if (!mealState.isLoading && mealState.error != null) {
+            ErrorStateComponent(errorMessage = mealState.error)
+        }
+
+        // Loaded Data but the list is empty
+        if (!mealState.isLoading && mealState.error == null && mealState.mealDetails.isEmpty()) {
+            EmptyStateComponent()
         }
     }
 }
