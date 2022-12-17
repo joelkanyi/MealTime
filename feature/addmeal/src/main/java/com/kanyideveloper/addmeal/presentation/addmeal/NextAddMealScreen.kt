@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -41,7 +42,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -55,7 +55,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -102,37 +101,35 @@ fun NextAddMealScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            StandardToolbar(
-                navigate = {
-                    navigator.popBackStack()
-                },
-                title = {
-                    Text(text = "Add meal", fontSize = 18.sp)
-                },
-                showBackArrow = true,
-                navActions = {
-                    TextButton(
-                        onClick = {
-                            keyboardController?.hide()
-                            viewModel.saveMeal(
-                                imageUri = imageUri,
-                                mealName = mealName,
-                                cookingTime = cookingTime,
-                                servingPeople = servingPeople,
-                                complexity = complexity,
-                                category = category
-                            )
-                        },
-                        enabled = !viewModel.saveMeal.value.isLoading
-                    ) {
-                        SaveTextButtonContent(viewModel)
-                    }
+    Column(Modifier.fillMaxSize()) {
+        StandardToolbar(
+            navigate = {
+                navigator.popBackStack()
+            },
+            title = {
+                Text(text = "Add meal", fontSize = 18.sp)
+            },
+            showBackArrow = true,
+            navActions = {
+                TextButton(
+                    onClick = {
+                        keyboardController?.hide()
+                        viewModel.saveMeal(
+                            imageUri = imageUri,
+                            mealName = mealName,
+                            cookingTime = cookingTime,
+                            servingPeople = servingPeople,
+                            complexity = complexity,
+                            category = category
+                        )
+                    },
+                    enabled = !viewModel.saveMeal.value.isLoading
+                ) {
+                    SaveTextButtonContent(viewModel)
                 }
-            )
-        }
-    ) {
+            }
+        )
+
         if (viewModel.saveMeal.value.mealIsSaved) {
             navigator.navigateBackToHome()
         }
@@ -182,9 +179,8 @@ private fun SaveTextButtonContent(viewModel: AddMealsViewModel) {
     } else {
         Text(
             text = "Save",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.labelMedium
         )
     }
 }
@@ -201,9 +197,8 @@ private fun DirectionComponent(
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Text(
-            text = "Cooking Directions",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold
+            text = "Cooking Instructions",
+            style = MaterialTheme.typography.labelMedium
         )
         TextField(
             modifier = Modifier.fillMaxWidth(),
@@ -212,7 +207,7 @@ private fun DirectionComponent(
                 viewModel.setDirectionState(it)
             },
             placeholder = {
-                Text(text = "Enter directions")
+                Text(text = "Enter instruction")
             },
             colors = TextFieldDefaults.textFieldColors(),
             trailingIcon = {
@@ -257,7 +252,10 @@ private fun IngredientComponent(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Text(text = "Ingredients", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        Text(
+            text = "Ingredients",
+            style = MaterialTheme.typography.labelMedium
+        )
         TextField(
             modifier = Modifier.fillMaxWidth(),
             value = ingredient.text,

@@ -85,8 +85,8 @@ fun AddMealScreen(
     val sliderInteractionSource = MutableInteractionSource()
     val sliderColors =
         SliderDefaults.colors(
-            thumbColor = MaterialTheme.colorScheme.primaryContainer,
-            activeTrackColor = MaterialTheme.colorScheme.onPrimaryContainer
+            thumbColor = MaterialTheme.colorScheme.primary,
+            activeTrackColor = MaterialTheme.colorScheme.primary
         )
 
     val galleryLauncher =
@@ -117,7 +117,7 @@ fun AddMealScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color.LightGray)
+                        .background(MaterialTheme.colorScheme.tertiaryContainer)
                         .height(210.dp)
                         .clickable {
                             galleryLauncher.launch("image/*")
@@ -149,7 +149,10 @@ fun AddMealScreen(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Text(text = "Meal Name", fontSize = 12.sp)
+                    Text(
+                        text = "Meal Name",
+                        style = MaterialTheme.typography.labelMedium
+                    )
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = mealName.text,
@@ -157,7 +160,10 @@ fun AddMealScreen(
                             viewModel.setMealNameState(value = it)
                         },
                         placeholder = {
-                            Text(text = "Meal Name")
+                            Text(
+                                text = "Meal Name",
+                                style = MaterialTheme.typography.labelMedium
+                            )
                         },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Text,
@@ -178,6 +184,7 @@ fun AddMealScreen(
             }
 
             item {
+                Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -186,7 +193,10 @@ fun AddMealScreen(
                         modifier = Modifier.fillMaxWidth(.5f),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Text(text = "Category", fontSize = 12.sp)
+                        Text(
+                            text = "Category",
+                            style = MaterialTheme.typography.labelMedium
+                        )
 
                         SearchableExpandedDropDownMenu(
                             listOfItems = viewModel.categories,
@@ -216,7 +226,10 @@ fun AddMealScreen(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Text(text = "Cooking Complexity", fontSize = 12.sp)
+                        Text(
+                            text = "Cooking Complexity",
+                            style = MaterialTheme.typography.labelMedium
+                        )
 
                         SearchableExpandedDropDownMenu(
                             listOfItems = viewModel.cookingComplexities,
@@ -253,7 +266,7 @@ fun AddMealScreen(
                     ) {
                         Text(
                             text = "Cooking Time - ${cookingTime.toInt()} Minutes",
-                            fontSize = 14.sp
+                            style = MaterialTheme.typography.labelMedium
                         )
                     }
                     Slider(
@@ -296,7 +309,7 @@ fun AddMealScreen(
                     ) {
                         Text(
                             text = "Serving - ${peopleServing.toInt()} People",
-                            fontSize = 14.sp
+                            style = MaterialTheme.typography.labelMedium
                         )
                     }
                     Slider(
