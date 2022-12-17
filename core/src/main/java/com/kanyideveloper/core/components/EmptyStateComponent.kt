@@ -23,6 +23,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -39,6 +40,7 @@ fun BoxScope.EmptyStateComponent() {
                 Alignment.Center
             )
             .padding(16.dp)
+            .testTag("Empty State Component")
     ) {
         LottieAnim(resId = R.raw.empty_state)
         Text(

@@ -15,6 +15,7 @@
  */
 package com.kanyideveloper.presentation.home.onlinemeal
 
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -49,6 +50,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -70,7 +73,6 @@ import com.kanyideveloper.presentation.home.HomeNavigator
 import com.kanyideveloper.presentation.home.onlinemeal.state.CategoriesState
 import com.kanyideveloper.presentation.home.onlinemeal.state.MealState
 import com.ramcosta.composedestinations.annotation.Destination
-import org.jetbrains.annotations.VisibleForTesting
 
 @Destination
 @Composable
@@ -105,7 +107,7 @@ fun OnlineMealScreen(
 
 @VisibleForTesting
 @Composable
-private fun OnlineMealScreenContent(
+fun OnlineMealScreenContent(
     categoriesState: CategoriesState,
     selectedCategory: String,
     mealsState: MealState,
@@ -181,7 +183,7 @@ fun OnlineMealItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(0.75f),
-                contentDescription = null,
+                contentDescription = meal.name,
                 painter = rememberAsyncImagePainter(
                     ImageRequest.Builder(LocalContext.current)
                         .data(data = meal.imageUrl)
@@ -202,7 +204,8 @@ fun OnlineMealItem(
                 Text(
                     modifier = Modifier
                         .fillMaxWidth(0.8f)
-                        .padding(vertical = 3.dp),
+                        .padding(vertical = 3.dp)
+                        .semantics { contentDescription = "Online Meal Name" },
                     text = meal.name,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,

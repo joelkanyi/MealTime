@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import com.kanyideveloper.core.util.LottieAnim
 import com.kanyideveloper.mealtime.core.R
 
@@ -26,8 +27,10 @@ import com.kanyideveloper.mealtime.core.R
 fun BoxScope.LoadingStateComponent() {
     LottieAnim(
         resId = R.raw.loading_anim,
-        modifier = Modifier.align(
-            Alignment.Center
-        )
+        modifier = Modifier
+            .align(
+                Alignment.Center
+            )
+            .testTag("Loading Component")
     )
 }
