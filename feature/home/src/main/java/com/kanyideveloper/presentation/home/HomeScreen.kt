@@ -84,6 +84,7 @@ fun HomeScreen(
                     modifier = Modifier
                         .height(50.dp),
                     shape = MaterialTheme.shapes.large,
+                    containerColor = MaterialTheme.colorScheme.tertiary,
                     content = {
                         Row(
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
@@ -91,10 +92,15 @@ fun HomeScreen(
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.fork_knife_thin),
-                                contentDescription = null
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onTertiary
                             )
                             Spacer(modifier = Modifier.width(5.dp))
-                            Text(text = "Add Meal")
+                            Text(
+                                text = "Add Meal",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onTertiary
+                            )
                         }
                     },
                     onClick = {
