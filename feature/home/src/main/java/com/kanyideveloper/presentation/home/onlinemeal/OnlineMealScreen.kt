@@ -76,7 +76,7 @@ import org.jetbrains.annotations.VisibleForTesting
 @Composable
 fun OnlineMealScreen(
     navigator: HomeNavigator,
-    viewModel: OnlineMealViewModel = hiltViewModel(),
+    viewModel: OnlineMealViewModel = hiltViewModel()
 ) {
     val mealsState = viewModel.meals.value
     val categoriesState = viewModel.categories.value
@@ -110,11 +110,9 @@ private fun OnlineMealScreenContent(
     selectedCategory: String,
     mealsState: MealState,
     onSelectCategory: (String) -> Unit,
-    onMealClick: (String) -> Unit,
+    onMealClick: (String) -> Unit
 ) {
-
     Box(modifier = Modifier.fillMaxSize()) {
-
         // Data Loaded Successfully
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
@@ -164,7 +162,7 @@ private fun OnlineMealScreenContent(
 fun OnlineMealItem(
     meal: OnlineMeal,
     isFavorite: Boolean = false,
-    onClick: (String) -> Unit,
+    onClick: (String) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -235,7 +233,7 @@ fun OnlineMealItem(
 fun CategorySelection(
     state: CategoriesState,
     onClick: (String) -> Unit,
-    selectedCategory: String,
+    selectedCategory: String
 ) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
@@ -257,7 +255,7 @@ fun CategorySelection(
 fun CategoryItem(
     category: Category,
     selectedCategory: String,
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     val selected = selectedCategory == category.categoryName
     Card(

@@ -73,6 +73,19 @@ fun DetailsScreen(
     meal: Meal,
     navigator: HomeNavigator
 ) {
+    DetailsScreenContent(
+        meal = meal,
+        navigateBack = {
+            navigator.popBackStack()
+        }
+    )
+}
+
+@Composable
+private fun DetailsScreenContent(
+    meal: Meal,
+    navigateBack: () -> Unit
+) {
     val state = rememberCollapsingToolbarScaffoldState()
     val textSize = (18 + (30 - 18) * state.toolbarState.progress).sp
 
@@ -124,7 +137,7 @@ fun DetailsScreen(
             )
 
             IconButton(onClick = {
-                navigator.popBackStack()
+                navigateBack()
             }) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,

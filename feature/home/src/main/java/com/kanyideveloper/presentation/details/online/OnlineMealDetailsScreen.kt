@@ -21,7 +21,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -54,7 +53,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -66,8 +64,8 @@ import com.kanyideveloper.core.components.EmptyStateComponent
 import com.kanyideveloper.core.components.ErrorStateComponent
 import com.kanyideveloper.core.components.LoadingStateComponent
 import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core.util.LottieAnim
 import com.kanyideveloper.mealtime.core.R
+import com.kanyideveloper.presentation.details.DetailsState
 import com.kanyideveloper.presentation.details.DetailsViewModel
 import com.kanyideveloper.presentation.home.HomeNavigator
 import com.ramcosta.composedestinations.annotation.Destination
@@ -83,17 +81,29 @@ fun OnlineMealDetailsScreen(
     navigator: HomeNavigator,
     viewModel: DetailsViewModel = hiltViewModel()
 ) {
-    val state = rememberCollapsingToolbarScaffoldState()
-    val textSize = (18 + (30 - 18) * state.toolbarState.progress).sp
-
     LaunchedEffect(key1 = true) {
         viewModel.getDetails(mealId = mealId)
     }
 
     val mealState = viewModel.details.value
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    OnlineMealScreenContent(
+        mealState = mealState,
+        navigateBack = {
+            navigator.popBackStack()
+        }
+    )
+}
 
+@Composable
+private fun OnlineMealScreenContent(
+    mealState: DetailsState,
+    navigateBack: () -> Unit = {}
+) {
+    val state = rememberCollapsingToolbarScaffoldState()
+    val textSize = (18 + (30 - 18) * state.toolbarState.progress).sp
+
+    Box(modifier = Modifier.fillMaxSize()) {
         // Data has been loaded successfully
         if (!mealState.isLoading && mealState.mealDetails.isNotEmpty()) {
             val meal = mealState.mealDetails.first()
@@ -145,7 +155,7 @@ fun OnlineMealDetailsScreen(
                     )
 
                     IconButton(onClick = {
-                        navigator.popBackStack()
+                        navigateBack()
                     }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,

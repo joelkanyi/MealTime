@@ -94,7 +94,7 @@ fun HomeScreen(
                                 contentDescription = null
                             )
                             Spacer(modifier = Modifier.width(5.dp))
-                            Text(text = "Add MealEntity")
+                            Text(text = "Add Meal")
                         }
                     },
                     onClick = {
