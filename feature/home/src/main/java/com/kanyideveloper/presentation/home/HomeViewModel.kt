@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val homeRepository: HomeRepository
+    homeRepository: HomeRepository
 ) : ViewModel() {
 
     val myMeals = homeRepository.getMyMeals()
