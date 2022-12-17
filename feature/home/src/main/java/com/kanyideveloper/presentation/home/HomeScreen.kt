@@ -21,15 +21,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,7 +42,6 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.compose_ui.theme.MainOrange
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.mealtime.core.R
 import com.kanyideveloper.presentation.home.composables.TabItem
@@ -55,6 +55,7 @@ interface HomeNavigator {
     fun openOnlineMealDetails(mealId: String)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Destination
 @Composable
@@ -68,11 +69,11 @@ fun HomeScreen(
                 navigate = {},
                 title = {
                     Image(
+                        modifier = Modifier.size(100.dp, 100.dp),
                         painter = painterResource(id = R.drawable.ic_meal_time_banner),
                         contentDescription = null
                     )
                 },
-                modifier = Modifier.fillMaxWidth(),
                 showBackArrow = false,
                 navActions = {}
             )
@@ -82,8 +83,8 @@ fun HomeScreen(
                 FloatingActionButton(
                     modifier = Modifier
                         .height(50.dp),
-                    shape = RoundedCornerShape(24.dp),
-                    backgroundColor = MainOrange,
+                    shape = MaterialTheme.shapes.large,
+                    containerColor = MaterialTheme.colorScheme.tertiary,
                     content = {
                         Row(
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
@@ -91,10 +92,15 @@ fun HomeScreen(
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.fork_knife_thin),
-                                contentDescription = null
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onTertiary
                             )
                             Spacer(modifier = Modifier.width(5.dp))
-                            Text(text = "Add Meal")
+                            Text(
+                                text = "Add Meal",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onTertiary
+                            )
                         }
                     },
                     onClick = {

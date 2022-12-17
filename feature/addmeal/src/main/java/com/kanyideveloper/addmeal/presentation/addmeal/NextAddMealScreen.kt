@@ -23,39 +23,38 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -64,15 +63,14 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
 import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.compose_ui.theme.MainOrange
 import com.kanyideveloper.core.state.TextFieldState
 import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
 
-@OptIn(ExperimentalComposeUiApi::class)
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter", "UnusedMaterial3ScaffoldPaddingParameter")
 @Destination
 @Composable
 fun NextAddMealScreen(
@@ -103,38 +101,35 @@ fun NextAddMealScreen(
         }
     }
 
-    Scaffold(
-        scaffoldState = scaffoldState,
-        topBar = {
-            StandardToolbar(
-                navigate = {
-                    navigator.popBackStack()
-                },
-                title = {
-                    Text(text = "Add meal", fontSize = 18.sp)
-                },
-                showBackArrow = true,
-                navActions = {
-                    TextButton(
-                        onClick = {
-                            keyboardController?.hide()
-                            viewModel.saveMeal(
-                                imageUri = imageUri,
-                                mealName = mealName,
-                                cookingTime = cookingTime,
-                                servingPeople = servingPeople,
-                                complexity = complexity,
-                                category = category
-                            )
-                        },
-                        enabled = !viewModel.saveMeal.value.isLoading
-                    ) {
-                        SaveTextButtonContent(viewModel)
-                    }
+    Column(Modifier.fillMaxSize()) {
+        StandardToolbar(
+            navigate = {
+                navigator.popBackStack()
+            },
+            title = {
+                Text(text = "Add meal", fontSize = 18.sp)
+            },
+            showBackArrow = true,
+            navActions = {
+                TextButton(
+                    onClick = {
+                        keyboardController?.hide()
+                        viewModel.saveMeal(
+                            imageUri = imageUri,
+                            mealName = mealName,
+                            cookingTime = cookingTime,
+                            servingPeople = servingPeople,
+                            complexity = complexity,
+                            category = category
+                        )
+                    },
+                    enabled = !viewModel.saveMeal.value.isLoading
+                ) {
+                    SaveTextButtonContent(viewModel)
                 }
-            )
-        }
-    ) {
+            }
+        )
+
         if (viewModel.saveMeal.value.mealIsSaved) {
             navigator.navigateBackToHome()
         }
@@ -184,14 +179,13 @@ private fun SaveTextButtonContent(viewModel: AddMealsViewModel) {
     } else {
         Text(
             text = "Save",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            color = MainOrange
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.labelMedium
         )
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun DirectionComponent(
     direction: TextFieldState,
@@ -203,9 +197,8 @@ private fun DirectionComponent(
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Text(
-            text = "Cooking Directions",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold
+            text = "Cooking Instructions",
+            style = MaterialTheme.typography.labelMedium
         )
         TextField(
             modifier = Modifier.fillMaxWidth(),
@@ -214,11 +207,9 @@ private fun DirectionComponent(
                 viewModel.setDirectionState(it)
             },
             placeholder = {
-                Text(text = "Enter directions")
+                Text(text = "Enter instruction")
             },
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.Transparent
-            ),
+            colors = TextFieldDefaults.textFieldColors(),
             trailingIcon = {
                 IconButton(onClick = {
                     keyboardController?.hide()
@@ -241,17 +232,16 @@ private fun DirectionComponent(
         if (direction.error != null) {
             Text(
                 text = direction.error ?: "",
-                style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.error,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.error,
                 textAlign = TextAlign.End,
-                modifier = Modifier.fillMaxWidth(),
-                fontSize = 10.sp
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun IngredientComponent(
     ingredient: TextFieldState,
@@ -262,7 +252,10 @@ private fun IngredientComponent(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Text(text = "Ingredients", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        Text(
+            text = "Ingredients",
+            style = MaterialTheme.typography.labelMedium
+        )
         TextField(
             modifier = Modifier.fillMaxWidth(),
             value = ingredient.text,
@@ -272,9 +265,7 @@ private fun IngredientComponent(
             placeholder = {
                 Text(text = "Enter ingredient")
             },
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.Transparent
-            ),
+            colors = TextFieldDefaults.textFieldColors(),
             trailingIcon = {
                 IconButton(onClick = {
                     keyboardController?.hide()
@@ -296,11 +287,10 @@ private fun IngredientComponent(
         if (ingredient.error != null) {
             Text(
                 text = ingredient.error ?: "",
-                style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.error,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.error,
                 textAlign = TextAlign.End,
-                modifier = Modifier.fillMaxWidth(),
-                fontSize = 10.sp
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
@@ -313,9 +303,8 @@ fun IngredientItem(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        elevation = 0.dp,
-        backgroundColor = Color.LightGray.copy(alpha = .5f),
-        shape = RoundedCornerShape(8.dp)
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Row(
             modifier = Modifier
@@ -351,9 +340,8 @@ fun DirectionItem(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        elevation = 0.dp,
-        backgroundColor = Color.LightGray.copy(alpha = .5f),
-        shape = RoundedCornerShape(8.dp)
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Row(
             modifier = Modifier

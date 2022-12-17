@@ -35,17 +35,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,7 +64,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyidev.searchable_dropdown.SearchableExpandedDropDownMenu
 import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.compose_ui.theme.MainOrange
 import com.kanyideveloper.core.util.imageUriToImageBitmap
 import com.ramcosta.composedestinations.annotation.Destination
 
@@ -84,7 +83,11 @@ fun AddMealScreen(
     val context = LocalContext.current
 
     val sliderInteractionSource = MutableInteractionSource()
-    val sliderColors = SliderDefaults.colors(thumbColor = MainOrange, activeTrackColor = MainOrange)
+    val sliderColors =
+        SliderDefaults.colors(
+            thumbColor = MaterialTheme.colorScheme.primary,
+            activeTrackColor = MaterialTheme.colorScheme.primary
+        )
 
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -114,7 +117,7 @@ fun AddMealScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color.LightGray)
+                        .background(MaterialTheme.colorScheme.tertiaryContainer)
                         .height(210.dp)
                         .clickable {
                             galleryLauncher.launch("image/*")
@@ -146,7 +149,10 @@ fun AddMealScreen(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Text(text = "Meal Name", fontSize = 12.sp)
+                    Text(
+                        text = "Meal Name",
+                        style = MaterialTheme.typography.labelMedium
+                    )
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = mealName.text,
@@ -154,7 +160,10 @@ fun AddMealScreen(
                             viewModel.setMealNameState(value = it)
                         },
                         placeholder = {
-                            Text(text = "Meal Name")
+                            Text(
+                                text = "Meal Name",
+                                style = MaterialTheme.typography.labelMedium
+                            )
                         },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Text,
@@ -165,17 +174,17 @@ fun AddMealScreen(
                     if (mealName.error != null) {
                         Text(
                             text = mealName.error ?: "",
-                            style = MaterialTheme.typography.body2,
-                            color = MaterialTheme.colors.error,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.error,
                             textAlign = TextAlign.End,
-                            modifier = Modifier.fillMaxWidth(),
-                            fontSize = 10.sp
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
             }
 
             item {
+                Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -184,7 +193,10 @@ fun AddMealScreen(
                         modifier = Modifier.fillMaxWidth(.5f),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Text(text = "Category", fontSize = 12.sp)
+                        Text(
+                            text = "Category",
+                            style = MaterialTheme.typography.labelMedium
+                        )
 
                         SearchableExpandedDropDownMenu(
                             listOfItems = viewModel.categories,
@@ -202,11 +214,10 @@ fun AddMealScreen(
                         if (category.error != null) {
                             Text(
                                 text = category.error ?: "",
-                                style = MaterialTheme.typography.body2,
-                                color = MaterialTheme.colors.error,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.error,
                                 textAlign = TextAlign.End,
-                                modifier = Modifier.fillMaxWidth(),
-                                fontSize = 10.sp
+                                modifier = Modifier.fillMaxWidth()
                             )
                         }
                     }
@@ -215,7 +226,10 @@ fun AddMealScreen(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Text(text = "Cooking Complexity", fontSize = 12.sp)
+                        Text(
+                            text = "Cooking Complexity",
+                            style = MaterialTheme.typography.labelMedium
+                        )
 
                         SearchableExpandedDropDownMenu(
                             listOfItems = viewModel.cookingComplexities,
@@ -233,11 +247,10 @@ fun AddMealScreen(
                         if (complexity.error != null) {
                             Text(
                                 text = complexity.error ?: "",
-                                style = MaterialTheme.typography.body2,
-                                color = MaterialTheme.colors.error,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.error,
                                 textAlign = TextAlign.End,
-                                modifier = Modifier.fillMaxWidth(),
-                                fontSize = 10.sp
+                                modifier = Modifier.fillMaxWidth()
                             )
                         }
                     }
@@ -253,7 +266,7 @@ fun AddMealScreen(
                     ) {
                         Text(
                             text = "Cooking Time - ${cookingTime.toInt()} Minutes",
-                            fontSize = 14.sp
+                            style = MaterialTheme.typography.labelMedium
                         )
                     }
                     Slider(
@@ -296,7 +309,7 @@ fun AddMealScreen(
                     ) {
                         Text(
                             text = "Serving - ${peopleServing.toInt()} People",
-                            fontSize = 14.sp
+                            style = MaterialTheme.typography.labelMedium
                         )
                     }
                     Slider(

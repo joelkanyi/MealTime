@@ -36,13 +36,14 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -50,7 +51,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -59,8 +59,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.kanyideveloper.compose_ui.theme.MainOrange
-import com.kanyideveloper.compose_ui.theme.MyLightOrange
+import com.kanyideveloper.compose_ui.theme.Shapes
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.data.mapper.toMeal
 import com.kanyideveloper.domain.model.MealCategory
@@ -105,65 +104,46 @@ private fun MyMealScreenContent(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         item(span = { GridItemSpan(2) }) {
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+        item(span = { GridItemSpan(2) }) {
             Text(
                 modifier = Modifier.padding(vertical = 5.dp),
                 text = "Categories",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.titleMedium
             )
         }
         item(span = { GridItemSpan(2) }) {
-            val mealCategories = listOf(
-                MealCategory(
-                    "Food",
-                    R.drawable.ic_food
-                ),
-                MealCategory(
-                    "Breakfast",
-                    R.drawable.ic_breakfast
-                ),
-                MealCategory(
-                    "Drinks",
-                    R.drawable.ic_drinks
-                ),
-                MealCategory(
-                    "Fruits",
-                    R.drawable.ic_fruit
-                ),
-                MealCategory(
-                    "Fast Food",
-                    R.drawable.ic_pizza_thin
-                )
-            )
-
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(mealCategories) { meal ->
-                    Box(
+                items(mealCategories) { category ->
+                    Card(
                         modifier = Modifier
-                            .size(70.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(MyLightOrange),
-                        contentAlignment = Alignment.Center
+                            .size(65.dp),
+                        shape = Shapes.large,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer
+                        )
                     ) {
                         Column(
+                            Modifier.fillMaxSize(),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
                             Icon(
-                                modifier = Modifier.size(32.dp),
-                                tint = MainOrange,
-                                painter = painterResource(id = meal.icon),
-
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .padding(4.dp),
+                                painter = painterResource(id = category.icon),
+                                tint = MaterialTheme.colorScheme.onSecondaryContainer,
                                 contentDescription = null
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = meal.name,
+                                text = category.name,
                                 textAlign = TextAlign.Center,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
                         }
                     }
@@ -178,9 +158,9 @@ private fun MyMealScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
-                    .height(200.dp),
-                shape = RoundedCornerShape(12.dp),
-                elevation = 0.dp
+                    .height(180.dp),
+                shape = Shapes.large,
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
                 Box(Modifier.fillMaxSize()) {
                     Image(
@@ -196,8 +176,7 @@ private fun MyMealScreenContent(
                     ) {
                         Text(
                             text = "What to cook for lunch?",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.titleMedium,
                             color = Color.White
                         )
                         Button(
@@ -206,9 +185,8 @@ private fun MyMealScreenContent(
                             }
                         ) {
                             Text(
-                                text = "Get a Random MealEntity",
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Normal
+                                text = "Get a Random Meal",
+                                style = MaterialTheme.typography.labelMedium
                             )
                         }
                     }
@@ -223,8 +201,10 @@ private fun MyMealScreenContent(
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
                         .height(180.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    elevation = 0.dp
+                    shape = Shapes.large,
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    )
                 ) {
                     Box(Modifier.fillMaxSize()) {
                         Image(
@@ -241,9 +221,10 @@ private fun MyMealScreenContent(
                                 .clickable {
                                     showRandomMeal1 = false
                                 },
-                            shape = RoundedCornerShape(8.dp),
-                            elevation = 0.dp,
-                            backgroundColor = Color.Red.copy(alpha = 0.8f)
+                            shape = Shapes.medium,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surface
+                            )
                         ) {
                             Row(
                                 modifier = Modifier
@@ -251,7 +232,10 @@ private fun MyMealScreenContent(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
-                                    modifier = Modifier.size(18.dp),
+                                    modifier = Modifier
+                                        .size(18.dp)
+                                        .background(MaterialTheme.colorScheme.surface)
+                                        .padding(4.dp),
                                     imageVector = Icons.Default.Close,
                                     tint = Color.White,
                                     contentDescription = null
@@ -295,9 +279,11 @@ private fun MyMealScreenContent(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
-                                        modifier = Modifier.size(24.dp),
+                                        modifier = Modifier
+                                            .size(24.dp)
+                                            .background(MaterialTheme.colorScheme.surface)
+                                            .padding(4.dp),
                                         painter = painterResource(id = R.drawable.ic_clock),
-                                        tint = MainOrange,
                                         contentDescription = null
                                     )
                                     Spacer(modifier = Modifier.width(5.dp))
@@ -323,8 +309,7 @@ private fun MyMealScreenContent(
             Text(
                 modifier = Modifier.padding(vertical = 3.dp),
                 text = "Meals",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.titleMedium
             )
         }
         items(myMeals ?: emptyList()) { meal ->
@@ -337,3 +322,26 @@ private fun MyMealScreenContent(
         }
     }
 }
+
+private val mealCategories = listOf(
+    MealCategory(
+        "Food",
+        R.drawable.ic_food
+    ),
+    MealCategory(
+        "Breakfast",
+        R.drawable.ic_breakfast
+    ),
+    MealCategory(
+        "Drinks",
+        R.drawable.ic_drinks
+    ),
+    MealCategory(
+        "Fruits",
+        R.drawable.ic_fruit
+    ),
+    MealCategory(
+        "Fast Food",
+        R.drawable.ic_pizza_thin
+    )
+)

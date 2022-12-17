@@ -18,9 +18,11 @@ package com.kanyideveloper.mealtime.component
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
@@ -37,13 +39,12 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavOptionsBuilder
-import com.kanyideveloper.compose_ui.theme.DarkGrey
-import com.kanyideveloper.compose_ui.theme.MainOrange
 import com.kanyideveloper.mealtime.BottomNavItem
 import com.kanyideveloper.mealtime.navigation.NavGraphs
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.spec.NavGraphSpec
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StandardScaffold(
     navController: NavController,
@@ -80,8 +81,8 @@ fun StandardScaffold(
                                     fontSize = 9.sp
                                 )
                             },
-                            selectedContentColor = MainOrange,
-                            unselectedContentColor = DarkGrey,
+                            selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            unselectedContentColor = MaterialTheme.colorScheme.surfaceVariant,
                             alwaysShowLabel = true,
                             selected = currentSelectedItem == item.screen,
                             onClick = {
