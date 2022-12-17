@@ -15,6 +15,7 @@
  */
 package com.kanyideveloper.presentation.home.onlinemeal
 
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -49,6 +50,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -59,11 +62,16 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.kanyideveloper.compose_ui.theme.MainOrange
 import com.kanyideveloper.compose_ui.theme.MyLightOrange
+import com.kanyideveloper.core.components.EmptyStateComponent
+import com.kanyideveloper.core.components.ErrorStateComponent
+import com.kanyideveloper.core.components.LoadingStateComponent
+import com.kanyideveloper.core.components.SwipeRefreshComponent
 import com.kanyideveloper.domain.model.Category
 import com.kanyideveloper.domain.model.OnlineMeal
 import com.kanyideveloper.mealtime.core.R
 import com.kanyideveloper.presentation.home.HomeNavigator
 import com.kanyideveloper.presentation.home.onlinemeal.state.CategoriesState
+import com.kanyideveloper.presentation.home.onlinemeal.state.MealState
 import com.ramcosta.composedestinations.annotation.Destination
 
 @Destination
@@ -72,30 +80,82 @@ fun OnlineMealScreen(
     navigator: HomeNavigator,
     viewModel: OnlineMealViewModel = hiltViewModel()
 ) {
-    val meals = viewModel.meals.value
+    val mealsState = viewModel.meals.value
     val categoriesState = viewModel.categories.value
+    val selectedCategory = viewModel.selectedCategory.value
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    SwipeRefreshComponent(
+        isRefreshingState = mealsState.isLoading,
+        onRefreshData = {
+            viewModel.getMeals(viewModel.selectedCategory.value)
+        }
     ) {
-        item(span = { GridItemSpan(2) }) {
-            CategorySelection(
-                state = categoriesState,
-                viewModel = viewModel
-            )
+        OnlineMealScreenContent(
+            categoriesState = categoriesState,
+            selectedCategory = selectedCategory,
+            mealsState = mealsState,
+            onMealClick = { mealId ->
+                navigator.openOnlineMealDetails(mealId = mealId)
+            },
+            onSelectCategory = { categoryName ->
+                viewModel.setSelectedCategory(categoryName)
+                viewModel.getMeals(viewModel.selectedCategory.value)
+            }
+        )
+    }
+}
+
+@VisibleForTesting
+@Composable
+fun OnlineMealScreenContent(
+    categoriesState: CategoriesState,
+    selectedCategory: String,
+    mealsState: MealState,
+    onSelectCategory: (String) -> Unit,
+    onMealClick: (String) -> Unit
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Data Loaded Successfully
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            contentPadding = PaddingValues(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            item(span = { GridItemSpan(2) }) {
+                CategorySelection(
+                    state = categoriesState,
+                    selectedCategory = selectedCategory,
+                    onClick = { categoryName ->
+                        onSelectCategory(categoryName)
+                    }
+                )
+            }
+            item(span = { GridItemSpan(2) }) {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            items(mealsState.meals) { meal ->
+                OnlineMealItem(
+                    meal = meal,
+                    onClick = { mealId ->
+                        onMealClick(mealId)
+                    }
+                )
+            }
         }
-        item(span = { GridItemSpan(2) }) {
-            Spacer(modifier = Modifier.height(16.dp))
+
+        // Loading data
+        if (mealsState.isLoading) {
+            LoadingStateComponent()
         }
-        items(meals.meals) { meal ->
-            OnlineMealItem(
-                meal = meal,
-                onClick = { mealId ->
-                    navigator.openOnlineMealDetails(mealId = mealId)
-                }
-            )
+
+        // An Error has occurred
+        if (!mealsState.isLoading && mealsState.error != null) {
+            ErrorStateComponent(errorMessage = mealsState.error)
+        }
+
+        // Loaded Data but the list is empty
+        if (!mealsState.isLoading && mealsState.error == null && mealsState.meals.isEmpty()) {
+            EmptyStateComponent()
         }
     }
 }
@@ -123,7 +183,7 @@ fun OnlineMealItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(0.75f),
-                contentDescription = null,
+                contentDescription = meal.name,
                 painter = rememberAsyncImagePainter(
                     ImageRequest.Builder(LocalContext.current)
                         .data(data = meal.imageUrl)
@@ -144,7 +204,8 @@ fun OnlineMealItem(
                 Text(
                     modifier = Modifier
                         .fillMaxWidth(0.8f)
-                        .padding(vertical = 3.dp),
+                        .padding(vertical = 3.dp)
+                        .semantics { contentDescription = "Online Meal Name" },
                     text = meal.name,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
@@ -174,7 +235,8 @@ fun OnlineMealItem(
 @Composable
 fun CategorySelection(
     state: CategoriesState,
-    viewModel: OnlineMealViewModel
+    onClick: (String) -> Unit,
+    selectedCategory: String
 ) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
@@ -183,7 +245,10 @@ fun CategorySelection(
         items(state.categories) { category ->
             CategoryItem(
                 category = category,
-                viewModel = viewModel
+                onClick = {
+                    onClick(category.categoryName)
+                },
+                selectedCategory = selectedCategory
             )
         }
     }
@@ -192,16 +257,16 @@ fun CategorySelection(
 @Composable
 fun CategoryItem(
     category: Category,
-    viewModel: OnlineMealViewModel
+    selectedCategory: String,
+    onClick: () -> Unit
 ) {
-    val selected = viewModel.selectedCategory.value == category.categoryName
+    val selected = selectedCategory == category.categoryName
     Card(
         Modifier
             .width(100.dp)
             .wrapContentHeight()
             .clickable {
-                viewModel.setSelectedCategory(category.categoryName)
-                viewModel.getMeals(viewModel.selectedCategory.value)
+                onClick()
             },
         shape = RoundedCornerShape(8.dp),
         elevation = 0.dp,

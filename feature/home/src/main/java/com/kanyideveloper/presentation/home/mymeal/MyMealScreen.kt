@@ -48,7 +48,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,6 +61,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.compose_ui.theme.MainOrange
 import com.kanyideveloper.compose_ui.theme.MyLightOrange
+import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.data.mapper.toMeal
 import com.kanyideveloper.domain.model.MealCategory
 import com.kanyideveloper.mealtime.core.R
@@ -78,9 +78,26 @@ fun MyMealScreen(
 ) {
     val myMeals = viewModel.myMeals.observeAsState().value?.map { it.toMeal() }
 
-    var showRandomMeal by remember {
+    val showRandomMeal by remember {
         mutableStateOf(false)
     }
+
+    MyMealScreenContent(
+        showRandomMeal = showRandomMeal,
+        myMeals = myMeals,
+        openMealDetails = { meal ->
+            navigator.openMealDetails(meal = meal)
+        }
+    )
+}
+
+@Composable
+private fun MyMealScreenContent(
+    showRandomMeal: Boolean,
+    myMeals: List<Meal>?,
+    openMealDetails: (Meal) -> Unit = {}
+) {
+    var showRandomMeal1 = showRandomMeal
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
         columns = GridCells.Fixed(2),
@@ -185,7 +202,7 @@ fun MyMealScreen(
                         )
                         Button(
                             onClick = {
-                                showRandomMeal = true
+                                showRandomMeal1 = true
                             }
                         ) {
                             Text(
@@ -199,7 +216,7 @@ fun MyMealScreen(
             }
         }
 
-        if (showRandomMeal) {
+        if (showRandomMeal1) {
             item(span = { GridItemSpan(2) }) {
                 Card(
                     modifier = Modifier
@@ -222,7 +239,7 @@ fun MyMealScreen(
                                 .align(Alignment.TopEnd)
                                 .padding(8.dp)
                                 .clickable {
-                                    showRandomMeal = false
+                                    showRandomMeal1 = false
                                 },
                             shape = RoundedCornerShape(8.dp),
                             elevation = 0.dp,
@@ -313,7 +330,7 @@ fun MyMealScreen(
         items(myMeals ?: emptyList()) { meal ->
             MealItem(
                 modifier = Modifier.clickable {
-                    navigator.openMealDetails(meal = meal)
+                    openMealDetails(meal)
                 },
                 meal = meal
             )

@@ -76,7 +76,9 @@ class OnlineMealViewModel @Inject constructor(
 
     fun getMeals(category: String) {
         _meals.value = meals.value.copy(
-            isLoading = true
+            isLoading = true,
+            meals = emptyList(),
+            error = null
         )
         viewModelScope.launch {
             when (val result = onlineMealsRepository.getMeals(category = category)) {

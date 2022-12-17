@@ -39,7 +39,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun Tabs(
     tabs: List<TabItem>,
-    pagerState: PagerState
+    pagerState: PagerState,
+    onClick: (Int) -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
@@ -71,6 +72,7 @@ fun Tabs(
                 selected = pagerState.currentPage == index,
                 onClick = {
                     scope.launch {
+                        onClick(index)
                         pagerState.animateScrollToPage(index)
                     }
                 },

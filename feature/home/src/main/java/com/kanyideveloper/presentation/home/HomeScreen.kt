@@ -94,7 +94,7 @@ fun HomeScreen(
                                 contentDescription = null
                             )
                             Spacer(modifier = Modifier.width(5.dp))
-                            Text(text = "Add MealEntity")
+                            Text(text = "Add Meal")
                         }
                     },
                     onClick = {
@@ -108,7 +108,14 @@ fun HomeScreen(
             navigator = navigator,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues = paddingValues)
+                .padding(paddingValues = paddingValues),
+            onClick = { page ->
+                if (page == 0) {
+                    viewModel.setIsMyMeal(true)
+                } else {
+                    viewModel.setIsMyMeal(false)
+                }
+            }
         )
     }
 }
@@ -117,7 +124,8 @@ fun HomeScreen(
 @Composable
 fun MainContent(
     navigator: HomeNavigator,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: (Int) -> Unit
 ) {
     val listOfTabs = listOf(
         TabItem.Outgoing(navigator = navigator),
@@ -128,14 +136,14 @@ fun MainContent(
     Column(modifier = modifier) {
         Tabs(
             tabs = listOfTabs,
-            pagerState = pagerState
+            pagerState = pagerState,
+            onClick = {
+                onClick(it)
+            }
         )
         TabContent(
             tabs = listOfTabs,
-            pagerState = pagerState,
-            onClick = {
-                // navigator.navigate(DetailsScreenDestination)
-            }
+            pagerState = pagerState
         )
     }
 }
@@ -144,8 +152,7 @@ fun MainContent(
 @Composable
 fun TabContent(
     tabs: List<TabItem>,
-    pagerState: PagerState,
-    onClick: () -> Unit
+    pagerState: PagerState
 ) {
     HorizontalPager(
         count = tabs.size,
@@ -154,7 +161,6 @@ fun TabContent(
     ) { page ->
         tabs[page].screen(
             onClick = {
-                onClick()
             }
         )
     }
