@@ -47,6 +47,7 @@ import coil.request.ImageRequest
 import com.kanyideveloper.compose_ui.theme.LightGrey
 import com.kanyideveloper.compose_ui.theme.MainOrange
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.util.convertMinutesToHours
 import com.kanyideveloper.mealtime.core.R
 
 @Composable
@@ -90,7 +91,7 @@ fun MealItem(
                         .padding(8.dp),
                     shape = RoundedCornerShape(8.dp),
                     elevation = 0.dp,
-                    backgroundColor = LightGrey.copy(alpha = 0.8f)
+                    backgroundColor = LightGrey.copy(alpha = 0.6f)
                 ) {
                     Row(
                         modifier = Modifier
@@ -106,7 +107,7 @@ fun MealItem(
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
                             modifier = Modifier.padding(vertical = 3.dp),
-                            text = "${meal.cookingTime} Mins",
+                            text = convertMinutesToHours(meal.cookingTime),
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold
                         )

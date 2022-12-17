@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core
+package com.kanyideveloper.core.util
 
-import org.junit.Assert.*
+import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
-class ExampleUnitTest {
+class UtilFunctionsTest {
+
     @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+    fun `return the correct cooking time format in mins or hours`() {
+        // Given
+        val mins = 330
+        val expectedResult = "5 hrs 30 mins"
+
+        // When
+        val result = convertMinutesToHours(mins)
+
+        // Then
+        assertThat(result).isEqualTo(expectedResult)
     }
 }
