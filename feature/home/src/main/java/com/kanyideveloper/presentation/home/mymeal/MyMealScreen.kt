@@ -104,68 +104,46 @@ private fun MyMealScreenContent(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         item(span = { GridItemSpan(2) }) {
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+        item(span = { GridItemSpan(2) }) {
             Text(
                 modifier = Modifier.padding(vertical = 5.dp),
                 text = "Categories",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.titleMedium
             )
         }
         item(span = { GridItemSpan(2) }) {
-            val mealCategories = listOf(
-                MealCategory(
-                    "Food",
-                    R.drawable.ic_food
-                ),
-                MealCategory(
-                    "Breakfast",
-                    R.drawable.ic_breakfast
-                ),
-                MealCategory(
-                    "Drinks",
-                    R.drawable.ic_drinks
-                ),
-                MealCategory(
-                    "Fruits",
-                    R.drawable.ic_fruit
-                ),
-                MealCategory(
-                    "Fast Food",
-                    R.drawable.ic_pizza_thin
-                )
-            )
-
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(mealCategories) { meal ->
+                items(mealCategories) { category ->
                     Card(
                         modifier = Modifier
-                            .size(70.dp),
+                            .size(65.dp),
                         shape = Shapes.large,
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surface
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer
                         )
                     ) {
                         Column(
+                            Modifier.fillMaxSize(),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
                             Icon(
                                 modifier = Modifier
                                     .size(32.dp)
-                                    .background(MaterialTheme.colorScheme.surface)
                                     .padding(4.dp),
-                                painter = painterResource(id = meal.icon),
-
+                                painter = painterResource(id = category.icon),
+                                tint = MaterialTheme.colorScheme.onSecondaryContainer,
                                 contentDescription = null
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = meal.name,
+                                text = category.name,
                                 textAlign = TextAlign.Center,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
                         }
                     }
@@ -180,7 +158,7 @@ private fun MyMealScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
-                    .height(200.dp),
+                    .height(180.dp),
                 shape = Shapes.large,
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
@@ -198,8 +176,7 @@ private fun MyMealScreenContent(
                     ) {
                         Text(
                             text = "What to cook for lunch?",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.titleMedium,
                             color = Color.White
                         )
                         Button(
@@ -208,9 +185,8 @@ private fun MyMealScreenContent(
                             }
                         ) {
                             Text(
-                                text = "Get a Random MealEntity",
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Normal
+                                text = "Get a Random Meal",
+                                style = MaterialTheme.typography.labelMedium
                             )
                         }
                     }
@@ -333,8 +309,7 @@ private fun MyMealScreenContent(
             Text(
                 modifier = Modifier.padding(vertical = 3.dp),
                 text = "Meals",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.titleMedium
             )
         }
         items(myMeals ?: emptyList()) { meal ->
@@ -347,3 +322,26 @@ private fun MyMealScreenContent(
         }
     }
 }
+
+private val mealCategories = listOf(
+    MealCategory(
+        "Food",
+        R.drawable.ic_food
+    ),
+    MealCategory(
+        "Breakfast",
+        R.drawable.ic_breakfast
+    ),
+    MealCategory(
+        "Drinks",
+        R.drawable.ic_drinks
+    ),
+    MealCategory(
+        "Fruits",
+        R.drawable.ic_fruit
+    ),
+    MealCategory(
+        "Fast Food",
+        R.drawable.ic_pizza_thin
+    )
+)

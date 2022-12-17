@@ -17,6 +17,7 @@ package com.kanyideveloper.compose_ui.theme // ktlint-disable filename
 
 import android.os.Build
 import androidx.annotation.ChecksSdkIntAtLeast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -92,22 +93,59 @@ private val DarkColors = darkColorScheme(
 
 @Composable
 fun MealTimeTheme(
-    useDarkTheme: Boolean = isSystemInDarkTheme(),
+    theme: Int = Theme.FOLLOW_SYSTEM.themeValue,
     content: @Composable() () -> Unit
 ) {
-    val useDynamicColors = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-    val colors = when {
-        useDynamicColors && useDarkTheme -> dynamicDarkColorScheme(LocalContext.current)
-        useDynamicColors && !useDarkTheme -> dynamicLightColorScheme(LocalContext.current)
-        useDarkTheme -> DarkColors
-        else -> LightColors
+    val autoColors = if (isSystemInDarkTheme()) DarkColors else LightColors
+
+    val dynamicColors = if (supportsDynamicTheming()) {
+        val context = LocalContext.current
+        if (isSystemInDarkTheme()) {
+            dynamicDarkColorScheme(context)
+        } else {
+            dynamicLightColorScheme(context)
+        }
+    } else {
+        autoColors
+    }
+
+    val colors = when (theme) {
+        Theme.LIGHT_THEME.themeValue -> LightColors
+        Theme.DARK_THEME.themeValue -> DarkColors
+        Theme.MATERIAL_YOU.themeValue -> dynamicColors
+        else -> autoColors
     }
 
     MaterialTheme(
         colorScheme = colors,
+        typography = Typography,
+        shapes = Shapes,
         content = content
     )
 }
 
 @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.S)
 private fun supportsDynamicTheming() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+
+// To be used to set the preferred theme inside settings
+enum class Theme(
+    val themeName: String,
+    val themeValue: Int
+) {
+    MATERIAL_YOU(
+        themeName = "Material You",
+        themeValue = 12
+    ),
+    FOLLOW_SYSTEM(
+        themeName = "Follow System Settings",
+        themeValue = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+    ),
+    LIGHT_THEME(
+        themeName = "Light Theme",
+        themeValue = AppCompatDelegate.MODE_NIGHT_NO
+    ),
+    DARK_THEME(
+        themeName = "Dark Theme",
+        themeValue = AppCompatDelegate.MODE_NIGHT_YES
+    );
+}

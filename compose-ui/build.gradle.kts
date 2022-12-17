@@ -52,6 +52,7 @@ dependencies {
 
     implementation("androidx.compose.ui:ui:${Versions.composeCompiler}")
     implementation("androidx.compose.ui:ui-tooling-preview:${Versions.composeCompiler}")
+    implementation("androidx.appcompat:appcompat:1.5.1")
 
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:${Versions.composeCompiler}")
     debugImplementation("androidx.compose.ui:ui-tooling:${Versions.composeCompiler}")

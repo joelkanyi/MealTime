@@ -16,7 +16,6 @@
 package com.kanyideveloper.presentation.home.composables
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -31,7 +30,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -59,7 +57,7 @@ fun MealItem(
             .height(220.dp)
             .padding(vertical = 5.dp),
         shape = Shapes.large,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Image(
@@ -88,7 +86,7 @@ fun MealItem(
                         .padding(8.dp),
                     shape = MaterialTheme.shapes.medium,
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = .75f)
                     )
                 ) {
                     Row(
@@ -99,13 +97,15 @@ fun MealItem(
                         Icon(
                             modifier = Modifier.size(18.dp),
                             painter = painterResource(id = R.drawable.ic_clock),
-                            contentDescription = null
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
                             modifier = Modifier.padding(vertical = 3.dp),
                             text = convertMinutesToHours(meal.cookingTime),
-                            style = MaterialTheme.typography.labelMedium
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -115,7 +115,7 @@ fun MealItem(
                     .fillMaxWidth()
                     .padding(vertical = 8.dp, horizontal = 12.dp)
                     .align(Alignment.BottomStart),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -123,25 +123,22 @@ fun MealItem(
                         .fillMaxWidth(0.8f)
                         .padding(vertical = 3.dp),
                     text = meal.name,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                IconButton(onClick = {
-                }) {
-                    Icon(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .background(MaterialTheme.colorScheme.surface)
-                            .padding(4.dp),
-                        painter = painterResource(
-                            id = if (meal.isFavorite) {
-                                R.drawable.filled_favorite
-                            } else {
-                                R.drawable.unfilled_favorite
-                            }
-                        ),
-                        contentDescription = null
-                    )
-                }
+                Icon(
+                    modifier = Modifier
+                        .size(42.dp),
+                    painter = painterResource(
+                        id = if (meal.isFavorite) {
+                            R.drawable.filled_favorite
+                        } else {
+                            R.drawable.unfilled_favorite
+                        }
+                    ),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }

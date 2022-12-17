@@ -83,7 +83,7 @@ val Typography = Typography(
     titleSmall = TextStyle(
         fontFamily = robotoCondensed,
         fontWeight = FontWeight.W500,
-        fontSize = 14.sp,
+        fontSize = 12.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp
     ),
