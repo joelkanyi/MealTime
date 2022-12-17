@@ -134,7 +134,7 @@ private fun OnlineMealScreenContent(
                             ImageRequest.Builder(LocalContext.current)
                                 .data(data = meal.imageUrl)
                                 .apply(block = fun ImageRequest.Builder.() {
-                                    crossfade(true)
+                                    placeholder(R.drawable.food_loading)
                                 }).build()
                         ),
                         contentDescription = null,
