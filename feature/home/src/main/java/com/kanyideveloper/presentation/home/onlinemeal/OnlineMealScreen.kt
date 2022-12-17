@@ -47,17 +47,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -173,7 +168,7 @@ fun OnlineMealItem(
             .clickable {
                 onClick(meal.mealId)
             },
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -202,11 +197,10 @@ fun OnlineMealItem(
                 Text(
                     modifier = Modifier
                         .fillMaxWidth(0.8f)
-                        .padding(vertical = 3.dp)
-                        .semantics { contentDescription = "Online Meal Name" },
+                        .padding(vertical = 3.dp),
                     text = meal.name,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -267,12 +261,13 @@ fun CategoryItem(
                 onClick()
             },
         shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-        /*backgroundColor = if (selected) {
-            MainOrange.copy(alpha = .6f)
-        } else {
-            MyLightOrange
-        }*/
+        colors = CardDefaults.cardColors(
+            containerColor = if (selected) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.surfaceVariant
+            }
+        )
     ) {
         Column(
             modifier = Modifier.padding(8.dp),
@@ -293,19 +288,17 @@ fun CategoryItem(
                 ),
                 contentScale = ContentScale.Inside
             )
-            Spacer(modifier = Modifier.height(6.dp))
 
             Text(
                 text = category.categoryName,
                 textAlign = TextAlign.Center,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.ExtraBold,
+                style = MaterialTheme.typography.labelSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 color = if (selected) {
-                    Color.White
+                    MaterialTheme.colorScheme.onPrimary
                 } else {
-                    Color.Black
+                    MaterialTheme.colorScheme.onSurfaceVariant
                 }
             )
         }

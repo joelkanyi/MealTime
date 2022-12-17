@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -124,21 +126,25 @@ fun MealItem(
                         .padding(vertical = 3.dp),
                     text = meal.name,
                     style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
-                Icon(
-                    modifier = Modifier
-                        .size(42.dp),
-                    painter = painterResource(
-                        id = if (meal.isFavorite) {
-                            R.drawable.filled_favorite
-                        } else {
-                            R.drawable.unfilled_favorite
-                        }
-                    ),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                IconButton(onClick = {
+                }) {
+                    Icon(
+                        modifier = Modifier
+                            .size(24.dp),
+                        painter = painterResource(
+                            id = if (meal.isFavorite) {
+                                R.drawable.filled_favorite
+                            } else {
+                                R.drawable.unfilled_favorite
+                            }
+                        ),
+                        contentDescription = null
+                    )
+                }
             }
         }
     }

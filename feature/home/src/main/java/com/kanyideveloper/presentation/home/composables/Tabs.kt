@@ -56,13 +56,13 @@ fun Tabs(
             val selected = pagerState.currentPage == index
             Tab(
                 modifier = if (selected) Modifier
-                    .padding(3.dp)
+                    .padding(6.dp)
                     .clip(RoundedCornerShape(50))
                     .background(
                         MaterialTheme.colorScheme.primary
                     )
                 else Modifier
-                    .padding(3.dp)
+                    .padding(6.dp)
                     .clip(RoundedCornerShape(50))
                     .background(
                         MaterialTheme.colorScheme.secondaryContainer
