@@ -326,6 +326,7 @@ fun IngredientItem(
         ) {
             Text(
                 modifier = Modifier
+                    .fillMaxWidth(.6f)
                     .padding(8.dp),
                 text = ingredient
             )
