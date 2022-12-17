@@ -121,3 +121,26 @@ fun LottieAnim(
         composition = composition
     )
 }
+
+fun convertMinutesToHours(minutes: Int): String {
+    return if (minutes >= 60) {
+        val hours = minutes / 60
+        val remainingMinutes = minutes % 60
+
+        if (hours == 1) {
+            if (remainingMinutes == 0) {
+                "$hours hr"
+            } else {
+                "$hours hr $remainingMinutes mins"
+            }
+        } else {
+            if (remainingMinutes == 0) {
+                "$hours hrs"
+            } else {
+                "$hours hrs $remainingMinutes mins"
+            }
+        }
+    } else {
+        "$minutes mins"
+    }
+}

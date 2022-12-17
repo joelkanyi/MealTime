@@ -185,7 +185,7 @@ private fun MyMealScreenContent(
                 Box(Modifier.fillMaxSize()) {
                     Image(
                         modifier = Modifier.fillMaxSize(),
-                        painter = painterResource(id = R.drawable.randomize_meals),
+                        painter = painterResource(id = R.drawable.randomize_mealss),
                         contentDescription = null,
                         contentScale = ContentScale.Crop
                     )
