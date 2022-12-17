@@ -35,17 +35,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,7 +64,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyidev.searchable_dropdown.SearchableExpandedDropDownMenu
 import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.compose_ui.theme.MainOrange
 import com.kanyideveloper.core.util.imageUriToImageBitmap
 import com.ramcosta.composedestinations.annotation.Destination
 
@@ -84,7 +83,11 @@ fun AddMealScreen(
     val context = LocalContext.current
 
     val sliderInteractionSource = MutableInteractionSource()
-    val sliderColors = SliderDefaults.colors(thumbColor = MainOrange, activeTrackColor = MainOrange)
+    val sliderColors =
+        SliderDefaults.colors(
+            thumbColor = MaterialTheme.colorScheme.primaryContainer,
+            activeTrackColor = MaterialTheme.colorScheme.onPrimaryContainer
+        )
 
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -165,11 +168,10 @@ fun AddMealScreen(
                     if (mealName.error != null) {
                         Text(
                             text = mealName.error ?: "",
-                            style = MaterialTheme.typography.body2,
-                            color = MaterialTheme.colors.error,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.error,
                             textAlign = TextAlign.End,
-                            modifier = Modifier.fillMaxWidth(),
-                            fontSize = 10.sp
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
@@ -202,11 +204,10 @@ fun AddMealScreen(
                         if (category.error != null) {
                             Text(
                                 text = category.error ?: "",
-                                style = MaterialTheme.typography.body2,
-                                color = MaterialTheme.colors.error,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.error,
                                 textAlign = TextAlign.End,
-                                modifier = Modifier.fillMaxWidth(),
-                                fontSize = 10.sp
+                                modifier = Modifier.fillMaxWidth()
                             )
                         }
                     }
@@ -233,11 +234,10 @@ fun AddMealScreen(
                         if (complexity.error != null) {
                             Text(
                                 text = complexity.error ?: "",
-                                style = MaterialTheme.typography.body2,
-                                color = MaterialTheme.colors.error,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.error,
                                 textAlign = TextAlign.End,
-                                modifier = Modifier.fillMaxWidth(),
-                                fontSize = 10.sp
+                                modifier = Modifier.fillMaxWidth()
                             )
                         }
                     }

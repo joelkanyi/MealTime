@@ -16,6 +16,7 @@
 package com.kanyideveloper.presentation.home.composables
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -27,25 +28,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.kanyideveloper.compose_ui.theme.LightGrey
-import com.kanyideveloper.compose_ui.theme.MainOrange
+import com.kanyideveloper.compose_ui.theme.Shapes
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.util.convertMinutesToHours
 import com.kanyideveloper.mealtime.core.R
@@ -60,9 +58,8 @@ fun MealItem(
             .fillMaxSize()
             .height(220.dp)
             .padding(vertical = 5.dp),
-        shape = RoundedCornerShape(12.dp),
-        backgroundColor = Color.White,
-        elevation = 2.dp
+        shape = Shapes.large,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Image(
@@ -89,9 +86,10 @@ fun MealItem(
                 Card(
                     modifier = Modifier
                         .padding(8.dp),
-                    shape = RoundedCornerShape(8.dp),
-                    elevation = 0.dp,
-                    backgroundColor = LightGrey.copy(alpha = 0.6f)
+                    shape = MaterialTheme.shapes.medium,
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
                 ) {
                     Row(
                         modifier = Modifier
@@ -101,15 +99,13 @@ fun MealItem(
                         Icon(
                             modifier = Modifier.size(18.dp),
                             painter = painterResource(id = R.drawable.ic_clock),
-                            tint = MainOrange,
                             contentDescription = null
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
                             modifier = Modifier.padding(vertical = 3.dp),
                             text = convertMinutesToHours(meal.cookingTime),
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold
+                            style = MaterialTheme.typography.labelMedium
                         )
                     }
                 }
@@ -127,14 +123,15 @@ fun MealItem(
                         .fillMaxWidth(0.8f)
                         .padding(vertical = 3.dp),
                     text = meal.name,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.titleSmall
                 )
                 IconButton(onClick = {
                 }) {
                     Icon(
                         modifier = Modifier
-                            .size(24.dp),
+                            .size(24.dp)
+                            .background(MaterialTheme.colorScheme.surface)
+                            .padding(4.dp),
                         painter = painterResource(
                             id = if (meal.isFavorite) {
                                 R.drawable.filled_favorite

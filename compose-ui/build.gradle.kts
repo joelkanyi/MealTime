@@ -51,7 +51,6 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.6.1")
 
     implementation("androidx.compose.ui:ui:${Versions.composeCompiler}")
-    implementation("androidx.compose.material:material:${Versions.composeCompiler}")
     implementation("androidx.compose.ui:ui-tooling-preview:${Versions.composeCompiler}")
 
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:${Versions.composeCompiler}")
@@ -77,10 +76,6 @@ dependencies {
     // collapsing Toolbar
     implementation("me.onebone:toolbar-compose:2.3.2")
 
-    // Material 3
-    implementation("androidx.compose.material3:material3:1.0.1")
-    implementation("androidx.compose.material3:material3-window-size-class:1.0.1")
-
     // Searchable Dropdown
     implementation("com.github.Breens-Mbaka:Searchable-Dropdown-Menu-Jetpack-Compose:0.2.4")
 
@@ -103,4 +98,8 @@ dependencies {
 
     // Navigation animation
     implementation("com.google.accompanist:accompanist-navigation-animation:0.27.0")
+
+    // Material 3
+    implementation("androidx.compose.material3:material3:1.0.1")
+    implementation("androidx.compose.material3:material3-window-size-class:1.0.1")
 }

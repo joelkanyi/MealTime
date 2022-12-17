@@ -29,20 +29,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -53,8 +54,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.compose_ui.theme.LightGrey
-import com.kanyideveloper.compose_ui.theme.MyLightBlue
+import com.kanyideveloper.compose_ui.theme.Shapes
 import com.kanyideveloper.mealtime.search.R
 import com.ramcosta.composedestinations.annotation.Destination
 
@@ -101,13 +101,14 @@ fun SearchScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(10) {
-                    Box(
+                    Card(
                         modifier = Modifier
                             .size(200.dp)
-                            .padding(vertical = 5.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(MyLightBlue),
-                        contentAlignment = Alignment.Center
+                            .padding(vertical = 5.dp),
+                        shape = Shapes.large,
+                        colors = CardDefaults.cardColors(
+                            containerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface
+                        )
                     ) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -138,6 +139,7 @@ fun SearchScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(
     // viewModel: SearchViewModel,
@@ -170,7 +172,6 @@ fun SearchBar(
         colors = TextFieldDefaults.textFieldColors(
             textColor = Color.Black,
             disabledTextColor = Color.Transparent,
-            backgroundColor = LightGrey,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent

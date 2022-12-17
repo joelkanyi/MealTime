@@ -35,12 +35,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,8 +56,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.kanyideveloper.compose_ui.theme.LightGrey
-import com.kanyideveloper.compose_ui.theme.MainOrange
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.mealtime.core.R
 import com.kanyideveloper.presentation.home.HomeNavigator
@@ -93,12 +91,12 @@ private fun DetailsScreenContent(
         modifier = Modifier.fillMaxSize(),
         state = state,
         scrollStrategy = ScrollStrategy.ExitUntilCollapsed,
-        toolbarModifier = Modifier.background(MaterialTheme.colors.primary),
+        toolbarModifier = Modifier.background(MaterialTheme.colorScheme.primary),
         enabled = true,
         toolbar = {
             Box(
                 modifier = Modifier
-                    .background(MaterialTheme.colors.primary)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
                     .fillMaxWidth()
                     .height(150.dp)
                     .pin()
@@ -163,7 +161,7 @@ private fun DetailsScreenContent(
                             .size(50.dp)
                             .clip(CircleShape)
                             .background(
-                                LightGrey.copy(alpha = .6f)
+                                MaterialTheme.colorScheme.surfaceVariant
                             )
                     ) {
                         Icon(
@@ -269,7 +267,7 @@ private fun MealProperties(meal: Meal) {
             modifier = Modifier
                 .clip(RoundedCornerShape(12.dp))
                 .background(
-                    MainOrange
+                    MaterialTheme.colorScheme.primaryContainer
                 )
         ) {
             Column(
@@ -308,7 +306,7 @@ private fun MealProperties(meal: Meal) {
             modifier = Modifier
                 .clip(RoundedCornerShape(12.dp))
                 .background(
-                    MainOrange
+                    MaterialTheme.colorScheme.primaryContainer
                 )
         ) {
             Column(
@@ -350,7 +348,7 @@ private fun MealProperties(meal: Meal) {
                 .width(60.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(
-                    MainOrange
+                    MaterialTheme.colorScheme.primaryContainer
                 )
         ) {
             Column(
@@ -389,7 +387,7 @@ private fun MealProperties(meal: Meal) {
                 .width(60.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(
-                    MainOrange
+                    MaterialTheme.colorScheme.primaryContainer
                 )
         ) {
             Column(
@@ -430,7 +428,7 @@ private fun MealProperties(meal: Meal) {
                 .width(60.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(
-                    MainOrange
+                    MaterialTheme.colorScheme.primaryContainer
                 )
         ) {
             Column(

@@ -16,6 +16,7 @@
 package com.kanyideveloper.favorites.presentation.favorites
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,12 +29,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,7 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.compose_ui.theme.MainOrange
+import com.kanyideveloper.compose_ui.theme.Shapes
 import com.kanyideveloper.favorites.presentation.favorites.destinations.FavoritesScreenDestination
 import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
@@ -86,8 +88,8 @@ fun FoodItem(
             .fillMaxWidth()
             .height(200.dp)
             .padding(horizontal = 8.dp, vertical = 5.dp),
-        elevation = 8.dp,
-        shape = RoundedCornerShape(12.dp)
+        shape = Shapes.large,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(Modifier.fillMaxWidth()) {
             Image(
@@ -105,9 +107,9 @@ fun FoodItem(
                 Icon(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .padding(16.dp),
+                        .background(MaterialTheme.colorScheme.surface)
+                        .padding(4.dp),
                     imageVector = Icons.Default.Favorite,
-                    tint = MainOrange,
                     contentDescription = null
                 )
                 Column(

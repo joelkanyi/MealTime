@@ -38,11 +38,12 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,8 +61,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.kanyideveloper.compose_ui.theme.MainOrange
-import com.kanyideveloper.compose_ui.theme.MyLightOrange
 import com.kanyideveloper.core.components.EmptyStateComponent
 import com.kanyideveloper.core.components.ErrorStateComponent
 import com.kanyideveloper.core.components.LoadingStateComponent
@@ -174,9 +173,8 @@ fun OnlineMealItem(
             .clickable {
                 onClick(meal.mealId)
             },
-        shape = RoundedCornerShape(12.dp),
-        backgroundColor = Color.White,
-        elevation = 2.dp
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Image(
@@ -268,13 +266,13 @@ fun CategoryItem(
             .clickable {
                 onClick()
             },
-        shape = RoundedCornerShape(8.dp),
-        elevation = 0.dp,
-        backgroundColor = if (selected) {
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+        /*backgroundColor = if (selected) {
             MainOrange.copy(alpha = .6f)
         } else {
             MyLightOrange
-        }
+        }*/
     ) {
         Column(
             modifier = Modifier.padding(8.dp),
