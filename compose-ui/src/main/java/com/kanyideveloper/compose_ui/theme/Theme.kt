@@ -95,7 +95,7 @@ private val DarkColors = darkColorScheme(
 
 @Composable
 fun MealTimeTheme(
-    theme: Int = Theme.FOLLOW_SYSTEM.themeValue,
+    theme: Int = Theme.MATERIAL_YOU.themeValue,
     content: @Composable() () -> Unit
 ) {
     val autoColors = if (isSystemInDarkTheme()) DarkColors else LightColors
