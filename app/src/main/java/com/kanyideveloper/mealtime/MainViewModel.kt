@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core.util
+package com.kanyideveloper.mealtime
 
-import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.lifecycle.ViewModel
+import com.kanyideveloper.core.domain.UserDataRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-object Constants {
-    const val MEAL_TABLE = "meal_table"
-    const val CATEGORIES_TABLE = "categories_table"
-    const val MEALTIME_DATABASE = "meal_time_database"
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    userDataRepository: UserDataRepository
+) : ViewModel() {
 
-    val THEME_OPTIONS = intPreferencesKey(name = "theme_option")
-    const val MEALTIME_PREFERENCES = "MEALTIME_PREFERENCES"
-    val USER_DATA = stringPreferencesKey("user_data")
+    val theme = userDataRepository.themeStream
 }

@@ -13,36 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core.di
+package com.kanyideveloper.settings.di
 
-import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStoreFile
-import com.google.gson.Gson
-import com.kanyideveloper.core.util.Constants.MEALTIME_PREFERENCES
+import com.kanyideveloper.core.data.MealTimePreferences
+import com.kanyideveloper.core.domain.UserDataRepository
+import com.kanyideveloper.settings.data.UserDataRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppModule {
+object UserDataModule {
 
     @Provides
     @Singleton
-    fun provideGson() = Gson()
+    fun provideMealTimePreferences(dataStore: DataStore<Preferences>) =
+        MealTimePreferences(dataStore)
 
     @Provides
     @Singleton
-    fun provideDatastorePreferences(@ApplicationContext context: Context): DataStore<Preferences> =
-        PreferenceDataStoreFactory.create(
-            produceFile = {
-                context.preferencesDataStoreFile(MEALTIME_PREFERENCES)
-            }
-        )
+    fun provideUserDataRepository(mealTimePreferences: MealTimePreferences): UserDataRepository {
+        return UserDataRepositoryImpl(mealTimePreferences = mealTimePreferences)
+    }
 }

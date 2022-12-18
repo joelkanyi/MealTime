@@ -95,9 +95,8 @@ private val DarkColors = darkColorScheme(
 
 @Composable
 fun MealTimeTheme(
-    theme: Int = Theme.FOLLOW_SYSTEM
-        .themeValue,
-    content: @Composable() () -> Unit
+    theme: Int,
+    content: @Composable () -> Unit
 ) {
     val autoColors = if (isSystemInDarkTheme()) DarkColors else LightColors
 
@@ -140,23 +139,18 @@ private fun supportsDynamicTheming() = Build.VERSION.SDK_INT >= Build.VERSION_CO
 
 // To be used to set the preferred theme inside settings
 enum class Theme(
-    val themeName: String,
     val themeValue: Int
 ) {
     MATERIAL_YOU(
-        themeName = "Material You",
         themeValue = 12
     ),
     FOLLOW_SYSTEM(
-        themeName = "Follow System Settings",
         themeValue = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
     ),
     LIGHT_THEME(
-        themeName = "Light Theme",
         themeValue = AppCompatDelegate.MODE_NIGHT_NO
     ),
     DARK_THEME(
-        themeName = "Dark Theme",
         themeValue = AppCompatDelegate.MODE_NIGHT_YES
     );
 }
