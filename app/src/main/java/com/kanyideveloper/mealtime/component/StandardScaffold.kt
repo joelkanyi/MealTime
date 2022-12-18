@@ -30,8 +30,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -63,8 +63,8 @@ fun StandardScaffold(
                 val currentSelectedItem by navController.currentScreenAsState()
 
                 BottomNavigation(
-                    backgroundColor = Color.White,
-                    contentColor = Color.Black,
+                    backgroundColor = MaterialTheme.colorScheme.background,
+                    // contentColor = MaterialTheme.colorScheme.onBackground,
                     elevation = 5.dp
                 ) {
                     items.forEach { item ->
@@ -72,17 +72,30 @@ fun StandardScaffold(
                             icon = {
                                 Icon(
                                     painterResource(id = item.icon),
-                                    contentDescription = item.title
+                                    contentDescription = item.title,
+                                    tint = if (currentSelectedItem == item.screen) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    }
                                 )
                             },
                             label = {
                                 Text(
                                     text = item.title,
-                                    fontSize = 9.sp
+                                    fontSize = 9.sp,
+                                    color = if (currentSelectedItem == item.screen) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    },
+                                    fontWeight = if (currentSelectedItem == item.screen) {
+                                        FontWeight.ExtraBold
+                                    } else {
+                                        FontWeight.Normal
+                                    }
                                 )
                             },
-                            selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            unselectedContentColor = MaterialTheme.colorScheme.surfaceVariant,
                             alwaysShowLabel = true,
                             selected = currentSelectedItem == item.screen,
                             onClick = {

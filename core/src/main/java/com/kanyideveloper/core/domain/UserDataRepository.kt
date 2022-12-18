@@ -13,17 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core.util
+package com.kanyideveloper.core.domain
 
-import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.flow.Flow
 
-object Constants {
-    const val MEAL_TABLE = "meal_table"
-    const val CATEGORIES_TABLE = "categories_table"
-    const val MEALTIME_DATABASE = "meal_time_database"
-
-    val THEME_OPTIONS = intPreferencesKey(name = "theme_option")
-    const val MEALTIME_PREFERENCES = "MEALTIME_PREFERENCES"
-    val USER_DATA = stringPreferencesKey("user_data")
+interface UserDataRepository {
+    val themeStream: Flow<Int>
+    suspend fun setTheme(themeValue: Int)
 }

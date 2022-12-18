@@ -25,14 +25,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.google.accompanist.systemuicontroller.SystemUiController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kanyideveloper.compose_ui.theme.MealTimeTheme
+import com.kanyideveloper.compose_ui.theme.Theme
 import com.kanyideveloper.favorites.presentation.favorites.destinations.FavoritesScreenDestination
 import com.kanyideveloper.mealtime.component.StandardScaffold
 import com.kanyideveloper.mealtime.component.navGraph
@@ -46,27 +47,31 @@ import com.ramcosta.composedestinations.navigation.dependency
 import com.ramcosta.composedestinations.rememberNavHostEngine
 import com.ramcosta.composedestinations.scope.DestinationScope
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    private lateinit var systemUiController: SystemUiController
 
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MealTimeTheme {
+            val viewModel: MainViewModel = hiltViewModel()
+
+            val themeValue by viewModel.theme.collectAsState(
+                initial = Theme.FOLLOW_SYSTEM.themeValue,
+                context = Dispatchers.Main.immediate
+            )
+
+            MealTimeTheme(
+                theme = themeValue
+            ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    systemUiController = rememberSystemUiController()
-
                     val navController = rememberAnimatedNavController()
-
                     val newBackStackEntry by navController.currentBackStackEntryAsState()
-
                     val route = newBackStackEntry?.destination?.route
 
                     StandardScaffold(
