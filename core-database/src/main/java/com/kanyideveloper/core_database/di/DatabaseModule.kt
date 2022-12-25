@@ -55,4 +55,8 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideMealDao(database: MealTimeDatabase) = database.mealDao
+
+    @Provides
+    @Singleton
+    fun providesFavoritesDao(database: MealTimeDatabase) = database.favoritesDao
 }
