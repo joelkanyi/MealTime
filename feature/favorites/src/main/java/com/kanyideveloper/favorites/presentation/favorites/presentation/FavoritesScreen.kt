@@ -16,7 +16,6 @@
 package com.kanyideveloper.favorites.presentation.favorites.presentation
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,36 +26,71 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.compose_ui.theme.Shapes
+import com.kanyideveloper.core.components.EmptyStateComponent
+import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.favorites.presentation.favorites.domain.model.Favorite
 import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
 
 interface FavoritesNavigator {
-    fun openFavorites(showId: Long)
+    fun openOnlineMealDetails(mealId: String)
+    fun openMealDetails(meal: Meal)
 }
 
 @Destination
 @Composable
 fun FavoritesScreen(
-    navigator: FavoritesNavigator
+    navigator: FavoritesNavigator,
+    viewModel: FavoritesViewModel = hiltViewModel()
+) {
+    val favorites = viewModel.favorites.value
+
+    FavoritesScreenContent(
+        favorites = favorites,
+        onClick = { id, mealId, isOnline ->
+            if (isOnline) {
+                mealId?.let { navigator.openOnlineMealDetails(mealId = it) }
+            } else {
+                val meal = id?.let { viewModel.getASingleFavorite(id = it) }
+                // navigator.openMealDetails(meal = meal)
+            }
+        },
+        onFavoriteClick = { favorite ->
+            viewModel.deleteAFavorite(favorite = favorite)
+        }
+    )
+}
+
+@Composable
+private fun FavoritesScreenContent(
+    favorites: List<Favorite>?,
+    onClick: (Int?, String?, Boolean) -> Unit,
+    onFavoriteClick: (Favorite) -> Unit
 ) {
     Column(Modifier.fillMaxSize()) {
         StandardToolbar(
@@ -69,72 +103,90 @@ fun FavoritesScreen(
             }
         )
 
-        LazyColumn {
-            items(20) {
-                FoodItem()
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn {
+                items(favorites ?: emptyList()) { favorite ->
+                    FoodItem(
+                        favorite = favorite,
+                        onClick = onClick,
+                        onFavoriteClick = onFavoriteClick
+                    )
+                }
+            }
+
+            if (favorites.isNullOrEmpty()) {
+                EmptyStateComponent()
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FoodItem(
-    modifier: Modifier = Modifier
+    favorite: Favorite,
+    modifier: Modifier = Modifier,
+    onClick: (Int?, String?, Boolean) -> Unit,
+    onFavoriteClick: (Favorite) -> Unit
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(200.dp)
+            .height(130.dp)
             .padding(horizontal = 8.dp, vertical = 5.dp),
         shape = Shapes.large,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        onClick = {
+            onClick(favorite.id, favorite.mealId, favorite.isOnline)
+        }
     ) {
         Row(Modifier.fillMaxWidth()) {
             Image(
                 modifier = Modifier
-                    .fillMaxWidth(0.5f)
+                    .fillMaxWidth(0.4f)
                     .fillMaxHeight(),
                 contentDescription = null,
-                painter = painterResource(id = R.drawable.meal_banner),
+                painter = rememberAsyncImagePainter(
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(data = favorite.mealImageUrl)
+                        .apply(block = fun ImageRequest.Builder.() {
+                            placeholder(R.drawable.food_loading)
+                        }).build()
+                ),
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Box(
-                Modifier.fillMaxSize()
+
+            Column(
+                Modifier
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.Center
             ) {
-                Icon(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .background(MaterialTheme.colorScheme.surface)
-                        .padding(4.dp),
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = null
+                Text(
+                    text = favorite.mealName,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
                 )
-                Column(
-                    Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.Center),
-                    verticalArrangement = Arrangement.Center
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "Rice Chicken Rice Chicken Rice Chicken Rice Chicken Rice Chicken",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    IconButton(onClick = {
+                        onFavoriteClick(favorite)
+                    }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_clock),
+                            modifier = Modifier
+                                .size(24.dp),
+                            painter = painterResource(
+                                id = if (favorite.isFavorite) {
+                                    R.drawable.filled_favorite
+                                } else {
+                                    R.drawable.unfilled_favorite
+                                }
+                            ),
                             contentDescription = null
-                        )
-                        Spacer(modifier = Modifier.width(5.dp))
-                        Text(
-                            text = "15 Minutes",
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Light
                         )
                     }
                 }

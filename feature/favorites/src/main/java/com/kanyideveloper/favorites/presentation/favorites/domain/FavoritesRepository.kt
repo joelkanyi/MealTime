@@ -25,4 +25,5 @@ interface FavoritesRepository {
     fun isFavorite(id: Int): LiveData<Boolean>
     suspend fun deleteOneFavorite(favorite: Favorite)
     suspend fun deleteAllFavorites()
+    fun inFavorites(id: Int): LiveData<Boolean>
 }

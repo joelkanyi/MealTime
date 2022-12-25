@@ -37,10 +37,6 @@ class CoreFeatureNavigator(
     private val navGraph: NavGraphSpec,
     private val navController: NavController
 ) : HomeNavigator, SearchNavigator, FavoritesNavigator, SettingsNavigator, AddMealNavigator {
-    override fun openFavorites(showId: Long) {
-        Timber.d("Favorites")
-    }
-
     override fun openAddMeal() {
         navController.navigate(AddMealScreenDestination within navGraph)
     }

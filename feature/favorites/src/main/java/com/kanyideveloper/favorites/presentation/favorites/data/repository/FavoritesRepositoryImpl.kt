@@ -53,4 +53,8 @@ class FavoritesRepositoryImpl(
     override suspend fun deleteAllFavorites() {
         favoritesDao.deleteAllFavorites()
     }
+
+    override fun inFavorites(id: Int): LiveData<Boolean> {
+        return favoritesDao.inFavorites(id = id)
+    }
 }

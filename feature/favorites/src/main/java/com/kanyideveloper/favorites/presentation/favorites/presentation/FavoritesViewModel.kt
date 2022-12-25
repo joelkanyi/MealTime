@@ -15,6 +15,7 @@
  */
 package com.kanyideveloper.favorites.presentation.favorites.presentation
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kanyideveloper.favorites.presentation.favorites.domain.FavoritesRepository
@@ -29,6 +30,14 @@ class FavoritesViewModel @Inject constructor(
 ) : ViewModel() {
 
     val favorites = favoritesRepository.getFavorites()
+
+    fun inFavorites(id: Int): LiveData<Boolean> {
+        return favoritesRepository.inFavorites(id = id)
+    }
+
+    fun getASingleFavorite(id: Int): LiveData<Favorite?> {
+        return favoritesRepository.getASingleFavorite(id = id)
+    }
 
     fun insertAFavorite(
         isOnline: Boolean = false,
