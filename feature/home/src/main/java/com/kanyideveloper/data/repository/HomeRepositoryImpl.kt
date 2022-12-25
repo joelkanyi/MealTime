@@ -16,8 +16,11 @@
 package com.kanyideveloper.data.repository
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
+import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core_database.dao.MealDao
 import com.kanyideveloper.core_database.model.MealEntity
+import com.kanyideveloper.data.mapper.toMeal
 import com.kanyideveloper.domain.repository.HomeRepository
 
 class HomeRepositoryImpl(
@@ -25,5 +28,11 @@ class HomeRepositoryImpl(
 ) : HomeRepository {
     override fun getMyMeals(): LiveData<List<MealEntity>> {
         return mealDao.getAllMeals()
+    }
+
+    override fun getMealById(id: Int): LiveData<Meal?> {
+        return Transformations.map(mealDao.getSingleMeal(id = id)) { mealEntity ->
+            mealEntity?.toMeal()
+        }
     }
 }

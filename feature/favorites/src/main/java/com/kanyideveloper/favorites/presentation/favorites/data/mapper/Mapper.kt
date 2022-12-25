@@ -21,7 +21,8 @@ import com.kanyideveloper.favorites.presentation.favorites.domain.model.Favorite
 internal fun FavoriteEntity.toFavorite(): Favorite {
     return Favorite(
         id = id,
-        mealId = mealId,
+        onlineMealId = onlineMealId,
+        localMealId = localMealId,
         isOnline = isOnline,
         mealName = mealName,
         mealImageUrl = mealImageUrl,
@@ -32,7 +33,8 @@ internal fun FavoriteEntity.toFavorite(): Favorite {
 internal fun Favorite.toEntity(): FavoriteEntity {
     return FavoriteEntity(
         id = id,
-        mealId = mealId,
+        onlineMealId = onlineMealId,
+        localMealId = localMealId,
         isOnline = isOnline,
         mealName = mealName,
         mealImageUrl = mealImageUrl,

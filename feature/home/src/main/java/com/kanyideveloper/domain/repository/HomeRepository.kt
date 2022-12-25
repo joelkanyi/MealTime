@@ -16,8 +16,10 @@
 package com.kanyideveloper.domain.repository
 
 import androidx.lifecycle.LiveData
+import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core_database.model.MealEntity
 
 interface HomeRepository {
     fun getMyMeals(): LiveData<List<MealEntity>>
+    fun getMealById(id: Int): LiveData<Meal?>
 }

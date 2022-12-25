@@ -69,15 +69,16 @@ fun FavoritesScreen(
     viewModel: FavoritesViewModel = hiltViewModel()
 ) {
     val favorites = viewModel.favorites.value
+    val meal = viewModel.singleMeal.value
 
     FavoritesScreenContent(
         favorites = favorites,
-        onClick = { id, mealId, isOnline ->
+        onClick = { _, onlineMealId, localMealId, isOnline ->
             if (isOnline) {
-                mealId?.let { navigator.openOnlineMealDetails(mealId = it) }
+                onlineMealId?.let { navigator.openOnlineMealDetails(mealId = it) }
             } else {
-                val meal = id?.let { viewModel.getASingleFavorite(id = it) }
-                // navigator.openMealDetails(meal = meal)
+                localMealId?.let { viewModel.getASingleMeal(id = it) }
+                meal?.let { navigator.openMealDetails(meal = it) }
             }
         },
         onFavoriteClick = { favorite ->
@@ -89,7 +90,7 @@ fun FavoritesScreen(
 @Composable
 private fun FavoritesScreenContent(
     favorites: List<Favorite>?,
-    onClick: (Int?, String?, Boolean) -> Unit,
+    onClick: (Int?, String?, Int?, Boolean) -> Unit,
     onFavoriteClick: (Favorite) -> Unit
 ) {
     Column(Modifier.fillMaxSize()) {
@@ -126,7 +127,7 @@ private fun FavoritesScreenContent(
 fun FoodItem(
     favorite: Favorite,
     modifier: Modifier = Modifier,
-    onClick: (Int?, String?, Boolean) -> Unit,
+    onClick: (Int?, String?, Int?, Boolean) -> Unit,
     onFavoriteClick: (Favorite) -> Unit
 ) {
     Card(
@@ -137,7 +138,7 @@ fun FoodItem(
         shape = Shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         onClick = {
-            onClick(favorite.id, favorite.mealId, favorite.isOnline)
+            onClick(favorite.id, favorite.onlineMealId, favorite.localMealId, favorite.isOnline)
         }
     ) {
         Row(Modifier.fillMaxWidth()) {

@@ -17,7 +17,8 @@ package com.kanyideveloper.favorites.presentation.favorites.domain.model
 
 data class Favorite(
     val id: Int? = null,
-    val mealId: String? = null,
+    val onlineMealId: String? = null,
+    val localMealId: Int? = null,
     val isOnline: Boolean = false,
     val mealName: String,
     val mealImageUrl: String,
