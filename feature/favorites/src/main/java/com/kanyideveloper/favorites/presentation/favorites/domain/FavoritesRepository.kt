@@ -21,4 +21,7 @@ import com.kanyideveloper.favorites.presentation.favorites.domain.model.Favorite
 interface FavoritesRepository {
     suspend fun insertFavorite(favorite: Favorite)
     fun getFavorites(): LiveData<List<Favorite>>
+    fun getASingleFavorite(id: Int): Favorite?
+    suspend fun deleteOneFavorite(favorite: Favorite)
+    suspend fun deleteAllFavorites()
 }
