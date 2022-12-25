@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.favorites.presentation.favorites
+package com.kanyideveloper.favorites.presentation.favorites.presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -46,7 +46,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.compose_ui.theme.Shapes
-import com.kanyideveloper.favorites.presentation.favorites.destinations.FavoritesScreenDestination
 import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
 
@@ -59,7 +58,6 @@ interface FavoritesNavigator {
 fun FavoritesScreen(
     navigator: FavoritesNavigator
 ) {
-    FavoritesScreenDestination
     Column(Modifier.fillMaxSize()) {
         StandardToolbar(
             navigate = {},

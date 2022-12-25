@@ -17,7 +17,7 @@ package com.kanyideveloper.mealtime.navigation
 
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
-import com.kanyideveloper.favorites.presentation.favorites.destinations.FavoritesScreenDestination
+import com.kanyideveloper.favorites.presentation.favorites.presentation.destinations.FavoritesScreenDestination
 import com.kanyideveloper.presentation.destinations.DetailsScreenDestination
 import com.kanyideveloper.presentation.destinations.HomeScreenDestination
 import com.kanyideveloper.presentation.destinations.MyMealScreenDestination
