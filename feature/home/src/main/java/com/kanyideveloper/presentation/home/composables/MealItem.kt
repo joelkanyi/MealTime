@@ -51,6 +51,7 @@ import com.kanyideveloper.mealtime.core.R
 @Composable
 fun MealItem(
     meal: Meal,
+    onFavoriteClick: (Int, String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -131,6 +132,7 @@ fun MealItem(
                     overflow = TextOverflow.Ellipsis
                 )
                 IconButton(onClick = {
+                    meal.localMealId?.let { onFavoriteClick(it, meal.imageUrl, meal.name) }
                 }) {
                     Icon(
                         modifier = Modifier

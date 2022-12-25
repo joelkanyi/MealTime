@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.domain.repository
+package com.kanyideveloper.core.domain
 
 import androidx.lifecycle.LiveData
 import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core_database.model.MealEntity
 
 interface HomeRepository {
-    fun getMyMeals(): LiveData<List<MealEntity>>
+    fun getMyMeals(): LiveData<List<Meal>>
     fun getMealById(id: Int): LiveData<Meal?>
 }

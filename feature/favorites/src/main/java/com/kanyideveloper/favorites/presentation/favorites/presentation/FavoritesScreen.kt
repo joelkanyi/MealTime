@@ -52,8 +52,8 @@ import coil.request.ImageRequest
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.compose_ui.theme.Shapes
 import com.kanyideveloper.core.components.EmptyStateComponent
+import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.favorites.presentation.favorites.domain.model.Favorite
 import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
 

@@ -15,8 +15,8 @@
  */
 package com.kanyideveloper.favorites.presentation.favorites.data.mapper
 
+import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core_database.model.FavoriteEntity
-import com.kanyideveloper.favorites.presentation.favorites.domain.model.Favorite
 
 internal fun FavoriteEntity.toFavorite(): Favorite {
     return Favorite(

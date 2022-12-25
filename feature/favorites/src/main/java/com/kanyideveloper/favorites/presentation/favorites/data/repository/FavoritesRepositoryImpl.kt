@@ -17,11 +17,11 @@ package com.kanyideveloper.favorites.presentation.favorites.data.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
+import com.kanyideveloper.core.domain.FavoritesRepository
+import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core_database.dao.FavoritesDao
 import com.kanyideveloper.favorites.presentation.favorites.data.mapper.toEntity
 import com.kanyideveloper.favorites.presentation.favorites.data.mapper.toFavorite
-import com.kanyideveloper.favorites.presentation.favorites.domain.FavoritesRepository
-import com.kanyideveloper.favorites.presentation.favorites.domain.model.Favorite
 
 class FavoritesRepositoryImpl(
     private val favoritesDao: FavoritesDao

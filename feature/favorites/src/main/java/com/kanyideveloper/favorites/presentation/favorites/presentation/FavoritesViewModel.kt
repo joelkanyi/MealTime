@@ -19,10 +19,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kanyideveloper.core.domain.FavoritesRepository
+import com.kanyideveloper.core.domain.HomeRepository
+import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.domain.repository.HomeRepository
-import com.kanyideveloper.favorites.presentation.favorites.domain.FavoritesRepository
-import com.kanyideveloper.favorites.presentation.favorites.domain.model.Favorite
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -35,36 +35,10 @@ class FavoritesViewModel @Inject constructor(
 
     val favorites = favoritesRepository.getFavorites()
 
-    fun inFavorites(id: Int): LiveData<Boolean> {
-        return favoritesRepository.inFavorites(id = id)
-    }
-
     private val _singleMeal = MutableLiveData<Meal?>()
     val singleMeal: LiveData<Meal?> = _singleMeal
     fun getASingleMeal(id: Int) {
         _singleMeal.value = homeRepository.getMealById(id = id).value
-    }
-
-    fun insertAFavorite(
-        isOnline: Boolean = false,
-        onlineMealId: String? = null,
-        localMealId: Int? = null,
-        mealImageUrl: String,
-        mealName: String
-    ) {
-        viewModelScope.launch {
-            val favorite = Favorite(
-                onlineMealId = onlineMealId,
-                localMealId = localMealId,
-                mealName = mealName,
-                mealImageUrl = mealImageUrl,
-                isOnline = isOnline,
-                isFavorite = true
-            )
-            favoritesRepository.insertFavorite(
-                favorite = favorite
-            )
-        }
     }
 
     fun deleteAFavorite(favorite: Favorite) {

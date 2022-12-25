@@ -34,7 +34,8 @@ internal fun MealEntity.toMeal(): Meal {
         ingredients = ingredients,
         cookingDirections = cookingDirections,
         isFavorite = isFavorite,
-        servingPeople = servingPeople
+        servingPeople = servingPeople,
+        localMealId = id
     )
 }
 
@@ -86,6 +87,7 @@ internal fun MealDetailsResponse.Meal.toMeal(): Meal {
         ).filter { it.isNotEmpty() },
         cookingDirections = strInstructions.stringToList(),
         isFavorite = false,
-        servingPeople = 0
+        servingPeople = 0,
+        onlineMealId = idMeal
     )
 }

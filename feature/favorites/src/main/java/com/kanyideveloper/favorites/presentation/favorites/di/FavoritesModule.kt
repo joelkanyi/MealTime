@@ -15,9 +15,9 @@
  */
 package com.kanyideveloper.favorites.presentation.favorites.di
 
+import com.kanyideveloper.core.domain.FavoritesRepository
 import com.kanyideveloper.core_database.dao.FavoritesDao
 import com.kanyideveloper.favorites.presentation.favorites.data.repository.FavoritesRepositoryImpl
-import com.kanyideveloper.favorites.presentation.favorites.domain.FavoritesRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

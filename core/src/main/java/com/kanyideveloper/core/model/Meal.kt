@@ -28,5 +28,7 @@ data class Meal(
     val cookingDifficulty: String,
     val ingredients: List<String>,
     val cookingDirections: List<String>,
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+    val onlineMealId: String? = null,
+    val localMealId: Int? = null
 ) : Parcelable

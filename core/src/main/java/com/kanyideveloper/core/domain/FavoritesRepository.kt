@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.favorites.presentation.favorites.domain
+package com.kanyideveloper.core.domain
 
 import androidx.lifecycle.LiveData
-import com.kanyideveloper.favorites.presentation.favorites.domain.model.Favorite
+import com.kanyideveloper.core.model.Favorite
 
 interface FavoritesRepository {
     suspend fun insertFavorite(favorite: Favorite)

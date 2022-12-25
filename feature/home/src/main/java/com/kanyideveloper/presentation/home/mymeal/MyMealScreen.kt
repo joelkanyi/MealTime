@@ -61,7 +61,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.compose_ui.theme.Shapes
 import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.data.mapper.toMeal
 import com.kanyideveloper.domain.model.MealCategory
 import com.kanyideveloper.mealtime.core.R
 import com.kanyideveloper.presentation.home.HomeNavigator
@@ -75,7 +74,7 @@ fun MyMealScreen(
     navigator: HomeNavigator,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val myMeals = viewModel.myMeals.observeAsState().value?.map { it.toMeal() }
+    val myMeals = viewModel.myMeals.observeAsState().value
 
     val showRandomMeal by remember {
         mutableStateOf(false)
@@ -86,6 +85,13 @@ fun MyMealScreen(
         myMeals = myMeals,
         openMealDetails = { meal ->
             navigator.openMealDetails(meal = meal)
+        },
+        onFavoriteClick = { localMealId, imageUrl, name ->
+            viewModel.insertAFavorite(
+                localMealId = localMealId,
+                mealImageUrl = imageUrl,
+                mealName = name
+            )
         }
     )
 }
@@ -94,7 +100,8 @@ fun MyMealScreen(
 private fun MyMealScreenContent(
     showRandomMeal: Boolean,
     myMeals: List<Meal>?,
-    openMealDetails: (Meal) -> Unit = {}
+    openMealDetails: (Meal) -> Unit = {},
+    onFavoriteClick: (Int, String, String) -> Unit
 ) {
     var showRandomMeal1 = showRandomMeal
     LazyVerticalGrid(
@@ -317,7 +324,8 @@ private fun MyMealScreenContent(
                 modifier = Modifier.clickable {
                     openMealDetails(meal)
                 },
-                meal = meal
+                meal = meal,
+                onFavoriteClick = onFavoriteClick
             )
         }
     }
