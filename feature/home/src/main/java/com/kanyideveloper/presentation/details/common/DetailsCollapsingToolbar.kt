@@ -39,6 +39,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,10 +49,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.mealtime.core.R
+import com.kanyideveloper.presentation.details.DetailsViewModel
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
@@ -60,10 +63,21 @@ import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 fun DetailsCollapsingToolbar(
     meal: Meal,
     navigateBack: () -> Unit,
-    onRemoveFavorite: (Int, String) -> Unit
+    onRemoveFavorite: (Int, String) -> Unit,
+    addToFavorites: (String, String, String) -> Unit,
+    isOnlineMeal: Boolean = false,
+    viewModel: DetailsViewModel = hiltViewModel()
 ) {
     val state = rememberCollapsingToolbarScaffoldState()
     val textSize = (18 + (30 - 18) * state.toolbarState.progress).sp
+
+    val isFavorite = if (isOnlineMeal) {
+        meal.onlineMealId?.let {
+            viewModel.inOnlineFavorites(id = it).observeAsState().value
+        } != null
+    } else {
+        meal.localMealId?.let { viewModel.inLocalFavorites(id = it).observeAsState().value } != null
+    }
 
     CollapsingToolbarScaffold(
         modifier = Modifier.fillMaxSize(),
@@ -149,11 +163,35 @@ fun DetailsCollapsingToolbar(
                                     .align(Alignment.Center)
                                     .padding(0.dp)
                                     .clickable {
-                                        onRemoveFavorite(meal.localMealId!!, "")
+                                        if (isFavorite) {
+                                            if (isOnlineMeal) {
+                                                meal.onlineMealId?.let {
+                                                    addToFavorites(
+                                                        it,
+                                                        meal.imageUrl,
+                                                        meal.name
+                                                    )
+                                                }
+                                            } else {
+                                                meal.localMealId?.let {
+                                                    addToFavorites(
+                                                        it.toString(),
+                                                        meal.imageUrl,
+                                                        meal.name
+                                                    )
+                                                }
+                                            }
+                                        } else {
+                                            if (isOnlineMeal) {
+                                                onRemoveFavorite(0, meal.onlineMealId!!)
+                                            } else {
+                                                onRemoveFavorite(meal.localMealId!!, "")
+                                            }
+                                        }
                                     },
                                 imageVector = Icons.Filled.Favorite,
                                 contentDescription = null,
-                                tint = if (meal.isFavorite) {
+                                tint = if (isFavorite) {
                                     Color(0xFFfa4a0c)
                                 } else {
                                     Color.LightGray.copy(alpha = .9f)

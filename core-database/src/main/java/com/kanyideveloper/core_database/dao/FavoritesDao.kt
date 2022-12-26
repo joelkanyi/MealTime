@@ -37,7 +37,7 @@ interface FavoritesDao {
     fun localInFavorites(id: Int): LiveData<Boolean>
 
     @Query("SELECT isFavorite FROM favorites_table WHERE onlineMealId = :id")
-    fun onlineInFavorites(id: Int): LiveData<Boolean>
+    fun onlineInFavorites(id: String): LiveData<Boolean>
 
     @Delete
     suspend fun deleteAFavorite(favoriteEntity: FavoriteEntity)
@@ -46,7 +46,7 @@ interface FavoritesDao {
     suspend fun deleteALocalFavorite(localMealId: Int)
 
     @Query("DELETE FROM favorites_table WHERE onlineMealId = :mealId")
-    suspend fun deleteAmOnlineFavorite(mealId: String)
+    suspend fun deleteAnOnlineFavorite(mealId: String)
 
     @Query("DELETE FROM favorites_table")
     suspend fun deleteAllFavorites()

@@ -39,6 +39,13 @@ fun DetailsScreen(
         onRemoveFavorite = { localMealId, _ ->
             viewModel.deleteALocalFavorite(localMealId = localMealId)
             navigator.popBackStack()
+        },
+        addToFavorites = { mealId, imageUrl, name ->
+            viewModel.insertAFavorite(
+                localMealId = mealId.toInt(),
+                mealImageUrl = imageUrl,
+                mealName = name
+            )
         }
     )
 }
@@ -47,13 +54,16 @@ fun DetailsScreen(
 private fun DetailsScreenContent(
     meal: Meal,
     navigateBack: () -> Unit,
-    onRemoveFavorite: (Int, String) -> Unit
+    onRemoveFavorite: (Int, String) -> Unit,
+    addToFavorites: (String, String, String) -> Unit
 ) {
     DetailsCollapsingToolbar(
         meal = meal,
         navigateBack = {
             navigateBack()
         },
-        onRemoveFavorite = onRemoveFavorite
+        onRemoveFavorite = onRemoveFavorite,
+        isOnlineMeal = false,
+        addToFavorites = addToFavorites
     )
 }

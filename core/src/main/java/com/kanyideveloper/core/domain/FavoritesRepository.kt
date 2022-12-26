@@ -25,13 +25,15 @@ interface FavoritesRepository {
 
     fun getASingleFavorite(id: Int): LiveData<Favorite?>
 
-    fun isLocalFavoriteFavorite(id: Int): LiveData<Boolean>
+    fun isLocalFavorite(id: Int): LiveData<Boolean>
+
+    fun isOnlineFavorite(id: String): LiveData<Boolean>
 
     suspend fun deleteOneFavorite(favorite: Favorite)
 
     suspend fun deleteAllFavorites()
 
-    fun inFavorites(id: Int): LiveData<Boolean>
-
     suspend fun deleteALocalFavorite(localMealId: Int)
+
+    suspend fun deleteAnOnlineFavorite(onlineMealId: String)
 }

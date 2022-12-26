@@ -17,9 +17,11 @@ package com.kanyideveloper.presentation.details
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kanyideveloper.core.domain.FavoritesRepository
+import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.domain.repository.OnlineMealsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -60,9 +62,45 @@ class DetailsViewModel @Inject constructor(
         }
     }
 
+    fun inLocalFavorites(id: Int): LiveData<Boolean> {
+        return favoritesRepository.isLocalFavorite(id = id)
+    }
+
+    fun inOnlineFavorites(id: String): LiveData<Boolean> {
+        return favoritesRepository.isOnlineFavorite(id = id)
+    }
+
     fun deleteALocalFavorite(localMealId: Int) {
         viewModelScope.launch {
             favoritesRepository.deleteALocalFavorite(localMealId = localMealId)
+        }
+    }
+
+    fun deleteAnOnlineFavorite(onlineMealId: String) {
+        viewModelScope.launch {
+            favoritesRepository.deleteAnOnlineFavorite(onlineMealId = onlineMealId)
+        }
+    }
+
+    fun insertAFavorite(
+        isOnline: Boolean = false,
+        onlineMealId: String? = null,
+        localMealId: Int? = null,
+        mealImageUrl: String,
+        mealName: String
+    ) {
+        viewModelScope.launch {
+            val favorite = Favorite(
+                onlineMealId = onlineMealId,
+                localMealId = localMealId,
+                mealName = mealName,
+                mealImageUrl = mealImageUrl,
+                isOnline = isOnline,
+                isFavorite = true
+            )
+            favoritesRepository.insertFavorite(
+                favorite = favorite
+            )
         }
     }
 }

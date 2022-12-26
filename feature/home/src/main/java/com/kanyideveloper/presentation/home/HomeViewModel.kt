@@ -42,7 +42,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun inFavorites(id: Int): LiveData<Boolean> {
-        return favoritesRepository.inFavorites(id = id)
+        return favoritesRepository.isLocalFavorite(id = id)
     }
 
     fun insertAFavorite(
