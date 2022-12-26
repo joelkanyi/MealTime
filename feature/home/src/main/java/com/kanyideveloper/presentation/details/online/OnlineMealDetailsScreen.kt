@@ -89,6 +89,8 @@ private fun OnlineMealScreenContent(
                 meal = meal,
                 navigateBack = {
                     navigateBack()
+                },
+                onRemoveFavorite = { _, _ ->
                 }
             )
         }

@@ -19,6 +19,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kanyideveloper.core.domain.FavoritesRepository
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.domain.repository.OnlineMealsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +28,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
-    private val onlineMealsRepository: OnlineMealsRepository
+    private val onlineMealsRepository: OnlineMealsRepository,
+    private val favoritesRepository: FavoritesRepository
 ) : ViewModel() {
 
     private val _details = mutableStateOf(DetailsState())
@@ -55,6 +57,12 @@ class DetailsViewModel @Inject constructor(
                     details
                 }
             }
+        }
+    }
+
+    fun deleteALocalFavorite(localMealId: Int) {
+        viewModelScope.launch {
+            favoritesRepository.deleteALocalFavorite(localMealId = localMealId)
         }
     }
 }

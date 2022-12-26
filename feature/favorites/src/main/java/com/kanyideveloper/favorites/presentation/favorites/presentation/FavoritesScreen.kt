@@ -38,6 +38,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -68,7 +70,7 @@ fun FavoritesScreen(
     navigator: FavoritesNavigator,
     viewModel: FavoritesViewModel = hiltViewModel()
 ) {
-    val favorites = viewModel.favorites.value
+    val favorites by viewModel.favorites.observeAsState()
     val meal = viewModel.singleMeal.value
 
     FavoritesScreenContent(

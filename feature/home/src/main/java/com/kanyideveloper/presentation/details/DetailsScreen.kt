@@ -17,6 +17,7 @@ package com.kanyideveloper.presentation.details
 
 import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.presentation.details.common.DetailsCollapsingToolbar
 import com.kanyideveloper.presentation.home.HomeNavigator
@@ -27,11 +28,16 @@ import com.ramcosta.composedestinations.annotation.Destination
 @Composable
 fun DetailsScreen(
     meal: Meal,
-    navigator: HomeNavigator
+    navigator: HomeNavigator,
+    viewModel: DetailsViewModel = hiltViewModel()
 ) {
     DetailsScreenContent(
         meal = meal,
         navigateBack = {
+            navigator.popBackStack()
+        },
+        onRemoveFavorite = { localMealId, _ ->
+            viewModel.deleteALocalFavorite(localMealId = localMealId)
             navigator.popBackStack()
         }
     )
@@ -40,12 +46,14 @@ fun DetailsScreen(
 @Composable
 private fun DetailsScreenContent(
     meal: Meal,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    onRemoveFavorite: (Int, String) -> Unit
 ) {
     DetailsCollapsingToolbar(
         meal = meal,
         navigateBack = {
             navigateBack()
-        }
+        },
+        onRemoveFavorite = onRemoveFavorite
     )
 }

@@ -27,6 +27,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -34,8 +36,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -47,13 +51,19 @@ import com.kanyideveloper.compose_ui.theme.Shapes
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.util.convertMinutesToHours
 import com.kanyideveloper.mealtime.core.R
+import com.kanyideveloper.presentation.home.HomeViewModel
 
 @Composable
 fun MealItem(
     meal: Meal,
-    onFavoriteClick: (Int, String, String) -> Unit,
-    modifier: Modifier = Modifier
+    addToFavorites: (Int, String, String) -> Unit,
+    removeFromFavorites: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel
 ) {
+    val isFavorite =
+        meal.localMealId?.let { viewModel.inFavorites(id = it).observeAsState().value } != null
+
     Card(
         modifier = modifier
             .fillMaxSize()
@@ -131,20 +141,25 @@ fun MealItem(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
-                IconButton(onClick = {
-                    meal.localMealId?.let { onFavoriteClick(it, meal.imageUrl, meal.name) }
-                }) {
+                IconButton(
+                    onClick = {
+                        if (isFavorite) {
+                            meal.localMealId?.let { removeFromFavorites(it) }
+                        } else {
+                            meal.localMealId?.let { addToFavorites(it, meal.imageUrl, meal.name) }
+                        }
+                    }
+                ) {
                     Icon(
                         modifier = Modifier
                             .size(24.dp),
-                        painter = painterResource(
-                            id = if (meal.isFavorite) {
-                                R.drawable.filled_favorite
-                            } else {
-                                R.drawable.unfilled_favorite
-                            }
-                        ),
-                        contentDescription = null
+                        imageVector = Icons.Filled.Favorite,
+                        contentDescription = null,
+                        tint = if (isFavorite) {
+                            Color(0xFFfa4a0c)
+                        } else {
+                            Color.LightGray.copy(alpha = .9f)
+                        }
                     )
                 }
             }

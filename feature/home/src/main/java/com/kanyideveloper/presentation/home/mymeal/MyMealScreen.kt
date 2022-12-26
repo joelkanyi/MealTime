@@ -86,13 +86,19 @@ fun MyMealScreen(
         openMealDetails = { meal ->
             navigator.openMealDetails(meal = meal)
         },
-        onFavoriteClick = { localMealId, imageUrl, name ->
+        addToFavorites = { localMealId, imageUrl, name ->
             viewModel.insertAFavorite(
                 localMealId = localMealId,
                 mealImageUrl = imageUrl,
                 mealName = name
             )
-        }
+        },
+        removeFromFavorites = { id ->
+            viewModel.deleteALocalFavorite(
+                localMealId = id
+            )
+        },
+        viewModel = viewModel
     )
 }
 
@@ -101,7 +107,9 @@ private fun MyMealScreenContent(
     showRandomMeal: Boolean,
     myMeals: List<Meal>?,
     openMealDetails: (Meal) -> Unit = {},
-    onFavoriteClick: (Int, String, String) -> Unit
+    addToFavorites: (Int, String, String) -> Unit,
+    removeFromFavorites: (Int) -> Unit,
+    viewModel: HomeViewModel
 ) {
     var showRandomMeal1 = showRandomMeal
     LazyVerticalGrid(
@@ -325,7 +333,9 @@ private fun MyMealScreenContent(
                     openMealDetails(meal)
                 },
                 meal = meal,
-                onFavoriteClick = onFavoriteClick
+                addToFavorites = addToFavorites,
+                removeFromFavorites = removeFromFavorites,
+                viewModel = viewModel
             )
         }
     }

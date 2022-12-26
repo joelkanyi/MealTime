@@ -33,6 +33,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -45,7 +46,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
@@ -59,7 +59,8 @@ import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 @Composable
 fun DetailsCollapsingToolbar(
     meal: Meal,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    onRemoveFavorite: (Int, String) -> Unit
 ) {
     val state = rememberCollapsingToolbarScaffoldState()
     val textSize = (18 + (30 - 18) * state.toolbarState.progress).sp
@@ -148,16 +149,16 @@ fun DetailsCollapsingToolbar(
                                     .align(Alignment.Center)
                                     .padding(0.dp)
                                     .clickable {
+                                        onRemoveFavorite(meal.localMealId!!, "")
                                     },
-                                painter = painterResource(
-                                    id = if (meal.isFavorite) {
-                                        R.drawable.filled_favorite
-                                    } else {
-                                        R.drawable.unfilled_favorite
-                                    }
-                                ),
+                                imageVector = Icons.Filled.Favorite,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onTertiaryContainer
+                                tint = if (meal.isFavorite) {
+                                    Color(0xFFfa4a0c)
+                                } else {
+                                    Color.LightGray.copy(alpha = .9f)
+                                }
+
                             )
                         }
                     }

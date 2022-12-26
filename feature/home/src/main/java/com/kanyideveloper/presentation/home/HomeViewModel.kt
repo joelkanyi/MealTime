@@ -66,4 +66,10 @@ class HomeViewModel @Inject constructor(
             )
         }
     }
+
+    fun deleteALocalFavorite(localMealId: Int) {
+        viewModelScope.launch {
+            favoritesRepository.deleteALocalFavorite(localMealId = localMealId)
+        }
+    }
 }

@@ -20,10 +20,18 @@ import com.kanyideveloper.core.model.Favorite
 
 interface FavoritesRepository {
     suspend fun insertFavorite(favorite: Favorite)
+
     fun getFavorites(): LiveData<List<Favorite>>
+
     fun getASingleFavorite(id: Int): LiveData<Favorite?>
-    fun isFavorite(id: Int): LiveData<Boolean>
+
+    fun isLocalFavoriteFavorite(id: Int): LiveData<Boolean>
+
     suspend fun deleteOneFavorite(favorite: Favorite)
+
     suspend fun deleteAllFavorites()
+
     fun inFavorites(id: Int): LiveData<Boolean>
+
+    suspend fun deleteALocalFavorite(localMealId: Int)
 }

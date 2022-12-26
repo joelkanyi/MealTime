@@ -42,8 +42,8 @@ class FavoritesRepositoryImpl(
         }
     }
 
-    override fun isFavorite(id: Int): LiveData<Boolean> {
-        return favoritesDao.inFavorites(id = id)
+    override fun isLocalFavoriteFavorite(id: Int): LiveData<Boolean> {
+        return favoritesDao.localInFavorites(id = id)
     }
 
     override suspend fun deleteOneFavorite(favorite: Favorite) {
@@ -55,6 +55,10 @@ class FavoritesRepositoryImpl(
     }
 
     override fun inFavorites(id: Int): LiveData<Boolean> {
-        return favoritesDao.inFavorites(id = id)
+        return favoritesDao.localInFavorites(id = id)
+    }
+
+    override suspend fun deleteALocalFavorite(localMealId: Int) {
+        favoritesDao.deleteALocalFavorite(localMealId = localMealId)
     }
 }
