@@ -58,6 +58,7 @@ import com.kanyideveloper.presentation.details.DetailsViewModel
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
+import timber.log.Timber
 
 @Composable
 fun DetailsCollapsingToolbar(
@@ -78,6 +79,8 @@ fun DetailsCollapsingToolbar(
     } else {
         meal.localMealId?.let { viewModel.inLocalFavorites(id = it).observeAsState().value } != null
     }
+
+    Timber.e("Meal Details is favorite: $isFavorite")
 
     CollapsingToolbarScaffold(
         modifier = Modifier.fillMaxSize(),
@@ -165,6 +168,12 @@ fun DetailsCollapsingToolbar(
                                     .clickable {
                                         if (isFavorite) {
                                             if (isOnlineMeal) {
+                                                onRemoveFavorite(0, meal.onlineMealId!!)
+                                            } else {
+                                                onRemoveFavorite(meal.localMealId!!, "")
+                                            }
+                                        } else {
+                                            if (isOnlineMeal) {
                                                 meal.onlineMealId?.let {
                                                     addToFavorites(
                                                         it,
@@ -180,12 +189,6 @@ fun DetailsCollapsingToolbar(
                                                         meal.name
                                                     )
                                                 }
-                                            }
-                                        } else {
-                                            if (isOnlineMeal) {
-                                                onRemoveFavorite(0, meal.onlineMealId!!)
-                                            } else {
-                                                onRemoveFavorite(meal.localMealId!!, "")
                                             }
                                         }
                                     },
