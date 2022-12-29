@@ -163,7 +163,8 @@ fun TabContent(
     HorizontalPager(
         count = tabs.size,
         state = pagerState,
-        modifier = Modifier
+        modifier = Modifier,
+        userScrollEnabled = false
     ) { page ->
         tabs[page].screen(
             onClick = {
