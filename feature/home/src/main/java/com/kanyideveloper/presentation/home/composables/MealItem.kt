@@ -27,8 +27,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -133,7 +131,7 @@ fun MealItem(
             ) {
                 Text(
                     modifier = Modifier
-                        .fillMaxWidth(0.8f)
+                        .fillMaxWidth(0.75f)
                         .padding(vertical = 3.dp),
                     text = meal.name,
                     style = MaterialTheme.typography.titleSmall,
@@ -152,13 +150,17 @@ fun MealItem(
                 ) {
                     Icon(
                         modifier = Modifier
-                            .size(24.dp),
-                        imageVector = Icons.Filled.Favorite,
+                            .size(30.dp),
+                        painter = if (isFavorite) {
+                            painterResource(id = R.drawable.filled_favorite)
+                        } else {
+                            painterResource(id = R.drawable.heart_plus)
+                        },
                         contentDescription = null,
                         tint = if (isFavorite) {
                             Color(0xFFfa4a0c)
                         } else {
-                            Color.LightGray.copy(alpha = .9f)
+                            MaterialTheme.colorScheme.onSurfaceVariant
                         }
                     )
                 }

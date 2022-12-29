@@ -38,7 +38,6 @@ fun DetailsScreen(
         },
         onRemoveFavorite = { localMealId, _ ->
             viewModel.deleteALocalFavorite(localMealId = localMealId)
-            navigator.popBackStack()
         },
         addToFavorites = { mealId, imageUrl, name ->
             viewModel.insertAFavorite(

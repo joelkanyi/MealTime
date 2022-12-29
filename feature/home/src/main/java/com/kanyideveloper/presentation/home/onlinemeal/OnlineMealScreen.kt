@@ -38,8 +38,6 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -53,6 +51,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -219,7 +218,7 @@ fun OnlineMealItem(
             ) {
                 Text(
                     modifier = Modifier
-                        .fillMaxWidth(0.8f)
+                        .fillMaxWidth(0.75f)
                         .padding(vertical = 3.dp),
                     text = meal.name,
                     style = MaterialTheme.typography.titleSmall,
@@ -239,13 +238,17 @@ fun OnlineMealItem(
                 ) {
                     Icon(
                         modifier = Modifier
-                            .size(24.dp),
-                        imageVector = Icons.Filled.Favorite,
+                            .size(30.dp),
+                        painter = if (isFavorite) {
+                            painterResource(id = R.drawable.filled_favorite)
+                        } else {
+                            painterResource(id = R.drawable.heart_plus)
+                        },
                         contentDescription = null,
                         tint = if (isFavorite) {
                             Color(0xFFfa4a0c)
                         } else {
-                            Color.LightGray.copy(alpha = .9f)
+                            MaterialTheme.colorScheme.onSurfaceVariant
                         }
                     )
                 }

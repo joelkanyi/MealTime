@@ -33,7 +33,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -47,6 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -159,47 +159,49 @@ fun DetailsCollapsingToolbar(
                                 .background(
                                     MaterialTheme.colorScheme.tertiaryContainer
                                 )
+                                .clickable {
+                                    if (isFavorite) {
+                                        if (isOnlineMeal) {
+                                            onRemoveFavorite(0, meal.onlineMealId!!)
+                                        } else {
+                                            onRemoveFavorite(meal.localMealId!!, "")
+                                        }
+                                    } else {
+                                        if (isOnlineMeal) {
+                                            meal.onlineMealId?.let {
+                                                addToFavorites(
+                                                    it,
+                                                    meal.imageUrl,
+                                                    meal.name
+                                                )
+                                            }
+                                        } else {
+                                            meal.localMealId?.let {
+                                                addToFavorites(
+                                                    it.toString(),
+                                                    meal.imageUrl,
+                                                    meal.name
+                                                )
+                                            }
+                                        }
+                                    }
+                                },
+                            contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 modifier = Modifier
-                                    .size(24.dp)
-                                    .align(Alignment.Center)
-                                    .padding(0.dp)
-                                    .clickable {
-                                        if (isFavorite) {
-                                            if (isOnlineMeal) {
-                                                onRemoveFavorite(0, meal.onlineMealId!!)
-                                            } else {
-                                                onRemoveFavorite(meal.localMealId!!, "")
-                                            }
-                                        } else {
-                                            if (isOnlineMeal) {
-                                                meal.onlineMealId?.let {
-                                                    addToFavorites(
-                                                        it,
-                                                        meal.imageUrl,
-                                                        meal.name
-                                                    )
-                                                }
-                                            } else {
-                                                meal.localMealId?.let {
-                                                    addToFavorites(
-                                                        it.toString(),
-                                                        meal.imageUrl,
-                                                        meal.name
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    },
-                                imageVector = Icons.Filled.Favorite,
+                                    .size(30.dp),
+                                painter = if (isFavorite) {
+                                    painterResource(id = R.drawable.filled_favorite)
+                                } else {
+                                    painterResource(id = R.drawable.heart_plus)
+                                },
                                 contentDescription = null,
                                 tint = if (isFavorite) {
                                     Color(0xFFfa4a0c)
                                 } else {
-                                    Color.LightGray.copy(alpha = .9f)
+                                    MaterialTheme.colorScheme.onSurfaceVariant
                                 }
-
                             )
                         }
                     }
