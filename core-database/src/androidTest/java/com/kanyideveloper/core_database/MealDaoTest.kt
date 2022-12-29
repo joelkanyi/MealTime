@@ -128,7 +128,7 @@ class MealDaoTest {
         mealDao.insertMeal(testMeal1)
         mealDao.insertMeal(testMeal2)
 
-        val liveData: LiveData<MealEntity> = mealDao.getSingleMeal(1)
+        val liveData: LiveData<MealEntity?> = mealDao.getSingleMeal(1)
         val data: MealEntity? = getValue(liveData)
 
         assertEquals(expectedMealName, data?.name)
