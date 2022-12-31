@@ -35,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.kanyideveloper.core.model.Meal
@@ -56,7 +57,7 @@ fun MealProperties(meal: Meal) {
             modifier = Modifier
                 .clip(RoundedCornerShape(12.dp))
                 .background(
-                    MaterialTheme.colorScheme.tertiaryContainer
+                    MaterialTheme.colorScheme.surfaceVariant
                 )
         ) {
             Column(
@@ -68,7 +69,7 @@ fun MealProperties(meal: Meal) {
                         .size(50.dp)
                         .clip(CircleShape)
                         .background(
-                            MaterialTheme.colorScheme.background
+                            Color.Transparent
                         )
                 ) {
                     Icon(
@@ -78,13 +79,13 @@ fun MealProperties(meal: Meal) {
                             .padding(0.dp),
                         painter = painterResource(id = R.drawable.ic_clock),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = "${meal.cookingTime} mins",
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelSmall
                 )
             }
@@ -95,7 +96,7 @@ fun MealProperties(meal: Meal) {
             modifier = Modifier
                 .clip(RoundedCornerShape(12.dp))
                 .background(
-                    MaterialTheme.colorScheme.tertiaryContainer
+                    MaterialTheme.colorScheme.surfaceVariant
                 )
         ) {
             Column(
@@ -107,7 +108,7 @@ fun MealProperties(meal: Meal) {
                         .size(50.dp)
                         .clip(CircleShape)
                         .background(
-                            MaterialTheme.colorScheme.background
+                            Color.Transparent
                         )
                 ) {
                     Icon(
@@ -119,13 +120,13 @@ fun MealProperties(meal: Meal) {
                             id = R.drawable.users_three_light
                         ),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = "${meal.servingPeople} Serving",
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelSmall
                 )
             }
@@ -137,7 +138,7 @@ fun MealProperties(meal: Meal) {
                 .width(60.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(
-                    MaterialTheme.colorScheme.tertiaryContainer
+                    MaterialTheme.colorScheme.surfaceVariant
                 )
         ) {
             Column(
@@ -149,7 +150,7 @@ fun MealProperties(meal: Meal) {
                         .size(50.dp)
                         .clip(CircleShape)
                         .background(
-                            MaterialTheme.colorScheme.background
+                            Color.Transparent
                         )
                 ) {
                     Icon(
@@ -159,13 +160,13 @@ fun MealProperties(meal: Meal) {
                             .padding(0.dp),
                         painter = painterResource(id = R.drawable.noun_easy),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = meal.cookingDifficulty,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelSmall
                 )
             }
@@ -176,7 +177,7 @@ fun MealProperties(meal: Meal) {
                 .width(60.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(
-                    MaterialTheme.colorScheme.tertiaryContainer
+                    MaterialTheme.colorScheme.surfaceVariant
                 )
         ) {
             Column(
@@ -188,7 +189,7 @@ fun MealProperties(meal: Meal) {
                         .size(50.dp)
                         .clip(CircleShape)
                         .background(
-                            MaterialTheme.colorScheme.background
+                            Color.Transparent
                         )
                 ) {
                     Icon(
@@ -200,13 +201,13 @@ fun MealProperties(meal: Meal) {
                             id = R.drawable.fire_simple_bold
                         ),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = "30 kcal",
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelSmall
                 )
             }
@@ -217,7 +218,7 @@ fun MealProperties(meal: Meal) {
                 .width(60.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(
-                    MaterialTheme.colorScheme.tertiaryContainer
+                    MaterialTheme.colorScheme.surfaceVariant
                 )
         ) {
             Column(
@@ -229,7 +230,7 @@ fun MealProperties(meal: Meal) {
                         .size(50.dp)
                         .clip(CircleShape)
                         .background(
-                            MaterialTheme.colorScheme.background
+                            Color.Transparent
                         )
                 ) {
                     Icon(
@@ -239,13 +240,13 @@ fun MealProperties(meal: Meal) {
                             .padding(0.dp),
                         painter = painterResource(id = R.drawable.ic_food),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = meal.category,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelSmall
                 )
             }

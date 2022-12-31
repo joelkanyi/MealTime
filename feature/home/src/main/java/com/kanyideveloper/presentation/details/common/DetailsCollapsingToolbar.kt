@@ -86,12 +86,12 @@ fun DetailsCollapsingToolbar(
         modifier = Modifier.fillMaxSize(),
         state = state,
         scrollStrategy = ScrollStrategy.ExitUntilCollapsed,
-        toolbarModifier = Modifier.background(MaterialTheme.colorScheme.tertiaryContainer),
+        toolbarModifier = Modifier.background(MaterialTheme.colorScheme.background),
         enabled = true,
         toolbar = {
             Box(
                 modifier = Modifier
-                    .background(MaterialTheme.colorScheme.tertiaryContainer)
+                    .background(MaterialTheme.colorScheme.background)
                     .fillMaxWidth()
                     .height(150.dp)
                     .pin()
@@ -157,7 +157,7 @@ fun DetailsCollapsingToolbar(
                                 .size(50.dp)
                                 .clip(CircleShape)
                                 .background(
-                                    MaterialTheme.colorScheme.tertiaryContainer
+                                    MaterialTheme.colorScheme.surfaceVariant
                                 )
                                 .clickable {
                                     if (isFavorite) {
@@ -206,11 +206,12 @@ fun DetailsCollapsingToolbar(
                         }
                     }
                 }
-
-                Spacer(modifier = Modifier.height(24.dp))
             }
             item {
-                MealProperties(meal)
+                if (!isOnlineMeal){
+                    Spacer(modifier = Modifier.height(24.dp))
+                    MealProperties(meal)
+                }
             }
 
             item {

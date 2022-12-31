@@ -55,7 +55,7 @@ interface SettingsNavigator {
 @Composable
 fun SettingsScreen(
     navigator: SettingsNavigator,
-    viewModel: SettingsViewModel = hiltViewModel()
+    viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     var shouldShowSettingsDialog by remember {
         mutableStateOf(false)
@@ -96,7 +96,7 @@ fun SettingsScreen(
 
 @Composable
 fun ThemeCard(
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -141,7 +141,7 @@ fun ThemeCard(
 @Composable
 fun ThemeDialog(
     onDismiss: () -> Unit,
-    onSelectTheme: (Int) -> Unit
+    onSelectTheme: (Int) -> Unit,
 ) {
     AlertDialog(
         onDismissRequest = { onDismiss() },
@@ -198,7 +198,7 @@ fun ThemeItem(
     themeName: String,
     themeValue: Int,
     icon: Int,
-    onSelectTheme: (Int) -> Unit
+    onSelectTheme: (Int) -> Unit,
 ) {
     Card(
         shape = MaterialTheme.shapes.large,

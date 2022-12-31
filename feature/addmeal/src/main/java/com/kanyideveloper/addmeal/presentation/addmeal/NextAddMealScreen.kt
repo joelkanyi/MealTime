@@ -18,6 +18,7 @@ package com.kanyideveloper.addmeal.presentation.addmeal
 import android.annotation.SuppressLint
 import android.net.Uri
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -43,7 +44,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -51,6 +51,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
@@ -81,7 +82,7 @@ fun NextAddMealScreen(
     cookingTime: Int,
     servingPeople: Int,
     navigator: AddMealNavigator,
-    viewModel: AddMealsViewModel = hiltViewModel()
+    viewModel: AddMealsViewModel = hiltViewModel(),
 ) {
     NextAddMealScreenDestination
     val context = LocalContext.current
@@ -107,27 +108,32 @@ fun NextAddMealScreen(
                 navigator.popBackStack()
             },
             title = {
-                Text(text = "Add meal", fontSize = 18.sp)
+                Row(modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween) {
+
+                    Text(text = "Add meal", fontSize = 18.sp)
+                    SaveTextButtonContent(
+                        isLoading = viewModel.saveMeal.value.isLoading,
+                        onClick = {
+                            keyboardController?.hide()
+                            viewModel.saveMeal(
+                                imageUri = imageUri,
+                                mealName = mealName,
+                                cookingTime = cookingTime,
+                                servingPeople = servingPeople,
+                                complexity = complexity,
+                                category = category
+                            )
+                        }
+                    )
+
+                }
             },
             showBackArrow = true,
-            navActions = {
-                TextButton(
-                    onClick = {
-                        keyboardController?.hide()
-                        viewModel.saveMeal(
-                            imageUri = imageUri,
-                            mealName = mealName,
-                            cookingTime = cookingTime,
-                            servingPeople = servingPeople,
-                            complexity = complexity,
-                            category = category
-                        )
-                    },
-                    enabled = !viewModel.saveMeal.value.isLoading
-                ) {
-                    SaveTextButtonContent(viewModel)
-                }
-            }
+            /*navActions = {
+
+            }*/
         )
 
         if (viewModel.saveMeal.value.mealIsSaved) {
@@ -171,16 +177,22 @@ fun NextAddMealScreen(
 }
 
 @Composable
-private fun SaveTextButtonContent(viewModel: AddMealsViewModel) {
-    if (viewModel.saveMeal.value.isLoading) {
+private fun SaveTextButtonContent(
+    isLoading: Boolean,
+    onClick: () -> Unit,
+) {
+    if (isLoading) {
         CircularProgressIndicator(
             modifier = Modifier.size(24.dp)
         )
     } else {
         Text(
+            modifier = Modifier.clickable {
+                onClick()
+            },
             text = "Save",
             color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.labelMedium
+            fontSize = 16.sp
         )
     }
 }
@@ -190,7 +202,7 @@ private fun SaveTextButtonContent(viewModel: AddMealsViewModel) {
 private fun DirectionComponent(
     direction: TextFieldState,
     viewModel: AddMealsViewModel,
-    keyboardController: SoftwareKeyboardController?
+    keyboardController: SoftwareKeyboardController?,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -209,7 +221,9 @@ private fun DirectionComponent(
             placeholder = {
                 Text(text = "Enter instruction")
             },
-            colors = TextFieldDefaults.textFieldColors(),
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color.Transparent
+            ),
             trailingIcon = {
                 IconButton(onClick = {
                     keyboardController?.hide()
@@ -246,7 +260,7 @@ private fun DirectionComponent(
 private fun IngredientComponent(
     ingredient: TextFieldState,
     viewModel: AddMealsViewModel,
-    keyboardController: SoftwareKeyboardController?
+    keyboardController: SoftwareKeyboardController?,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -265,7 +279,9 @@ private fun IngredientComponent(
             placeholder = {
                 Text(text = "Enter ingredient")
             },
-            colors = TextFieldDefaults.textFieldColors(),
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color.Transparent
+            ),
             trailingIcon = {
                 IconButton(onClick = {
                     keyboardController?.hide()
@@ -299,7 +315,7 @@ private fun IngredientComponent(
 @Composable
 fun IngredientItem(
     ingredient: String,
-    viewModel: AddMealsViewModel
+    viewModel: AddMealsViewModel,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -336,7 +352,7 @@ fun IngredientItem(
 fun DirectionItem(
     direction: String,
     viewModel: AddMealsViewModel,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
