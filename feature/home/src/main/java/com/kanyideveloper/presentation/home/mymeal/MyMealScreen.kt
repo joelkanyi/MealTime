@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.compose_ui.theme.Shapes
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.util.showDayCookMessage
 import com.kanyideveloper.domain.model.MealCategory
 import com.kanyideveloper.mealtime.core.R
 import com.kanyideveloper.presentation.home.HomeNavigator
@@ -162,8 +163,8 @@ private fun MyMealScreenContent(
                             .padding(16.dp)
                     ) {
                         Text(
-                            text = "What to cook for lunch?",
-                            style = MaterialTheme.typography.titleMedium,
+                            text = showDayCookMessage(),
+                            style = MaterialTheme.typography.titleSmall,
                             color = Color.White
                         )
                         Button(
