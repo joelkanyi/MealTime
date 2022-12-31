@@ -34,6 +34,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.gson.Gson
 import com.kanyideveloper.core.model.ErrorResponse
 import java.io.IOException
+import java.util.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -142,5 +143,27 @@ fun convertMinutesToHours(minutes: Int): String {
         }
     } else {
         "$minutes mins"
+    }
+}
+
+fun showDayCookMessage(): String {
+    // Get the time of day
+    val date = Date()
+    val cal = Calendar.getInstance()
+    cal.time = date
+
+    return when (cal[Calendar.HOUR_OF_DAY]) {
+        in 12..16 -> {
+            "What to cook for lunch?"
+        }
+        in 17..20 -> {
+            "What to cook for dinner?"
+        }
+        in 21..23 -> {
+            "What to cook tonight?"
+        }
+        else -> {
+            "What to cook for breakfast?"
+        }
     }
 }

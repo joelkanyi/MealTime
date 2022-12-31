@@ -32,7 +32,7 @@ import com.kanyideveloper.mealtime.core.R
 
 @Composable
 fun BoxScope.ErrorStateComponent(
-    errorMessage: String,
+    errorMessage: String
 ) {
     Column(
         Modifier

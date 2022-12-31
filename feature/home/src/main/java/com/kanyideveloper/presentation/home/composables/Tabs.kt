@@ -39,7 +39,7 @@ import kotlinx.coroutines.launch
 fun Tabs(
     tabs: List<TabItem>,
     pagerState: PagerState,
-    onClick: (Int) -> Unit,
+    onClick: (Int) -> Unit
 ) {
     val scope = rememberCoroutineScope()
 

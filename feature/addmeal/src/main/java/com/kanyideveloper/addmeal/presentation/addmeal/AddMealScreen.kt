@@ -128,7 +128,11 @@ fun AddMealScreen(
                         IconButton(onClick = {
                             galleryLauncher.launch("image/*")
                         }) {
-                            Icon(imageVector = Icons.Default.Add, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
                     }
 

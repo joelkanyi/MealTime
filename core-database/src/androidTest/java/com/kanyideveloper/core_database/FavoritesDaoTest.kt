@@ -88,7 +88,6 @@ class FavoritesDaoTest {
         assertEquals(expectedResult, data?.size)
     }
 
-
     @get:Rule
     val instantTaskExecutorRule1 = InstantTaskExecutorRule()
 
@@ -124,7 +123,6 @@ class FavoritesDaoTest {
 
         assertEquals(expectedResult, data?.size)
     }
-
 
     @get:Rule
     val instantTaskExecutorRule2 = InstantTaskExecutorRule()

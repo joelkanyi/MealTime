@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -150,7 +151,7 @@ fun DetailsCollapsingToolbar(
                         Text(
                             modifier = Modifier.fillMaxWidth(0.85f),
                             text = meal.name,
-                            style = MaterialTheme.typography.titleLarge
+                            style = MaterialTheme.typography.headlineMedium
                         )
                         Box(
                             modifier = Modifier
@@ -208,7 +209,7 @@ fun DetailsCollapsingToolbar(
                 }
             }
             item {
-                if (!isOnlineMeal){
+                if (!isOnlineMeal) {
                     Spacer(modifier = Modifier.height(24.dp))
                     MealProperties(meal)
                 }
@@ -222,7 +223,7 @@ fun DetailsCollapsingToolbar(
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = "Ingredients",
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleLarge
                 )
             }
 
@@ -250,24 +251,23 @@ fun DetailsCollapsingToolbar(
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = "Cooking Instructions",
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleLarge
                 )
             }
 
-            items(meal.cookingDirections) { instruction ->
+            itemsIndexed(meal.cookingDirections) { index, instruction ->
                 Row(
                     modifier = Modifier.padding(start = 12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(6.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.onBackground)
-                    )
                     Text(
-                        modifier = Modifier.padding(3.dp),
+                        modifier = Modifier.padding(6.dp),
+                        text = "${index + 1}.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+
+                    Text(
+                        modifier = Modifier.padding(6.dp),
                         text = instruction,
                         style = MaterialTheme.typography.bodyMedium
                     )
