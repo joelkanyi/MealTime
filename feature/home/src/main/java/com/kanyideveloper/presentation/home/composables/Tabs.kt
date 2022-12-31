@@ -17,8 +17,8 @@ package com.kanyideveloper.presentation.home.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
@@ -38,34 +39,35 @@ import kotlinx.coroutines.launch
 fun Tabs(
     tabs: List<TabItem>,
     pagerState: PagerState,
-    onClick: (Int) -> Unit
+    onClick: (Int) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
     TabRow(
+
         selectedTabIndex = pagerState.currentPage,
-        backgroundColor = MaterialTheme.colorScheme.secondaryContainer,
+        backgroundColor = MaterialTheme.colorScheme.background,
         modifier = Modifier
+            .width(300.dp)
             .padding(vertical = 4.dp, horizontal = 16.dp)
             .clip(RoundedCornerShape(50)),
         indicator = {
             Box {}
-        }
+        },
+        divider = {}
     ) {
         tabs.forEachIndexed { index, tabItem ->
             val selected = pagerState.currentPage == index
             Tab(
                 modifier = if (selected) Modifier
-                    .padding(6.dp)
                     .clip(RoundedCornerShape(50))
                     .background(
                         MaterialTheme.colorScheme.primary
                     )
                 else Modifier
-                    .padding(6.dp)
                     .clip(RoundedCornerShape(50))
                     .background(
-                        MaterialTheme.colorScheme.secondaryContainer
+                        Color.Transparent
                     ),
                 selected = pagerState.currentPage == index,
                 onClick = {
@@ -76,14 +78,14 @@ fun Tabs(
                 },
                 text = {
                     Text(
-                        modifier = Modifier.padding(PaddingValues(16.dp)),
                         text = tabItem.title,
                         color = if (pagerState.currentPage == index) {
                             MaterialTheme.colorScheme.onPrimary
                         } else {
-                            MaterialTheme.colorScheme.onSecondaryContainer
+                            MaterialTheme.colorScheme.onBackground
+                                .copy(alpha = .5f)
                         },
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.titleSmall
                     )
                 }
             )

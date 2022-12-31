@@ -61,7 +61,7 @@ interface HomeNavigator {
 @Composable
 fun HomeScreen(
     navigator: HomeNavigator,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
     Scaffold(
         topBar = {
@@ -84,7 +84,7 @@ fun HomeScreen(
                     modifier = Modifier
                         .height(50.dp),
                     shape = MaterialTheme.shapes.large,
-                    containerColor = MaterialTheme.colorScheme.tertiary,
+                    containerColor = MaterialTheme.colorScheme.primary,
                     content = {
                         Row(
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
@@ -131,7 +131,7 @@ fun HomeScreen(
 fun MainContent(
     navigator: HomeNavigator,
     modifier: Modifier = Modifier,
-    onClick: (Int) -> Unit
+    onClick: (Int) -> Unit,
 ) {
     val listOfTabs = listOf(
         TabItem.Outgoing(navigator = navigator),
@@ -158,7 +158,7 @@ fun MainContent(
 @Composable
 fun TabContent(
     tabs: List<TabItem>,
-    pagerState: PagerState
+    pagerState: PagerState,
 ) {
     HorizontalPager(
         count = tabs.size,

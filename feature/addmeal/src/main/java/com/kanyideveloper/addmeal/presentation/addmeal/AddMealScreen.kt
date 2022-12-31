@@ -86,7 +86,8 @@ fun AddMealScreen(
     val sliderColors =
         SliderDefaults.colors(
             thumbColor = MaterialTheme.colorScheme.primary,
-            activeTrackColor = MaterialTheme.colorScheme.primary
+            activeTrackColor = MaterialTheme.colorScheme.primary,
+            inactiveTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = .5f)
         )
 
     val galleryLauncher =
@@ -117,7 +118,7 @@ fun AddMealScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
-                        .background(MaterialTheme.colorScheme.tertiaryContainer)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                         .height(210.dp)
                         .clickable {
                             galleryLauncher.launch("image/*")
@@ -127,7 +128,7 @@ fun AddMealScreen(
                         IconButton(onClick = {
                             galleryLauncher.launch("image/*")
                         }) {
-                            Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                            Icon(imageVector = Icons.Default.Add, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
 
