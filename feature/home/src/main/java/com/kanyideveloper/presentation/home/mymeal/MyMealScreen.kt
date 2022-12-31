@@ -72,7 +72,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 @Composable
 fun MyMealScreen(
     navigator: HomeNavigator,
-    viewModel: HomeViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val myMeals = viewModel.myMeals.observeAsState().value
 
@@ -109,7 +109,7 @@ private fun MyMealScreenContent(
     openMealDetails: (Meal) -> Unit = {},
     addToFavorites: (Int, String, String) -> Unit,
     removeFromFavorites: (Int) -> Unit,
-    viewModel: HomeViewModel,
+    viewModel: HomeViewModel
 ) {
     var showRandomMeal1 = showRandomMeal
     LazyVerticalGrid(

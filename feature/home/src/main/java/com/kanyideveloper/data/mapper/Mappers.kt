@@ -84,7 +84,7 @@ internal fun MealDetailsResponse.Meal.toMeal(): Meal {
             strIngredient18,
             strIngredient19,
             strIngredient20
-        ).filter { it.isNotEmpty() },
+        ).filter { !it.isNullOrEmpty() },
         cookingDirections = strInstructions.stringToList(),
         isFavorite = false,
         servingPeople = 0,

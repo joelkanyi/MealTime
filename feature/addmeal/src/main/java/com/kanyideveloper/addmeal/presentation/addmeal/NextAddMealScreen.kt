@@ -82,7 +82,7 @@ fun NextAddMealScreen(
     cookingTime: Int,
     servingPeople: Int,
     navigator: AddMealNavigator,
-    viewModel: AddMealsViewModel = hiltViewModel(),
+    viewModel: AddMealsViewModel = hiltViewModel()
 ) {
     NextAddMealScreenDestination
     val context = LocalContext.current
@@ -108,10 +108,11 @@ fun NextAddMealScreen(
                 navigator.popBackStack()
             },
             title = {
-                Row(modifier = Modifier.fillMaxWidth(),
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween) {
-
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Text(text = "Add meal", fontSize = 18.sp)
                     SaveTextButtonContent(
                         isLoading = viewModel.saveMeal.value.isLoading,
@@ -127,10 +128,9 @@ fun NextAddMealScreen(
                             )
                         }
                     )
-
                 }
             },
-            showBackArrow = true,
+            showBackArrow = true
             /*navActions = {
 
             }*/
@@ -179,7 +179,7 @@ fun NextAddMealScreen(
 @Composable
 private fun SaveTextButtonContent(
     isLoading: Boolean,
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     if (isLoading) {
         CircularProgressIndicator(
@@ -202,7 +202,7 @@ private fun SaveTextButtonContent(
 private fun DirectionComponent(
     direction: TextFieldState,
     viewModel: AddMealsViewModel,
-    keyboardController: SoftwareKeyboardController?,
+    keyboardController: SoftwareKeyboardController?
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -260,7 +260,7 @@ private fun DirectionComponent(
 private fun IngredientComponent(
     ingredient: TextFieldState,
     viewModel: AddMealsViewModel,
-    keyboardController: SoftwareKeyboardController?,
+    keyboardController: SoftwareKeyboardController?
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -315,7 +315,7 @@ private fun IngredientComponent(
 @Composable
 fun IngredientItem(
     ingredient: String,
-    viewModel: AddMealsViewModel,
+    viewModel: AddMealsViewModel
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -352,7 +352,7 @@ fun IngredientItem(
 fun DirectionItem(
     direction: String,
     viewModel: AddMealsViewModel,
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),

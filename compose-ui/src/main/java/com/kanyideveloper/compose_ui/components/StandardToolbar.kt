@@ -32,7 +32,7 @@ fun StandardToolbar(
     navigate: () -> Unit = {},
     showBackArrow: Boolean = false,
     navActions: @Composable RowScope.() -> Unit = {},
-    title: @Composable () -> Unit = {},
+    title: @Composable () -> Unit = {}
 ) {
     TopAppBar(
         title = title,
