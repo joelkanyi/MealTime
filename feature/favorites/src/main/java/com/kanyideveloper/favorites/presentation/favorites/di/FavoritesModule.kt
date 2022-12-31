@@ -13,20 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core_database
+package com.kanyideveloper.favorites.presentation.favorites.di
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
-import com.kanyideveloper.core_database.converters.Converters
+import com.kanyideveloper.core.domain.FavoritesRepository
 import com.kanyideveloper.core_database.dao.FavoritesDao
-import com.kanyideveloper.core_database.dao.MealDao
-import com.kanyideveloper.core_database.model.FavoriteEntity
-import com.kanyideveloper.core_database.model.MealEntity
+import com.kanyideveloper.favorites.presentation.favorites.data.repository.FavoritesRepositoryImpl
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-@TypeConverters(Converters::class)
-@Database(entities = [MealEntity::class, FavoriteEntity::class], version = 2)
-abstract class MealTimeDatabase : RoomDatabase() {
-    abstract val mealDao: MealDao
-    abstract val favoritesDao: FavoritesDao
+@Module
+@InstallIn(SingletonComponent::class)
+object FavoritesModule {
+
+    @Provides
+    @Singleton
+    fun providesFavoritesRepository(favoritesDao: FavoritesDao): FavoritesRepository {
+        return FavoritesRepositoryImpl(favoritesDao = favoritesDao)
+    }
 }

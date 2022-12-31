@@ -13,22 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core.model
+package com.kanyideveloper.core.domain
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.lifecycle.LiveData
+import com.kanyideveloper.core.model.Meal
 
-@Parcelize
-data class Meal(
-    val name: String,
-    val imageUrl: String,
-    val cookingTime: Int,
-    val servingPeople: Int,
-    val category: String,
-    val cookingDifficulty: String,
-    val ingredients: List<String>,
-    val cookingDirections: List<String>,
-    val isFavorite: Boolean = false,
-    val onlineMealId: String? = null,
-    val localMealId: Int? = null
-) : Parcelable
+interface HomeRepository {
+    fun getMyMeals(): LiveData<List<Meal>>
+    fun getMealById(id: Int): LiveData<Meal?>
+}

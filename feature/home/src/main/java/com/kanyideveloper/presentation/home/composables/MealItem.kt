@@ -34,8 +34,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -47,12 +49,19 @@ import com.kanyideveloper.compose_ui.theme.Shapes
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.util.convertMinutesToHours
 import com.kanyideveloper.mealtime.core.R
+import com.kanyideveloper.presentation.home.HomeViewModel
 
 @Composable
 fun MealItem(
     meal: Meal,
-    modifier: Modifier = Modifier
+    addToFavorites: (Int, String, String) -> Unit,
+    removeFromFavorites: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel
 ) {
+    val isFavorite =
+        meal.localMealId?.let { viewModel.inFavorites(id = it).observeAsState().value } != null
+
     Card(
         modifier = modifier
             .fillMaxSize()
@@ -122,7 +131,7 @@ fun MealItem(
             ) {
                 Text(
                     modifier = Modifier
-                        .fillMaxWidth(0.8f)
+                        .fillMaxWidth(0.75f)
                         .padding(vertical = 3.dp),
                     text = meal.name,
                     style = MaterialTheme.typography.titleSmall,
@@ -130,19 +139,29 @@ fun MealItem(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
-                IconButton(onClick = {
-                }) {
+                IconButton(
+                    onClick = {
+                        if (isFavorite) {
+                            meal.localMealId?.let { removeFromFavorites(it) }
+                        } else {
+                            meal.localMealId?.let { addToFavorites(it, meal.imageUrl, meal.name) }
+                        }
+                    }
+                ) {
                     Icon(
                         modifier = Modifier
-                            .size(24.dp),
-                        painter = painterResource(
-                            id = if (meal.isFavorite) {
-                                R.drawable.filled_favorite
-                            } else {
-                                R.drawable.unfilled_favorite
-                            }
-                        ),
-                        contentDescription = null
+                            .size(30.dp),
+                        painter = if (isFavorite) {
+                            painterResource(id = R.drawable.filled_favorite)
+                        } else {
+                            painterResource(id = R.drawable.heart_plus)
+                        },
+                        contentDescription = null,
+                        tint = if (isFavorite) {
+                            Color(0xFFfa4a0c)
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        }
                     )
                 }
             }

@@ -72,6 +72,16 @@ fun OnlineMealDetailsScreen(
         mealState = mealState,
         navigateBack = {
             navigator.popBackStack()
+        },
+        onRemoveFavorite = { _, onlineMealId ->
+            viewModel.deleteAnOnlineFavorite(onlineMealId = onlineMealId)
+        },
+        addToFavorites = { onlineMealId, imageUrl, name ->
+            viewModel.insertAFavorite(
+                onlineMealId = onlineMealId,
+                mealImageUrl = imageUrl,
+                mealName = name
+            )
         }
     )
 }
@@ -79,7 +89,9 @@ fun OnlineMealDetailsScreen(
 @Composable
 private fun OnlineMealScreenContent(
     mealState: DetailsState,
-    navigateBack: () -> Unit = {}
+    navigateBack: () -> Unit = {},
+    onRemoveFavorite: (Int, String) -> Unit,
+    addToFavorites: (String, String, String) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         // Data has been loaded successfully
@@ -89,7 +101,10 @@ private fun OnlineMealScreenContent(
                 meal = meal,
                 navigateBack = {
                     navigateBack()
-                }
+                },
+                onRemoveFavorite = onRemoveFavorite,
+                addToFavorites = addToFavorites,
+                isOnlineMeal = true
             )
         }
 

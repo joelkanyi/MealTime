@@ -17,8 +17,11 @@ package com.kanyideveloper.presentation.home.onlinemeal
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kanyideveloper.core.domain.FavoritesRepository
+import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.domain.repository.OnlineMealsRepository
 import com.kanyideveloper.presentation.home.onlinemeal.state.CategoriesState
@@ -29,7 +32,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class OnlineMealViewModel @Inject constructor(
-    private val onlineMealsRepository: OnlineMealsRepository
+    private val onlineMealsRepository: OnlineMealsRepository,
+    private val favoritesRepository: FavoritesRepository
 ) : ViewModel() {
 
     private val _categories = mutableStateOf(CategoriesState())
@@ -98,6 +102,38 @@ class OnlineMealViewModel @Inject constructor(
                     categories
                 }
             }
+        }
+    }
+
+    fun inOnlineFavorites(id: String): LiveData<Boolean> {
+        return favoritesRepository.isOnlineFavorite(id = id)
+    }
+
+    fun insertAFavorite(
+        isOnline: Boolean = false,
+        onlineMealId: String? = null,
+        localMealId: Int? = null,
+        mealImageUrl: String,
+        mealName: String
+    ) {
+        viewModelScope.launch {
+            val favorite = Favorite(
+                onlineMealId = onlineMealId,
+                localMealId = localMealId,
+                mealName = mealName,
+                mealImageUrl = mealImageUrl,
+                isOnline = isOnline,
+                isFavorite = true
+            )
+            favoritesRepository.insertFavorite(
+                favorite = favorite
+            )
+        }
+    }
+
+    fun deleteAnOnlineFavorite(onlineMealId: String) {
+        viewModelScope.launch {
+            favoritesRepository.deleteAnOnlineFavorite(onlineMealId = onlineMealId)
         }
     }
 }

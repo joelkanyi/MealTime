@@ -15,20 +15,12 @@
  */
 package com.kanyideveloper.core.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-
-@Parcelize
-data class Meal(
-    val name: String,
-    val imageUrl: String,
-    val cookingTime: Int,
-    val servingPeople: Int,
-    val category: String,
-    val cookingDifficulty: String,
-    val ingredients: List<String>,
-    val cookingDirections: List<String>,
-    val isFavorite: Boolean = false,
+data class Favorite(
+    val id: Int? = null,
     val onlineMealId: String? = null,
-    val localMealId: Int? = null
-) : Parcelable
+    val localMealId: Int? = null,
+    val isOnline: Boolean = false,
+    val mealName: String,
+    val mealImageUrl: String,
+    val isFavorite: Boolean = false
+)

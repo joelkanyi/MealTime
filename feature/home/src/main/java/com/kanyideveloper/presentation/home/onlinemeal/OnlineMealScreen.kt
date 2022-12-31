@@ -45,8 +45,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -94,6 +96,18 @@ fun OnlineMealScreen(
             onSelectCategory = { categoryName ->
                 viewModel.setSelectedCategory(categoryName)
                 viewModel.getMeals(viewModel.selectedCategory.value)
+            },
+            addToFavorites = { onlineMealId, imageUrl, name ->
+                viewModel.insertAFavorite(
+                    onlineMealId = onlineMealId,
+                    mealImageUrl = imageUrl,
+                    mealName = name
+                )
+            },
+            removeFromFavorites = { id ->
+                viewModel.deleteAnOnlineFavorite(
+                    onlineMealId = id
+                )
             }
         )
     }
@@ -106,7 +120,9 @@ fun OnlineMealScreenContent(
     selectedCategory: String,
     mealsState: MealState,
     onSelectCategory: (String) -> Unit,
-    onMealClick: (String) -> Unit
+    onMealClick: (String) -> Unit,
+    addToFavorites: (String, String, String) -> Unit,
+    removeFromFavorites: (String) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         // Data Loaded Successfully
@@ -132,7 +148,9 @@ fun OnlineMealScreenContent(
                     meal = meal,
                     onClick = { mealId ->
                         onMealClick(mealId)
-                    }
+                    },
+                    addToFavorites = addToFavorites,
+                    removeFromFavorites = removeFromFavorites
                 )
             }
         }
@@ -157,9 +175,13 @@ fun OnlineMealScreenContent(
 @Composable
 fun OnlineMealItem(
     meal: OnlineMeal,
-    isFavorite: Boolean = false,
-    onClick: (String) -> Unit
+    onClick: (String) -> Unit,
+    addToFavorites: (String, String, String) -> Unit,
+    removeFromFavorites: (String) -> Unit,
+    viewModel: OnlineMealViewModel = hiltViewModel()
 ) {
+    val isFavorite = viewModel.inOnlineFavorites(id = meal.mealId).observeAsState().value != null
+
     Card(
         modifier = Modifier
             .fillMaxSize()
@@ -196,7 +218,7 @@ fun OnlineMealItem(
             ) {
                 Text(
                     modifier = Modifier
-                        .fillMaxWidth(0.8f)
+                        .fillMaxWidth(0.75f)
                         .padding(vertical = 3.dp),
                     text = meal.name,
                     style = MaterialTheme.typography.titleSmall,
@@ -204,19 +226,30 @@ fun OnlineMealItem(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
-                IconButton(onClick = {
-                }) {
+
+                IconButton(
+                    onClick = {
+                        if (isFavorite) {
+                            removeFromFavorites(meal.mealId)
+                        } else {
+                            addToFavorites(meal.mealId, meal.imageUrl, meal.name)
+                        }
+                    }
+                ) {
                     Icon(
                         modifier = Modifier
-                            .size(24.dp),
-                        painter = painterResource(
-                            id = if (isFavorite) {
-                                R.drawable.filled_favorite
-                            } else {
-                                R.drawable.unfilled_favorite
-                            }
-                        ),
-                        contentDescription = null
+                            .size(30.dp),
+                        painter = if (isFavorite) {
+                            painterResource(id = R.drawable.filled_favorite)
+                        } else {
+                            painterResource(id = R.drawable.heart_plus)
+                        },
+                        contentDescription = null,
+                        tint = if (isFavorite) {
+                            Color(0xFFfa4a0c)
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        }
                     )
                 }
             }

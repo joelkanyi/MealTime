@@ -13,11 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.domain.repository
+package com.kanyideveloper.core_database.model
 
-import androidx.lifecycle.LiveData
-import com.kanyideveloper.core_database.model.MealEntity
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.kanyideveloper.core.util.Constants.FAVORITES_TABLE
 
-interface HomeRepository {
-    fun getMyMeals(): LiveData<List<MealEntity>>
-}
+@Entity(tableName = FAVORITES_TABLE)
+data class FavoriteEntity(
+    @PrimaryKey(autoGenerate = true) val id: Int? = null,
+    val onlineMealId: String? = null,
+    val localMealId: Int? = null,
+    val isOnline: Boolean = false,
+    val mealName: String,
+    val mealImageUrl: String,
+    val isFavorite: Boolean = false
+)

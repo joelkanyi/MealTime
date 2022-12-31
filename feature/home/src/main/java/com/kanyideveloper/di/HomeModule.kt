@@ -15,11 +15,11 @@
  */
 package com.kanyideveloper.di
 
+import com.kanyideveloper.core.domain.HomeRepository
 import com.kanyideveloper.core_database.dao.MealDao
 import com.kanyideveloper.core_network.MealDbApi
 import com.kanyideveloper.data.repository.HomeRepositoryImpl
 import com.kanyideveloper.data.repository.OnlineMealsRepositoryImpl
-import com.kanyideveloper.domain.repository.HomeRepository
 import com.kanyideveloper.domain.repository.OnlineMealsRepository
 import dagger.Module
 import dagger.Provides
