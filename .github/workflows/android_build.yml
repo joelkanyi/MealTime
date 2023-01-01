@@ -24,8 +24,3 @@ jobs:
       - name: Run Tests
         run: ./gradlew test
 
-      - name: Upload a Build Artifact (APK)
-        uses: actions/upload-artifact@v2.2.4
-        with:
-          name: app
-          path: app/build/outputs/apk/debug/app-debug.apk
