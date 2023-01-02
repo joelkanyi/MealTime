@@ -163,7 +163,7 @@ private val meal = Meal(
 private val mealTypes = listOf(
     MealType(
         name = "Breakfast",
-        meals = listOf(meal, meal, meal)
+        meals = listOf(meal, meal)
     ),
     MealType(
         name = "Lunch",
@@ -171,7 +171,7 @@ private val mealTypes = listOf(
     ),
     MealType(
         name = "Dinner",
-        meals = listOf(meal)
+        meals = listOf(meal, meal)
     )
 )
 
@@ -189,22 +189,39 @@ fun MealPlanItem(
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        Row(
-            modifier = Modifier
+        Card(
+            Modifier
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            shape = MaterialTheme.shapes.medium,
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            )
         ) {
-            Text(text = mealType.name, style = MaterialTheme.typography.titleMedium)
-            IconButton(onClick = {
-            }) {
-                Icon(
-                    modifier = Modifier.size(32.dp),
-                    painter = painterResource(id = R.drawable.add_circle),
-                    contentDescription = null
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp),
+                    text = mealType.name,
+                    style = MaterialTheme.typography.titleMedium
                 )
+                IconButton(onClick = {
+                }) {
+                    Icon(
+                        modifier = Modifier.size(32.dp),
+                        painter = painterResource(id = R.drawable.add_circle),
+                        contentDescription = null
+                    )
+                }
             }
         }
+
+        Spacer(modifier = Modifier.height(6.dp))
 
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -212,6 +229,10 @@ fun MealPlanItem(
             items(mealType.meals) { meal ->
                 PlanMealItem(meal = meal)
             }
+        }
+
+        if (mealType.meals.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(12.dp))
         }
     }
 }
