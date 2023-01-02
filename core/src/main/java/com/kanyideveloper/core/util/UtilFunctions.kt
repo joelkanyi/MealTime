@@ -117,7 +117,7 @@ fun LottieAnim(
     LottieAnimation(
         modifier = modifier
             .fillMaxWidth()
-            .height(250.dp),
+            .height(300.dp),
         iterations = LottieConstants.IterateForever,
         composition = composition
     )

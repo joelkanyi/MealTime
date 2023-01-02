@@ -23,6 +23,10 @@ import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealS
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.favorites.presentation.favorites.presentation.FavoritesNavigator
 import com.kanyideveloper.mealplanner.MealPlannerNavigator
+import com.kanyideveloper.mealplanner.destinations.AllergiesScreenDestination
+import com.kanyideveloper.mealplanner.destinations.MealPlannerScreenDestination
+import com.kanyideveloper.mealplanner.destinations.MealTypesScreenDestination
+import com.kanyideveloper.mealplanner.destinations.NumberOfPeopleScreenDestination
 import com.kanyideveloper.presentation.destinations.DetailsScreenDestination
 import com.kanyideveloper.presentation.destinations.HomeScreenDestination
 import com.kanyideveloper.presentation.destinations.OnlineMealDetailsScreenDestination
@@ -84,6 +88,22 @@ class CoreFeatureNavigator(
 
     override fun popBackStack() {
         navController.popBackStack()
+    }
+
+    override fun openAllergiesScreen() {
+        navController.navigate(AllergiesScreenDestination within navGraph)
+    }
+
+    override fun openNoOfPeopleScreen() {
+        navController.navigate(NumberOfPeopleScreenDestination within navGraph)
+    }
+
+    override fun openMealTypesScreen() {
+        navController.navigate(MealTypesScreenDestination within navGraph)
+    }
+
+    override fun openMealPlanner() {
+        navController.navigate(MealPlannerScreenDestination within navGraph)
     }
 
     override fun openOnlineMealDetails(mealId: String) {

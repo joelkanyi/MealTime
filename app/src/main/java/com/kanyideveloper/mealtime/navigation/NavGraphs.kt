@@ -18,7 +18,10 @@ package com.kanyideveloper.mealtime.navigation
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
 import com.kanyideveloper.favorites.presentation.favorites.presentation.destinations.FavoritesScreenDestination
+import com.kanyideveloper.mealplanner.destinations.AllergiesScreenDestination
 import com.kanyideveloper.mealplanner.destinations.MealPlannerScreenDestination
+import com.kanyideveloper.mealplanner.destinations.MealTypesScreenDestination
+import com.kanyideveloper.mealplanner.destinations.NumberOfPeopleScreenDestination
 import com.kanyideveloper.presentation.destinations.DetailsScreenDestination
 import com.kanyideveloper.presentation.destinations.HomeScreenDestination
 import com.kanyideveloper.presentation.destinations.MyMealScreenDestination
@@ -79,7 +82,10 @@ object NavGraphs {
         override val startRoute = MealPlannerScreenDestination routedIn this
 
         override val destinationsByRoute = listOf<DestinationSpec<*>>(
-            MealPlannerScreenDestination
+            MealPlannerScreenDestination,
+            AllergiesScreenDestination,
+            NumberOfPeopleScreenDestination,
+            MealTypesScreenDestination
         ).routedIn(this)
             .associateBy { it.route }
     }

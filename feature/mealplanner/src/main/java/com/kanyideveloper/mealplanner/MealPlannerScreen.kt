@@ -16,15 +16,28 @@
 package com.kanyideveloper.mealplanner
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.kanyideveloper.compose_ui.components.StandardToolbar
+import com.kanyideveloper.core.components.EmptyStateComponent
+import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
 
 interface MealPlannerNavigator {
     fun popBackStack()
+    fun openAllergiesScreen()
+    fun openNoOfPeopleScreen()
+    fun openMealTypesScreen()
+    fun openMealPlanner()
 }
 
 @Destination
@@ -32,10 +45,40 @@ interface MealPlannerNavigator {
 fun MealPlannerScreen(
     navigator: MealPlannerNavigator
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = "Meal Planner")
+    val hasMealPlan = false
+    Column(Modifier.fillMaxSize()) {
+        StandardToolbar(
+            navigate = {
+                navigator.popBackStack()
+            },
+            title = {
+                Text(text = "Meal Planner", fontSize = 18.sp)
+            },
+            showBackArrow = false,
+            navActions = {
+            }
+        )
+
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (!hasMealPlan) {
+                EmptyStateComponent(
+                    anim = R.raw.women_thinking,
+                    message = "Looks like you haven't created a meal plan yet",
+                    content = {
+                        Spacer(modifier = Modifier.height(32.dp))
+                        Button(onClick = {
+                            navigator.openAllergiesScreen()
+                        }) {
+                            Text(text = "Get Started")
+                        }
+                    }
+                )
+            }
+
+            if (hasMealPlan) {
+                LazyColumn {
+                }
+            }
+        }
     }
 }
