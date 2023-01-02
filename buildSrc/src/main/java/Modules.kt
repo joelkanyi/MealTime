@@ -11,4 +11,5 @@ object Modules {
     const val search = ":feature:search"
     const val settings = ":feature:settings"
     const val randomMeal = ":feature:randommeal"
+    const val mealPlanner = ":feature:mealplanner"
 }

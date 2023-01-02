@@ -13,38 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.randommeal
+package com.kanyideveloper.mealplanner
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.sp
-import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.core.util.showDayCookMessage
 import com.ramcosta.composedestinations.annotation.Destination
 
-interface RandomMealNavigator {
+interface MealPlannerNavigator {
     fun popBackStack()
 }
 
 @Destination
 @Composable
-fun RandomMealScreen(
-    navigator: RandomMealNavigator
+fun MealPlannerScreen(
+    navigator: MealPlannerNavigator
 ) {
-    Column(Modifier.fillMaxSize()) {
-        StandardToolbar(
-            navigate = {
-                navigator.popBackStack()
-            },
-            title = {
-                Text(text = showDayCookMessage(), fontSize = 16.sp)
-            },
-            showBackArrow = true,
-            navActions = {
-            }
-        )
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = "Meal Planner")
     }
 }

@@ -22,6 +22,7 @@ import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScree
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.favorites.presentation.favorites.presentation.FavoritesNavigator
+import com.kanyideveloper.mealplanner.MealPlannerNavigator
 import com.kanyideveloper.presentation.destinations.DetailsScreenDestination
 import com.kanyideveloper.presentation.destinations.HomeScreenDestination
 import com.kanyideveloper.presentation.destinations.OnlineMealDetailsScreenDestination
@@ -38,7 +39,13 @@ import timber.log.Timber
 class CoreFeatureNavigator(
     private val navGraph: NavGraphSpec,
     private val navController: NavController
-) : HomeNavigator, SearchNavigator, FavoritesNavigator, SettingsNavigator, AddMealNavigator, RandomMealNavigator {
+) : HomeNavigator,
+    SearchNavigator,
+    FavoritesNavigator,
+    SettingsNavigator,
+    AddMealNavigator,
+    RandomMealNavigator,
+    MealPlannerNavigator {
     override fun openAddMeal() {
         navController.navigate(AddMealScreenDestination within navGraph)
     }
