@@ -23,6 +23,7 @@ import com.kanyideveloper.presentation.destinations.HomeScreenDestination
 import com.kanyideveloper.presentation.destinations.MyMealScreenDestination
 import com.kanyideveloper.presentation.destinations.OnlineMealDetailsScreenDestination
 import com.kanyideveloper.presentation.destinations.OnlineMealScreenDestination
+import com.kanyideveloper.randommeal.destinations.RandomMealScreenDestination
 import com.kanyideveloper.search.presentation.search.destinations.SearchScreenDestination
 import com.kanyideveloper.settings.presentation.destinations.SettingsScreenDestination
 import com.ramcosta.composedestinations.dynamic.routedIn
@@ -43,7 +44,8 @@ object NavGraphs {
             OnlineMealDetailsScreenDestination,
             DetailsScreenDestination,
             AddMealScreenDestination,
-            NextAddMealScreenDestination
+            NextAddMealScreenDestination,
+            RandomMealScreenDestination
         ).routedIn(this)
             .associateBy { it.route }
     }

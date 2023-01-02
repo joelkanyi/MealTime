@@ -26,6 +26,8 @@ import com.kanyideveloper.presentation.destinations.DetailsScreenDestination
 import com.kanyideveloper.presentation.destinations.HomeScreenDestination
 import com.kanyideveloper.presentation.destinations.OnlineMealDetailsScreenDestination
 import com.kanyideveloper.presentation.home.HomeNavigator
+import com.kanyideveloper.randommeal.RandomMealNavigator
+import com.kanyideveloper.randommeal.destinations.RandomMealScreenDestination
 import com.kanyideveloper.search.presentation.search.SearchNavigator
 import com.kanyideveloper.settings.presentation.SettingsNavigator
 import com.ramcosta.composedestinations.dynamic.within
@@ -36,7 +38,7 @@ import timber.log.Timber
 class CoreFeatureNavigator(
     private val navGraph: NavGraphSpec,
     private val navController: NavController
-) : HomeNavigator, SearchNavigator, FavoritesNavigator, SettingsNavigator, AddMealNavigator {
+) : HomeNavigator, SearchNavigator, FavoritesNavigator, SettingsNavigator, AddMealNavigator, RandomMealNavigator {
     override fun openAddMeal() {
         navController.navigate(AddMealScreenDestination within navGraph)
     }
@@ -79,6 +81,10 @@ class CoreFeatureNavigator(
 
     override fun openOnlineMealDetails(mealId: String) {
         navController.navigate(OnlineMealDetailsScreenDestination(mealId = mealId) within navGraph)
+    }
+
+    override fun openRandomMeals() {
+        navController.navigate(RandomMealScreenDestination within navGraph)
     }
 
     override fun navigateBackToHome() {

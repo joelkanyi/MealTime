@@ -53,6 +53,7 @@ interface HomeNavigator {
     fun openAddMeal()
     fun popBackStack()
     fun openOnlineMealDetails(mealId: String)
+    fun openRandomMeals()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
