@@ -20,6 +20,7 @@
             <option value="$PROJECT_DIR$/feature/addmeal" />
             <option value="$PROJECT_DIR$/feature/favorites" />
             <option value="$PROJECT_DIR$/feature/home" />
+            <option value="$PROJECT_DIR$/feature/randommeal" />
             <option value="$PROJECT_DIR$/feature/search" />
             <option value="$PROJECT_DIR$/feature/settings" />
           </set>
