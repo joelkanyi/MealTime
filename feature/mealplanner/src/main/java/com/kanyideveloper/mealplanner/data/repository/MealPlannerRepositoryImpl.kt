@@ -15,6 +15,16 @@
  */
 package com.kanyideveloper.mealplanner.data.repository
 
+import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.mealplanner.domain.repository.MealPlannerRepository
 
-class MealPlannerRepositoryImpl : MealPlannerRepository
+class MealPlannerRepositoryImpl : MealPlannerRepository {
+    override suspend fun saveMealToPlan(meal: Meal) {
+        TODO("Not yet implemented")
+    }
+
+    override fun searchMeal(source: String, searchBy: String): Resource<List<Meal>> {
+        TODO("Not yet implemented")
+    }
+}
