@@ -18,11 +18,16 @@ package com.kanyideveloper.mealtime.navigation
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
 import com.kanyideveloper.favorites.presentation.favorites.presentation.destinations.FavoritesScreenDestination
+import com.kanyideveloper.mealplanner.destinations.AllergiesScreenDestination
+import com.kanyideveloper.mealplanner.destinations.MealPlannerScreenDestination
+import com.kanyideveloper.mealplanner.destinations.MealTypesScreenDestination
+import com.kanyideveloper.mealplanner.destinations.NumberOfPeopleScreenDestination
 import com.kanyideveloper.presentation.destinations.DetailsScreenDestination
 import com.kanyideveloper.presentation.destinations.HomeScreenDestination
 import com.kanyideveloper.presentation.destinations.MyMealScreenDestination
 import com.kanyideveloper.presentation.destinations.OnlineMealDetailsScreenDestination
 import com.kanyideveloper.presentation.destinations.OnlineMealScreenDestination
+import com.kanyideveloper.randommeal.destinations.RandomMealScreenDestination
 import com.kanyideveloper.search.presentation.search.destinations.SearchScreenDestination
 import com.kanyideveloper.settings.presentation.destinations.SettingsScreenDestination
 import com.ramcosta.composedestinations.dynamic.routedIn
@@ -43,7 +48,8 @@ object NavGraphs {
             OnlineMealDetailsScreenDestination,
             DetailsScreenDestination,
             AddMealScreenDestination,
-            NextAddMealScreenDestination
+            NextAddMealScreenDestination,
+            RandomMealScreenDestination
         ).routedIn(this)
             .associateBy { it.route }
     }
@@ -70,6 +76,20 @@ object NavGraphs {
             .associateBy { it.route }
     }
 
+    val mealPlanner = object : NavGraphSpec {
+        override val route = "meal_planner"
+
+        override val startRoute = MealPlannerScreenDestination routedIn this
+
+        override val destinationsByRoute = listOf<DestinationSpec<*>>(
+            MealPlannerScreenDestination,
+            AllergiesScreenDestination,
+            NumberOfPeopleScreenDestination,
+            MealTypesScreenDestination
+        ).routedIn(this)
+            .associateBy { it.route }
+    }
+
     val settings = object : NavGraphSpec {
         override val route = "settings"
 
@@ -88,6 +108,7 @@ object NavGraphs {
         override val nestedNavGraphs = listOf(
             home,
             search,
+            mealPlanner,
             favorites,
             settings
         )

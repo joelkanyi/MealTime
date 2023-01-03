@@ -31,7 +31,11 @@ import com.kanyideveloper.core.util.LottieAnim
 import com.kanyideveloper.mealtime.core.R
 
 @Composable
-fun BoxScope.EmptyStateComponent() {
+fun BoxScope.EmptyStateComponent(
+    anim: Int = R.raw.empty_state,
+    message: String = "Nothing found here!",
+    content: @Composable () -> Unit = {}
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -39,15 +43,17 @@ fun BoxScope.EmptyStateComponent() {
                 Alignment.Center
             )
             .padding(16.dp)
-            .testTag("Empty State Component")
+            .testTag("Empty State Component"),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        LottieAnim(resId = R.raw.empty_state)
+        LottieAnim(resId = anim)
         Text(
             modifier = Modifier
                 .fillMaxWidth(),
-            text = "Nothing found here!",
+            text = message,
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center
         )
+        content()
     }
 }

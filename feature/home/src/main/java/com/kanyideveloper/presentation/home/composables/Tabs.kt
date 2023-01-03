@@ -16,6 +16,7 @@
 package com.kanyideveloper.presentation.home.composables
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -60,15 +61,17 @@ fun Tabs(
             val selected = pagerState.currentPage == index
             Tab(
                 modifier = if (selected) Modifier
-                    .clip(RoundedCornerShape(50))
+                    .padding(4.dp)
                     .background(
-                        MaterialTheme.colorScheme.primary
+                        MaterialTheme.colorScheme.primary,
+                        shape = RoundedCornerShape(50)
                     )
                 else Modifier
-                    .clip(RoundedCornerShape(50))
+                    .padding(4.dp)
                     .background(
                         Color.Transparent
-                    ),
+                    )
+                    .border(1.dp, MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(50)),
                 selected = pagerState.currentPage == index,
                 onClick = {
                     scope.launch {

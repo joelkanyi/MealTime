@@ -22,10 +22,17 @@ import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScree
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.favorites.presentation.favorites.presentation.FavoritesNavigator
+import com.kanyideveloper.mealplanner.MealPlannerNavigator
+import com.kanyideveloper.mealplanner.destinations.AllergiesScreenDestination
+import com.kanyideveloper.mealplanner.destinations.MealPlannerScreenDestination
+import com.kanyideveloper.mealplanner.destinations.MealTypesScreenDestination
+import com.kanyideveloper.mealplanner.destinations.NumberOfPeopleScreenDestination
 import com.kanyideveloper.presentation.destinations.DetailsScreenDestination
 import com.kanyideveloper.presentation.destinations.HomeScreenDestination
 import com.kanyideveloper.presentation.destinations.OnlineMealDetailsScreenDestination
 import com.kanyideveloper.presentation.home.HomeNavigator
+import com.kanyideveloper.randommeal.RandomMealNavigator
+import com.kanyideveloper.randommeal.destinations.RandomMealScreenDestination
 import com.kanyideveloper.search.presentation.search.SearchNavigator
 import com.kanyideveloper.settings.presentation.SettingsNavigator
 import com.ramcosta.composedestinations.dynamic.within
@@ -36,7 +43,13 @@ import timber.log.Timber
 class CoreFeatureNavigator(
     private val navGraph: NavGraphSpec,
     private val navController: NavController
-) : HomeNavigator, SearchNavigator, FavoritesNavigator, SettingsNavigator, AddMealNavigator {
+) : HomeNavigator,
+    SearchNavigator,
+    FavoritesNavigator,
+    SettingsNavigator,
+    AddMealNavigator,
+    RandomMealNavigator,
+    MealPlannerNavigator {
     override fun openAddMeal() {
         navController.navigate(AddMealScreenDestination within navGraph)
     }
@@ -77,8 +90,28 @@ class CoreFeatureNavigator(
         navController.popBackStack()
     }
 
+    override fun openAllergiesScreen() {
+        navController.navigate(AllergiesScreenDestination within navGraph)
+    }
+
+    override fun openNoOfPeopleScreen() {
+        navController.navigate(NumberOfPeopleScreenDestination within navGraph)
+    }
+
+    override fun openMealTypesScreen() {
+        navController.navigate(MealTypesScreenDestination within navGraph)
+    }
+
+    override fun openMealPlanner() {
+        navController.navigate(MealPlannerScreenDestination within navGraph)
+    }
+
     override fun openOnlineMealDetails(mealId: String) {
         navController.navigate(OnlineMealDetailsScreenDestination(mealId = mealId) within navGraph)
+    }
+
+    override fun openRandomMeals() {
+        navController.navigate(RandomMealScreenDestination within navGraph)
     }
 
     override fun navigateBackToHome() {

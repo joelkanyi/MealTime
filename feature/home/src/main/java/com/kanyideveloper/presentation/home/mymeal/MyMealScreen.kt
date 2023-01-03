@@ -99,7 +99,8 @@ fun MyMealScreen(
                 localMealId = id
             )
         },
-        viewModel = viewModel
+        viewModel = viewModel,
+        navigator = navigator
     )
 }
 
@@ -110,7 +111,8 @@ private fun MyMealScreenContent(
     openMealDetails: (Meal) -> Unit = {},
     addToFavorites: (Int, String, String) -> Unit,
     removeFromFavorites: (Int) -> Unit,
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel,
+    navigator: HomeNavigator
 ) {
     var showRandomMeal1 = showRandomMeal
     LazyVerticalGrid(
@@ -169,7 +171,7 @@ private fun MyMealScreenContent(
                         )
                         Button(
                             onClick = {
-                                showRandomMeal1 = true
+                                navigator.openRandomMeals()
                             }
                         ) {
                             Text(

@@ -35,6 +35,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.kanyideveloper.compose_ui.theme.MealTimeTheme
 import com.kanyideveloper.compose_ui.theme.Theme
 import com.kanyideveloper.favorites.presentation.favorites.presentation.destinations.FavoritesScreenDestination
+import com.kanyideveloper.mealplanner.destinations.MealPlannerScreenDestination
 import com.kanyideveloper.mealtime.component.StandardScaffold
 import com.kanyideveloper.mealtime.component.navGraph
 import com.kanyideveloper.mealtime.navigation.CoreFeatureNavigator
@@ -48,6 +49,7 @@ import com.ramcosta.composedestinations.rememberNavHostEngine
 import com.ramcosta.composedestinations.scope.DestinationScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -74,11 +76,14 @@ class MainActivity : ComponentActivity() {
                     val newBackStackEntry by navController.currentBackStackEntryAsState()
                     val route = newBackStackEntry?.destination?.route
 
+                    Timber.e("route: $route")
+
                     StandardScaffold(
                         navController = navController,
                         showBottomBar = route in listOf(
                             "home/${HomeScreenDestination.route}",
                             "search/${SearchScreenDestination.route}",
+                            "meal_planner/${MealPlannerScreenDestination.route}",
                             "favorites/${FavoritesScreenDestination.route}",
                             "settings/${SettingsScreenDestination.route}"
                         )

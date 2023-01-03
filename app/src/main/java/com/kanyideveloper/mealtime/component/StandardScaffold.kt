@@ -52,6 +52,7 @@ fun StandardScaffold(
     items: List<BottomNavItem> = listOf(
         BottomNavItem.Home,
         BottomNavItem.Search,
+        BottomNavItem.MealPlanner,
         BottomNavItem.Favorites,
         BottomNavItem.Settings
     ),
