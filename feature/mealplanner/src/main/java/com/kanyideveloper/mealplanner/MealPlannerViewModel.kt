@@ -18,17 +18,137 @@ package com.kanyideveloper.mealplanner
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.util.Resource
+import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.mealplanner.domain.repository.MealPlannerRepository
+import com.kanyideveloper.mealplanner.model.Day
+import com.kanyideveloper.mealplanner.model.MealType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MealPlannerViewModel @Inject constructor(
     private val mealPlannerRepository: MealPlannerRepository
 ) : ViewModel() {
+
+    val hasMealPlan = true
+
+    val days = listOf(
+        Day(name = "Mon", date = "02"),
+        Day(name = "Tue", date = "03"),
+        Day(name = "Wed", date = "04"),
+        Day(name = "Thur", date = "05"),
+        Day(name = "Fri", date = "06"),
+        Day(name = "Sat", date = "07"),
+        Day(name = "Sun", date = "08")
+    )
+
+    private val meal = Meal(
+        name = "Test Meal that will fit here will fit well",
+        imageUrl = "https://www.themealdb.com/images/media/meals/020z181619788503.jpg",
+        cookingTime = 0,
+        category = "Test",
+        cookingDifficulty = "",
+        ingredients = listOf(),
+        cookingDirections = listOf(),
+        isFavorite = false,
+        servingPeople = 0
+    )
+
+    val mealTypes = listOf(
+        MealType(
+            name = "Breakfast",
+            meals = listOf(meal, meal)
+        ),
+        MealType(
+            name = "Lunch",
+            meals = listOf(meal, meal)
+        ),
+        MealType(
+            name = "Dinner",
+            meals = listOf(meal, meal)
+        )
+    )
+
     private val _mealType = mutableStateOf("")
     val mealType: State<String> = _mealType
     fun setMealTypeState(value: String) {
         _mealType.value = value
+    }
+
+    private val _searchString = mutableStateOf("")
+    val searchString: State<String> = _searchString
+    fun setSearchStringState(value: String) {
+        _searchString.value = value
+    }
+
+    private val _source = mutableStateOf("")
+    private val source: State<String> = _source
+    fun setSourceState(value: String) {
+        _source.value = value
+    }
+
+    private val _searchBy = mutableStateOf("")
+    private val searchBy: State<String> = _searchBy
+    fun setSearchByState(value: String) {
+        _searchBy.value = value
+    }
+
+    private val _shouldShowMealsDialog = mutableStateOf(false)
+    val shouldShowMealsDialog: State<Boolean> = _shouldShowMealsDialog
+    fun setShouldShowMealsDialogState(value: Boolean) {
+        _shouldShowMealsDialog.value = value
+    }
+
+    fun insertMealToPlan(meal: Meal) {
+        viewModelScope.launch {
+            mealPlannerRepository.saveMealToPlan(meal = meal)
+        }
+    }
+
+    private val _searchMeals = mutableStateOf(SearchMealState())
+    val searchMeals: State<SearchMealState> = _searchMeals
+
+    private val _eventsFlow = MutableSharedFlow<UiEvents>()
+    val eventsFlow = _eventsFlow
+
+    fun searchMeal() {
+        _searchMeals.value = searchMeals.value.copy(
+            isLoading = true
+        )
+
+        viewModelScope.launch {
+            when (
+                val result = mealPlannerRepository.searchMeal(
+                    source = source.value,
+                    searchBy = searchBy.value
+                )
+            ) {
+                is Resource.Error -> {
+                    eventsFlow.emit(
+                        UiEvents.SnackbarEvent(
+                            message = result.message ?: "Unknown Error Occurred"
+                        )
+                    )
+                    _searchMeals.value = searchMeals.value.copy(
+                        isLoading = false,
+                        error = result.message ?: "Unknown Error Occurred"
+                    )
+                }
+                is Resource.Success -> {
+                    _searchMeals.value = searchMeals.value.copy(
+                        isLoading = false,
+                        meals = result.data ?: emptyList()
+                    )
+                }
+                else -> {
+                    searchMeals
+                }
+            }
+        }
     }
 }

@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.mealplanner.domain.repository
+package com.kanyideveloper.mealplanner
 
 import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core.util.Resource
 
-interface MealPlannerRepository {
-    suspend fun saveMealToPlan(meal: Meal)
-    fun searchMeal(source: String, searchBy: String): Resource<List<Meal>>
-}
+data class SearchMealState(
+    val isLoading: Boolean = false,
+    val error: String? = null,
+    val meals: List<Meal> = emptyList()
+)
