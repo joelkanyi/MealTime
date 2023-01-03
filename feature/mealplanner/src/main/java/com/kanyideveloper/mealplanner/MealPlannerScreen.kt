@@ -34,18 +34,27 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,13 +66,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.kanyidev.searchable_dropdown.SearchableExpandedDropDownMenu
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.compose_ui.theme.PrimaryColor
 import com.kanyideveloper.compose_ui.theme.Shapes
@@ -253,7 +266,8 @@ fun MealPlanItem(
         Spacer(modifier = Modifier.height(6.dp))
 
         LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp)
         ) {
             items(mealType.meals) { meal ->
                 PlanMealItem(meal = meal)
@@ -329,12 +343,16 @@ fun DayItemCard(
 @Composable
 fun PlanMealItem(
     meal: Meal,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    cardWidth: Dp = 160.dp,
+    imageHeight: Dp = 120.dp,
+    isAddingToPlan: Boolean = false,
+    isAdded: Boolean = false
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.width(cardWidth).padding(horizontal = 4.dp, vertical = 4.dp)) {
         Card(
             modifier = modifier
-                .width(180.dp)
+                .width(cardWidth)
                 .wrapContentHeight(),
             shape = Shapes.large,
             colors = CardDefaults.cardColors(
@@ -344,8 +362,8 @@ fun PlanMealItem(
             Column(modifier = Modifier.fillMaxSize()) {
                 Image(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(120.dp),
+                        .width(cardWidth)
+                        .height(imageHeight),
                     contentDescription = null,
                     painter = rememberAsyncImagePainter(
                         ImageRequest.Builder(LocalContext.current)
@@ -366,13 +384,46 @@ fun PlanMealItem(
                     overflow = TextOverflow.Ellipsis
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(4.dp))
+
+                if (isAddingToPlan) {
+                    Button(
+                        modifier = Modifier.padding(8.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = if (isAdded) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.secondary
+                            },
+                            contentColor = if (isAdded) {
+                                MaterialTheme.colorScheme.onPrimary
+                            } else {
+                                MaterialTheme.colorScheme.onSecondary
+                            }
+                        ),
+                        onClick = { /*TODO*/ }
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                modifier = Modifier.size(18.dp),
+                                imageVector = Icons.Default.Add,
+                                contentDescription = null
+                            )
+                            Text(
+                                text = "Add",
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(4.dp))
+                }
             }
         }
 
         Box(
             modifier = Modifier
-                .size(34.dp)
+                .size(30.dp)
                 .align(Alignment.TopEnd)
                 .background(
                     color = PrimaryColor,
@@ -388,7 +439,7 @@ fun PlanMealItem(
             IconButton(onClick = {
             }) {
                 Icon(
-                    modifier = Modifier.size(18.dp),
+                    modifier = Modifier.size(14.dp),
                     imageVector = Icons.Default.Close,
                     contentDescription = null,
                     tint = Color.White
@@ -404,6 +455,7 @@ fun SelectMealDialog(
     mealType: String
 ) {
     AlertDialog(
+        containerColor = MaterialTheme.colorScheme.background,
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(.9f),
@@ -415,10 +467,124 @@ fun SelectMealDialog(
             )
         },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                item(span = { GridItemSpan(2) }) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = "Search By",
+                            style = MaterialTheme.typography.labelMedium
+                        )
+
+                        SearchableExpandedDropDownMenu(
+                            listOfItems = listOf(""),
+                            modifier = Modifier.fillMaxWidth(),
+                            onDropDownItemSelected = { item ->
+                                // viewModel.setCategory(item)
+                            },
+                            dropdownItem = { category ->
+                                Text(text = category, color = Color.Black)
+                            },
+                            parentTextFieldCornerRadius = 4.dp
+                        )
+                    }
+                }
+
+                item(span = { GridItemSpan(2) }) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Text(
+                            text = "Source",
+                            style = MaterialTheme.typography.labelMedium
+                        )
+
+                        SearchableExpandedDropDownMenu(
+                            listOfItems = listOf(""),
+                            modifier = Modifier.fillMaxWidth(),
+                            onDropDownItemSelected = { item ->
+                                // viewModel.setCategory(item)
+                            },
+                            dropdownItem = { category ->
+                                Text(text = category, color = Color.Black)
+                            },
+                            parentTextFieldCornerRadius = 4.dp
+                        )
+                    }
+                }
+
+                item(span = { GridItemSpan(2) }) {
+                    SearchBarComponent()
+                }
+
+                item(span = { GridItemSpan(2) }) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
+
+                items(10) {
+                    PlanMealItem(
+                        meal = meal,
+                        cardWidth = 160.dp,
+                        imageHeight = 80.dp,
+                        isAddingToPlan = true,
+                        isAdded = false
+                    )
+                }
             }
         },
         confirmButton = {
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchBarComponent() {
+    Spacer(modifier = Modifier.height(4.dp))
+
+    TextField(
+        value = "",
+        onValueChange = {
+            // viewModel.setSearchTerm(it)
+        },
+        placeholder = {
+            Text(
+                text = "Search"
+                // color = primaryGray
+            )
+        },
+
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+            },
+        shape = RoundedCornerShape(size = 8.dp),
+        keyboardOptions = KeyboardOptions(
+            capitalization = KeyboardCapitalization.Words,
+            autoCorrect = true,
+            keyboardType = KeyboardType.Text
+        ),
+        colors = TextFieldDefaults.textFieldColors(
+            textColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        ),
+        maxLines = 1,
+        singleLine = true,
+        leadingIcon = {
+            Icon(
+                modifier = Modifier
+                    .size(24.dp),
+                painter = painterResource(id = R.drawable.ic_search),
+                contentDescription = null
+            )
         }
     )
 }

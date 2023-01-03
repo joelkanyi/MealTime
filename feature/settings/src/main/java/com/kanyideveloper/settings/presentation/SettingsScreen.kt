@@ -144,6 +144,7 @@ fun ThemeDialog(
     onSelectTheme: (Int) -> Unit
 ) {
     AlertDialog(
+        containerColor = MaterialTheme.colorScheme.background,
         onDismissRequest = { onDismiss() },
         title = {
             Text(
