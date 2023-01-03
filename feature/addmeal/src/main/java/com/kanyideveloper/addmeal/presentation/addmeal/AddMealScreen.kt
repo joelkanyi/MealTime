@@ -215,7 +215,8 @@ fun AddMealScreen(
                                 Text(text = category, color = Color.Black)
                             },
                             parentTextFieldCornerRadius = 4.dp,
-                            isError = category.error != null
+                            isError = category.error != null,
+                            colors = TextFieldDefaults.outlinedTextFieldColors()
                         )
 
                         if (category.error != null) {
@@ -248,7 +249,8 @@ fun AddMealScreen(
                                 Text(text = complexity, color = Color.Black)
                             },
                             parentTextFieldCornerRadius = 4.dp,
-                            isError = complexity.error != null
+                            isError = complexity.error != null,
+                            colors = TextFieldDefaults.outlinedTextFieldColors()
                         )
 
                         if (complexity.error != null) {

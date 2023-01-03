@@ -64,7 +64,7 @@ dependencies {
     implementation("me.onebone:toolbar-compose:2.3.5")
 
     // Searchable Dropdown
-    implementation("com.github.Breens-Mbaka:Searchable-Dropdown-Menu-Jetpack-Compose:0.2.5")
+    implementation("com.github.Breens-Mbaka:Searchable-Dropdown-Menu-Jetpack-Compose:0.2.7")
 
     // Swipe to refresh
     implementation("com.google.accompanist:accompanist-swiperefresh:0.27.1")
