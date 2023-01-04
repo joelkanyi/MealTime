@@ -15,6 +15,7 @@
  */
 package com.kanyideveloper.mealplanner.di
 
+import com.kanyideveloper.core.data.MealTimePreferences
 import com.kanyideveloper.mealplanner.data.repository.MealPlannerRepositoryImpl
 import com.kanyideveloper.mealplanner.domain.repository.MealPlannerRepository
 import dagger.Module
@@ -29,7 +30,7 @@ object MealPlannerModule {
 
     @Provides
     @Singleton
-    fun providesMealPlannerRepository(): MealPlannerRepository {
-        return MealPlannerRepositoryImpl()
+    fun providesMealPlannerRepository(mealTimePreferences: MealTimePreferences): MealPlannerRepository {
+        return MealPlannerRepositoryImpl(mealTimePreferences = mealTimePreferences)
     }
 }

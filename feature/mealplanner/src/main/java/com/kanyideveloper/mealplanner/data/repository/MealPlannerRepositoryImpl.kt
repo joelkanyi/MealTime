@@ -15,11 +15,16 @@
  */
 package com.kanyideveloper.mealplanner.data.repository
 
+import com.kanyideveloper.core.data.MealTimePreferences
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.model.MealPlanPreference
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.mealplanner.domain.repository.MealPlannerRepository
+import kotlinx.coroutines.flow.Flow
 
-class MealPlannerRepositoryImpl : MealPlannerRepository {
+class MealPlannerRepositoryImpl(
+    private val mealTimePreferences: MealTimePreferences
+) : MealPlannerRepository {
     override suspend fun saveMealToPlan(meal: Meal) {
         TODO("Not yet implemented")
     }
@@ -27,4 +32,19 @@ class MealPlannerRepositoryImpl : MealPlannerRepository {
     override fun searchMeal(source: String, searchBy: String): Resource<List<Meal>> {
         TODO("Not yet implemented")
     }
+
+    override suspend fun saveMealPlannerPreferences(
+        allergies: List<String>,
+        numberOfPeople: String,
+        dishTypes: List<String>
+    ) {
+        mealTimePreferences.saveMealPlanPreferences(
+            allergies = allergies,
+            numberOfPeople = numberOfPeople,
+            dishTypes = dishTypes
+        )
+    }
+
+    override val hasMealPlanPref: Flow<MealPlanPreference?>
+        get() = mealTimePreferences.mealPlanPreferences
 }

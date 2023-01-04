@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,6 +36,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.gson.Gson
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.compose_ui.theme.PrimaryColor
 import com.kanyideveloper.mealplanner.MealPlannerNavigator
@@ -43,7 +46,29 @@ import com.ramcosta.composedestinations.annotation.Destination
 @Destination
 @Composable
 fun AllergiesScreen(
-    navigator: MealPlannerNavigator
+    navigator: MealPlannerNavigator,
+    viewModel: SetupViewModel = hiltViewModel()
+) {
+    AllergiesScreenContent(
+        navigator = navigator,
+        allergiesChoices = viewModel.allergies,
+        allergies = viewModel.gson.toJson(viewModel.allergicTo),
+        onCheck = { allergy ->
+            viewModel.insertAllergicTo(allergy)
+        },
+        isChecked = { allergy ->
+            viewModel.allergicTo.contains(allergy)
+        }
+    )
+}
+
+@Composable
+private fun AllergiesScreenContent(
+    navigator: MealPlannerNavigator,
+    allergies: String,
+    allergiesChoices: List<String>,
+    isChecked: (String) -> Boolean,
+    onCheck: (String) -> Unit
 ) {
     Column(Modifier.fillMaxSize()) {
         StandardToolbar(
@@ -57,7 +82,9 @@ fun AllergiesScreen(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .clickable {
-                            navigator.openNoOfPeopleScreen()
+                            navigator.openNoOfPeopleScreen(
+                                allergies = allergies
+                            )
                         },
                     text = "Next",
                     style = MaterialTheme.typography.titleMedium,
@@ -81,14 +108,16 @@ fun AllergiesScreen(
             item(span = { GridItemSpan(currentLineSpan = 3) }) {
                 Spacer(modifier = Modifier.height(12.dp))
             }
-            items(30) {
+            items(allergiesChoices) { allergy ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(
-                        checked = false,
-                        onCheckedChange = {}
+                        checked = isChecked(allergy),
+                        onCheckedChange = {
+                            onCheck(allergy)
+                        }
                     )
                     Text(
-                        text = "Chicken",
+                        text = allergy,
                         style = MaterialTheme.typography.labelMedium
                     )
                 }

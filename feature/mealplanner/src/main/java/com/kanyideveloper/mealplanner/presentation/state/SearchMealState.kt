@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.mealplanner.domain.repository
+package com.kanyideveloper.mealplanner.presentation.state
 
 import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core.model.MealPlanPreference
-import com.kanyideveloper.core.util.Resource
-import kotlinx.coroutines.flow.Flow
 
-interface MealPlannerRepository {
-    suspend fun saveMealToPlan(meal: Meal)
-    fun searchMeal(source: String, searchBy: String): Resource<List<Meal>>
-    suspend fun saveMealPlannerPreferences(
-        allergies: List<String>,
-        numberOfPeople: String,
-        dishTypes: List<String>
-    )
-    val hasMealPlanPref : Flow<MealPlanPreference?>
-}
+data class SearchMealState(
+    val isLoading: Boolean = false,
+    val error: String? = null,
+    val meals: List<Meal> = emptyList()
+)

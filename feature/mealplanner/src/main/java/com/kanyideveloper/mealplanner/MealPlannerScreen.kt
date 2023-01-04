@@ -49,8 +49,8 @@ import kotlinx.coroutines.flow.collectLatest
 interface MealPlannerNavigator {
     fun popBackStack()
     fun openAllergiesScreen()
-    fun openNoOfPeopleScreen()
-    fun openMealTypesScreen()
+    fun openNoOfPeopleScreen(allergies: String)
+    fun openMealTypesScreen(allergies: String, noOfPeople: String)
     fun openMealPlanner()
 }
 
@@ -60,7 +60,7 @@ fun MealPlannerScreen(
     navigator: MealPlannerNavigator,
     viewModel: MealPlannerViewModel = hiltViewModel()
 ) {
-    val hasMealPlan = viewModel.hasMealPlan
+    val hasMealPlan = viewModel.hasMealPlanPrefs.value
     val shouldShowMealsDialog = viewModel.shouldShowMealsDialog.value
 
     val scaffoldState = rememberScaffoldState()
@@ -120,7 +120,7 @@ fun MealPlannerScreen(
             hasMealPlan = hasMealPlan,
             navigator = navigator,
             days = viewModel.days,
-            mealsAndTheirTypes = viewModel.mealTypes,
+            mealsAndTheirTypes = viewModel.mealTypes.value.meals,
             onClickAdd = { mealType ->
                 viewModel.setMealTypeState(mealType)
                 viewModel.setShouldShowMealsDialogState(!viewModel.shouldShowMealsDialog.value)

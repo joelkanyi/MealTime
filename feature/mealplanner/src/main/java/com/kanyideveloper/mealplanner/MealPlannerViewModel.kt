@@ -20,14 +20,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.model.MealPlanPreference
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.mealplanner.domain.repository.MealPlannerRepository
 import com.kanyideveloper.mealplanner.model.Day
-import com.kanyideveloper.mealplanner.model.MealType
+import com.kanyideveloper.mealplanner.presentation.state.DailyMealsState
+import com.kanyideveloper.mealplanner.presentation.state.SearchMealState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -35,7 +39,16 @@ class MealPlannerViewModel @Inject constructor(
     private val mealPlannerRepository: MealPlannerRepository
 ) : ViewModel() {
 
-    val hasMealPlan = true
+    private val _hasMealPlanPrefs = mutableStateOf(false)
+    val hasMealPlanPrefs: State<Boolean> = _hasMealPlanPrefs
+
+    init {
+        viewModelScope.launch {
+            mealPlannerRepository.hasMealPlanPref.collectLatest { result ->
+                _hasMealPlanPrefs.value = result?.numberOfPeople != "0"
+            }
+        }
+    }
 
     val days = listOf(
         Day(name = "Mon", date = "02"),
@@ -47,32 +60,8 @@ class MealPlannerViewModel @Inject constructor(
         Day(name = "Sun", date = "08")
     )
 
-    private val meal = Meal(
-        name = "Test Meal that will fit here will fit well",
-        imageUrl = "https://www.themealdb.com/images/media/meals/020z181619788503.jpg",
-        cookingTime = 0,
-        category = "Test",
-        cookingDifficulty = "",
-        ingredients = listOf(),
-        cookingDirections = listOf(),
-        isFavorite = false,
-        servingPeople = 0
-    )
-
-    val mealTypes = listOf(
-        MealType(
-            name = "Breakfast",
-            meals = listOf(meal, meal)
-        ),
-        MealType(
-            name = "Lunch",
-            meals = listOf(meal, meal)
-        ),
-        MealType(
-            name = "Dinner",
-            meals = listOf(meal, meal)
-        )
-    )
+    private val _mealTypes = mutableStateOf(DailyMealsState())
+    val mealTypes: State<DailyMealsState> = _mealTypes
 
     private val _mealType = mutableStateOf("")
     val mealType: State<String> = _mealType

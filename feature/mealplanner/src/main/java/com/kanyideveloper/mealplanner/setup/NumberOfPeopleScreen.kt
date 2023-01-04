@@ -29,6 +29,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -39,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.compose_ui.theme.PrimaryColor
 import com.kanyideveloper.mealplanner.MealPlannerNavigator
@@ -47,7 +49,32 @@ import com.ramcosta.composedestinations.annotation.Destination
 @Destination
 @Composable
 fun NumberOfPeopleScreen(
-    navigator: MealPlannerNavigator
+    allergies: String,
+    navigator: MealPlannerNavigator,
+    viewModel: SetupViewModel = hiltViewModel()
+) {
+    NumberOfPeopleScreenContent(
+        navigator = navigator,
+        allergies = allergies,
+        numberOfPeople = viewModel.selectedNumberOfPeople.value,
+        numberOfPeopleChoices = viewModel.numberOfPeople,
+        onNumberClick = { number ->
+            viewModel.setSelectedNumberOfPeople(number)
+        },
+        isSelected = { number ->
+            viewModel.selectedNumberOfPeople.value == number
+        }
+    )
+}
+
+@Composable
+private fun NumberOfPeopleScreenContent(
+    navigator: MealPlannerNavigator,
+    allergies: String,
+    numberOfPeople: String,
+    numberOfPeopleChoices: List<String>,
+    onNumberClick: (String) -> Unit,
+    isSelected: (String) -> Boolean
 ) {
     Column(Modifier.fillMaxSize()) {
         StandardToolbar(
@@ -61,7 +88,10 @@ fun NumberOfPeopleScreen(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .clickable {
-                            navigator.openMealTypesScreen()
+                            navigator.openMealTypesScreen(
+                                allergies = allergies,
+                                noOfPeople = numberOfPeople
+                            )
                         },
                     text = "Next",
                     style = MaterialTheme.typography.titleMedium,
@@ -95,10 +125,13 @@ fun NumberOfPeopleScreen(
 
             item(span = { GridItemSpan(currentLineSpan = 3) }) {
                 LazyRow(contentPadding = PaddingValues(8.dp)) {
-                    items(5) {
+                    items(numberOfPeopleChoices) { number ->
                         NumberOfPeopleItemCard(
-                            numberOfPeople = "10+",
-                            onClick = { }
+                            numberOfPeople = number,
+                            isSelected = isSelected,
+                            onClick = {
+                                onNumberClick(number)
+                            }
                         )
                     }
                 }
@@ -111,7 +144,7 @@ fun NumberOfPeopleScreen(
 fun NumberOfPeopleItemCard(
     numberOfPeople: String,
     onClick: () -> Unit,
-    selected: Boolean = false
+    isSelected: (String) -> Boolean
 ) {
     Card(
         Modifier
@@ -123,7 +156,7 @@ fun NumberOfPeopleItemCard(
             },
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
-            containerColor = if (selected) {
+            containerColor = if (isSelected(numberOfPeople)) {
                 MaterialTheme.colorScheme.primary
             } else {
                 MaterialTheme.colorScheme.surfaceVariant
@@ -142,7 +175,7 @@ fun NumberOfPeopleItemCard(
                 style = MaterialTheme.typography.labelLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = if (selected) {
+                color = if (isSelected(numberOfPeople)) {
                     MaterialTheme.colorScheme.onPrimary
                 } else {
                     MaterialTheme.colorScheme.onSurfaceVariant
