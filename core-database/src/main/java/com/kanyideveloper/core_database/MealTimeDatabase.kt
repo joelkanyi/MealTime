@@ -21,12 +21,15 @@ import androidx.room.TypeConverters
 import com.kanyideveloper.core_database.converters.Converters
 import com.kanyideveloper.core_database.dao.FavoritesDao
 import com.kanyideveloper.core_database.dao.MealDao
+import com.kanyideveloper.core_database.dao.MealPlanDao
 import com.kanyideveloper.core_database.model.FavoriteEntity
 import com.kanyideveloper.core_database.model.MealEntity
+import com.kanyideveloper.core_database.model.MealPlanEntity
 
 @TypeConverters(Converters::class)
-@Database(entities = [MealEntity::class, FavoriteEntity::class], version = 2)
+@Database(entities = [MealEntity::class, FavoriteEntity::class, MealPlanEntity::class], version = 2)
 abstract class MealTimeDatabase : RoomDatabase() {
     abstract val mealDao: MealDao
     abstract val favoritesDao: FavoritesDao
+    abstract val mealPlanDao: MealPlanDao
 }

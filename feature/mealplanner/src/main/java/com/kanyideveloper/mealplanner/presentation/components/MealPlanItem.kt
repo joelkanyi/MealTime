@@ -37,13 +37,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.kanyideveloper.mealplanner.model.MealType
+import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.mealtime.core.R
 
 @Composable
 fun MealPlanItem(
-    mealType: MealType,
-    onClickAdd: (String) -> Unit
+    meals: List<Meal>,
+    type: String,
+    onClickAdd: (String) -> Unit,
+    onClickRemove: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -68,11 +70,11 @@ fun MealPlanItem(
                 Text(
                     modifier = Modifier
                         .padding(horizontal = 4.dp),
-                    text = mealType.name,
+                    text = type,
                     style = MaterialTheme.typography.titleMedium
                 )
                 IconButton(onClick = {
-                    onClickAdd(mealType.name)
+                    onClickAdd(type)
                 }) {
                     Icon(
                         modifier = Modifier.size(32.dp),
@@ -89,12 +91,16 @@ fun MealPlanItem(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp)
         ) {
-            items(mealType.meals) { meal ->
-                PlanMealItem(meal = meal)
+            items(meals) { meal ->
+                PlanMealItem(
+                    meal = meal,
+                    onClickAdd = { _, _ -> },
+                    onRemoveClick = onClickRemove
+                )
             }
         }
 
-        if (mealType.meals.isNotEmpty()) {
+        if (meals.isNotEmpty()) {
             Spacer(modifier = Modifier.height(12.dp))
         }
     }

@@ -63,7 +63,9 @@ fun PlanMealItem(
     imageHeight: Dp = 120.dp,
     isAddingToPlan: Boolean = false,
     isAdded: Boolean = false,
-    onClickAdd: (Meal) -> Unit = {}
+    type: String = "",
+    onClickAdd: (Meal, String) -> Unit,
+    onRemoveClick: (Int) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -122,7 +124,7 @@ fun PlanMealItem(
                             }
                         ),
                         onClick = {
-                            onClickAdd(meal)
+                            onClickAdd(meal, type)
                         }
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -159,6 +161,7 @@ fun PlanMealItem(
             contentAlignment = Alignment.Center
         ) {
             IconButton(onClick = {
+                // onRemoveClick(mealPlanId)
             }) {
                 Icon(
                     modifier = Modifier.size(14.dp),

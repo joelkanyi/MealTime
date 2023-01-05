@@ -37,8 +37,9 @@ import androidx.compose.ui.unit.dp
 fun DayItemCard(
     day: String,
     date: String,
-    onClick: () -> Unit = {},
-    selected: Boolean = false
+    fullDate: String,
+    onClick: (String) -> Unit = {},
+    isSelected: (String) -> Boolean
 ) {
     Card(
         Modifier
@@ -46,11 +47,11 @@ fun DayItemCard(
             .height(70.dp)
             .padding(2.dp)
             .clickable {
-                onClick()
+                onClick(fullDate)
             },
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
-            containerColor = if (selected) {
+            containerColor = if (isSelected(fullDate)) {
                 MaterialTheme.colorScheme.primary
             } else {
                 MaterialTheme.colorScheme.surfaceVariant
@@ -70,7 +71,7 @@ fun DayItemCard(
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = if (selected) {
+                    color = if (isSelected(fullDate)) {
                         MaterialTheme.colorScheme.onPrimary
                     } else {
                         MaterialTheme.colorScheme.onSurfaceVariant
@@ -82,7 +83,7 @@ fun DayItemCard(
                     style = MaterialTheme.typography.titleSmall,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = if (selected) {
+                    color = if (isSelected(fullDate)) {
                         MaterialTheme.colorScheme.onPrimary
                     } else {
                         MaterialTheme.colorScheme.onSurfaceVariant

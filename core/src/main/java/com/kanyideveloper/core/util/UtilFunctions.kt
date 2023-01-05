@@ -34,6 +34,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.gson.Gson
 import com.kanyideveloper.core.model.ErrorResponse
 import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -166,4 +167,10 @@ fun showDayCookMessage(): String {
             "What to cook for breakfast?"
         }
     }
+}
+
+fun getTodaysDate(): String {
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy")
+    val today = Calendar.getInstance().time
+    return dateFormat.format(today)
 }

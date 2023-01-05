@@ -24,6 +24,7 @@ object Constants {
     const val CATEGORIES_TABLE = "categories_table"
     const val MEALTIME_DATABASE = "meal_time_database"
     const val FAVORITES_TABLE = "favorites_table"
+    const val MEAL_PLAN_TABLE = "meal_plan_table"
 
     val THEME_OPTIONS = intPreferencesKey(name = "theme_option")
     const val MEALTIME_PREFERENCES = "MEALTIME_PREFERENCES"

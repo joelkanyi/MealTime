@@ -30,7 +30,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -44,8 +43,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.gson.Gson
 import com.kanyideveloper.compose_ui.components.StandardToolbar
+import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.mealplanner.MealPlannerNavigator
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
@@ -58,15 +57,13 @@ fun MealTypesScreen(
     navigator: MealPlannerNavigator,
     viewModel: SetupViewModel = hiltViewModel()
 ) {
-    val scaffoldState = rememberScaffoldState()
-
     LaunchedEffect(key1 = true) {
-        viewModel.hasMealPlanPrefs.collectLatest { result ->
-            if (result?.numberOfPeople != "0") {
-                scaffoldState.snackbarHostState.showSnackbar(
-                    message = "Meal Plan Preferences Saved Successfully"
-                )
-                navigator.openMealPlanner()
+        viewModel.eventsFlow.collectLatest { event ->
+            when (event) {
+                is UiEvents.NavigationEvent -> {
+                    navigator.openMealPlanner()
+                }
+                else -> {}
             }
         }
     }

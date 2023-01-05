@@ -13,11 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.mealplanner.model
+package com.kanyideveloper.mealplanner.data.mapper
 
-import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core_database.model.MealPlanEntity
+import com.kanyideveloper.mealplanner.model.MealPlan
 
-data class MealType(
-    val name: String,
-    val meals: List<Meal> = emptyList()
-)
+internal fun MealPlan.toEntity(): MealPlanEntity {
+    return MealPlanEntity(
+        mealTypeName = mealTypeName,
+        meals = meals,
+        date = date
+    )
+}
+
+internal fun MealPlanEntity.toMealPlan(): MealPlan {
+    return MealPlan(
+        mealTypeName = mealTypeName,
+        meals = meals,
+        date = date,
+        id = id
+    )
+}

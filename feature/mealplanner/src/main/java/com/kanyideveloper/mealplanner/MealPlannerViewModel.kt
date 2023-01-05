@@ -15,22 +15,28 @@
  */
 package com.kanyideveloper.mealplanner
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core.model.MealPlanPreference
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.UiEvents
+import com.kanyideveloper.core.util.getTodaysDate
+import com.kanyideveloper.mealplanner.data.paging.DayPagingSource
 import com.kanyideveloper.mealplanner.domain.repository.MealPlannerRepository
 import com.kanyideveloper.mealplanner.model.Day
-import com.kanyideveloper.mealplanner.presentation.state.DailyMealsState
+import com.kanyideveloper.mealplanner.model.MealPlan
 import com.kanyideveloper.mealplanner.presentation.state.SearchMealState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -39,8 +45,21 @@ class MealPlannerViewModel @Inject constructor(
     private val mealPlannerRepository: MealPlannerRepository
 ) : ViewModel() {
 
+    private val _types = mutableStateOf<List<String>>(emptyList())
+    val types: State<List<String>> = _types
+
     private val _hasMealPlanPrefs = mutableStateOf(false)
     val hasMealPlanPrefs: State<Boolean> = _hasMealPlanPrefs
+
+    private val _selectedDate = mutableStateOf(getTodaysDate())
+    val selectedDate: State<String> = _selectedDate
+    fun setSelectedDateState(value: String) {
+        _selectedDate.value = value
+    }
+
+    fun getPlanMeals(filterDay: String = selectedDate.value): LiveData<List<MealPlan>> {
+        return mealPlannerRepository.getMealsInMyPlan(filterDay = filterDay)
+    }
 
     init {
         viewModelScope.launch {
@@ -48,20 +67,32 @@ class MealPlannerViewModel @Inject constructor(
                 _hasMealPlanPrefs.value = result?.numberOfPeople != "0"
             }
         }
+
+        if (hasMealPlanPrefs.value) {
+            getMealsTypes()
+        }
     }
 
-    val days = listOf(
-        Day(name = "Mon", date = "02"),
-        Day(name = "Tue", date = "03"),
-        Day(name = "Wed", date = "04"),
-        Day(name = "Thur", date = "05"),
-        Day(name = "Fri", date = "06"),
-        Day(name = "Sat", date = "07"),
-        Day(name = "Sun", date = "08")
-    )
+    private fun getMealsTypes() {
+        viewModelScope.launch {
+            mealPlannerRepository.hasMealPlanPref.collectLatest { result ->
+                _types.value = result?.dishTypes ?: emptyList()
+            }
+        }
+    }
 
-    private val _mealTypes = mutableStateOf(DailyMealsState())
-    val mealTypes: State<DailyMealsState> = _mealTypes
+    fun deleteAMealFromPlan(id: Int) {
+        viewModelScope.launch {
+            mealPlannerRepository.deleteAMealFromPlan(id = id)
+        }
+    }
+
+    val pager = Pager(
+        config = PagingConfig(enablePlaceholders = false, pageSize = 10),
+        pagingSourceFactory = {
+            DayPagingSource()
+        }
+    ).flow
 
     private val _mealType = mutableStateOf("")
     val mealType: State<String> = _mealType
@@ -93,13 +124,65 @@ class MealPlannerViewModel @Inject constructor(
         _shouldShowMealsDialog.value = value
     }
 
-    fun insertMealToPlan(meal: Meal) {
+    fun insertMealToPlan(meal: Meal, mealTypePlan: String, date: String) {
         viewModelScope.launch {
-            mealPlannerRepository.saveMealToPlan(meal = meal)
+            val existingMeals =
+                mealPlannerRepository.getExistingMeals(mealType = mealTypePlan, date = date)
+                    .toMutableList()
+            existingMeals.add(element = meal)
+
+            val newMealsList = existingMeals.toList()
+
+            val plan = MealPlan(
+                mealTypeName = mealTypePlan,
+                date = selectedDate.value,
+                meals = newMealsList
+            )
+            mealPlannerRepository.saveMealToPlan(mealPlan = plan)
         }
     }
 
-    private val _searchMeals = mutableStateOf(SearchMealState())
+    private val _searchMeals = mutableStateOf(
+        SearchMealState(
+            meals = listOf(
+                Meal(
+                    name = "Test One",
+                    imageUrl = "",
+                    cookingTime = 0,
+                    category = "",
+                    cookingDifficulty = "",
+                    ingredients = listOf(),
+                    cookingDirections = listOf(),
+                    isFavorite = false,
+                    servingPeople = 0
+                ),
+
+                Meal(
+                    name = "Test Two",
+                    imageUrl = "",
+                    cookingTime = 0,
+                    category = "",
+                    cookingDifficulty = "",
+                    ingredients = listOf(),
+                    cookingDirections = listOf(),
+                    isFavorite = false,
+                    servingPeople = 0
+                ),
+
+                Meal(
+                    name = "Test Three",
+                    imageUrl = "",
+                    cookingTime = 0,
+                    category = "",
+                    cookingDifficulty = "",
+                    ingredients = listOf(),
+                    cookingDirections = listOf(),
+                    isFavorite = false,
+                    servingPeople = 0
+                )
+            )
+        )
+    )
     val searchMeals: State<SearchMealState> = _searchMeals
 
     private val _eventsFlow = MutableSharedFlow<UiEvents>()
@@ -140,4 +223,54 @@ class MealPlannerViewModel @Inject constructor(
             }
         }
     }
+}
+
+@SuppressLint("SimpleDateFormat")
+fun generateDaysAndMonths(): List<Day> {
+    val calendar = Calendar.getInstance()
+
+    val days = mutableListOf<Day>()
+
+    val startYear = 2023
+    val endYear = 2050
+
+    // Create a SimpleDateFormat instance for formatting the fullDate field
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy")
+
+    // Iterate over the years in the given range
+    for (year in startYear..endYear) {
+        // Set the calendar to the first day of the year
+        calendar.set(Calendar.YEAR, year)
+
+        // Iterate over the months of the year
+        for (month in 0..11) {
+            // Set the calendar to the first day of the month
+            calendar.set(Calendar.MONTH, month)
+
+            // Get the number of days in the month
+            val numDaysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+
+            // Iterate over the days of the month
+            for (day in 1..numDaysInMonth) {
+                calendar.set(Calendar.DAY_OF_MONTH, day)
+                val dayOfWeek = calendar.getDisplayName(
+                    Calendar.DAY_OF_WEEK,
+                    Calendar.SHORT,
+                    Locale.getDefault()
+                )
+                val displayDate = String.format("%02d", day) // format the day to always have two digits
+                val fullDate = dateFormat.format(calendar.time) // use the SimpleDateFormat to format the fullDate field
+                val displayMonth = calendar.getDisplayName(
+                    Calendar.MONTH,
+                    Calendar.SHORT,
+                    Locale.getDefault()
+                )
+                val year = calendar.get(Calendar.YEAR).toString()
+                val day = Day(dayOfWeek, displayDate, fullDate, displayMonth, year)
+                days.add(day)
+            }
+        }
+    }
+
+    return days
 }

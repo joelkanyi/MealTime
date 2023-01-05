@@ -45,7 +45,7 @@ import com.kanyideveloper.core.model.Meal
 fun SelectMealDialog(
     onDismiss: () -> Unit,
     mealType: String,
-    onClickAdd: (Meal) -> Unit,
+    onClickAdd: (Meal, String) -> Unit,
     meals: List<Meal>,
     onSearchClicked: () -> Unit,
     onSearchValueChange: (String) -> Unit,
@@ -141,7 +141,10 @@ fun SelectMealDialog(
                         imageHeight = 80.dp,
                         isAddingToPlan = true,
                         isAdded = false,
-                        onClickAdd = onClickAdd
+                        onClickAdd = onClickAdd,
+                        type = mealType,
+                        onRemoveClick = { mealId ->
+                        }
                     )
                 }
             }

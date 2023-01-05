@@ -17,5 +17,8 @@ package com.kanyideveloper.mealplanner.model
 
 data class Day(
     val name: String,
-    val date: String
+    val displayDate: String,
+    val fullDate: String,
+    val displayMonth: String,
+    val year: String
 )

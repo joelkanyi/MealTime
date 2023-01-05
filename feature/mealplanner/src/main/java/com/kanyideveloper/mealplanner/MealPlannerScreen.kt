@@ -21,24 +21,32 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.core.components.EmptyStateComponent
 import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.mealplanner.model.Day
-import com.kanyideveloper.mealplanner.model.MealType
+import com.kanyideveloper.mealplanner.model.MealPlan
 import com.kanyideveloper.mealplanner.presentation.components.DayItemCard
 import com.kanyideveloper.mealplanner.presentation.components.MealPlanItem
 import com.kanyideveloper.mealplanner.presentation.components.SelectMealDialog
@@ -62,6 +70,7 @@ fun MealPlannerScreen(
 ) {
     val hasMealPlan = viewModel.hasMealPlanPrefs.value
     val shouldShowMealsDialog = viewModel.shouldShowMealsDialog.value
+    val planMeals = viewModel.getPlanMeals().observeAsState().value
 
     val scaffoldState = rememberScaffoldState()
 
@@ -71,6 +80,7 @@ fun MealPlannerScreen(
                 is UiEvents.SnackbarEvent -> {
                     scaffoldState.snackbarHostState.showSnackbar(message = event.message)
                 }
+                else -> {}
             }
         }
     }
@@ -85,8 +95,12 @@ fun MealPlannerScreen(
             onDismiss = {
                 viewModel.setShouldShowMealsDialogState(!viewModel.shouldShowMealsDialog.value)
             },
-            onClickAdd = { meal ->
-                viewModel.insertMealToPlan(meal = meal)
+            onClickAdd = { meal, type ->
+                viewModel.insertMealToPlan(
+                    meal = meal,
+                    mealTypePlan = type,
+                    date = viewModel.selectedDate.value
+                )
             },
             onSearchValueChange = {
                 viewModel.setSearchStringState(it)
@@ -119,13 +133,23 @@ fun MealPlannerScreen(
         MealPlannerScreenContent(
             hasMealPlan = hasMealPlan,
             navigator = navigator,
-            days = viewModel.days,
-            mealsAndTheirTypes = viewModel.mealTypes.value.meals,
+            days = viewModel.pager.collectAsLazyPagingItems(),
+            mealTypes = viewModel.types.value,
+            mealsAndTheirTypes = planMeals ?: emptyList(),
             onClickAdd = { mealType ->
                 viewModel.setMealTypeState(mealType)
                 viewModel.setShouldShowMealsDialogState(!viewModel.shouldShowMealsDialog.value)
+            },
+            isDaySelected = { fullDate ->
+                viewModel.selectedDate.value == fullDate
+            },
+            onClickDay = { fullDate ->
+                viewModel.setSelectedDateState(fullDate)
+                viewModel.getPlanMeals(filterDay = viewModel.selectedDate.value)
             }
-        )
+        ) { mealId ->
+            viewModel.deleteAMealFromPlan(id = mealId)
+        }
     }
 }
 
@@ -134,8 +158,12 @@ private fun MealPlannerScreenContent(
     hasMealPlan: Boolean,
     navigator: MealPlannerNavigator,
     onClickAdd: (String) -> Unit,
-    days: List<Day>,
-    mealsAndTheirTypes: List<MealType>
+    days: LazyPagingItems<Day>,
+    mealsAndTheirTypes: List<MealPlan>,
+    mealTypes: List<String>,
+    isDaySelected: (String) -> Boolean,
+    onClickDay: (String) -> Unit,
+    onRemoveClick: (Int) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         if (!hasMealPlan) {
@@ -156,12 +184,31 @@ private fun MealPlannerScreenContent(
         if (hasMealPlan) {
             LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp)) {
                 item {
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(2.dp)
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        items(days) { day ->
-                            DayItemCard(day = day.name, date = day.date)
-                        }
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = "Jan, 2023",
+                            style = MaterialTheme.typography.titleLarge,
+                            textAlign = TextAlign.End
+                        )
+
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(2.dp),
+                            content = {
+                                items(days) { day ->
+                                    DayItemCard(
+                                        day = day!!.name,
+                                        date = day.displayDate,
+                                        fullDate = day.fullDate,
+                                        isSelected = isDaySelected,
+                                        onClick = onClickDay
+                                    )
+                                }
+                            }
+                        )
                     }
                 }
 
@@ -169,10 +216,13 @@ private fun MealPlannerScreenContent(
                     Spacer(modifier = Modifier.height(8.dp))
                 }
 
-                items(mealsAndTheirTypes) { type ->
+                items(mealTypes) { type ->
                     MealPlanItem(
-                        mealType = type,
-                        onClickAdd = onClickAdd
+                        meals = mealsAndTheirTypes.filter { it.mealTypeName == type }
+                            .flatMap { it.meals },
+                        onClickAdd = onClickAdd,
+                        type = type,
+                        onClickRemove = onRemoveClick
                     )
                 }
             }

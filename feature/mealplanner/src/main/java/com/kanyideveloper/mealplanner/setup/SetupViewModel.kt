@@ -21,16 +21,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
-import com.kanyideveloper.core.data.MealTimePreferences
+import com.kanyideveloper.core.util.UiEvents
+import com.kanyideveloper.mealplanner.destinations.MealPlannerScreenDestination
 import com.kanyideveloper.mealplanner.domain.repository.MealPlannerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SetupViewModel @Inject constructor(
-    private val mealPlannerRepository: MealPlannerRepository,
+    private val mealPlannerRepository: MealPlannerRepository
 ) : ViewModel() {
     val gson = Gson()
     val allergies = listOf("Onions", "Tomatoes", "Chicken", "Pork")
@@ -65,6 +66,9 @@ class SetupViewModel @Inject constructor(
 
     val hasMealPlanPrefs = mealPlannerRepository.hasMealPlanPref
 
+    private val _eventsFlow = MutableSharedFlow<UiEvents>()
+    val eventsFlow = _eventsFlow
+
     fun saveMealPlanPreferences(
         allergies: List<String>,
         numberOfPeople: String,
@@ -75,6 +79,12 @@ class SetupViewModel @Inject constructor(
                 allergies = allergies,
                 numberOfPeople = numberOfPeople,
                 dishTypes = dishTypes
+            )
+
+            _eventsFlow.emit(
+                UiEvents.NavigationEvent(
+                    route = MealPlannerScreenDestination.route
+                )
             )
         }
     }

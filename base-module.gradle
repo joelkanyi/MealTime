@@ -106,4 +106,7 @@ dependencies {
 
     // Compose livedata
     implementation ("androidx.compose.runtime:runtime-livedata:${Versions.composeCompiler}")
+
+    // Compose Paging
+    implementation ("androidx.paging:paging-runtime:3.1.1")
 }

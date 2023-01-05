@@ -15,10 +15,10 @@
  */
 package com.kanyideveloper.mealplanner.presentation.state
 
-import com.kanyideveloper.mealplanner.model.MealType
+import com.kanyideveloper.mealplanner.model.MealPlan
 
 data class DailyMealsState(
     val isLoading: Boolean = false,
     val error: String? = null,
-    val meals: List<MealType> = emptyList()
+    val meals: List<MealPlan> = emptyList()
 )
