@@ -16,11 +16,11 @@
 package com.kanyideveloper.data.mapper
 
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.util.stringToList
 import com.kanyideveloper.core_database.model.MealEntity
 import com.kanyideveloper.core_network.model.CategoriesResponse
 import com.kanyideveloper.core_network.model.MealDetailsResponse
 import com.kanyideveloper.core_network.model.MealsResponse
-import com.kanyideveloper.data.util.stringToList
 import com.kanyideveloper.domain.model.Category
 import com.kanyideveloper.domain.model.OnlineMeal
 

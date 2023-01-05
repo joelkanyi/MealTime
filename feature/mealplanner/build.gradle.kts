@@ -52,6 +52,7 @@ dependencies {
     implementation(project(Modules.core))
     implementation(project(Modules.composeUi))
     implementation(project(Modules.coreDatabase))
+    implementation(project(Modules.coreNetwork))
 
     // Room
     implementation("androidx.room:room-runtime:2.4.3")

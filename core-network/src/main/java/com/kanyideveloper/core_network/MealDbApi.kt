@@ -34,4 +34,19 @@ interface MealDbApi {
     suspend fun getMealDetails(
         @Query("i") mealId: String
     ): MealDetailsResponse
+
+    @GET("search.php")
+    suspend fun searchMealsByName(
+        @Query("s") query: String
+    ): MealsResponse
+
+    @GET("filter.php")
+    suspend fun searchMealsByIngredient(
+        @Query("i") query: String
+    ): MealsResponse
+
+    @GET("filter.php")
+    suspend fun searchMealsByCategory(
+        @Query("c") query: String
+    ): MealsResponse
 }

@@ -138,47 +138,7 @@ class MealPlannerViewModel @Inject constructor(
         }
     }
 
-    private val _searchMeals = mutableStateOf(
-        SearchMealState(
-            meals = listOf(
-                Meal(
-                    name = "Test One",
-                    imageUrl = "",
-                    cookingTime = 0,
-                    category = "",
-                    cookingDifficulty = "",
-                    ingredients = listOf(),
-                    cookingDirections = listOf(),
-                    isFavorite = false,
-                    servingPeople = 0
-                ),
-
-                Meal(
-                    name = "Test Two",
-                    imageUrl = "",
-                    cookingTime = 0,
-                    category = "",
-                    cookingDifficulty = "",
-                    ingredients = listOf(),
-                    cookingDirections = listOf(),
-                    isFavorite = false,
-                    servingPeople = 0
-                ),
-
-                Meal(
-                    name = "Test Three",
-                    imageUrl = "",
-                    cookingTime = 0,
-                    category = "",
-                    cookingDifficulty = "",
-                    ingredients = listOf(),
-                    cookingDirections = listOf(),
-                    isFavorite = false,
-                    servingPeople = 0
-                )
-            )
-        )
-    )
+    private val _searchMeals = mutableStateOf(SearchMealState())
     val searchMeals: State<SearchMealState> = _searchMeals
 
     private val _eventsFlow = MutableSharedFlow<UiEvents>()
@@ -193,7 +153,8 @@ class MealPlannerViewModel @Inject constructor(
             when (
                 val result = mealPlannerRepository.searchMeal(
                     source = source.value,
-                    searchBy = searchBy.value
+                    searchBy = searchBy.value,
+                    searchString = searchString.value
                 )
             ) {
                 is Resource.Error -> {

@@ -21,24 +21,85 @@ import com.kanyideveloper.core.data.MealTimePreferences
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.model.MealPlanPreference
 import com.kanyideveloper.core.util.Resource
+import com.kanyideveloper.core.util.safeApiCall
+import com.kanyideveloper.core_database.dao.FavoritesDao
+import com.kanyideveloper.core_database.dao.MealDao
 import com.kanyideveloper.core_database.dao.MealPlanDao
+import com.kanyideveloper.core_network.MealDbApi
 import com.kanyideveloper.mealplanner.data.mapper.toEntity
+import com.kanyideveloper.mealplanner.data.mapper.toGeneralMeal
+import com.kanyideveloper.mealplanner.data.mapper.toMeal
 import com.kanyideveloper.mealplanner.data.mapper.toMealPlan
+import com.kanyideveloper.mealplanner.data.mapper.toOnlineMeal
 import com.kanyideveloper.mealplanner.domain.repository.MealPlannerRepository
 import com.kanyideveloper.mealplanner.model.MealPlan
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
 class MealPlannerRepositoryImpl(
     private val mealTimePreferences: MealTimePreferences,
-    private val mealPlanDao: MealPlanDao
+    private val mealPlanDao: MealPlanDao,
+    private val favoritesDao: FavoritesDao,
+    private val mealDao: MealDao,
+    private val mealDbApi: MealDbApi
 ) : MealPlannerRepository {
 
     override suspend fun saveMealToPlan(mealPlan: MealPlan) {
         mealPlanDao.insertMealPlan(mealPlanEntity = mealPlan.toEntity())
     }
 
-    override fun searchMeal(source: String, searchBy: String): Resource<List<Meal>> {
-        TODO("Not yet implemented")
+    override suspend fun searchMeal(
+        source: String,
+        searchBy: String,
+        searchString: String
+    ): Resource<List<Meal>> {
+        return when (source) {
+            "Online" -> {
+                when (searchBy) {
+                    "Name" -> {
+                        safeApiCall(Dispatchers.IO) {
+                            val response = mealDbApi.searchMealsByName(query = searchString)
+                            response.meals.map { it.toOnlineMeal().toGeneralMeal() }
+                        }
+                    }
+                    "Ingredient" -> {
+                        safeApiCall(Dispatchers.IO) {
+                            val response = mealDbApi.searchMealsByIngredient(query = searchString)
+                            response.meals.map { it.toOnlineMeal().toGeneralMeal() }
+                        }
+                    }
+                    "Category" -> {
+                        safeApiCall(Dispatchers.IO) {
+                            val response = mealDbApi.searchMealsByCategory(query = searchString)
+                            response.meals.map { it.toOnlineMeal().toGeneralMeal() }
+                        }
+                    }
+                    else -> {
+                        Resource.Error("Unknown online search by")
+                    }
+                }
+            }
+            "My Meals" -> {
+                val myMeals = mealDao.getAllMeals()
+
+                val mealEntities = myMeals.value ?: emptyList()
+                val mealList = mealEntities.map { it.toMeal() }
+
+                Resource.Success(mealList)
+            }
+            "My Favorites" -> {
+                val meals = favoritesDao.getFavorites()
+
+                val mealEntities = meals.value ?: emptyList()
+                val mealList = mealEntities.map { it.toMeal() }
+
+                Resource.Success(mealList)
+            }
+            else -> {
+                // Return a Resource with a status of ERROR if the source is not recognized
+                Resource.Error("Invalid source: $source", null)
+            }
+        }
     }
 
     override suspend fun saveMealPlannerPreferences(

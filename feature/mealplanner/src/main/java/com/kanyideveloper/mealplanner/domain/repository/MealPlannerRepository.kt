@@ -23,18 +23,21 @@ import com.kanyideveloper.mealplanner.model.MealPlan
 import kotlinx.coroutines.flow.Flow
 
 interface MealPlannerRepository {
-    suspend fun saveMealToPlan(mealPlan: MealPlan)
-    fun searchMeal(source: String, searchBy: String): Resource<List<Meal>>
+    val hasMealPlanPref: Flow<MealPlanPreference?>
+
     suspend fun saveMealPlannerPreferences(
         allergies: List<String>,
         numberOfPeople: String,
         dishTypes: List<String>
     )
-    val hasMealPlanPref: Flow<MealPlanPreference?>
 
     fun getMealsInMyPlan(filterDay: String): LiveData<List<MealPlan>>
 
     fun getExistingMeals(mealType: String, date: String): List<Meal>
 
     suspend fun deleteAMealFromPlan(id: Int)
+
+    suspend fun saveMealToPlan(mealPlan: MealPlan)
+
+    suspend fun searchMeal(source: String, searchBy: String, searchString: String): Resource<List<Meal>>
 }

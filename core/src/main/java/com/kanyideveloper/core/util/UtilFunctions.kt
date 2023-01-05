@@ -41,6 +41,10 @@ import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import timber.log.Timber
 
+fun String.stringToList(): List<String> {
+    return this.split("\r\n").filter { !it.matches(Regex("[0-9]+")) }.filter { !it.isNullOrBlank() }
+}
+
 fun Context.imageUriToImageBitmap(uri: Uri): Bitmap {
     return if (Build.VERSION.SDK_INT < 28) {
         MediaStore.Images
