@@ -15,7 +15,6 @@
  */
 package com.kanyideveloper.mealplanner
 
-import android.annotation.SuppressLint
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
@@ -29,12 +28,9 @@ import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.core.util.getTodaysDate
 import com.kanyideveloper.mealplanner.data.paging.DayPagingSource
 import com.kanyideveloper.mealplanner.domain.repository.MealPlannerRepository
-import com.kanyideveloper.mealplanner.model.Day
 import com.kanyideveloper.mealplanner.model.MealPlan
 import com.kanyideveloper.mealplanner.presentation.state.SearchMealState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.text.SimpleDateFormat
-import java.util.*
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -87,7 +83,7 @@ class MealPlannerViewModel @Inject constructor(
         }
     }
 
-    val pager = Pager(
+    val days = Pager(
         config = PagingConfig(enablePlaceholders = false, pageSize = 10),
         pagingSourceFactory = {
             DayPagingSource()
@@ -223,54 +219,4 @@ class MealPlannerViewModel @Inject constructor(
             }
         }
     }
-}
-
-@SuppressLint("SimpleDateFormat")
-fun generateDaysAndMonths(): List<Day> {
-    val calendar = Calendar.getInstance()
-
-    val days = mutableListOf<Day>()
-
-    val startYear = 2023
-    val endYear = 2050
-
-    // Create a SimpleDateFormat instance for formatting the fullDate field
-    val dateFormat = SimpleDateFormat("dd/MM/yyyy")
-
-    // Iterate over the years in the given range
-    for (year in startYear..endYear) {
-        // Set the calendar to the first day of the year
-        calendar.set(Calendar.YEAR, year)
-
-        // Iterate over the months of the year
-        for (month in 0..11) {
-            // Set the calendar to the first day of the month
-            calendar.set(Calendar.MONTH, month)
-
-            // Get the number of days in the month
-            val numDaysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-
-            // Iterate over the days of the month
-            for (day in 1..numDaysInMonth) {
-                calendar.set(Calendar.DAY_OF_MONTH, day)
-                val dayOfWeek = calendar.getDisplayName(
-                    Calendar.DAY_OF_WEEK,
-                    Calendar.SHORT,
-                    Locale.getDefault()
-                )
-                val displayDate = String.format("%02d", day) // format the day to always have two digits
-                val fullDate = dateFormat.format(calendar.time) // use the SimpleDateFormat to format the fullDate field
-                val displayMonth = calendar.getDisplayName(
-                    Calendar.MONTH,
-                    Calendar.SHORT,
-                    Locale.getDefault()
-                )
-                val year = calendar.get(Calendar.YEAR).toString()
-                val day = Day(dayOfWeek, displayDate, fullDate, displayMonth, year)
-                days.add(day)
-            }
-        }
-    }
-
-    return days
 }

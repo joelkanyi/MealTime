@@ -15,6 +15,7 @@
  */
 package com.kanyideveloper.mealplanner
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +35,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -41,7 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.items
+import androidx.paging.compose.itemsIndexed
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.core.components.EmptyStateComponent
 import com.kanyideveloper.core.util.UiEvents
@@ -133,7 +137,7 @@ fun MealPlannerScreen(
         MealPlannerScreenContent(
             hasMealPlan = hasMealPlan,
             navigator = navigator,
-            days = viewModel.pager.collectAsLazyPagingItems(),
+            days = viewModel.days.collectAsLazyPagingItems(),
             mealTypes = viewModel.types.value,
             mealsAndTheirTypes = planMeals ?: emptyList(),
             onClickAdd = { mealType ->
@@ -153,6 +157,7 @@ fun MealPlannerScreen(
     }
 }
 
+@SuppressLint("FrequentlyChangedStateReadInComposition")
 @Composable
 private fun MealPlannerScreenContent(
     hasMealPlan: Boolean,
@@ -165,6 +170,8 @@ private fun MealPlannerScreenContent(
     onClickDay: (String) -> Unit,
     onRemoveClick: (Int) -> Unit
 ) {
+    val daysLazyRowState = rememberLazyListState()
+
     Box(modifier = Modifier.fillMaxSize()) {
         if (!hasMealPlan) {
             EmptyStateComponent(
@@ -188,17 +195,24 @@ private fun MealPlannerScreenContent(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
+                        val monthAndYear = remember {
+                            mutableStateOf("")
+                        }
                         Text(
                             modifier = Modifier.fillMaxWidth(),
-                            text = "Jan, 2023",
+                            text = monthAndYear.value,
                             style = MaterialTheme.typography.titleLarge,
                             textAlign = TextAlign.End
                         )
 
                         LazyRow(
+                            state = daysLazyRowState,
                             horizontalArrangement = Arrangement.spacedBy(2.dp),
                             content = {
-                                items(days) { day ->
+                                itemsIndexed(days) { index, day ->
+                                    if (daysLazyRowState.firstVisibleItemIndex == index) {
+                                        monthAndYear.value = "${day?.displayMonth}, ${day?.year}"
+                                    }
                                     DayItemCard(
                                         day = day!!.name,
                                         date = day.displayDate,
