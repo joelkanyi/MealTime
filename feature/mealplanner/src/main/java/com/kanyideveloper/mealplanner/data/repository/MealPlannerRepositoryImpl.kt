@@ -16,6 +16,7 @@
 package com.kanyideveloper.mealplanner.data.repository
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.kanyideveloper.core.data.MealTimePreferences
 import com.kanyideveloper.core.model.Meal
@@ -52,26 +53,38 @@ class MealPlannerRepositoryImpl(
         source: String,
         searchBy: String,
         searchString: String
-    ): Resource<List<Meal>> {
+    ): Resource<LiveData<List<Meal>>> {
         return when (source) {
             "Online" -> {
                 when (searchBy) {
                     "Name" -> {
                         safeApiCall(Dispatchers.IO) {
                             val response = mealDbApi.searchMealsByName(query = searchString)
-                            response.meals.map { it.toOnlineMeal().toGeneralMeal() }
+                            val mealsList = response.meals.map { it.toOnlineMeal().toGeneralMeal() }
+
+                            val liveData = MutableLiveData<List<Meal>>()
+                            liveData.postValue(mealsList)
+                            liveData
                         }
                     }
                     "Ingredient" -> {
                         safeApiCall(Dispatchers.IO) {
                             val response = mealDbApi.searchMealsByIngredient(query = searchString)
-                            response.meals.map { it.toOnlineMeal().toGeneralMeal() }
+                            val mealsList = response.meals.map { it.toOnlineMeal().toGeneralMeal() }
+
+                            val liveData = MutableLiveData<List<Meal>>()
+                            liveData.postValue(mealsList)
+                            liveData
                         }
                     }
                     "Category" -> {
                         safeApiCall(Dispatchers.IO) {
                             val response = mealDbApi.searchMealsByCategory(query = searchString)
-                            response.meals.map { it.toOnlineMeal().toGeneralMeal() }
+                            val mealsList = response.meals.map { it.toOnlineMeal().toGeneralMeal() }
+
+                            val liveData = MutableLiveData<List<Meal>>()
+                            liveData.postValue(mealsList)
+                            liveData
                         }
                     }
                     else -> {
@@ -80,23 +93,19 @@ class MealPlannerRepositoryImpl(
                 }
             }
             "My Meals" -> {
-                val myMeals = mealDao.getAllMeals()
-
-                val mealEntities = myMeals.value ?: emptyList()
-                val mealList = mealEntities.map { it.toMeal() }
-
-                Resource.Success(mealList)
+                val a = Transformations.map(mealDao.getAllMeals()) { it ->
+                    it.map { it.toMeal() }
+                }
+                Resource.Success(a)
             }
             "My Favorites" -> {
-                val meals = favoritesDao.getFavorites()
+                val meals = Transformations.map(favoritesDao.getFavorites()) { favs ->
+                    favs.map { it.toMeal() }
+                }
 
-                val mealEntities = meals.value ?: emptyList()
-                val mealList = mealEntities.map { it.toMeal() }
-
-                Resource.Success(mealList)
+                Resource.Success(meals)
             }
             else -> {
-                // Return a Resource with a status of ERROR if the source is not recognized
                 Resource.Error("Invalid source: $source", null)
             }
         }
@@ -125,7 +134,6 @@ class MealPlannerRepositoryImpl(
 
     override fun getExistingMeals(mealType: String, date: String): List<Meal> {
         return emptyList()
-        // mealPlanDao.getExistingMeals(mealType = mealType, date = date)
     }
 
     override suspend fun deleteAMealFromPlan(id: Int) {

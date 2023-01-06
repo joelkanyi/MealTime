@@ -21,15 +21,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,10 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kanyidev.searchable_dropdown.SearchableExpandedDropDownMenu
-import com.kanyideveloper.compose_ui.theme.Shapes
 import com.kanyideveloper.core.model.Meal
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectMealDialog(
     onDismiss: () -> Unit,
@@ -53,14 +47,15 @@ fun SelectMealDialog(
     onSearchByChange: (String) -> Unit,
     onSourceChange: (String) -> Unit,
     sources: List<String>,
-    searchOptions: List<String>
+    searchOptions: List<String>,
+    currentSource: String
 ) {
     AlertDialog(
         containerColor = MaterialTheme.colorScheme.background,
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(.9f),
-        onDismissRequest = { },
+        onDismissRequest = { onDismiss() },
         title = {
             Text(
                 text = mealType,
@@ -72,30 +67,6 @@ fun SelectMealDialog(
                 columns = GridCells.Fixed(2),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                item(span = { GridItemSpan(2) }) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Text(
-                            text = "Search By",
-                            style = MaterialTheme.typography.labelMedium
-                        )
-
-                        SearchableExpandedDropDownMenu(
-                            listOfItems = searchOptions,
-                            modifier = Modifier.fillMaxWidth(),
-                            onDropDownItemSelected = { item ->
-                                onSearchByChange(item)
-                            },
-                            dropdownItem = { category ->
-                                Text(text = category, color = Color.Black)
-                            },
-                            parentTextFieldCornerRadius = 4.dp
-                        )
-                    }
-                }
-
                 item(span = { GridItemSpan(2) }) {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
@@ -122,12 +93,38 @@ fun SelectMealDialog(
                     }
                 }
 
-                item(span = { GridItemSpan(2) }) {
-                    SearchBarComponent(
-                        onSearchClicked = onSearchClicked,
-                        onSearchValueChange = onSearchValueChange,
-                        textFieldCurrentText = currentSearchString
-                    )
+                if (currentSource == "Online") {
+                    item(span = { GridItemSpan(2) }) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(
+                                text = "Search By",
+                                style = MaterialTheme.typography.labelMedium
+                            )
+
+                            SearchableExpandedDropDownMenu(
+                                listOfItems = searchOptions,
+                                modifier = Modifier.fillMaxWidth(),
+                                onDropDownItemSelected = { item ->
+                                    onSearchByChange(item)
+                                },
+                                dropdownItem = { category ->
+                                    Text(text = category, color = Color.Black)
+                                },
+                                parentTextFieldCornerRadius = 4.dp
+                            )
+                        }
+                    }
+
+                    item(span = { GridItemSpan(2) }) {
+                        SearchBarComponent(
+                            onSearchClicked = onSearchClicked,
+                            onSearchValueChange = onSearchValueChange,
+                            textFieldCurrentText = currentSearchString
+                        )
+                    }
                 }
 
                 item(span = { GridItemSpan(2) }) {
@@ -150,7 +147,7 @@ fun SelectMealDialog(
             }
         },
         confirmButton = {
-            Card(
+            /*Card(
                 onClick = {
                     onDismiss()
                 },
@@ -164,7 +161,7 @@ fun SelectMealDialog(
                     text = "Done",
                     style = MaterialTheme.typography.titleMedium
                 )
-            }
+            }*/
         }
     )
 }

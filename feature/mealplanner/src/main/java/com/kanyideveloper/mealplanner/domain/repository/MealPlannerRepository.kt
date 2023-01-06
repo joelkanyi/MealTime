@@ -39,5 +39,5 @@ interface MealPlannerRepository {
 
     suspend fun saveMealToPlan(mealPlan: MealPlan)
 
-    suspend fun searchMeal(source: String, searchBy: String, searchString: String): Resource<List<Meal>>
+    suspend fun searchMeal(source: String, searchBy: String, searchString: String): Resource<LiveData<List<Meal>>>
 }

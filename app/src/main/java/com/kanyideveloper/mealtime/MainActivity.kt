@@ -49,7 +49,6 @@ import com.ramcosta.composedestinations.rememberNavHostEngine
 import com.ramcosta.composedestinations.scope.DestinationScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -75,8 +74,6 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberAnimatedNavController()
                     val newBackStackEntry by navController.currentBackStackEntryAsState()
                     val route = newBackStackEntry?.destination?.route
-
-                    Timber.e("route: $route")
 
                     StandardScaffold(
                         navController = navController,

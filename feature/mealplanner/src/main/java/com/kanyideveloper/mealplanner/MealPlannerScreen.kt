@@ -92,10 +92,11 @@ fun MealPlannerScreen(
     if (shouldShowMealsDialog) {
         SelectMealDialog(
             mealType = viewModel.mealType.value,
-            meals = viewModel.searchMeals.value.meals,
+            meals = viewModel.searchMeals.value.meals?.observeAsState()?.value ?: emptyList(),
             currentSearchString = viewModel.searchString.value,
             sources = listOf("Online", "My Meals", "My Favorites"),
             searchOptions = listOf("Name", "Ingredient", "Category"),
+            currentSource = viewModel.source.value,
             onDismiss = {
                 viewModel.setShouldShowMealsDialogState(!viewModel.shouldShowMealsDialog.value)
             },
@@ -117,6 +118,9 @@ fun MealPlannerScreen(
             },
             onSourceChange = { source ->
                 viewModel.setSourceState(source)
+                if (source == "My Meals" || source == "My Favorites") {
+                    viewModel.searchMeal()
+                }
             }
         )
     }

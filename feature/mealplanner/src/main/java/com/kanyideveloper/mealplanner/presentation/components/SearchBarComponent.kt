@@ -29,7 +29,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -37,13 +39,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.kanyideveloper.mealtime.core.R
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SearchBarComponent(
     onSearchClicked: () -> Unit,
     onSearchValueChange: (String) -> Unit,
     textFieldCurrentText: String
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     Spacer(modifier = Modifier.height(4.dp))
 
     TextField(
@@ -65,6 +69,7 @@ fun SearchBarComponent(
             imeAction = ImeAction.Search
         ),
         keyboardActions = KeyboardActions {
+            keyboardController?.hide()
             onSearchClicked()
         },
         colors = TextFieldDefaults.textFieldColors(

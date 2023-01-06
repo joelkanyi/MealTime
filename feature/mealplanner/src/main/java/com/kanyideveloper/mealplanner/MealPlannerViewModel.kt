@@ -103,9 +103,14 @@ class MealPlannerViewModel @Inject constructor(
     }
 
     private val _source = mutableStateOf("")
-    private val source: State<String> = _source
+    val source: State<String> = _source
     fun setSourceState(value: String) {
         _source.value = value
+        _searchMeals.value = searchMeals.value.copy(
+            isLoading = false,
+            error = null,
+            meals = null
+        )
     }
 
     private val _searchBy = mutableStateOf("")
@@ -154,7 +159,7 @@ class MealPlannerViewModel @Inject constructor(
                 val result = mealPlannerRepository.searchMeal(
                     source = source.value,
                     searchBy = searchBy.value,
-                    searchString = searchString.value
+                    searchString = searchString.value.trim()
                 )
             ) {
                 is Resource.Error -> {
@@ -171,7 +176,7 @@ class MealPlannerViewModel @Inject constructor(
                 is Resource.Success -> {
                     _searchMeals.value = searchMeals.value.copy(
                         isLoading = false,
-                        meals = result.data ?: emptyList()
+                        meals = result.data
                     )
                 }
                 else -> {
