@@ -97,6 +97,8 @@ fun MealPlannerScreen(
             sources = listOf("Online", "My Meals", "My Favorites"),
             searchOptions = listOf("Name", "Ingredient", "Category"),
             currentSource = viewModel.source.value,
+            isLoading = viewModel.searchMeals.value.isLoading,
+            error = viewModel.searchMeals.value.error,
             onDismiss = {
                 viewModel.setShouldShowMealsDialogState(!viewModel.shouldShowMealsDialog.value)
             },

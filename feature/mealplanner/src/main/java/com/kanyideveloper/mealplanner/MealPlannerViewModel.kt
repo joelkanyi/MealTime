@@ -151,7 +151,9 @@ class MealPlannerViewModel @Inject constructor(
 
     fun searchMeal() {
         _searchMeals.value = searchMeals.value.copy(
-            isLoading = true
+            isLoading = true,
+            meals = null,
+            error = null
         )
 
         viewModelScope.launch {

@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -116,13 +117,14 @@ fun errorBodyAsString(throwable: HttpException): String? {
 @Composable
 fun LottieAnim(
     resId: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    height: Dp = 300.dp
 ) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(resId = resId))
     LottieAnimation(
         modifier = modifier
             .fillMaxWidth()
-            .height(300.dp),
+            .height(height),
         iterations = LottieConstants.IterateForever,
         composition = composition
     )
