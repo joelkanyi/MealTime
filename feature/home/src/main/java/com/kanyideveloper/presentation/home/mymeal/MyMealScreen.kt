@@ -16,28 +16,23 @@
 package com.kanyideveloper.presentation.home.mymeal
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -46,22 +41,19 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.compose_ui.theme.Shapes
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.util.LottieAnim
 import com.kanyideveloper.core.util.showDayCookMessage
 import com.kanyideveloper.domain.model.MealCategory
 import com.kanyideveloper.mealtime.core.R
@@ -78,12 +70,7 @@ fun MyMealScreen(
 ) {
     val myMeals = viewModel.myMeals.observeAsState().value?.observeAsState()?.value
 
-    val showRandomMeal by remember {
-        mutableStateOf(false)
-    }
-
     MyMealScreenContent(
-        showRandomMeal = showRandomMeal,
         myMeals = myMeals,
         viewModel = viewModel,
         navigator = navigator,
@@ -114,7 +101,6 @@ fun MyMealScreen(
 
 @Composable
 private fun MyMealScreenContent(
-    showRandomMeal: Boolean,
     myMeals: List<Meal>?,
     viewModel: HomeViewModel,
     navigator: HomeNavigator,
@@ -124,7 +110,6 @@ private fun MyMealScreenContent(
     isSelected: (String) -> Boolean,
     onCategoryClick: (String) -> Unit
 ) {
-    var showRandomMeal1 = showRandomMeal
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
         columns = GridCells.Fixed(2),
@@ -198,123 +183,17 @@ private fun MyMealScreenContent(
             }
         }
 
-        if (showRandomMeal1) {
-            item(span = { GridItemSpan(2) }) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                        .height(180.dp),
-                    shape = Shapes.large,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
-                    )
-                ) {
-                    Box(Modifier.fillMaxSize()) {
-                        Image(
-                            modifier = Modifier.fillMaxSize(),
-                            painter = painterResource(id = R.drawable.meal_banner),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop
-                        )
-
-                        Card(
-                            modifier = Modifier
-                                .align(Alignment.TopEnd)
-                                .padding(8.dp)
-                                .clickable {
-                                    showRandomMeal1 = false
-                                },
-                            shape = Shapes.medium,
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surface
-                            )
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .padding(vertical = 3.dp, horizontal = 12.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    modifier = Modifier
-                                        .size(18.dp)
-                                        .background(MaterialTheme.colorScheme.surface)
-                                        .padding(4.dp),
-                                    imageVector = Icons.Default.Close,
-                                    tint = Color.White,
-                                    contentDescription = null
-                                )
-                                Spacer(modifier = Modifier.width(5.dp))
-                                Text(
-                                    modifier = Modifier.padding(vertical = 3.dp),
-                                    text = "Dismiss",
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White
-                                )
-                            }
-                        }
-
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .align(Alignment.BottomEnd)
-                                .background(Color.Black.copy(alpha = 0.6f))
-                                .padding(5.dp)
-                        ) {
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                text = "Rice Chicken with Chapati",
-                                textAlign = TextAlign.Center,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(30.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .padding(vertical = 3.dp, horizontal = 3.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        modifier = Modifier
-                                            .size(24.dp)
-                                            .background(MaterialTheme.colorScheme.surface)
-                                            .padding(4.dp),
-                                        painter = painterResource(id = R.drawable.ic_clock),
-                                        contentDescription = null
-                                    )
-                                    Spacer(modifier = Modifier.width(5.dp))
-                                    Text(
-                                        modifier = Modifier.padding(vertical = 3.dp),
-                                        text = "3 Mins",
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Light,
-                                        color = Color.White
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         item(span = { GridItemSpan(2) }) {
             Spacer(modifier = Modifier.height(8.dp))
         }
-        item(span = { GridItemSpan(2) }) {
-            Text(
-                modifier = Modifier.padding(vertical = 3.dp),
-                text = "Meals",
-                style = MaterialTheme.typography.titleMedium
-            )
+        if (!myMeals.isNullOrEmpty()) {
+            item(span = { GridItemSpan(2) }) {
+                Text(
+                    modifier = Modifier.padding(vertical = 3.dp),
+                    text = "Meals",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
         }
         items(myMeals ?: emptyList()) { meal ->
             MealItem(
@@ -326,6 +205,30 @@ private fun MyMealScreenContent(
                 removeFromFavorites = removeFromFavorites,
                 viewModel = viewModel
             )
+        }
+
+        if (myMeals.isNullOrEmpty()) {
+            item(span = { GridItemSpan(2) }) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .testTag("Empty State Component"),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    LottieAnim(
+                        resId = R.raw.astronaut,
+                        height = 120.dp
+                    )
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        text = "You don't have local meals, you can add some.",
+                        style = MaterialTheme.typography.titleSmall,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
         }
     }
 }
