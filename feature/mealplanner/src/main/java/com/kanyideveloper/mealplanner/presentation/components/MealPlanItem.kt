@@ -45,7 +45,7 @@ fun MealPlanItem(
     meals: List<Meal>,
     type: String,
     onClickAdd: (String) -> Unit,
-    onClickRemove: (Int) -> Unit
+    onRemoveClick: (Int?, String?, String, Boolean) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -95,7 +95,7 @@ fun MealPlanItem(
                 PlanMealItem(
                     meal = meal,
                     onClickAdd = { _, _ -> },
-                    onRemoveClick = onClickRemove
+                    onRemoveClick = onRemoveClick
                 )
             }
         }

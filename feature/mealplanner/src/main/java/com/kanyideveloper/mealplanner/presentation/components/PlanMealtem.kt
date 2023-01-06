@@ -19,7 +19,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -31,8 +30,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -65,12 +62,20 @@ fun PlanMealItem(
     isAdded: Boolean = false,
     type: String = "",
     onClickAdd: (Meal, String) -> Unit,
-    onRemoveClick: (Int) -> Unit
+    onRemoveClick: (Int?, String?, String, Boolean) -> Unit
 ) {
+    val isOnline = meal.onlineMealId != null
+
     Box(
         modifier = Modifier
             .width(cardWidth)
-            .padding(horizontal = 4.dp, vertical = 4.dp)
+            .padding(
+                horizontal = if (isAddingToPlan) {
+                    2.dp
+                } else {
+                    0.dp
+                }
+            )
     ) {
         Card(
             modifier = modifier
@@ -107,41 +112,6 @@ fun PlanMealItem(
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
-
-                if (isAddingToPlan) {
-                    Button(
-                        modifier = Modifier.padding(8.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = if (isAdded) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                MaterialTheme.colorScheme.secondary
-                            },
-                            contentColor = if (isAdded) {
-                                MaterialTheme.colorScheme.onPrimary
-                            } else {
-                                MaterialTheme.colorScheme.onSecondary
-                            }
-                        ),
-                        onClick = {
-                            onClickAdd(meal, type)
-                        }
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                modifier = Modifier.size(18.dp),
-                                imageVector = Icons.Default.Add,
-                                contentDescription = null
-                            )
-                            Text(
-                                text = "Add",
-                                style = MaterialTheme.typography.labelSmall
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(4.dp))
-                }
             }
         }
 
@@ -161,11 +131,19 @@ fun PlanMealItem(
             contentAlignment = Alignment.Center
         ) {
             IconButton(onClick = {
-                // onRemoveClick(mealPlanId)
+                if (isAddingToPlan) {
+                    onClickAdd(meal, type)
+                } else {
+                    onRemoveClick(meal.localMealId, meal.onlineMealId, type, isOnline)
+                }
             }) {
                 Icon(
                     modifier = Modifier.size(14.dp),
-                    imageVector = Icons.Default.Close,
+                    imageVector = if (isAddingToPlan) {
+                        Icons.Default.Add
+                    } else {
+                        Icons.Default.Close
+                    },
                     contentDescription = null,
                     tint = Color.White
                 )

@@ -40,4 +40,8 @@ interface MealPlannerRepository {
     suspend fun saveMealToPlan(mealPlan: MealPlan)
 
     suspend fun searchMeal(source: String, searchBy: String, searchString: String): Resource<LiveData<List<Meal>>>
+
+    suspend fun removeOnlineMealFromPlan(onlineMealId: Int, mealType: String)
+
+    suspend fun removeLocalMealFromPlan(localMealId: String, mealType: String)
 }

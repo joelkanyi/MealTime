@@ -173,13 +173,13 @@ fun SelectMealDialog(
                     items(meals) { searchMeal ->
                         PlanMealItem(
                             meal = searchMeal,
-                            cardWidth = 160.dp,
-                            imageHeight = 80.dp,
+                            cardWidth = 150.dp,
+                            imageHeight = 100.dp,
                             isAddingToPlan = true,
                             isAdded = false,
                             onClickAdd = onClickAdd,
                             type = mealType,
-                            onRemoveClick = { mealId ->
+                            onRemoveClick = { _, _, _, _ ->
                             }
                         )
                     }

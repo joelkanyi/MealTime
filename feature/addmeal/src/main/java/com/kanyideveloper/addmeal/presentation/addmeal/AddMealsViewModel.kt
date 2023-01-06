@@ -229,14 +229,11 @@ class AddMealsViewModel @Inject constructor(
     }
 
     val categories = listOf(
+        "Food",
         "Breakfast",
         "Drinks",
         "Fruits",
-        "Fast Food",
-        "Supper",
-        "Dinner",
-        "Appetizer",
-        "Salad"
+        "Fast Food"
     )
 
     val cookingComplexities = listOf(

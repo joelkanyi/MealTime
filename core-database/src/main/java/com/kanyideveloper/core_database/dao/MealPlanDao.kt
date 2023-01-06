@@ -33,6 +33,9 @@ interface MealPlanDao {
     @Query("DELETE FROM meal_plan_table WHERE id = :id")
     suspend fun deleteAMealFromPlan(id: Int)
 
+    /*@Query("DELETE ")
+    suspend fun removeOnlineMealFromPlan(onlineMealId: Int, mealType: String)*/
+
     /*@Query("SELECT meals FROM meal_plan_table WHERE mealTypeName = :mealType AND date = :date")
     fun getExistingMeals(mealType: String, date: String): List<Meal>*/
 }

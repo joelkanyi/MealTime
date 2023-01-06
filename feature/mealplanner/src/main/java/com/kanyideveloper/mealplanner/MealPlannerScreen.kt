@@ -16,6 +16,7 @@
 package com.kanyideveloper.mealplanner
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,6 +40,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -77,6 +79,8 @@ fun MealPlannerScreen(
     val planMeals = viewModel.getPlanMeals().observeAsState().value
 
     val scaffoldState = rememberScaffoldState()
+
+    val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
         viewModel.eventsFlow.collectLatest { event ->
@@ -156,10 +160,16 @@ fun MealPlannerScreen(
             onClickDay = { fullDate ->
                 viewModel.setSelectedDateState(fullDate)
                 viewModel.getPlanMeals(filterDay = viewModel.selectedDate.value)
+            },
+            onRemoveClick = { onlineMealId, localMealId, mealType, isOnline ->
+                /*if (isOnline){
+                    viewModel.removeOnlineMealFromPlan(onlineMealId = onlineMealId, mealType = mealType)
+                }else{
+                    viewModel.removeLocalMealFromPlan(localMealId = localMealId, mealType = mealType)
+                }*/
+                Toast.makeText(context, "Feature in development", Toast.LENGTH_SHORT).show()
             }
-        ) { mealId ->
-            viewModel.deleteAMealFromPlan(id = mealId)
-        }
+        )
     }
 }
 
@@ -174,7 +184,7 @@ private fun MealPlannerScreenContent(
     mealTypes: List<String>,
     isDaySelected: (String) -> Boolean,
     onClickDay: (String) -> Unit,
-    onRemoveClick: (Int) -> Unit
+    onRemoveClick: (Int?, String?, String, Boolean) -> Unit
 ) {
     val daysLazyRowState = rememberLazyListState()
 
@@ -242,7 +252,7 @@ private fun MealPlannerScreenContent(
                             .flatMap { it.meals },
                         onClickAdd = onClickAdd,
                         type = type,
-                        onClickRemove = onRemoveClick
+                        onRemoveClick = onRemoveClick
                     )
                 }
             }
