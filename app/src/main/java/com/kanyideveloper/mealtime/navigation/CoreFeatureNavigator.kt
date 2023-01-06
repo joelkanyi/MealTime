@@ -94,12 +94,19 @@ class CoreFeatureNavigator(
         navController.navigate(AllergiesScreenDestination within navGraph)
     }
 
-    override fun openNoOfPeopleScreen() {
-        navController.navigate(NumberOfPeopleScreenDestination within navGraph)
+    override fun openNoOfPeopleScreen(allergies: String) {
+        navController.navigate(
+            NumberOfPeopleScreenDestination(allergies = allergies) within navGraph
+        )
     }
 
-    override fun openMealTypesScreen() {
-        navController.navigate(MealTypesScreenDestination within navGraph)
+    override fun openMealTypesScreen(allergies: String, noOfPeople: String) {
+        navController.navigate(
+            MealTypesScreenDestination(
+                allergies = allergies,
+                numberOfPeople = noOfPeople
+            ) within navGraph
+        )
     }
 
     override fun openMealPlanner() {

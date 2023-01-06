@@ -14,7 +14,3 @@
  * limitations under the License.
  */
 package com.kanyideveloper.data.util
-
-internal fun String.stringToList(): List<String> {
-    return this.split("\r\n").filter { !it.matches(Regex("[0-9]+")) }.filter { !it.isNullOrBlank() }
-}

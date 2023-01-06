@@ -17,14 +17,20 @@ package com.kanyideveloper.core.util
 
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 
 object Constants {
     const val MEAL_TABLE = "meal_table"
     const val CATEGORIES_TABLE = "categories_table"
     const val MEALTIME_DATABASE = "meal_time_database"
     const val FAVORITES_TABLE = "favorites_table"
+    const val MEAL_PLAN_TABLE = "meal_plan_table"
 
     val THEME_OPTIONS = intPreferencesKey(name = "theme_option")
     const val MEALTIME_PREFERENCES = "MEALTIME_PREFERENCES"
     val USER_DATA = stringPreferencesKey("user_data")
+
+    val ALLERGIES = stringSetPreferencesKey("allergies")
+    val NUMBER_OF_PEOPLE = stringPreferencesKey("number_of_people")
+    val DISH_TYPES = stringSetPreferencesKey("dish_types")
 }

@@ -41,10 +41,10 @@ object DatabaseModule {
     fun provideMealTimeDatabase(
         @ApplicationContext context: Context,
         converters: com.kanyideveloper.core_database.converters.Converters
-    ): com.kanyideveloper.core_database.MealTimeDatabase {
+    ): MealTimeDatabase {
         return Room.databaseBuilder(
             context.applicationContext,
-            com.kanyideveloper.core_database.MealTimeDatabase::class.java,
+            MealTimeDatabase::class.java,
             Constants.MEALTIME_DATABASE
         )
             .fallbackToDestructiveMigration()
@@ -59,4 +59,8 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun providesFavoritesDao(database: MealTimeDatabase) = database.favoritesDao
+
+    @Provides
+    @Singleton
+    fun providesMealPlanDao(database: MealTimeDatabase) = database.mealPlanDao
 }

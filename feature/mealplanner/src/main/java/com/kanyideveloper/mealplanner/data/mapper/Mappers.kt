@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Joel Kanyi.
+ * Copyright 2023 Joel Kanyi.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,58 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.data.mapper
+package com.kanyideveloper.mealplanner.data.mapper
 
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.model.OnlineMeal
 import com.kanyideveloper.core.util.stringToList
+import com.kanyideveloper.core_database.model.FavoriteEntity
 import com.kanyideveloper.core_database.model.MealEntity
-import com.kanyideveloper.core_network.model.CategoriesResponse
+import com.kanyideveloper.core_database.model.MealPlanEntity
 import com.kanyideveloper.core_network.model.MealDetailsResponse
 import com.kanyideveloper.core_network.model.MealsResponse
-import com.kanyideveloper.domain.model.Category
-import com.kanyideveloper.domain.model.OnlineMeal
+import com.kanyideveloper.mealplanner.model.MealPlan
+
+internal fun MealPlan.toEntity(): MealPlanEntity {
+    return MealPlanEntity(
+        mealTypeName = mealTypeName,
+        meals = meals,
+        date = date
+    )
+}
+
+internal fun MealPlanEntity.toMealPlan(): MealPlan {
+    return MealPlan(
+        mealTypeName = mealTypeName,
+        meals = meals,
+        date = date,
+        id = id
+    )
+}
+
+internal fun MealsResponse.Meal.toOnlineMeal(): OnlineMeal {
+    return OnlineMeal(
+        name = strMeal,
+        imageUrl = strMealThumb,
+        mealId = idMeal
+    )
+}
+
+internal fun OnlineMeal.toGeneralMeal(): Meal {
+    return Meal(
+        name = name,
+        imageUrl = imageUrl,
+        onlineMealId = mealId,
+        cookingTime = 0,
+        category = "",
+        cookingDifficulty = "",
+        ingredients = emptyList(),
+        cookingDirections = emptyList(),
+        isFavorite = false,
+        servingPeople = 0,
+        localMealId = null
+    )
+}
 
 internal fun MealEntity.toMeal(): Meal {
     return Meal(
@@ -39,20 +81,19 @@ internal fun MealEntity.toMeal(): Meal {
     )
 }
 
-internal fun CategoriesResponse.Category.toCategory(): Category {
-    return Category(
-        categoryId = idCategory,
-        categoryName = strCategory,
-        categoryDescription = strCategoryDescription,
-        categoryImageUrl = strCategoryThumb
-    )
-}
-
-internal fun MealsResponse.Meal.toMeal(): OnlineMeal {
-    return OnlineMeal(
-        name = strMeal,
-        imageUrl = strMealThumb,
-        mealId = idMeal
+internal fun FavoriteEntity.toMeal(): Meal {
+    return Meal(
+        name = mealName,
+        imageUrl = mealImageUrl,
+        localMealId = id,
+        onlineMealId = onlineMealId,
+        isFavorite = isFavorite,
+        cookingTime = 0,
+        category = "",
+        cookingDifficulty = "",
+        ingredients = emptyList(),
+        cookingDirections = emptyList(),
+        servingPeople = 0
     )
 }
 

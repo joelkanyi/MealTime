@@ -15,6 +15,12 @@
  */
 package com.kanyideveloper.mealplanner.di
 
+import android.content.Context
+import com.kanyideveloper.core.data.MealTimePreferences
+import com.kanyideveloper.core_database.dao.FavoritesDao
+import com.kanyideveloper.core_database.dao.MealDao
+import com.kanyideveloper.core_database.dao.MealPlanDao
+import com.kanyideveloper.core_network.MealDbApi
 import com.kanyideveloper.mealplanner.data.repository.MealPlannerRepositoryImpl
 import com.kanyideveloper.mealplanner.domain.repository.MealPlannerRepository
 import dagger.Module
@@ -29,7 +35,21 @@ object MealPlannerModule {
 
     @Provides
     @Singleton
-    fun providesMealPlannerRepository(): MealPlannerRepository {
-        return MealPlannerRepositoryImpl()
+    fun providesMealPlannerRepository(
+        mealTimePreferences: MealTimePreferences,
+        mealsPlanDao: MealPlanDao,
+        mealDbApi: MealDbApi,
+        mealDao: MealDao,
+        favoritesDao: FavoritesDao,
+        context: Context
+    ): MealPlannerRepository {
+        return MealPlannerRepositoryImpl(
+            mealTimePreferences = mealTimePreferences,
+            mealPlanDao = mealsPlanDao,
+            mealDao = mealDao,
+            mealDbApi = mealDbApi,
+            favoritesDao = favoritesDao,
+            context = context
+        )
     }
 }

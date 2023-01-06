@@ -98,6 +98,7 @@ fun NextAddMealScreen(
                 is UiEvents.SnackbarEvent -> {
                     scaffoldState.snackbarHostState.showSnackbar(message = event.message)
                 }
+                else -> {}
             }
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Joel Kanyi.
+ * Copyright 2023 Joel Kanyi.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core.util
+package com.kanyideveloper.core_database.model
 
-sealed class UiEvents {
-    data class SnackbarEvent(val message: String) : UiEvents()
-    data class NavigationEvent(val route: String) : UiEvents()
-}
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.util.Constants.MEAL_PLAN_TABLE
+
+@Entity(tableName = MEAL_PLAN_TABLE)
+data class MealPlanEntity(
+    val mealTypeName: String,
+    val meals: List<Meal> = emptyList(),
+    val date: String,
+    @PrimaryKey(autoGenerate = true) val id: Int? = null
+)

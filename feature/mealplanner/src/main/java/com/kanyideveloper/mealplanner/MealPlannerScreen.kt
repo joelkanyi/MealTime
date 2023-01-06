@@ -15,81 +15,56 @@
  */
 package com.kanyideveloper.mealplanner
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
-import com.kanyidev.searchable_dropdown.SearchableExpandedDropDownMenu
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemsIndexed
 import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.compose_ui.theme.PrimaryColor
-import com.kanyideveloper.compose_ui.theme.Shapes
 import com.kanyideveloper.core.components.EmptyStateComponent
-import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.util.UiEvents
+import com.kanyideveloper.mealplanner.model.Day
+import com.kanyideveloper.mealplanner.model.MealPlan
+import com.kanyideveloper.mealplanner.presentation.components.DayItemCard
+import com.kanyideveloper.mealplanner.presentation.components.MealPlanItem
+import com.kanyideveloper.mealplanner.presentation.components.SelectMealDialog
 import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
+import kotlinx.coroutines.flow.collectLatest
 
 interface MealPlannerNavigator {
     fun popBackStack()
     fun openAllergiesScreen()
-    fun openNoOfPeopleScreen()
-    fun openMealTypesScreen()
+    fun openNoOfPeopleScreen(allergies: String)
+    fun openMealTypesScreen(allergies: String, noOfPeople: String)
     fun openMealPlanner()
 }
 
@@ -99,9 +74,61 @@ fun MealPlannerScreen(
     navigator: MealPlannerNavigator,
     viewModel: MealPlannerViewModel = hiltViewModel()
 ) {
-    val hasMealPlan = true
-    var shouldShowMealsDialog by remember {
-        mutableStateOf(false)
+    val hasMealPlan = viewModel.hasMealPlanPrefs.value
+    val shouldShowMealsDialog = viewModel.shouldShowMealsDialog.value
+    val planMeals = viewModel.getPlanMeals().observeAsState().value
+
+    val scaffoldState = rememberScaffoldState()
+
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = true) {
+        viewModel.eventsFlow.collectLatest { event ->
+            when (event) {
+                is UiEvents.SnackbarEvent -> {
+                    scaffoldState.snackbarHostState.showSnackbar(message = event.message)
+                }
+                else -> {}
+            }
+        }
+    }
+
+    if (shouldShowMealsDialog) {
+        SelectMealDialog(
+            mealType = viewModel.mealType.value,
+            meals = viewModel.searchMeals.value.meals?.observeAsState()?.value ?: emptyList(),
+            currentSearchString = viewModel.searchString.value,
+            sources = listOf("Online", "My Meals", "My Favorites"),
+            searchOptions = listOf("Name", "Ingredient", "Category"),
+            currentSource = viewModel.source.value,
+            isLoading = viewModel.searchMeals.value.isLoading,
+            error = viewModel.searchMeals.value.error,
+            onDismiss = {
+                viewModel.setShouldShowMealsDialogState(!viewModel.shouldShowMealsDialog.value)
+            },
+            onClickAdd = { meal, type ->
+                viewModel.insertMealToPlan(
+                    meal = meal,
+                    mealTypePlan = type,
+                    date = viewModel.selectedDate.value
+                )
+            },
+            onSearchValueChange = {
+                viewModel.setSearchStringState(it)
+            },
+            onSearchClicked = {
+                viewModel.searchMeal()
+            },
+            onSearchByChange = { searchBy ->
+                viewModel.setSearchByState(searchBy)
+            },
+            onSourceChange = { source ->
+                viewModel.setSourceState(source)
+                if (source == "My Meals" || source == "My Favorites") {
+                    viewModel.searchMeal()
+                }
+            }
+        )
     }
 
     Column(Modifier.fillMaxSize()) {
@@ -117,474 +144,118 @@ fun MealPlannerScreen(
             }
         )
 
-        if (shouldShowMealsDialog) {
-            SelectMealDialog(
-                mealType = viewModel.mealType.value,
-                onDismiss = {
-                    shouldShowMealsDialog = !shouldShowMealsDialog
-                }
-            )
-        }
-
-        Box(modifier = Modifier.fillMaxSize()) {
-            if (!hasMealPlan) {
-                EmptyStateComponent(
-                    anim = R.raw.women_thinking,
-                    message = "Looks like you haven't created a meal plan yet",
-                    content = {
-                        Spacer(modifier = Modifier.height(32.dp))
-                        Button(onClick = {
-                            navigator.openAllergiesScreen()
-                        }) {
-                            Text(text = "Get Started")
-                        }
-                    }
-                )
-            }
-
-            if (hasMealPlan) {
-                LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp)) {
-                    item {
-                        LazyRow(
-                            horizontalArrangement = Arrangement.spacedBy(2.dp)
-                        ) {
-                            items(days) { day ->
-                                DayItemCard(day = day.name, date = day.date)
-                            }
-                        }
-                    }
-
-                    item {
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
-
-                    items(mealTypes) { type ->
-                        MealPlanItem(
-                            mealType = type,
-                            onClickAdd = { mealType ->
-                                viewModel.setMealTypeState(mealType)
-                                shouldShowMealsDialog = !shouldShowMealsDialog
-                            }
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-data class Day(
-    val name: String,
-    val date: String
-)
-
-private val days = listOf(
-    Day(name = "Mon", date = "02"),
-    Day(name = "Tue", date = "03"),
-    Day(name = "Wed", date = "04"),
-    Day(name = "Thur", date = "05"),
-    Day(name = "Fri", date = "06"),
-    Day(name = "Sat", date = "07"),
-    Day(name = "Sun", date = "08")
-)
-
-private val meal = Meal(
-    name = "Test Meal that will fit here will fit well",
-    imageUrl = "https://www.themealdb.com/images/media/meals/020z181619788503.jpg",
-    cookingTime = 0,
-    category = "Test",
-    cookingDifficulty = "",
-    ingredients = listOf(),
-    cookingDirections = listOf(),
-    isFavorite = false,
-    servingPeople = 0
-)
-
-private val mealTypes = listOf(
-    MealType(
-        name = "Breakfast",
-        meals = listOf(meal, meal)
-    ),
-    MealType(
-        name = "Lunch",
-        meals = listOf(meal, meal)
-    ),
-    MealType(
-        name = "Dinner",
-        meals = listOf(meal, meal)
-    )
-)
-
-data class MealType(
-    val name: String,
-    val meals: List<Meal> = emptyList()
-)
-
-@Composable
-fun MealPlanItem(
-    mealType: MealType,
-    onClickAdd: (String) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-    ) {
-        Card(
-            Modifier
-                .fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium,
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
-            )
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    modifier = Modifier
-                        .padding(horizontal = 4.dp),
-                    text = mealType.name,
-                    style = MaterialTheme.typography.titleMedium
-                )
-                IconButton(onClick = {
-                    onClickAdd(mealType.name)
-                }) {
-                    Icon(
-                        modifier = Modifier.size(32.dp),
-                        painter = painterResource(id = R.drawable.add_circle),
-                        contentDescription = null
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(6.dp))
-
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp)
-        ) {
-            items(mealType.meals) { meal ->
-                PlanMealItem(meal = meal)
-            }
-        }
-
-        if (mealType.meals.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(12.dp))
-        }
-    }
-}
-
-@Composable
-fun DayItemCard(
-    day: String,
-    date: String,
-    onClick: () -> Unit = {},
-    selected: Boolean = false
-) {
-    Card(
-        Modifier
-            .width(70.dp)
-            .height(70.dp)
-            .padding(2.dp)
-            .clickable {
-                onClick()
+        MealPlannerScreenContent(
+            hasMealPlan = hasMealPlan,
+            navigator = navigator,
+            days = viewModel.days.collectAsLazyPagingItems(),
+            mealTypes = viewModel.types.value,
+            mealsAndTheirTypes = planMeals ?: emptyList(),
+            onClickAdd = { mealType ->
+                viewModel.setMealTypeState(mealType)
+                viewModel.setShouldShowMealsDialogState(!viewModel.shouldShowMealsDialog.value)
             },
-        shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(
-            containerColor = if (selected) {
-                MaterialTheme.colorScheme.primary
-            } else {
-                MaterialTheme.colorScheme.surfaceVariant
+            isDaySelected = { fullDate ->
+                viewModel.selectedDate.value == fullDate
+            },
+            onClickDay = { fullDate ->
+                viewModel.setSelectedDateState(fullDate)
+                viewModel.getPlanMeals(filterDay = viewModel.selectedDate.value)
+            },
+            onRemoveClick = { onlineMealId, localMealId, mealType, isOnline ->
+                /*if (isOnline){
+                    viewModel.removeOnlineMealFromPlan(onlineMealId = onlineMealId, mealType = mealType)
+                }else{
+                    viewModel.removeLocalMealFromPlan(localMealId = localMealId, mealType = mealType)
+                }*/
+                Toast.makeText(context, "Feature in development", Toast.LENGTH_SHORT).show()
             }
         )
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(8.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = day,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = if (selected) {
-                        MaterialTheme.colorScheme.onPrimary
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    }
-                )
-                Text(
-                    text = date,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleSmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = if (selected) {
-                        MaterialTheme.colorScheme.onPrimary
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    }
-                )
-            }
-        }
     }
 }
 
+@SuppressLint("FrequentlyChangedStateReadInComposition")
 @Composable
-fun PlanMealItem(
-    meal: Meal,
-    modifier: Modifier = Modifier,
-    cardWidth: Dp = 160.dp,
-    imageHeight: Dp = 120.dp,
-    isAddingToPlan: Boolean = false,
-    isAdded: Boolean = false
+private fun MealPlannerScreenContent(
+    hasMealPlan: Boolean,
+    navigator: MealPlannerNavigator,
+    onClickAdd: (String) -> Unit,
+    days: LazyPagingItems<Day>,
+    mealsAndTheirTypes: List<MealPlan>,
+    mealTypes: List<String>,
+    isDaySelected: (String) -> Boolean,
+    onClickDay: (String) -> Unit,
+    onRemoveClick: (Int?, String?, String, Boolean) -> Unit
 ) {
-    Box(modifier = Modifier.width(cardWidth).padding(horizontal = 4.dp, vertical = 4.dp)) {
-        Card(
-            modifier = modifier
-                .width(cardWidth)
-                .wrapContentHeight(),
-            shape = Shapes.large,
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
+    val daysLazyRowState = rememberLazyListState()
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        if (!hasMealPlan) {
+            EmptyStateComponent(
+                anim = R.raw.women_thinking,
+                message = "Looks like you haven't created a meal plan yet",
+                content = {
+                    Spacer(modifier = Modifier.height(32.dp))
+                    Button(onClick = {
+                        navigator.openAllergiesScreen()
+                    }) {
+                        Text(text = "Get Started")
+                    }
+                }
             )
-        ) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                Image(
-                    modifier = Modifier
-                        .width(cardWidth)
-                        .height(imageHeight),
-                    contentDescription = null,
-                    painter = rememberAsyncImagePainter(
-                        ImageRequest.Builder(LocalContext.current)
-                            .data(data = meal.imageUrl)
-                            .apply(block = fun ImageRequest.Builder.() {
-                                placeholder(R.drawable.food_loading)
-                            }).build()
-                    ),
-                    contentScale = ContentScale.Crop
-                )
+        }
 
-                Text(
-                    modifier = Modifier.padding(4.dp),
-                    text = meal.name,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                if (isAddingToPlan) {
-                    Button(
-                        modifier = Modifier.padding(8.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = if (isAdded) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                MaterialTheme.colorScheme.secondary
-                            },
-                            contentColor = if (isAdded) {
-                                MaterialTheme.colorScheme.onPrimary
-                            } else {
-                                MaterialTheme.colorScheme.onSecondary
-                            }
-                        ),
-                        onClick = { /*TODO*/ }
+        if (hasMealPlan) {
+            LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp)) {
+                item {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                modifier = Modifier.size(18.dp),
-                                imageVector = Icons.Default.Add,
-                                contentDescription = null
-                            )
-                            Text(
-                                text = "Add",
-                                style = MaterialTheme.typography.labelSmall
-                            )
+                        val monthAndYear = remember {
+                            mutableStateOf("")
                         }
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = monthAndYear.value,
+                            style = MaterialTheme.typography.titleLarge,
+                            textAlign = TextAlign.End
+                        )
+
+                        LazyRow(
+                            state = daysLazyRowState,
+                            horizontalArrangement = Arrangement.spacedBy(2.dp),
+                            content = {
+                                itemsIndexed(days) { index, day ->
+                                    if (daysLazyRowState.firstVisibleItemIndex == index) {
+                                        monthAndYear.value = "${day?.displayMonth}, ${day?.year}"
+                                    }
+                                    DayItemCard(
+                                        day = day!!.name,
+                                        date = day.displayDate,
+                                        fullDate = day.fullDate,
+                                        isSelected = isDaySelected,
+                                        onClick = onClickDay
+                                    )
+                                }
+                            }
+                        )
                     }
-
-                    Spacer(modifier = Modifier.height(4.dp))
                 }
-            }
-        }
 
-        Box(
-            modifier = Modifier
-                .size(30.dp)
-                .align(Alignment.TopEnd)
-                .background(
-                    color = PrimaryColor,
-                    shape = RoundedCornerShape(
-                        topStart = 0.dp,
-                        bottomStart = 12.dp,
-                        topEnd = 12.dp,
-                        bottomEnd = 0.dp
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+
+                items(mealTypes) { type ->
+                    MealPlanItem(
+                        meals = mealsAndTheirTypes.filter { it.mealTypeName == type }
+                            .flatMap { it.meals },
+                        onClickAdd = onClickAdd,
+                        type = type,
+                        onRemoveClick = onRemoveClick
                     )
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            IconButton(onClick = {
-            }) {
-                Icon(
-                    modifier = Modifier.size(14.dp),
-                    imageVector = Icons.Default.Close,
-                    contentDescription = null,
-                    tint = Color.White
-                )
+                }
             }
         }
     }
-}
-
-@Composable
-fun SelectMealDialog(
-    onDismiss: () -> Unit,
-    mealType: String
-) {
-    AlertDialog(
-        containerColor = MaterialTheme.colorScheme.background,
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(.9f),
-        onDismissRequest = { onDismiss() },
-        title = {
-            Text(
-                text = mealType,
-                style = MaterialTheme.typography.titleLarge
-            )
-        },
-        text = {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                item(span = { GridItemSpan(2) }) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Text(
-                            text = "Search By",
-                            style = MaterialTheme.typography.labelMedium
-                        )
-
-                        SearchableExpandedDropDownMenu(
-                            listOfItems = listOf(""),
-                            modifier = Modifier.fillMaxWidth(),
-                            onDropDownItemSelected = { item ->
-                                // viewModel.setCategory(item)
-                            },
-                            dropdownItem = { category ->
-                                Text(text = category, color = Color.Black)
-                            },
-                            parentTextFieldCornerRadius = 4.dp
-                        )
-                    }
-                }
-
-                item(span = { GridItemSpan(2) }) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Spacer(modifier = Modifier.height(4.dp))
-
-                        Text(
-                            text = "Source",
-                            style = MaterialTheme.typography.labelMedium
-                        )
-
-                        SearchableExpandedDropDownMenu(
-                            listOfItems = listOf(""),
-                            modifier = Modifier.fillMaxWidth(),
-                            onDropDownItemSelected = { item ->
-                                // viewModel.setCategory(item)
-                            },
-                            dropdownItem = { category ->
-                                Text(text = category, color = Color.Black)
-                            },
-                            parentTextFieldCornerRadius = 4.dp
-                        )
-                    }
-                }
-
-                item(span = { GridItemSpan(2) }) {
-                    SearchBarComponent()
-                }
-
-                item(span = { GridItemSpan(2) }) {
-                    Spacer(modifier = Modifier.height(12.dp))
-                }
-
-                items(10) {
-                    PlanMealItem(
-                        meal = meal,
-                        cardWidth = 160.dp,
-                        imageHeight = 80.dp,
-                        isAddingToPlan = true,
-                        isAdded = false
-                    )
-                }
-            }
-        },
-        confirmButton = {
-        }
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchBarComponent() {
-    Spacer(modifier = Modifier.height(4.dp))
-
-    TextField(
-        value = "",
-        onValueChange = {
-            // viewModel.setSearchTerm(it)
-        },
-        placeholder = {
-            Text(
-                text = "Search"
-                // color = primaryGray
-            )
-        },
-
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-            },
-        shape = RoundedCornerShape(size = 8.dp),
-        keyboardOptions = KeyboardOptions(
-            capitalization = KeyboardCapitalization.Words,
-            autoCorrect = true,
-            keyboardType = KeyboardType.Text
-        ),
-        colors = TextFieldDefaults.textFieldColors(
-            textColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        ),
-        maxLines = 1,
-        singleLine = true,
-        leadingIcon = {
-            Icon(
-                modifier = Modifier
-                    .size(24.dp),
-                painter = painterResource(id = R.drawable.ic_search),
-                contentDescription = null
-            )
-        }
-    )
 }

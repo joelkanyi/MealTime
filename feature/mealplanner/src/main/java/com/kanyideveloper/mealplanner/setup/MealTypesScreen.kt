@@ -36,19 +36,64 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.compose_ui.components.StandardToolbar
+import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.mealplanner.MealPlannerNavigator
 import com.ramcosta.composedestinations.annotation.Destination
+import kotlinx.coroutines.flow.collectLatest
 
 @Destination
 @Composable
 fun MealTypesScreen(
-    navigator: MealPlannerNavigator
+    allergies: String,
+    numberOfPeople: String,
+    navigator: MealPlannerNavigator,
+    viewModel: SetupViewModel = hiltViewModel()
+) {
+    LaunchedEffect(key1 = true) {
+        viewModel.eventsFlow.collectLatest { event ->
+            when (event) {
+                is UiEvents.NavigationEvent -> {
+                    navigator.openMealPlanner()
+                }
+                else -> {}
+            }
+        }
+    }
+
+    MealTypesScreenContent(
+        navigator = navigator,
+        mealTypes = viewModel.dishTypes,
+        onClickComplete = {
+            viewModel.saveMealPlanPreferences(
+                allergies = viewModel.gson.fromJson(allergies, Array<String>::class.java).toList(),
+                numberOfPeople = numberOfPeople,
+                dishTypes = viewModel.selectedDishType
+            )
+        },
+        onClickAMealType = { type ->
+            viewModel.insertSelectedDishType(type)
+        },
+        isSelected = { type ->
+            viewModel.selectedDishType.contains(type)
+        }
+    )
+}
+
+@Composable
+private fun MealTypesScreenContent(
+    mealTypes: List<String>,
+    navigator: MealPlannerNavigator,
+    isSelected: (String) -> Boolean,
+    onClickComplete: () -> Unit,
+    onClickAMealType: (String) -> Unit
 ) {
     Column(Modifier.fillMaxSize()) {
         StandardToolbar(
@@ -86,7 +131,10 @@ fun MealTypesScreen(
             items(mealTypes) { type ->
                 MealTypeItemCard(
                     mealType = type,
-                    onClick = { /*TODO*/ }
+                    onClick = {
+                        onClickAMealType(type)
+                    },
+                    isSelected = isSelected
                 )
             }
 
@@ -96,7 +144,7 @@ fun MealTypesScreen(
 
             item(span = { GridItemSpan(currentLineSpan = 3) }) {
                 Button(onClick = {
-                    navigator.openMealPlanner()
+                    onClickComplete()
                 }) {
                     Text(
                         modifier = Modifier
@@ -111,13 +159,11 @@ fun MealTypesScreen(
     }
 }
 
-private val mealTypes = listOf("Breakfast", "Lunch", "Dinner", "Dessert")
-
 @Composable
 fun MealTypeItemCard(
     mealType: String,
     onClick: () -> Unit,
-    selected: Boolean = false
+    isSelected: (String) -> Boolean
 ) {
     Card(
         Modifier
@@ -129,7 +175,7 @@ fun MealTypeItemCard(
             },
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
-            containerColor = if (selected) {
+            containerColor = if (isSelected(mealType)) {
                 MaterialTheme.colorScheme.primary
             } else {
                 MaterialTheme.colorScheme.surfaceVariant
@@ -148,7 +194,7 @@ fun MealTypeItemCard(
                 style = MaterialTheme.typography.labelLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = if (selected) {
+                color = if (isSelected(mealType)) {
                     MaterialTheme.colorScheme.onPrimary
                 } else {
                     MaterialTheme.colorScheme.onSurfaceVariant
