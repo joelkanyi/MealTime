@@ -18,27 +18,51 @@ package com.kanyideveloper.presentation.home
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kanyideveloper.core.domain.FavoritesRepository
 import com.kanyideveloper.core.domain.HomeRepository
 import com.kanyideveloper.core.model.Favorite
+import com.kanyideveloper.core.model.Meal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    homeRepository: HomeRepository,
+    private val homeRepository: HomeRepository,
     private val favoritesRepository: FavoritesRepository
 ) : ViewModel() {
 
-    val myMeals = homeRepository.getMyMeals()
+    private val _myMeals = MutableLiveData<LiveData<List<Meal>>>()
+    val myMeals: LiveData<LiveData<List<Meal>>> = _myMeals
+
+    fun getMyMeals(filterCategory: String = "All") {
+        _myMeals.value = if (filterCategory == "All") {
+            homeRepository.getMyMeals()
+        } else {
+            Transformations.map(homeRepository.getMyMeals()) { meals ->
+                meals.filter { it.category == filterCategory }
+            }
+        }
+    }
+
+    init {
+        getMyMeals()
+    }
 
     private val _isMyMeal = mutableStateOf(true)
     val isMyMeal: State<Boolean> = _isMyMeal
     fun setIsMyMeal(value: Boolean) {
         _isMyMeal.value = value
+    }
+
+    private val _selectedCategory = mutableStateOf("All")
+    val selectedCategory: State<String> = _selectedCategory
+    fun setSelectedCategory(value: String) {
+        _selectedCategory.value = value
     }
 
     fun inFavorites(id: Int): LiveData<Boolean> {

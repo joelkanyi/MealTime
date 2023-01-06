@@ -41,6 +41,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -75,7 +76,7 @@ fun MyMealScreen(
     navigator: HomeNavigator,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val myMeals = viewModel.myMeals.observeAsState().value
+    val myMeals = viewModel.myMeals.observeAsState().value?.observeAsState()?.value
 
     val showRandomMeal by remember {
         mutableStateOf(false)
@@ -84,6 +85,8 @@ fun MyMealScreen(
     MyMealScreenContent(
         showRandomMeal = showRandomMeal,
         myMeals = myMeals,
+        viewModel = viewModel,
+        navigator = navigator,
         openMealDetails = { meal ->
             navigator.openMealDetails(meal = meal)
         },
@@ -99,8 +102,13 @@ fun MyMealScreen(
                 localMealId = id
             )
         },
-        viewModel = viewModel,
-        navigator = navigator
+        isSelected = { category ->
+            viewModel.selectedCategory.value == category
+        },
+        onCategoryClick = { category ->
+            viewModel.setSelectedCategory(category)
+            viewModel.getMyMeals(viewModel.selectedCategory.value)
+        }
     )
 }
 
@@ -108,11 +116,13 @@ fun MyMealScreen(
 private fun MyMealScreenContent(
     showRandomMeal: Boolean,
     myMeals: List<Meal>?,
+    viewModel: HomeViewModel,
+    navigator: HomeNavigator,
     openMealDetails: (Meal) -> Unit = {},
     addToFavorites: (Int, String, String) -> Unit,
     removeFromFavorites: (Int) -> Unit,
-    viewModel: HomeViewModel,
-    navigator: HomeNavigator
+    isSelected: (String) -> Boolean,
+    onCategoryClick: (String) -> Unit
 ) {
     var showRandomMeal1 = showRandomMeal
     LazyVerticalGrid(
@@ -136,7 +146,11 @@ private fun MyMealScreenContent(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(mealCategories) { category ->
-                    MyMealsCategoryItem(category)
+                    MyMealsCategoryItem(
+                        category = category,
+                        isSelected = isSelected,
+                        onCategoryClick = onCategoryClick
+                    )
                 }
             }
         }
@@ -316,19 +330,27 @@ private fun MyMealScreenContent(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MyMealsCategoryItem(category: MealCategory, selected: Boolean = false) {
+private fun MyMealsCategoryItem(
+    category: MealCategory,
+    isSelected: (String) -> Boolean,
+    onCategoryClick: (String) -> Unit
+) {
     Card(
         modifier = Modifier
             .size(65.dp),
         shape = Shapes.large,
         colors = CardDefaults.cardColors(
-            containerColor = if (selected) {
+            containerColor = if (isSelected(category.name)) {
                 MaterialTheme.colorScheme.primary
             } else {
                 MaterialTheme.colorScheme.surfaceVariant
             }
-        )
+        ),
+        onClick = {
+            onCategoryClick(category.name)
+        }
     ) {
         Column(
             Modifier.fillMaxSize(),
@@ -340,20 +362,32 @@ private fun MyMealsCategoryItem(category: MealCategory, selected: Boolean = fals
                     .size(32.dp)
                     .padding(4.dp),
                 painter = painterResource(id = category.icon),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                contentDescription = null
+                contentDescription = null,
+                tint = if (isSelected(category.name)) {
+                    MaterialTheme.colorScheme.onPrimary
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                }
             )
             Text(
                 text = category.name,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = if (isSelected(category.name)) {
+                    MaterialTheme.colorScheme.onPrimary
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                }
             )
         }
     }
 }
 
 private val mealCategories = listOf(
+    MealCategory(
+        "All",
+        R.drawable.fork_knife_thin
+    ),
     MealCategory(
         "Food",
         R.drawable.ic_food
