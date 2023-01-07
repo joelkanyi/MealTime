@@ -29,7 +29,7 @@ internal fun MealPlan.toEntity(): MealPlanEntity {
     return MealPlanEntity(
         mealTypeName = mealTypeName,
         meals = meals,
-        date = date
+        mealDate = date
     )
 }
 
@@ -37,7 +37,7 @@ internal fun MealPlanEntity.toMealPlan(): MealPlan {
     return MealPlan(
         mealTypeName = mealTypeName,
         meals = meals,
-        date = date,
+        date = mealDate,
         id = id
     )
 }
@@ -74,7 +74,7 @@ internal fun MealEntity.toMeal(): Meal {
         category = category,
         cookingDifficulty = cookingDifficulty,
         ingredients = ingredients,
-        cookingDirections = cookingDirections,
+        cookingDirections = cookingInstructions,
         isFavorite = isFavorite,
         servingPeople = servingPeople,
         localMealId = id

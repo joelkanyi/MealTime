@@ -27,7 +27,7 @@ interface MealPlanDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMealPlan(mealPlanEntity: MealPlanEntity)
 
-    @Query("SELECT * FROM meal_plan_table WHERE date = :filterDay")
+    @Query("SELECT * FROM meal_plan_table WHERE mealDate = :filterDay")
     fun getPlanMeals(filterDay: String): LiveData<List<MealPlanEntity>>
 
     @Query("DELETE FROM meal_plan_table WHERE id = :id")
