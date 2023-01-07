@@ -207,7 +207,7 @@ fun FoodItem(
                         ImageRequest.Builder(LocalContext.current)
                             .data(data = favorite.mealImageUrl)
                             .apply(block = fun ImageRequest.Builder.() {
-                                placeholder(R.drawable.food_loading)
+                                placeholder(R.drawable.placeholder)
                             }).build()
                     ),
                     contentScale = ContentScale.Crop

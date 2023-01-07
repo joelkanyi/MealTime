@@ -63,7 +63,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -328,7 +327,6 @@ fun SearchBar(
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent
         ),
-        textStyle = TextStyle(color = Color.Black),
         maxLines = 1,
         singleLine = true,
         trailingIcon = {
@@ -380,7 +378,7 @@ fun OnlineMealItem(
                     ImageRequest.Builder(LocalContext.current)
                         .data(data = meal.imageUrl)
                         .apply(block = fun ImageRequest.Builder.() {
-                            placeholder(R.drawable.food_loading)
+                            placeholder(R.drawable.placeholder)
                         }).build()
                 ),
                 contentScale = ContentScale.Crop
