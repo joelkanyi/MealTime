@@ -60,7 +60,8 @@ object NavGraphs {
         override val startRoute = SearchScreenDestination routedIn this
 
         override val destinationsByRoute = listOf<DestinationSpec<*>>(
-            SearchScreenDestination
+            SearchScreenDestination,
+            OnlineMealDetailsScreenDestination
         ).routedIn(this)
             .associateBy { it.route }
     }
