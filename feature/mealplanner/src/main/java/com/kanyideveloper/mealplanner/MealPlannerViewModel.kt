@@ -18,10 +18,12 @@ package com.kanyideveloper.mealplanner
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import com.kanyideveloper.core.domain.HomeRepository
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.UiEvents
@@ -38,7 +40,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MealPlannerViewModel @Inject constructor(
-    private val mealPlannerRepository: MealPlannerRepository
+    private val mealPlannerRepository: MealPlannerRepository,
+    private val homeRepository: HomeRepository
 ) : ViewModel() {
 
     private val _types = mutableStateOf<List<String>>(emptyList())
@@ -222,5 +225,11 @@ class MealPlannerViewModel @Inject constructor(
                 mealType = mealType
             )
         }
+    }
+
+    private val _singleMeal = MutableLiveData<LiveData<Meal?>>()
+    val singleMeal: LiveData<LiveData<Meal?>> = _singleMeal
+    fun getASingleMeal(id: Int) {
+        _singleMeal.value = homeRepository.getMealById(id = id)
     }
 }

@@ -16,7 +16,6 @@
 package com.kanyideveloper.mealplanner
 
 import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,7 +39,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,6 +48,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.core.components.EmptyStateComponent
+import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.mealplanner.model.Day
 import com.kanyideveloper.mealplanner.model.MealPlan
@@ -66,6 +65,8 @@ interface MealPlannerNavigator {
     fun openNoOfPeopleScreen(allergies: String)
     fun openMealTypesScreen(allergies: String, noOfPeople: String)
     fun openMealPlanner()
+    fun openMealDetails(meal: Meal)
+    fun openOnlineMealDetails(mealId: String)
 }
 
 @Destination
@@ -80,7 +81,7 @@ fun MealPlannerScreen(
 
     val scaffoldState = rememberScaffoldState()
 
-    val context = LocalContext.current
+    val meal = viewModel.singleMeal.observeAsState().value?.observeAsState()?.value
 
     LaunchedEffect(key1 = true) {
         viewModel.eventsFlow.collectLatest { event ->
@@ -127,7 +128,8 @@ fun MealPlannerScreen(
                 if (source == "My Meals" || source == "My Favorites") {
                     viewModel.searchMeal()
                 }
-            }
+            },
+            onMealClick = { _, _, _ -> }
         )
     }
 
@@ -162,12 +164,30 @@ fun MealPlannerScreen(
                 viewModel.getPlanMeals(filterDay = viewModel.selectedDate.value)
             },
             onRemoveClick = { onlineMealId, localMealId, mealType, isOnline ->
-                /*if (isOnline){
-                    viewModel.removeOnlineMealFromPlan(onlineMealId = onlineMealId, mealType = mealType)
-                }else{
-                    viewModel.removeLocalMealFromPlan(localMealId = localMealId, mealType = mealType)
-                }*/
-                Toast.makeText(context, "Feature in development", Toast.LENGTH_SHORT).show()
+                if (isOnline) {
+                    viewModel.removeOnlineMealFromPlan(
+                        onlineMealId = onlineMealId,
+                        mealType = mealType
+                    )
+                } else {
+                    viewModel.removeLocalMealFromPlan(
+                        localMealId = localMealId,
+                        mealType = mealType
+                    )
+                }
+            },
+            onMealClick = { localMealId, onlineMealId, isOnline ->
+                if (isOnline) {
+                    onlineMealId?.let { navigator.openOnlineMealDetails(mealId = it) }
+                } else {
+                    if (localMealId != null) {
+                        viewModel.getASingleMeal(id = localMealId)
+
+                        if (meal != null) {
+                            navigator.openMealDetails(meal = meal)
+                        }
+                    }
+                }
             }
         )
     }
@@ -184,7 +204,8 @@ private fun MealPlannerScreenContent(
     mealTypes: List<String>,
     isDaySelected: (String) -> Boolean,
     onClickDay: (String) -> Unit,
-    onRemoveClick: (Int?, String?, String, Boolean) -> Unit
+    onRemoveClick: (Int?, String?, String, Boolean) -> Unit,
+    onMealClick: (Int?, String?, Boolean) -> Unit
 ) {
     val daysLazyRowState = rememberLazyListState()
 
@@ -252,7 +273,8 @@ private fun MealPlannerScreenContent(
                             .flatMap { it.meals },
                         onClickAdd = onClickAdd,
                         type = type,
-                        onRemoveClick = onRemoveClick
+                        onRemoveClick = onRemoveClick,
+                        onMealClick = onMealClick
                     )
                 }
             }

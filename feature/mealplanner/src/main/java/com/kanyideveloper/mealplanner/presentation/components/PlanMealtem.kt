@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -52,6 +53,7 @@ import com.kanyideveloper.compose_ui.theme.Shapes
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.mealtime.core.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlanMealItem(
     meal: Meal,
@@ -59,13 +61,11 @@ fun PlanMealItem(
     cardWidth: Dp = 160.dp,
     imageHeight: Dp = 120.dp,
     isAddingToPlan: Boolean = false,
-    isAdded: Boolean = false,
     type: String = "",
+    onMealClick: (Int?, String?, Boolean) -> Unit,
     onClickAdd: (Meal, String) -> Unit,
     onRemoveClick: (Int?, String?, String, Boolean) -> Unit
 ) {
-    val isOnline = meal.onlineMealId != null
-
     Box(
         modifier = Modifier
             .width(cardWidth)
@@ -84,7 +84,10 @@ fun PlanMealItem(
             shape = Shapes.large,
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant
-            )
+            ),
+            onClick = {
+                onMealClick(meal.localMealId, meal.onlineMealId, meal.onlineMealId != null)
+            }
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
                 Image(
@@ -134,7 +137,12 @@ fun PlanMealItem(
                 if (isAddingToPlan) {
                     onClickAdd(meal, type)
                 } else {
-                    onRemoveClick(meal.localMealId, meal.onlineMealId, type, isOnline)
+                    onRemoveClick(
+                        meal.localMealId,
+                        meal.onlineMealId,
+                        type,
+                        meal.onlineMealId != null
+                    )
                 }
             }) {
                 Icon(

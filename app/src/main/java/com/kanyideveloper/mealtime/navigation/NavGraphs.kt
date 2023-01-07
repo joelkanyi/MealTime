@@ -88,7 +88,9 @@ object NavGraphs {
             MealPlannerScreenDestination,
             AllergiesScreenDestination,
             NumberOfPeopleScreenDestination,
-            MealTypesScreenDestination
+            MealTypesScreenDestination,
+            OnlineMealDetailsScreenDestination,
+            DetailsScreenDestination
         ).routedIn(this)
             .associateBy { it.route }
     }
