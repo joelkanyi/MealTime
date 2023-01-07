@@ -72,7 +72,9 @@ object NavGraphs {
         override val startRoute = FavoritesScreenDestination routedIn this
 
         override val destinationsByRoute = listOf<DestinationSpec<*>>(
-            FavoritesScreenDestination
+            FavoritesScreenDestination,
+            OnlineMealDetailsScreenDestination,
+            DetailsScreenDestination
         ).routedIn(this)
             .associateBy { it.route }
     }
