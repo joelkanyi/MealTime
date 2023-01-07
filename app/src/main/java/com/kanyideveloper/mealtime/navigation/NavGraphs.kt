@@ -27,7 +27,7 @@ import com.kanyideveloper.presentation.destinations.HomeScreenDestination
 import com.kanyideveloper.presentation.destinations.MyMealScreenDestination
 import com.kanyideveloper.presentation.destinations.OnlineMealDetailsScreenDestination
 import com.kanyideveloper.presentation.destinations.OnlineMealScreenDestination
-import com.kanyideveloper.randommeal.destinations.RandomMealScreenDestination
+import com.kanyideveloper.presentation.destinations.RandomOnlineMealDetailsScreenDestination
 import com.kanyideveloper.search.presentation.search.destinations.SearchScreenDestination
 import com.kanyideveloper.settings.presentation.destinations.SettingsScreenDestination
 import com.ramcosta.composedestinations.dynamic.routedIn
@@ -49,7 +49,7 @@ object NavGraphs {
             DetailsScreenDestination,
             AddMealScreenDestination,
             NextAddMealScreenDestination,
-            RandomMealScreenDestination
+            RandomOnlineMealDetailsScreenDestination
         ).routedIn(this)
             .associateBy { it.route }
     }
@@ -72,7 +72,9 @@ object NavGraphs {
         override val startRoute = FavoritesScreenDestination routedIn this
 
         override val destinationsByRoute = listOf<DestinationSpec<*>>(
-            FavoritesScreenDestination
+            FavoritesScreenDestination,
+            OnlineMealDetailsScreenDestination,
+            DetailsScreenDestination
         ).routedIn(this)
             .associateBy { it.route }
     }

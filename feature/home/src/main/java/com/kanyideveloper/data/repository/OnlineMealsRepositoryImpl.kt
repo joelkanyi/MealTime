@@ -50,4 +50,11 @@ class OnlineMealsRepositoryImpl(
             response.meals.map { it.toMeal() }
         }
     }
+
+    override suspend fun getRandomMeal(): Resource<List<Meal>> {
+        return safeApiCall(Dispatchers.IO) {
+            val response = mealDbApi.getRandomMeal()
+            response.meals.map { it.toMeal() }
+        }
+    }
 }

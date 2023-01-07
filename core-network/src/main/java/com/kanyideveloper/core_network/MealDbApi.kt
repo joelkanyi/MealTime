@@ -49,4 +49,7 @@ interface MealDbApi {
     suspend fun searchMealsByCategory(
         @Query("c") query: String
     ): MealsResponse
+
+    @GET("random.php")
+    suspend fun getRandomMeal(): MealDetailsResponse
 }

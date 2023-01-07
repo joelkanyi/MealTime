@@ -81,7 +81,7 @@ fun FavoritesScreen(
     viewModel: FavoritesViewModel = hiltViewModel()
 ) {
     val favorites by viewModel.favorites.observeAsState()
-    val meal = viewModel.singleMeal.value
+    val meal = viewModel.singleMeal.observeAsState().value?.observeAsState()?.value
 
     FavoritesScreenContent(
         favorites = favorites,
@@ -89,8 +89,13 @@ fun FavoritesScreen(
             if (isOnline) {
                 onlineMealId?.let { navigator.openOnlineMealDetails(mealId = it) }
             } else {
-                localMealId?.let { viewModel.getASingleMeal(id = it) }
-                meal?.let { navigator.openMealDetails(meal = it) }
+                if (localMealId != null) {
+                    viewModel.getASingleMeal(id = localMealId)
+
+                    if (meal != null) {
+                        navigator.openMealDetails(meal = meal)
+                    }
+                }
             }
         },
         onFavoriteClick = { favorite ->
@@ -183,7 +188,12 @@ fun FoodItem(
         shape = Shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         onClick = {
-            onClick(favorite.id, favorite.onlineMealId, favorite.localMealId, favorite.isOnline)
+            onClick(
+                favorite.id,
+                favorite.onlineMealId,
+                favorite.localMealId,
+                favorite.onlineMealId != null
+            )
         }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -197,7 +207,7 @@ fun FoodItem(
                         ImageRequest.Builder(LocalContext.current)
                             .data(data = favorite.mealImageUrl)
                             .apply(block = fun ImageRequest.Builder.() {
-                                placeholder(R.drawable.food_loading)
+                                placeholder(R.drawable.placeholder)
                             }).build()
                     ),
                     contentScale = ContentScale.Crop

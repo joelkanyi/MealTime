@@ -34,4 +34,8 @@ class FakeOnlineMealsRepository : OnlineMealsRepository {
     override suspend fun getMealDetails(mealId: String): Resource<List<Meal>> {
         TODO("Not yet implemented")
     }
+
+    override suspend fun getRandomMeal(): Resource<List<Meal>> {
+        TODO("Not yet implemented")
+    }
 }

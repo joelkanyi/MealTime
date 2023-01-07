@@ -76,7 +76,6 @@ dependencies {
     implementation(project(Modules.favorites))
     implementation(project(Modules.settings))
     implementation(project(Modules.addMeal))
-    implementation(project(Modules.randomMeal))
     implementation(project(Modules.mealPlanner))
 
     // RamCosta Navigation

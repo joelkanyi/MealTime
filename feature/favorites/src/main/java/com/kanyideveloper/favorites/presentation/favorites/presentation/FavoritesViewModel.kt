@@ -35,10 +35,10 @@ class FavoritesViewModel @Inject constructor(
 
     val favorites = favoritesRepository.getFavorites()
 
-    private val _singleMeal = MutableLiveData<Meal?>()
-    val singleMeal: LiveData<Meal?> = _singleMeal
+    private val _singleMeal = MutableLiveData<LiveData<Meal?>>()
+    val singleMeal: LiveData<LiveData<Meal?>> = _singleMeal
     fun getASingleMeal(id: Int) {
-        _singleMeal.value = homeRepository.getMealById(id = id).value
+        _singleMeal.value = homeRepository.getMealById(id = id)
     }
 
     fun deleteAFavorite(favorite: Favorite) {
