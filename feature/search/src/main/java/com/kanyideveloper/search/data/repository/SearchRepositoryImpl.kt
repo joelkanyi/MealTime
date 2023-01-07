@@ -15,16 +15,43 @@
  */
 package com.kanyideveloper.search.data.repository
 
-import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.model.OnlineMeal
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.safeApiCall
+import com.kanyideveloper.core_network.MealDbApi
+import com.kanyideveloper.search.data.mapper.toOnlineMeal
 import com.kanyideveloper.search.domain.SearchRepository
 import kotlinx.coroutines.Dispatchers
 
-class SearchRepositoryImpl : SearchRepository {
-    override suspend fun search(searchOption: String, searchParam: String): Resource<List<Meal>> {
-        return safeApiCall(Dispatchers.IO) {
-            emptyList()
+class SearchRepositoryImpl(
+    private val mealDbApi: MealDbApi
+) : SearchRepository {
+    override suspend fun search(
+        searchOption: String,
+        searchParam: String
+    ): Resource<List<OnlineMeal>> {
+        return when (searchOption) {
+            "Meal Name" -> {
+                safeApiCall(Dispatchers.IO) {
+                    val response = mealDbApi.searchMealsByName(query = searchParam)
+                    response.meals.map { it.toOnlineMeal() }
+                }
+            }
+            "Ingredient" -> {
+                safeApiCall(Dispatchers.IO) {
+                    val response = mealDbApi.searchMealsByIngredient(query = searchParam)
+                    response.meals.map { it.toOnlineMeal() }
+                }
+            }
+            "Meal Category" -> {
+                safeApiCall(Dispatchers.IO) {
+                    val response = mealDbApi.searchMealsByCategory(query = searchParam)
+                    response.meals.map { it.toOnlineMeal() }
+                }
+            }
+            else -> {
+                Resource.Error("Unknown online search by")
+            }
         }
     }
 }

@@ -15,6 +15,7 @@
  */
 package com.kanyideveloper.search.di
 
+import com.kanyideveloper.core_network.MealDbApi
 import com.kanyideveloper.search.data.repository.SearchRepositoryImpl
 import com.kanyideveloper.search.domain.SearchRepository
 import dagger.Module
@@ -29,7 +30,7 @@ object SearchModule {
 
     @Provides
     @Singleton
-    fun providesSearchRepository(): SearchRepository {
-        return SearchRepositoryImpl()
+    fun providesSearchRepository(mealDbApi: MealDbApi): SearchRepository {
+        return SearchRepositoryImpl(mealDbApi = mealDbApi)
     }
 }

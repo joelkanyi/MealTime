@@ -15,9 +15,9 @@
  */
 package com.kanyideveloper.search.domain
 
-import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.model.OnlineMeal
 import com.kanyideveloper.core.util.Resource
 
 interface SearchRepository {
-    suspend fun search(searchOption: String, searchParam: String): Resource<List<Meal>>
+    suspend fun search(searchOption: String, searchParam: String): Resource<List<OnlineMeal>>
 }

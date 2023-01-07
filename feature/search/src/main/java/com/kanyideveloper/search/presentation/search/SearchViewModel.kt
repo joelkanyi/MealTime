@@ -17,8 +17,11 @@ package com.kanyideveloper.search.presentation.search
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kanyideveloper.core.domain.FavoritesRepository
+import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.search.domain.SearchRepository
@@ -30,7 +33,8 @@ import timber.log.Timber
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val searchRepository: SearchRepository
+    private val searchRepository: SearchRepository,
+    private val favoritesRepository: FavoritesRepository
 ) : ViewModel() {
 
     private val _eventsFlow = MutableSharedFlow<UiEvents>()
@@ -94,6 +98,38 @@ class SearchViewModel @Inject constructor(
                     searchState
                 }
             }
+        }
+    }
+
+    fun inOnlineFavorites(id: String): LiveData<Boolean> {
+        return favoritesRepository.isOnlineFavorite(id = id)
+    }
+
+    fun insertAFavorite(
+        isOnline: Boolean = false,
+        onlineMealId: String? = null,
+        localMealId: Int? = null,
+        mealImageUrl: String,
+        mealName: String
+    ) {
+        viewModelScope.launch {
+            val favorite = Favorite(
+                onlineMealId = onlineMealId,
+                localMealId = localMealId,
+                mealName = mealName,
+                mealImageUrl = mealImageUrl,
+                isOnline = isOnline,
+                isFavorite = true
+            )
+            favoritesRepository.insertFavorite(
+                favorite = favorite
+            )
+        }
+    }
+
+    fun deleteAnOnlineFavorite(onlineMealId: String) {
+        viewModelScope.launch {
+            favoritesRepository.deleteAnOnlineFavorite(onlineMealId = onlineMealId)
         }
     }
 }

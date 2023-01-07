@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.search.presentation.search
+package com.kanyideveloper.search.data.mapper
 
 import com.kanyideveloper.core.model.OnlineMeal
+import com.kanyideveloper.core_network.model.MealsResponse
 
-data class SearchState(
-    val isLoading: Boolean = false,
-    val error: String? = null,
-    val searchData: List<OnlineMeal> = emptyList()
-)
+internal fun MealsResponse.Meal.toOnlineMeal(): OnlineMeal {
+    return OnlineMeal(
+        name = strMeal,
+        imageUrl = strMealThumb,
+        mealId = idMeal
+    )
+}

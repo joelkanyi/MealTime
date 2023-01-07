@@ -16,20 +16,25 @@
 package com.kanyideveloper.search.presentation.search
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -48,13 +53,16 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -64,16 +72,20 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.core.components.EmptyStateComponent
 import com.kanyideveloper.core.components.ErrorStateComponent
 import com.kanyideveloper.core.components.LoadingStateComponent
+import com.kanyideveloper.core.model.OnlineMeal
 import com.kanyideveloper.core.util.UiEvents
+import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
 
 interface SearchNavigator {
-    fun openSearch(showId: Long)
+    fun openOnlineMealDetails(mealId: String)
 }
 
 @Destination
@@ -96,6 +108,51 @@ fun SearchScreen(
         }
     }
 
+    SearchScreenContent(
+        searchState = searchState,
+        currentSearchString = viewModel.searchString.value,
+        onSearchStringChange = { newValue ->
+            viewModel.setSearchString(newValue)
+        },
+        onSearch = { searchParam ->
+            viewModel.search(searchParam)
+        },
+        onSearchOptionClick = { option ->
+            viewModel.setSelectedSearchOption(option)
+        },
+        isSelected = { option ->
+            viewModel.selectedSearchOption.value == option
+        },
+        addToFavorites = { onlineMealId, imageUrl, name ->
+            viewModel.insertAFavorite(
+                onlineMealId = onlineMealId,
+                mealImageUrl = imageUrl,
+                mealName = name
+            )
+        },
+        removeFromFavorites = { id ->
+            viewModel.deleteAnOnlineFavorite(
+                onlineMealId = id
+            )
+        },
+        onMealClick = { mealId ->
+            navigator.openOnlineMealDetails(mealId = mealId)
+        }
+    )
+}
+
+@Composable
+private fun SearchScreenContent(
+    searchState: SearchState,
+    onMealClick: (String) -> Unit,
+    addToFavorites: (String, String, String) -> Unit,
+    removeFromFavorites: (String) -> Unit,
+    onSearchStringChange: (String) -> Unit,
+    onSearch: (String) -> Unit,
+    currentSearchString: String,
+    isSelected: (String) -> Boolean,
+    onSearchOptionClick: (String) -> Unit
+) {
     Column(
         Modifier
             .fillMaxSize()
@@ -114,12 +171,8 @@ fun SearchScreen(
 
         SearchOptionsComponent(
             options = searchOptions,
-            onClick = { option ->
-                viewModel.setSelectedSearchOption(option)
-            },
-            isSelected = { option ->
-                viewModel.selectedSearchOption.value == option
-            }
+            onClick = onSearchOptionClick,
+            isSelected = isSelected
         )
 
         SearchBar(
@@ -127,13 +180,9 @@ fun SearchScreen(
                 .fillMaxWidth()
                 .height(67.dp)
                 .padding(8.dp),
-            currentSearchString = viewModel.searchString.value,
-            onSearchStringChange = { newValue ->
-                viewModel.setSearchString(newValue)
-            },
-            onSearch = { searchParam ->
-                viewModel.search(searchParam)
-            }
+            currentSearchString = currentSearchString,
+            onSearchStringChange = onSearchStringChange,
+            onSearch = onSearch
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -145,6 +194,14 @@ fun SearchScreen(
                 columns = GridCells.Fixed(2),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                items(searchState.searchData) { searchData ->
+                    OnlineMealItem(
+                        meal = searchData,
+                        onClick = onMealClick,
+                        addToFavorites = addToFavorites,
+                        removeFromFavorites = removeFromFavorites
+                    )
+                }
             }
 
             // Loading data
@@ -285,4 +342,91 @@ fun SearchBar(
             }
         }
     )
+}
+
+@Composable
+fun OnlineMealItem(
+    meal: OnlineMeal,
+    onClick: (String) -> Unit,
+    addToFavorites: (String, String, String) -> Unit,
+    removeFromFavorites: (String) -> Unit,
+    viewModel: SearchViewModel = hiltViewModel()
+) {
+    val isFavorite = viewModel.inOnlineFavorites(id = meal.mealId).observeAsState().value != null
+
+    Card(
+        modifier = Modifier
+            .fillMaxSize()
+            .height(220.dp)
+            .padding(vertical = 5.dp)
+            .clickable {
+                onClick(meal.mealId)
+            },
+        shape = androidx.compose.material3.MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(
+            containerColor = androidx.compose.material3.MaterialTheme.colorScheme.surfaceVariant
+        )
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Image(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.75f),
+                contentDescription = meal.name,
+                painter = rememberAsyncImagePainter(
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(data = meal.imageUrl)
+                        .apply(block = fun ImageRequest.Builder.() {
+                            placeholder(R.drawable.food_loading)
+                        }).build()
+                ),
+                contentScale = ContentScale.Crop
+            )
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp, horizontal = 12.dp)
+                    .align(Alignment.BottomStart),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth(0.75f)
+                        .padding(vertical = 3.dp),
+                    text = meal.name,
+                    style = androidx.compose.material3.MaterialTheme.typography.titleSmall,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                androidx.compose.material3.IconButton(
+                    onClick = {
+                        if (isFavorite) {
+                            removeFromFavorites(meal.mealId)
+                        } else {
+                            addToFavorites(meal.mealId, meal.imageUrl, meal.name)
+                        }
+                    }
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .size(30.dp),
+                        painter = if (isFavorite) {
+                            painterResource(id = R.drawable.filled_favorite)
+                        } else {
+                            painterResource(id = R.drawable.heart_plus)
+                        },
+                        contentDescription = null,
+                        tint = if (isFavorite) {
+                            Color(0xFFfa4a0c)
+                        } else {
+                            androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
+                        }
+                    )
+                }
+            }
+        }
+    }
 }

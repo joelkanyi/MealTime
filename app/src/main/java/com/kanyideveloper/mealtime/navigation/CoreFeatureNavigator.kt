@@ -54,10 +54,6 @@ class CoreFeatureNavigator(
         navController.navigate(AddMealScreenDestination within navGraph)
     }
 
-    override fun openSearch(showId: Long) {
-        Timber.d("Search")
-    }
-
     override fun openSettings(showId: Long) {
         Timber.d("Settings")
     }
