@@ -15,6 +15,7 @@
  */
 package com.kanyideveloper.core_database
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -26,8 +27,20 @@ import com.kanyideveloper.core_database.model.FavoriteEntity
 import com.kanyideveloper.core_database.model.MealEntity
 import com.kanyideveloper.core_database.model.MealPlanEntity
 
+@Database(
+    entities = [
+        MealEntity::class,
+        FavoriteEntity::class,
+        MealPlanEntity::class
+    ],
+    version = 3,
+    autoMigrations = [
+        AutoMigration(from = 1, to = 2, spec = DatabaseMigrations.Migration1To2::class),
+        AutoMigration(from = 2, to = 3, spec = DatabaseMigrations.Migration2To3::class)
+    ],
+    exportSchema = true
+)
 @TypeConverters(Converters::class)
-@Database(entities = [MealEntity::class, FavoriteEntity::class, MealPlanEntity::class], version = 2)
 abstract class MealTimeDatabase : RoomDatabase() {
     abstract val mealDao: MealDao
     abstract val favoritesDao: FavoritesDao

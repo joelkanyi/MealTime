@@ -64,7 +64,7 @@ class MealDaoTest {
             category = "",
             cookingDifficulty = "",
             ingredients = listOf(),
-            cookingDirections = listOf(),
+            cookingInstructions = listOf(),
             isFavorite = false,
             servingPeople = 0
         )
@@ -76,7 +76,7 @@ class MealDaoTest {
             category = "",
             cookingDifficulty = "",
             ingredients = listOf(),
-            cookingDirections = listOf(),
+            cookingInstructions = listOf(),
             isFavorite = false,
             servingPeople = 0
         )
@@ -106,7 +106,7 @@ class MealDaoTest {
             category = "",
             cookingDifficulty = "",
             ingredients = listOf(),
-            cookingDirections = listOf(),
+            cookingInstructions = listOf(),
             isFavorite = false,
             servingPeople = 0
         )
@@ -118,7 +118,7 @@ class MealDaoTest {
             category = "",
             cookingDifficulty = "",
             ingredients = listOf(),
-            cookingDirections = listOf(),
+            cookingInstructions = listOf(),
             isFavorite = false,
             servingPeople = 0
         )

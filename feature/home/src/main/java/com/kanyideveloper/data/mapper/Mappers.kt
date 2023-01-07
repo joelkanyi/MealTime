@@ -32,7 +32,7 @@ internal fun MealEntity.toMeal(): Meal {
         category = category,
         cookingDifficulty = cookingDifficulty,
         ingredients = ingredients,
-        cookingDirections = cookingDirections,
+        cookingDirections = cookingInstructions,
         isFavorite = isFavorite,
         servingPeople = servingPeople,
         localMealId = id

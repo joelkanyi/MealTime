@@ -13,19 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.core_database.model
+package com.kanyideveloper.core_database
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core.util.Constants.MEAL_PLAN_TABLE
+import androidx.room.RenameColumn
+import androidx.room.migration.AutoMigrationSpec
+import com.kanyideveloper.core.util.Constants
 
-@Entity(tableName = MEAL_PLAN_TABLE)
-data class MealPlanEntity(
-    val mealTypeName: String,
-    val meals: List<Meal> = emptyList(),
-    @ColumnInfo(name = "mealDate", defaultValue = "27/07/2023")
-    val mealDate: String,
-    @PrimaryKey(autoGenerate = true) val id: Int? = null
-)
+object DatabaseMigrations {
+    @RenameColumn(
+        tableName = Constants.MEAL_PLAN_TABLE,
+        fromColumnName = "date",
+        toColumnName = "mealDate"
+    )
+    class Migration1To2 : AutoMigrationSpec
+
+    @RenameColumn(
+        tableName = Constants.MEAL_TABLE,
+        fromColumnName = "cookingDirections",
+        toColumnName = "cookingInstructions"
+    )
+    class Migration2To3 : AutoMigrationSpec
+}

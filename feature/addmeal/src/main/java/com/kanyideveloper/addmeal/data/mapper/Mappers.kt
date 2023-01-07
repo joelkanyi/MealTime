@@ -26,7 +26,7 @@ internal fun Meal.toMealEntity(): MealEntity {
         category = category,
         cookingDifficulty = cookingDifficulty,
         ingredients = ingredients,
-        cookingDirections = cookingDirections,
+        cookingInstructions = cookingDirections,
         isFavorite = isFavorite,
         servingPeople = servingPeople
     )
