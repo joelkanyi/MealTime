@@ -119,6 +119,9 @@ fun SearchScreen(
         },
         onSearchOptionClick = { option ->
             viewModel.setSelectedSearchOption(option)
+            if (viewModel.searchString.value.isNotEmpty()) {
+                viewModel.search(viewModel.searchString.value)
+            }
         },
         isSelected = { option ->
             viewModel.selectedSearchOption.value == option

@@ -44,6 +44,10 @@ class SearchViewModel @Inject constructor(
     val selectedSearchOption: State<String> = _selectedSearchOption
     fun setSelectedSearchOption(value: String) {
         _selectedSearchOption.value = value
+        _searchState.value = searchState.value.copy(
+            error = null,
+            searchData = emptyList()
+        )
     }
 
     private val _searchString = mutableStateOf("")
