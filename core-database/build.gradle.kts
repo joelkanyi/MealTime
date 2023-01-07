@@ -29,6 +29,10 @@ android {
         }
     }
 
+    sourceSets {
+        getByName("androidTest").assets.srcDirs(files("$projectDir/schemas")) // Room
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -55,6 +59,8 @@ dependencies {
     // Room
     implementation("androidx.room:room-runtime:2.4.3")
     kapt("androidx.room:room-compiler:2.4.3")
+    testImplementation("androidx.room:room-testing:2.4.3")
+    androidTestImplementation("androidx.room:room-testing:2.4.3")
 
     // Kotlin Extensions and Coroutines support for Room
     implementation("androidx.room:room-ktx:2.4.3")
