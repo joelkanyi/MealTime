@@ -110,7 +110,7 @@ fun DetailsCollapsingToolbar(
                     ImageRequest.Builder(LocalContext.current)
                         .data(data = meal.imageUrl)
                         .apply(block = fun ImageRequest.Builder.() {
-                            placeholder(R.drawable.food_loading)
+                            placeholder(R.drawable.placeholder)
                         }).build()
                 ),
                 contentDescription = null,

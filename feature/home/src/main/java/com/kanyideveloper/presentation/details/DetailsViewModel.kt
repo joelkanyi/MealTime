@@ -62,6 +62,34 @@ class DetailsViewModel @Inject constructor(
         }
     }
 
+    private val _randomMeal = mutableStateOf(DetailsState())
+    val randomMeal: State<DetailsState> = _randomMeal
+
+    fun getRandomMeal() {
+        _randomMeal.value = randomMeal.value.copy(
+            isLoading = true
+        )
+        viewModelScope.launch {
+            when (val result = onlineMealsRepository.getRandomMeal()) {
+                is Resource.Error -> {
+                    _randomMeal.value = randomMeal.value.copy(
+                        isLoading = false,
+                        error = result.message
+                    )
+                }
+                is Resource.Success -> {
+                    _randomMeal.value = randomMeal.value.copy(
+                        isLoading = false,
+                        mealDetails = result.data ?: emptyList()
+                    )
+                }
+                else -> {
+                    randomMeal
+                }
+            }
+        }
+    }
+
     fun inLocalFavorites(id: Int): LiveData<Boolean> {
         return favoritesRepository.isLocalFavorite(id = id)
     }

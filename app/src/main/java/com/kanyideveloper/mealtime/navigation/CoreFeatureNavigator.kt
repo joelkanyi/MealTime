@@ -30,9 +30,8 @@ import com.kanyideveloper.mealplanner.destinations.NumberOfPeopleScreenDestinati
 import com.kanyideveloper.presentation.destinations.DetailsScreenDestination
 import com.kanyideveloper.presentation.destinations.HomeScreenDestination
 import com.kanyideveloper.presentation.destinations.OnlineMealDetailsScreenDestination
+import com.kanyideveloper.presentation.destinations.RandomOnlineMealDetailsScreenDestination
 import com.kanyideveloper.presentation.home.HomeNavigator
-import com.kanyideveloper.randommeal.RandomMealNavigator
-import com.kanyideveloper.randommeal.destinations.RandomMealScreenDestination
 import com.kanyideveloper.search.presentation.search.SearchNavigator
 import com.kanyideveloper.settings.presentation.SettingsNavigator
 import com.ramcosta.composedestinations.dynamic.within
@@ -48,7 +47,6 @@ class CoreFeatureNavigator(
     FavoritesNavigator,
     SettingsNavigator,
     AddMealNavigator,
-    RandomMealNavigator,
     MealPlannerNavigator {
     override fun openAddMeal() {
         navController.navigate(AddMealScreenDestination within navGraph)
@@ -114,7 +112,7 @@ class CoreFeatureNavigator(
     }
 
     override fun openRandomMeals() {
-        navController.navigate(RandomMealScreenDestination within navGraph)
+        navController.navigate(RandomOnlineMealDetailsScreenDestination within navGraph)
     }
 
     override fun navigateBackToHome() {
