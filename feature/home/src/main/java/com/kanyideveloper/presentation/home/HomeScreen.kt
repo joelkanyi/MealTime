@@ -49,6 +49,7 @@ import com.kanyideveloper.presentation.home.composables.Tabs
 import com.ramcosta.composedestinations.annotation.Destination
 
 interface HomeNavigator {
+    fun openHome()
     fun openMealDetails(meal: Meal)
     fun openAddMeal()
     fun popBackStack()
