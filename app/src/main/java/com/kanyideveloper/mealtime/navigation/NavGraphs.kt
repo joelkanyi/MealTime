@@ -28,7 +28,6 @@ import com.kanyideveloper.presentation.destinations.MyMealScreenDestination
 import com.kanyideveloper.presentation.destinations.OnlineMealDetailsScreenDestination
 import com.kanyideveloper.presentation.destinations.OnlineMealScreenDestination
 import com.kanyideveloper.presentation.destinations.RandomOnlineMealDetailsScreenDestination
-import com.kanyideveloper.presentation.destinations.SplashScreenDestination
 import com.kanyideveloper.search.presentation.search.destinations.SearchScreenDestination
 import com.kanyideveloper.settings.presentation.destinations.SettingsScreenDestination
 import com.ramcosta.composedestinations.dynamic.routedIn
@@ -40,10 +39,9 @@ object NavGraphs {
     val home = object : NavGraphSpec {
         override val route = "home"
 
-        override val startRoute = SplashScreenDestination routedIn this
+        override val startRoute = HomeScreenDestination routedIn this
 
         override val destinationsByRoute = listOf<DestinationSpec<*>>(
-            SplashScreenDestination,
             HomeScreenDestination,
             MyMealScreenDestination,
             OnlineMealScreenDestination,
