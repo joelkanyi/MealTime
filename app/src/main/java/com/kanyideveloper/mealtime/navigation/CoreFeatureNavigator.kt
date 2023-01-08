@@ -56,6 +56,10 @@ class CoreFeatureNavigator(
         Timber.d("Settings")
     }
 
+    override fun openHome() {
+        navController.navigate(HomeScreenDestination within navGraph)
+    }
+
     override fun openMealDetails(meal: Meal) {
         navController.navigate(DetailsScreenDestination(meal = meal) within navGraph)
     }
