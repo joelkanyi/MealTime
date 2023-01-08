@@ -16,6 +16,7 @@
 package com.kanyideveloper.addmeal.di
 
 import android.content.Context
+import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.kanyideveloper.addmeal.data.repository.SaveMealRepositoryImpl
 import com.kanyideveloper.addmeal.data.repository.UploadImageRepositoryImpl
@@ -49,5 +50,11 @@ object AddMealModule {
     @Singleton
     fun provideSaveMealRepository(mealTimeDatabase: MealTimeDatabase): SaveMealRepository {
         return SaveMealRepositoryImpl(mealTimeDatabase = mealTimeDatabase)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseStorageReference(): StorageReference {
+        return FirebaseStorage.getInstance().getReference("meal_images")
     }
 }
