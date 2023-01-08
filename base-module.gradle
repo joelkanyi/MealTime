@@ -20,19 +20,7 @@ dependencies {
     // Timber
     implementation("com.jakewharton.timber:timber:5.0.1")
 
-    // Timber
-    implementation("com.jakewharton.timber:timber:5.0.1")
-
-    // Firebase Storage
-    implementation(platform("com.google.firebase:firebase-bom:31.1.0"))
-    implementation("com.google.firebase:firebase-storage-ktx")
-
-    // Firebase Coroutine
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
-
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
-
-
 
     // UI
     implementation("androidx.activity:activity-compose:1.6.1")
@@ -73,12 +61,6 @@ dependencies {
     implementation("com.google.accompanist:accompanist-pager:0.28.0")
     implementation("com.google.accompanist:accompanist-pager-indicators:0.28.0")
 
-    // Insets
-    implementation("com.google.accompanist:accompanist-insets:0.17.0")
-
-    // Accompanist System UI controller
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
-
     // debugImplementation because LeakCanary should only run in debug builds.
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.10")
 
@@ -88,13 +70,10 @@ dependencies {
 
     androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
 
-    // Chucker
-    debugImplementation "com.github.chuckerteam.chucker:library:3.5.2"
-    releaseImplementation "com.github.chuckerteam.chucker:library-no-op:3.5.2"
-
     // Gson
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
+    // Lottie
     api "com.airbnb.android:lottie-compose:5.2.0"
 
     // Material 3
