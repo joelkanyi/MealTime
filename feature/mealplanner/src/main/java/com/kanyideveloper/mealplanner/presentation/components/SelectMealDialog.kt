@@ -55,6 +55,7 @@ fun SelectMealDialog(
     currentSearchString: String,
     onSearchByChange: (String) -> Unit,
     onSourceChange: (String) -> Unit,
+    onMealClick: (Int?, String?, Boolean) -> Unit,
     sources: List<String>,
     searchOptions: List<String>,
     currentSource: String,
@@ -176,11 +177,11 @@ fun SelectMealDialog(
                             cardWidth = 150.dp,
                             imageHeight = 100.dp,
                             isAddingToPlan = true,
-                            isAdded = false,
                             onClickAdd = onClickAdd,
                             type = mealType,
                             onRemoveClick = { _, _, _, _ ->
-                            }
+                            },
+                            onMealClick = onMealClick
                         )
                     }
                 }

@@ -19,7 +19,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
@@ -49,7 +49,7 @@ fun Tabs(
         selectedTabIndex = pagerState.currentPage,
         backgroundColor = MaterialTheme.colorScheme.background,
         modifier = Modifier
-            .width(300.dp)
+            .wrapContentWidth()
             .padding(vertical = 4.dp, horizontal = 16.dp)
             .clip(RoundedCornerShape(50)),
         indicator = {

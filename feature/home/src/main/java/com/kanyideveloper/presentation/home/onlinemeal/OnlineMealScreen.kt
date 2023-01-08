@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -185,7 +184,7 @@ fun OnlineMealItem(
     Card(
         modifier = Modifier
             .fillMaxSize()
-            .height(220.dp)
+            .wrapContentHeight()
             .padding(vertical = 5.dp)
             .clickable {
                 onClick(meal.mealId)
@@ -193,11 +192,11 @@ fun OnlineMealItem(
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
             Image(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.75f),
+                    .height(200.dp),
                 contentDescription = meal.name,
                 painter = rememberAsyncImagePainter(
                     ImageRequest.Builder(LocalContext.current)
@@ -211,8 +210,7 @@ fun OnlineMealItem(
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp, horizontal = 12.dp)
-                    .align(Alignment.BottomStart),
+                    .padding(vertical = 8.dp, horizontal = 12.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
