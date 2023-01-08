@@ -37,18 +37,16 @@ MealTime is a MultiModule meal planning app built with Jetpack Compose. It helps
 
 ## Demo
 
-### Home
-#### My Meals
+### My Meals
 <img src="screenshots/my_meals_light.jpeg" width="250"/> <img src="screenshots/home_dark.jpeg" width="250"/>
 
-#### Online Meals
+### Online Meals
 <img src="screenshots/online_meals_light.jpeg" width="250"/> <img src="screenshots/online_meals_dark.jpeg" width="250"/>
 
-#### Meal Details
+### Meal Details
 <img src="screenshots/meal_details.jpeg" width="250"/>
 
 ### Meal Planner
-#### My Meals
 <img src="screenshots/meal_planner_empty.jpeg" width="250"/> <img src="screenshots/allergies.jpeg" width="250"/>
 
 <img src="screenshots/number_of_people.jpeg" width="250"/> <img src="screenshots/dish_types.jpeg" width="250"/>
