@@ -15,7 +15,6 @@
  */
 package com.kanyideveloper.core_database.model
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.kanyideveloper.core.model.Meal
@@ -25,7 +24,7 @@ import com.kanyideveloper.core.util.Constants.MEAL_PLAN_TABLE
 data class MealPlanEntity(
     val mealTypeName: String,
     val meals: List<Meal> = emptyList(),
-    @ColumnInfo(name = "mealDate", defaultValue = "27/07/2023")
+    // @ColumnInfo(name = "mealDate", defaultValue = "27/07/2023")
     val mealDate: String,
     @PrimaryKey(autoGenerate = true) val id: Int? = null
 )
