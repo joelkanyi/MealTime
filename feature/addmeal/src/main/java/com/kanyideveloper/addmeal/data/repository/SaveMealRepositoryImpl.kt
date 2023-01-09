@@ -15,14 +15,17 @@
  */
 package com.kanyideveloper.addmeal.data.repository
 
+import com.kanyideveloper.addmeal.data.mapper.toMealEntity
 import com.kanyideveloper.addmeal.domain.repository.SaveMealRepository
+import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core_database.MealTimeDatabase
-import com.kanyideveloper.core_database.model.Meal
 
 class SaveMealRepositoryImpl(
     private val mealTimeDatabase: MealTimeDatabase
 ) : SaveMealRepository {
     override suspend fun saveMeal(meal: Meal) {
-        mealTimeDatabase.mealDao.insertMeal(meal)
+        mealTimeDatabase.mealDao.insertMeal(
+            mealEntity = meal.toMealEntity()
+        )
     }
 }

@@ -15,7 +15,6 @@
  */
 package com.kanyideveloper.addmeal.presentation.addmeal
 
-import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -33,26 +32,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -70,13 +65,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyidev.searchable_dropdown.SearchableExpandedDropDownMenu
 import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.compose_ui.theme.MainOrange
 import com.kanyideveloper.core.util.imageUriToImageBitmap
 import com.ramcosta.composedestinations.annotation.Destination
-
-interface AddMealNavigator {
-    fun openNextAddMealScreen(imageUri: Uri)
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
@@ -85,16 +75,32 @@ fun AddMealScreen(
     navigator: AddMealNavigator,
     viewModel: AddMealsViewModel = hiltViewModel()
 ) {
+    val mealName = viewModel.mealName.value
+    val category = viewModel.category.value
+    val complexity = viewModel.cookingComplexity.value
+    val peopleServing = viewModel.peopleServing.value
+    val cookingTime = viewModel.cookingTime.value
+
     val context = LocalContext.current
+
+    val sliderInteractionSource = MutableInteractionSource()
+    val sliderColors =
+        SliderDefaults.colors(
+            thumbColor = MaterialTheme.colorScheme.primary,
+            activeTrackColor = MaterialTheme.colorScheme.primary,
+            inactiveTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = .5f)
+        )
 
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            viewModel.setProductImageUri(uri)
+            viewModel.setMealImageUri(uri)
         }
 
     Column(Modifier.fillMaxSize()) {
         StandardToolbar(
-            navigate = {},
+            navigate = {
+                navigator.popBackStack()
+            },
             title = {
                 Text(text = "Add meal", fontSize = 18.sp)
             },
@@ -113,22 +119,26 @@ fun AddMealScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color.LightGray)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                         .height(210.dp)
                         .clickable {
                             galleryLauncher.launch("image/*")
                         }
                 ) {
-                    if (viewModel.imageUri.value == null) {
+                    if (viewModel.mealImageUri.value == null) {
                         IconButton(onClick = {
                             galleryLauncher.launch("image/*")
                         }) {
-                            Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
                     }
 
                     // Selected Image
-                    viewModel.imageUri.value?.let { uri ->
+                    viewModel.mealImageUri.value?.let { uri ->
                         Image(
                             modifier = Modifier
                                 .fillMaxSize(),
@@ -145,91 +155,118 @@ fun AddMealScreen(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Text(text = "Meal Name", fontSize = 12.sp)
+                    Text(
+                        text = "Meal Name",
+                        style = MaterialTheme.typography.labelMedium
+                    )
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        value = "",
+                        value = mealName.text,
                         onValueChange = {
+                            viewModel.setMealNameState(value = it)
                         },
+                        colors = TextFieldDefaults.outlinedTextFieldColors(),
                         placeholder = {
-                            Text(text = "Meal Name")
+                            Text(
+                                text = "Meal Name",
+                                style = MaterialTheme.typography.labelMedium
+                            )
                         },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Text,
                             capitalization = KeyboardCapitalization.Words
-                        )
+                        ),
+                        isError = mealName.error != null
                     )
+                    if (mealName.error != null) {
+                        Text(
+                            text = mealName.error ?: "",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.error,
+                            textAlign = TextAlign.End,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
             }
 
             item {
+                Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    val sports = mutableListOf(
-                        Sport("Basketball", "🏀"),
-                        Sport("Rugby", "🏉"),
-                        Sport("Football", "⚽️"),
-                        Sport("MMA", "🤼‍♂️"),
-                        Sport("Motorsport", "🏁"),
-                        Sport("Snooker", "🎱"),
-                        Sport("Tennis", "🎾")
-                    )
-
                     Column(
                         modifier = Modifier.fillMaxWidth(.5f),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Text(text = "Category", fontSize = 12.sp)
+                        Text(
+                            text = "Category",
+                            style = MaterialTheme.typography.labelMedium
+                        )
 
                         SearchableExpandedDropDownMenu(
-                            listOfItems = sports,
+                            listOfItems = viewModel.categories,
                             modifier = Modifier.fillMaxWidth(),
                             onDropDownItemSelected = { item ->
-                                Toast.makeText(
-                                    context,
-                                    item.name,
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                viewModel.setCategory(item)
                             },
-                            dropdownItem = { test ->
-                                DropDownItem(test = test)
+                            dropdownItem = { category ->
+                                Text(text = category, color = Color.Black)
                             },
-                            parentTextFieldCornerRadius = 4.dp
+                            parentTextFieldCornerRadius = 4.dp,
+                            isError = category.error != null,
+                            colors = TextFieldDefaults.outlinedTextFieldColors()
                         )
+
+                        if (category.error != null) {
+                            Text(
+                                text = category.error ?: "",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.error,
+                                textAlign = TextAlign.End,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
                     }
 
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Text(text = "Cooking Complexity", fontSize = 12.sp)
+                        Text(
+                            text = "Cooking Complexity",
+                            style = MaterialTheme.typography.labelMedium
+                        )
 
                         SearchableExpandedDropDownMenu(
-                            listOfItems = sports,
+                            listOfItems = viewModel.cookingComplexities,
                             modifier = Modifier.fillMaxWidth(),
                             onDropDownItemSelected = { item ->
-                                Toast.makeText(
-                                    context,
-                                    item.name,
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                viewModel.setCookingComplexity(item)
                             },
-                            dropdownItem = { test ->
-                                DropDownItem(test = test)
+                            dropdownItem = { complexity ->
+                                Text(text = complexity, color = Color.Black)
                             },
-                            parentTextFieldCornerRadius = 4.dp
+                            parentTextFieldCornerRadius = 4.dp,
+                            isError = complexity.error != null,
+                            colors = TextFieldDefaults.outlinedTextFieldColors()
                         )
+
+                        if (complexity.error != null) {
+                            Text(
+                                text = complexity.error ?: "",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.error,
+                                textAlign = TextAlign.End,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
                     }
                 }
             }
 
             item {
-                var sliderPosition by remember { mutableStateOf(0f) }
-                val interactionSource = MutableInteractionSource()
-                val colors =
-                    SliderDefaults.colors(thumbColor = MainOrange, activeTrackColor = MainOrange)
                 Column {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -237,35 +274,34 @@ fun AddMealScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Cooking Time - ${sliderPosition.toInt()} Minutes",
-                            fontSize = 14.sp
+                            text = "Cooking Time - ${cookingTime.toInt()} Minutes",
+                            style = MaterialTheme.typography.labelMedium
                         )
                     }
                     Slider(
                         modifier = Modifier
                             .fillMaxWidth()
                             .semantics {
-                                contentDescription = "Localized Description"
+                                contentDescription = "Cooking Time Slider"
                             },
-                        value = sliderPosition,
+                        value = cookingTime,
                         onValueChange = {
-                            sliderPosition = it
+                            viewModel.setCookingTime(it)
                         },
                         valueRange = 0f..300f,
                         onValueChangeFinished = {
-                            // launch some business logic update with the state you hold
-                            // viewModel.updateSelectedSliderValue(sliderPosition)
+                            viewModel.setCookingTime(cookingTime)
                         },
-                        interactionSource = interactionSource,
+                        interactionSource = sliderInteractionSource,
                         thumb = {
                             SliderDefaults.Thumb(
-                                interactionSource = interactionSource,
-                                colors = colors
+                                interactionSource = sliderInteractionSource,
+                                colors = sliderColors
                             )
                         },
                         track = { sliderPositions ->
                             SliderDefaults.Track(
-                                colors = colors,
+                                colors = sliderColors,
                                 sliderPositions = sliderPositions
                             )
                         }
@@ -274,10 +310,6 @@ fun AddMealScreen(
             }
 
             item {
-                var sliderPosition by remember { mutableStateOf(0f) }
-                val interactionSource = MutableInteractionSource()
-                val colors =
-                    SliderDefaults.colors(thumbColor = MainOrange, activeTrackColor = MainOrange)
                 Column {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -285,8 +317,8 @@ fun AddMealScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Serving - ${sliderPosition.toInt()} People",
-                            fontSize = 14.sp
+                            text = "Serving - ${peopleServing.toInt()} People",
+                            style = MaterialTheme.typography.labelMedium
                         )
                     }
                     Slider(
@@ -295,25 +327,24 @@ fun AddMealScreen(
                             .semantics {
                                 contentDescription = "Localized Description"
                             },
-                        value = sliderPosition,
+                        value = peopleServing,
                         onValueChange = {
-                            sliderPosition = it
+                            viewModel.setPeopleServing(it)
                         },
                         valueRange = 0f..300f,
                         onValueChangeFinished = {
-                            // launch some business logic update with the state you hold
-                            // viewModel.updateSelectedSliderValue(sliderPosition)
+                            viewModel.setPeopleServing(peopleServing)
                         },
-                        interactionSource = interactionSource,
+                        interactionSource = sliderInteractionSource,
                         thumb = {
                             SliderDefaults.Thumb(
-                                interactionSource = interactionSource,
-                                colors = colors
+                                interactionSource = sliderInteractionSource,
+                                colors = sliderColors
                             )
                         },
                         track = { sliderPositions ->
                             SliderDefaults.Track(
-                                colors = colors,
+                                colors = sliderColors,
                                 sliderPositions = sliderPositions
                             )
                         }
@@ -329,16 +360,52 @@ fun AddMealScreen(
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        if (viewModel.imageUri.value == null) {
+                        if (viewModel.mealImageUri.value == null) {
                             Toast.makeText(
                                 context,
                                 "Please select an image so as to proceed",
                                 Toast.LENGTH_SHORT
                             ).show()
                             return@Button
+                        } else if (mealName.text.isEmpty()) {
+                            viewModel.setMealNameState(error = "Meal name cannot be empty")
+                            return@Button
+                        } else if (category.text.isEmpty()) {
+                            viewModel.setCategory(error = "Meal category cannot be empty")
+                            return@Button
+                        } else if (complexity.text.isEmpty()) {
+                            viewModel.setCookingComplexity(
+                                error = "Cooking complexity cannot be empty"
+                            )
+                            return@Button
                         }
 
-                        navigator.openNextAddMealScreen(viewModel.imageUri.value!!)
+                        if (cookingTime.toInt() <= 0) {
+                            Toast.makeText(
+                                context,
+                                "Please use the slider to select cooking time",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            return@Button
+                        }
+
+                        if (peopleServing.toInt() <= 0) {
+                            Toast.makeText(
+                                context,
+                                "Please use the slider to select people serving",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            return@Button
+                        }
+
+                        navigator.openNextAddMealScreen(
+                            imageUri = viewModel.mealImageUri.value!!,
+                            mealName = viewModel.mealName.value.text,
+                            cookingTime = viewModel.cookingTime.value.toInt(),
+                            servingPeople = viewModel.peopleServing.value.toInt(),
+                            complexity = complexity.text,
+                            category = category.text
+                        )
                     },
                     shape = RoundedCornerShape(4.dp)
                 ) {
@@ -356,34 +423,13 @@ fun AddMealScreen(
     }
 }
 
-@Composable
-fun DropDownItem(test: Sport) {
-    Row(
-        modifier = Modifier
-            .padding(8.dp)
-            .wrapContentSize()
-    ) {
-        Text(text = test.emoji)
-        Spacer(modifier = Modifier.width(12.dp))
-        Text(test.name)
-    }
-}
-
-data class Sport(
-    val name: String,
-    val emoji: String
-) {
-    override fun toString(): String {
-        return "$emoji $name"
-    }
-}
 /**
  * Select Image -DONE
  * Enter Food Title - DONE
  * Cooking Time - DONE
  * Serving People - DONE
  * Cooking Complexity - DONE
- * Category - DONE
+ * CategoryEntity - DONE
  * Ingredients - DONE
  * Cooking Directions - DONE
  */

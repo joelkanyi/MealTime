@@ -17,14 +17,20 @@ package com.kanyideveloper.compose_ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val MainOrange = Color(0xFFfa4a0c)
-val LightGrey = Color(0xFFe8e8e8)
-val MainGrey = Color(0xFFcacccf)
-val DarkGrey = Color(0xFFa0a4a8)
-val MyPink = Color(0xFFff546c)
-val MyLightPink = Color(0xFFffe4e8)
-val MyGreen = Color(0xFF1ad391)
-val MyLightGreen = Color(0xFFe1ecdc)
-val MyLightOrange = Color(0xFFf8e5de)
-val MyLightBlue = Color(0xFFd3e5f3)
-val MyLightYellow = Color(0xFFfef6d4)
+val PrimaryColor = Color(0xffFF4500)
+val PrimaryLightColor = Color(0xffffe3d5)
+
+val SecondaryColor = Color(0xff6167FF)
+val SecondaryLightColor = Color(0xffBEC1FF)
+
+val PrimaryTextColor = Color(0xffffffff)
+val SecondaryTextColor = Color(0xff000000)
+
+val SurfaceDark = Color(0xFF3A3A3A)
+val SurfaceLight = Color(0xFFFFFFFF)
+
+val BackgroundLightColor = Color(0xffF1F0F5)
+val BackgroundDarkColor = Color(0xff121212)
+
+val ErrorColor = Color(0xFFFF8989)
+val OnErrorColor = Color(0xFF000000)

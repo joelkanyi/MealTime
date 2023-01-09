@@ -19,6 +19,7 @@ import android.content.Context
 import androidx.room.Room
 import com.google.gson.Gson
 import com.kanyideveloper.core.util.Constants
+import com.kanyideveloper.core_database.MealTimeDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,13 +41,26 @@ object DatabaseModule {
     fun provideMealTimeDatabase(
         @ApplicationContext context: Context,
         converters: com.kanyideveloper.core_database.converters.Converters
-    ): com.kanyideveloper.core_database.MealTimeDatabase {
+    ): MealTimeDatabase {
         return Room.databaseBuilder(
             context.applicationContext,
-            com.kanyideveloper.core_database.MealTimeDatabase::class.java,
+            MealTimeDatabase::class.java,
             Constants.MEALTIME_DATABASE
         )
+            .fallbackToDestructiveMigration()
             .addTypeConverter(converters)
             .build()
     }
+
+    @Provides
+    @Singleton
+    fun provideMealDao(database: MealTimeDatabase) = database.mealDao
+
+    @Provides
+    @Singleton
+    fun providesFavoritesDao(database: MealTimeDatabase) = database.favoritesDao
+
+    @Provides
+    @Singleton
+    fun providesMealPlanDao(database: MealTimeDatabase) = database.mealPlanDao
 }

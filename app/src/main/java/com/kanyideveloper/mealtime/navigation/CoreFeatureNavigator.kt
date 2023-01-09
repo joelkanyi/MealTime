@@ -20,9 +20,18 @@ import androidx.navigation.NavController
 import com.kanyideveloper.addmeal.presentation.addmeal.AddMealNavigator
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
-import com.kanyideveloper.destinations.DetailsScreenDestination
-import com.kanyideveloper.favorites.presentation.favorites.FavoritesNavigator
-import com.kanyideveloper.home.presentation.home.HomeNavigator
+import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.favorites.presentation.favorites.presentation.FavoritesNavigator
+import com.kanyideveloper.mealplanner.MealPlannerNavigator
+import com.kanyideveloper.mealplanner.destinations.AllergiesScreenDestination
+import com.kanyideveloper.mealplanner.destinations.MealPlannerScreenDestination
+import com.kanyideveloper.mealplanner.destinations.MealTypesScreenDestination
+import com.kanyideveloper.mealplanner.destinations.NumberOfPeopleScreenDestination
+import com.kanyideveloper.presentation.destinations.DetailsScreenDestination
+import com.kanyideveloper.presentation.destinations.HomeScreenDestination
+import com.kanyideveloper.presentation.destinations.OnlineMealDetailsScreenDestination
+import com.kanyideveloper.presentation.destinations.RandomOnlineMealDetailsScreenDestination
+import com.kanyideveloper.presentation.home.HomeNavigator
 import com.kanyideveloper.search.presentation.search.SearchNavigator
 import com.kanyideveloper.settings.presentation.SettingsNavigator
 import com.ramcosta.composedestinations.dynamic.within
@@ -33,28 +42,85 @@ import timber.log.Timber
 class CoreFeatureNavigator(
     private val navGraph: NavGraphSpec,
     private val navController: NavController
-) : HomeNavigator, SearchNavigator, FavoritesNavigator, SettingsNavigator, AddMealNavigator {
-    override fun openFavorites(showId: Long) {
-        Timber.d("Favorites")
-    }
-
+) : HomeNavigator,
+    SearchNavigator,
+    FavoritesNavigator,
+    SettingsNavigator,
+    AddMealNavigator,
+    MealPlannerNavigator {
     override fun openAddMeal() {
         navController.navigate(AddMealScreenDestination within navGraph)
-    }
-
-    override fun openSearch(showId: Long) {
-        Timber.d("Search")
     }
 
     override fun openSettings(showId: Long) {
         Timber.d("Settings")
     }
 
-    override fun openNextAddMealScreen(imageUri: Uri) {
-        navController.navigate(NextAddMealScreenDestination(imageUri = imageUri) within navGraph)
+    override fun openHome() {
+        navController.navigate(HomeScreenDestination within navGraph)
     }
 
-    override fun openMealDetails() {
-        navController.navigate(DetailsScreenDestination within navGraph)
+    override fun openMealDetails(meal: Meal) {
+        navController.navigate(DetailsScreenDestination(meal = meal) within navGraph)
+    }
+
+    override fun openNextAddMealScreen(
+        imageUri: Uri,
+        mealName: String,
+        category: String,
+        complexity: String,
+        cookingTime: Int,
+        servingPeople: Int
+    ) {
+        navController.navigate(
+            NextAddMealScreenDestination(
+                imageUri = imageUri,
+                mealName = mealName,
+                cookingTime = cookingTime,
+                servingPeople = servingPeople,
+                complexity = complexity,
+                category = category
+            ) within navGraph
+        )
+    }
+
+    override fun popBackStack() {
+        navController.popBackStack()
+    }
+
+    override fun openAllergiesScreen() {
+        navController.navigate(AllergiesScreenDestination within navGraph)
+    }
+
+    override fun openNoOfPeopleScreen(allergies: String) {
+        navController.navigate(
+            NumberOfPeopleScreenDestination(allergies = allergies) within navGraph
+        )
+    }
+
+    override fun openMealTypesScreen(allergies: String, noOfPeople: String) {
+        navController.navigate(
+            MealTypesScreenDestination(
+                allergies = allergies,
+                numberOfPeople = noOfPeople
+            ) within navGraph
+        )
+    }
+
+    override fun openMealPlanner() {
+        navController.navigate(MealPlannerScreenDestination within navGraph)
+    }
+
+    override fun openOnlineMealDetails(mealId: String) {
+        navController.navigate(OnlineMealDetailsScreenDestination(mealId = mealId) within navGraph)
+    }
+
+    override fun openRandomMeals() {
+        navController.navigate(RandomOnlineMealDetailsScreenDestination within navGraph)
+    }
+
+    override fun navigateBackToHome() {
+        navController.navigate(HomeScreenDestination within navGraph)
+        navController.clearBackStack("home")
     }
 }

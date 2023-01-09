@@ -16,31 +16,28 @@
 package com.kanyideveloper.compose_ui.components
 
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import com.kanyideveloper.compose_ui.theme.MainOrange
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StandardToolbar(
-    modifier: Modifier = Modifier,
     navigate: () -> Unit = {},
     showBackArrow: Boolean = false,
-    backgroundColor: Color = Color.White,
     navActions: @Composable RowScope.() -> Unit = {},
     title: @Composable () -> Unit = {}
 ) {
     TopAppBar(
         title = title,
-        backgroundColor = backgroundColor,
-        navigationIcon = if (showBackArrow) {
-            {
+        navigationIcon = {
+            if (showBackArrow) {
                 IconButton(
                     onClick = {
                         navigate()
@@ -48,13 +45,14 @@ fun StandardToolbar(
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
-                        contentDescription = null,
-                        tint = MainOrange
+                        contentDescription = null
                     )
                 }
             }
-        } else null,
+        },
         actions = navActions,
-        elevation = 2.dp
+        colors = TopAppBarDefaults.smallTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.background
+        )
     )
 }

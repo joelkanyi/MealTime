@@ -32,6 +32,12 @@ sealed class BottomNavItem(var title: String, var icon: Int, var screen: NavGrap
         screen = NavGraphs.search
     )
 
+    object MealPlanner : BottomNavItem(
+        title = "Meal Planner",
+        icon = R.drawable.date_range,
+        screen = NavGraphs.mealPlanner
+    )
+
     object Favorites : BottomNavItem(
         title = "Favorites",
         icon = R.drawable.ic_favorites,

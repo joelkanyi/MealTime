@@ -24,18 +24,15 @@ import androidx.lifecycle.viewModelScope
 import com.kanyideveloper.addmeal.domain.repository.SaveMealRepository
 import com.kanyideveloper.addmeal.domain.repository.UploadImageRepository
 import com.kanyideveloper.addmeal.presentation.addmeal.state.SaveMealState
+import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.state.TextFieldState
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.UiEvents
-import com.kanyideveloper.core_database.model.Meal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.newSingleThreadContext
-import timber.log.Timber
 
 @HiltViewModel
 class AddMealsViewModel @Inject constructor(
@@ -43,17 +40,56 @@ class AddMealsViewModel @Inject constructor(
     private val saveMealRepository: SaveMealRepository
 ) : ViewModel() {
 
+    private val _mealImageUri = mutableStateOf<Uri?>(null)
+    val mealImageUri: State<Uri?> = _mealImageUri
+    fun setMealImageUri(value: Uri?) {
+        _mealImageUri.value = value
+    }
+
+    private val _mealName = mutableStateOf(TextFieldState())
+    val mealName: State<TextFieldState> = _mealName
+    fun setMealNameState(value: String = "", error: String? = null) {
+        _mealName.value = mealName.value.copy(
+            text = value,
+            error = error
+        )
+    }
+
+    private val _category = mutableStateOf(TextFieldState())
+    val category: State<TextFieldState> = _category
+    fun setCategory(value: String = "", error: String? = null) {
+        _category.value = category.value.copy(
+            text = value,
+            error = error
+        )
+    }
+
+    private val _cookingComplexity = mutableStateOf(TextFieldState())
+    val cookingComplexity: State<TextFieldState> = _cookingComplexity
+    fun setCookingComplexity(value: String = "", error: String? = null) {
+        _cookingComplexity.value = cookingComplexity.value.copy(
+            text = value,
+            error = error
+        )
+    }
+
+    private val _cookingTime = mutableStateOf(0f)
+    val cookingTime: State<Float> = _cookingTime
+    fun setCookingTime(value: Float) {
+        _cookingTime.value = value
+    }
+
+    private val _peopleServing = mutableStateOf(0f)
+    val peopleServing: State<Float> = _peopleServing
+    fun setPeopleServing(value: Float) {
+        _peopleServing.value = value
+    }
+
     private val _saveMeal = mutableStateOf(SaveMealState())
     val saveMeal: State<SaveMealState> = _saveMeal
 
     private val _eventFlow = MutableSharedFlow<UiEvents>()
     val eventFlow = _eventFlow.asSharedFlow()
-
-    private val _imageUri = mutableStateOf<Uri?>(null)
-    val imageUri: State<Uri?> = _imageUri
-    fun setProductImageUri(value: Uri?) {
-        _imageUri.value = value
-    }
 
     private val _ingredient = mutableStateOf(TextFieldState())
     val ingredient: State<TextFieldState> = _ingredient
@@ -62,6 +98,89 @@ class AddMealsViewModel @Inject constructor(
             text = value,
             error = error
         )
+    }
+
+    /**
+     * Take [imageUri] and upload it to FirebaseStorage and then generate an imageUrl to be stored on local database together with meal details.
+     */
+    fun saveMeal(
+        imageUri: Uri,
+        mealName: String,
+        category: String,
+        complexity: String,
+        cookingTime: Int,
+        servingPeople: Int
+    ) {
+        viewModelScope.launch {
+            if (ingredientsList.isEmpty()) {
+                _eventFlow.emit(
+                    UiEvents.SnackbarEvent(
+                        message = "Please key in some ingredients"
+                    )
+                )
+
+                return@launch
+            }
+
+            if (directionsList.isEmpty()) {
+                _eventFlow.emit(
+                    UiEvents.SnackbarEvent(
+                        message = "Please key in some preparation instructions"
+                    )
+                )
+
+                return@launch
+            }
+
+            _saveMeal.value = saveMeal.value.copy(
+                isLoading = true
+            )
+
+            when (val uploadResult = uploadImageRepository.uploadImage(imageUri = imageUri)) {
+                is Resource.Error -> {
+                    _saveMeal.value = saveMeal.value.copy(
+                        isLoading = false,
+                        error = uploadResult.message
+                    )
+
+                    _eventFlow.emit(
+                        UiEvents.SnackbarEvent(
+                            message = uploadResult.message ?: "Unknown Error Occurred"
+                        )
+                    )
+                }
+                is Resource.Success -> {
+                    val imageUrl = uploadResult.data.toString()
+
+                    val meal = Meal(
+                        name = mealName,
+                        imageUrl = imageUrl,
+                        cookingTime = cookingTime,
+                        cookingDirections = directionsList,
+                        cookingDifficulty = complexity,
+                        category = category,
+                        ingredients = ingredientsList,
+                        servingPeople = servingPeople
+                    )
+
+                    saveMealRepository.saveMeal(meal = meal)
+
+                    _saveMeal.value = saveMeal.value.copy(
+                        isLoading = false,
+                        mealIsSaved = true
+                    )
+
+                    _eventFlow.emit(
+                        UiEvents.SnackbarEvent(
+                            message = "Meal Saved Successful"
+                        )
+                    )
+                }
+                else -> {
+                    saveMeal
+                }
+            }
+        }
     }
 
     private val _ingredientsList = mutableStateListOf<String>()
@@ -109,68 +228,17 @@ class AddMealsViewModel @Inject constructor(
         _directionsList.remove(value)
     }
 
-    fun uploadMealImage(imageUri: Uri) {
-        // TODO("Add Validations")
+    val categories = listOf(
+        "Food",
+        "Breakfast",
+        "Drinks",
+        "Fruits",
+        "Fast Food"
+    )
 
-        _saveMeal.value = saveMeal.value.copy(
-            isLoading = true
-        )
-
-        viewModelScope.launch(SINGLE_THREAD) {
-            when (val uploadResult = uploadImageRepository.uploadImage(imageUri = imageUri)) {
-                is Resource.Error -> {
-                    _saveMeal.value = saveMeal.value.copy(
-                        isLoading = false,
-                        error = uploadResult.message
-                    )
-
-                    _eventFlow.emit(
-                        UiEvents.SnackbarEvent(
-                            message = uploadResult.message ?: "Unknown Error Occurred"
-                        )
-                    )
-                }
-                is Resource.Success -> {
-                    Timber.d("Image Url: ${uploadResult.data}")
-
-                    val meal = Meal(
-                        name = "Ugali Sukuma Wiki",
-                        imageUrl = uploadResult.data.toString(),
-                        cookingTime = 0,
-                        cookingDirections = directionsList,
-                        cookingDifficulty = "Medium",
-                        category = "Lunch",
-                        ingredients = ingredientsList
-                    )
-
-                    saveMeal(meal = meal)
-
-                    _saveMeal.value = saveMeal.value.copy(
-                        isLoading = false,
-                        mealIsSaved = true
-                    )
-
-                    _eventFlow.emit(
-                        UiEvents.SnackbarEvent(
-                            message = "Meal Saved Successful"
-                        )
-                    )
-                }
-                else -> {
-                    saveMeal
-                }
-            }
-        }
-    }
-
-    private fun saveMeal(meal: Meal) {
-        viewModelScope.launch(SINGLE_THREAD) {
-            saveMealRepository.saveMeal(meal = meal)
-        }
-    }
-
-    companion object {
-        @OptIn(DelicateCoroutinesApi::class)
-        val SINGLE_THREAD = newSingleThreadContext("ContactCreation")
-    }
+    val cookingComplexities = listOf(
+        "Easy",
+        "Medium",
+        "Hard"
+    )
 }

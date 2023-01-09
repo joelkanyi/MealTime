@@ -18,9 +18,11 @@ package com.kanyideveloper.mealtime.component
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
@@ -28,8 +30,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -37,13 +39,12 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavOptionsBuilder
-import com.kanyideveloper.compose_ui.theme.DarkGrey
-import com.kanyideveloper.compose_ui.theme.MainOrange
 import com.kanyideveloper.mealtime.BottomNavItem
 import com.kanyideveloper.mealtime.navigation.NavGraphs
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.spec.NavGraphSpec
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StandardScaffold(
     navController: NavController,
@@ -51,6 +52,7 @@ fun StandardScaffold(
     items: List<BottomNavItem> = listOf(
         BottomNavItem.Home,
         BottomNavItem.Search,
+        BottomNavItem.MealPlanner,
         BottomNavItem.Favorites,
         BottomNavItem.Settings
     ),
@@ -62,8 +64,8 @@ fun StandardScaffold(
                 val currentSelectedItem by navController.currentScreenAsState()
 
                 BottomNavigation(
-                    backgroundColor = Color.White,
-                    contentColor = Color.Black,
+                    backgroundColor = MaterialTheme.colorScheme.background,
+                    // contentColor = MaterialTheme.colorScheme.onBackground,
                     elevation = 5.dp
                 ) {
                     items.forEach { item ->
@@ -71,17 +73,30 @@ fun StandardScaffold(
                             icon = {
                                 Icon(
                                     painterResource(id = item.icon),
-                                    contentDescription = item.title
+                                    contentDescription = item.title,
+                                    tint = if (currentSelectedItem == item.screen) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    }
                                 )
                             },
                             label = {
                                 Text(
                                     text = item.title,
-                                    fontSize = 9.sp
+                                    fontSize = 9.sp,
+                                    color = if (currentSelectedItem == item.screen) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    },
+                                    fontWeight = if (currentSelectedItem == item.screen) {
+                                        FontWeight.ExtraBold
+                                    } else {
+                                        FontWeight.Normal
+                                    }
                                 )
                             },
-                            selectedContentColor = MainOrange,
-                            unselectedContentColor = DarkGrey,
                             alwaysShowLabel = true,
                             selected = currentSelectedItem == item.screen,
                             onClick = {
