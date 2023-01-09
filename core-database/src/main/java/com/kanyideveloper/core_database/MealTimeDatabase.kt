@@ -15,7 +15,6 @@
  */
 package com.kanyideveloper.core_database
 
-import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -33,11 +32,11 @@ import com.kanyideveloper.core_database.model.MealPlanEntity
         FavoriteEntity::class,
         MealPlanEntity::class
     ],
-    version = 3,
-    autoMigrations = [
+    version = 1,
+    /*autoMigrations = [
         AutoMigration(from = 1, to = 2, spec = DatabaseMigrations.Migration1To2::class),
         AutoMigration(from = 2, to = 3, spec = DatabaseMigrations.Migration2To3::class)
-    ],
+    ],*/
     exportSchema = true
 )
 @TypeConverters(Converters::class)
