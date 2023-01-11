@@ -32,7 +32,7 @@ MealTime is a MultiModule meal planning app built with Jetpack Compose. It helps
 <img src="screenshots/favorites_light.jpeg" width="250"/> <img src="screenshots/favorites_dark.jpeg" width="250"/>
 
 ### Settings
-<img src="screenshots/settings_light.jpeg" width="250"/> <img src="screenshots/theme_options.jpeg" width="250"/>
+<img src="screenshots/settings_screen_light.jpeg" width="250"/> <img src="screenshots/theme_options.jpeg" width="250"/>
 
 ## Tech Stack.
 - [Kotlin](https://developer.android.com/kotlin) - Kotlin is a programming language that can run on JVM. Google has announced Kotlin as one of its officially supported programming languages in Android Studio; and the Android community is migrating at a pace from Java to Kotlin.
