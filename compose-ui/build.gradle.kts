@@ -46,7 +46,6 @@ android {
 
 dependencies {
     // Modules
-    implementation(project(Modules.core))
     implementation("androidx.appcompat:appcompat:1.5.1")
 
     // Accompanist System UI controller
