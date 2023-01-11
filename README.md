@@ -5,6 +5,9 @@ MealTime is a MultiModule meal planning app built with Jetpack Compose. It helps
 
 # ⚠️ Not Stable - Under Heavy Development 🛠️ 🛠️ 🛠️
 
+## Modules
+<img src="screenshots/mealtime_modules.jpeg" width="1000"/>
+
 ## Demo
 
 ### My Meals
