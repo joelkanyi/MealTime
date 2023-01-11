@@ -45,6 +45,4 @@ android {
 
 dependencies {
     implementation("androidx.appcompat:appcompat:1.5.1")
-    // Modules
-    /*implementation(project(Modules.composeUi))*/
 }
