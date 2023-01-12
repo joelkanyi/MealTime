@@ -5,6 +5,9 @@ MealTime is a MultiModule meal planning app built with Jetpack Compose. It helps
 
 # ⚠️ Not Stable - Under Heavy Development 🛠️ 🛠️ 🛠️
 
+## Modules
+<img src="screenshots/mealtime_modules.jpeg" width="1000"/>
+
 ## Demo
 
 ### My Meals
@@ -32,7 +35,7 @@ MealTime is a MultiModule meal planning app built with Jetpack Compose. It helps
 <img src="screenshots/favorites_light.jpeg" width="250"/> <img src="screenshots/favorites_dark.jpeg" width="250"/>
 
 ### Settings
-<img src="screenshots/settings_light.jpeg" width="250"/> <img src="screenshots/theme_options.jpeg" width="250"/>
+<img src="screenshots/settings_screen_light.jpg" width="250"/> <img src="screenshots/theme_options.jpeg" width="250"/>
 
 ## Tech Stack.
 - [Kotlin](https://developer.android.com/kotlin) - Kotlin is a programming language that can run on JVM. Google has announced Kotlin as one of its officially supported programming languages in Android Studio; and the Android community is migrating at a pace from Java to Kotlin.
@@ -58,3 +61,22 @@ MealTime is a MultiModule meal planning app built with Jetpack Compose. It helps
 - [Timber](https://github.com/JakeWharton/timber)- A logger with a small, extensible API which provides utility on top of Android's normal Log class.
 - CI/CD:
   - [GitHub Actions](https://github.com/features/actions) - GitHub Actions makes it easy to automate all your software workflows, now with world-class CI/CD. Build, test, and deploy your code right from GitHub. Make code reviews, branch management, and issue triaging work the way you want.
+  
+
+# License
+```xml
+Copyright 2023 JoelKanyi
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+```  
+  

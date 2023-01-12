@@ -15,11 +15,16 @@
  */
 package com.kanyideveloper.settings.presentation
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kanyideveloper.core.domain.UserDataRepository
+import com.kanyideveloper.core.state.TextFieldState
+import com.kanyideveloper.core.util.UiEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -27,9 +32,42 @@ class SettingsViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository
 ) : ViewModel() {
 
+    private val _eventsFlow = MutableSharedFlow<UiEvents>()
+    val eventsFlow = _eventsFlow
+
+    private val _shouldShowThemesDialog = mutableStateOf(false)
+    val shouldShowThemesDialog: State<Boolean> = _shouldShowThemesDialog
+    fun setShowThemesDialogState(value: Boolean) {
+        _shouldShowThemesDialog.value = value
+    }
+
+    private val _shouldShowFeedbackDialog = mutableStateOf(false)
+    val shouldShowFeedbackDialog: State<Boolean> = _shouldShowFeedbackDialog
+    fun setShowFeedbackDialogState(value: Boolean) {
+        _shouldShowFeedbackDialog.value = value
+    }
+
+    private val _feedback = mutableStateOf(TextFieldState())
+    val feedback: State<TextFieldState> = _feedback
+    fun setFeedbackState(value: String) {
+        _feedback.value = feedback.value.copy(
+            text = value,
+            error = null
+        )
+    }
+
     fun updateTheme(themeValue: Int) {
         viewModelScope.launch {
             userDataRepository.setTheme(themeValue = themeValue)
+            setShowThemesDialogState(false)
+        }
+    }
+
+    fun validateFeedbackTextfield(message: String) {
+        if (message.isEmpty()) {
+            _feedback.value = feedback.value.copy(
+                error = "Feedback cannot be empty"
+            )
         }
     }
 }

@@ -15,218 +15,194 @@
  */
 package com.kanyideveloper.settings.presentation
 
-import androidx.compose.foundation.clickable
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.compose_ui.theme.Theme
+import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.mealtime.core.R
+import com.kanyideveloper.settings.presentation.components.FeedbackDialog
+import com.kanyideveloper.settings.presentation.components.SettingCard
+import com.kanyideveloper.settings.presentation.components.ThemesDialog
 import com.ramcosta.composedestinations.annotation.Destination
 
 interface SettingsNavigator {
     fun openSettings(showId: Long)
 }
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Destination
 @Composable
 fun SettingsScreen(
-    navigator: SettingsNavigator,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
-    var shouldShowSettingsDialog by remember {
-        mutableStateOf(false)
+    val shouldShowThemesDialog = viewModel.shouldShowThemesDialog.value
+    val shouldShowFeedbackDialog = viewModel.shouldShowFeedbackDialog.value
+    val context = LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.eventsFlow.collect { event ->
+            when (event) {
+                is UiEvents.SnackbarEvent -> {
+                    snackbarHostState.showSnackbar(message = event.message)
+                }
+                else -> {}
+            }
+        }
     }
 
-    Column(Modifier.fillMaxSize()) {
-        StandardToolbar(
-            navigate = {
-            },
-            title = {
-                Text(text = "Settings", fontSize = 16.sp)
-            },
-            showBackArrow = false,
-            navActions = {
-            }
-        )
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            StandardToolbar(
+                navigate = {
+                },
+                title = {
+                    Text(text = "Settings", fontSize = 16.sp)
+                },
+                showBackArrow = false,
+                navActions = {
+                }
+            )
+        }
+    ) { paddingValues ->
 
-        LazyColumn(contentPadding = PaddingValues(16.dp)) {
-            item {
-                ThemeCard(
-                    onClick = {
-                        shouldShowSettingsDialog = !shouldShowSettingsDialog
+        if (shouldShowThemesDialog) {
+            ThemesDialog(
+                onDismiss = {
+                    viewModel.setShowThemesDialogState(!viewModel.shouldShowThemesDialog.value)
+                },
+                onSelectTheme = viewModel::updateTheme
+            )
+        }
+
+        if (shouldShowFeedbackDialog) {
+            FeedbackDialog(
+                currentFeedbackString = viewModel.feedback.value.text,
+                isError = viewModel.feedback.value.error != null,
+                error = viewModel.feedback.value.error,
+                onDismiss = {
+                    viewModel.setShowFeedbackDialogState(!viewModel.shouldShowFeedbackDialog.value)
+                },
+                onFeedbackChange = { newValue ->
+                    viewModel.setFeedbackState(newValue)
+                },
+                onClickSend = { feedback ->
+                    keyboardController?.hide()
+                    viewModel.validateFeedbackTextfield(message = feedback)
+
+                    if (feedback.isEmpty()) {
+                        return@FeedbackDialog
+                    }
+
+                    try {
+                        val intent = Intent(Intent.ACTION_SENDTO).apply {
+                            data = Uri.parse("mailto:")
+                            putExtra(Intent.EXTRA_EMAIL, arrayOf("joelkanyi98@gmail.com"))
+                            putExtra(Intent.EXTRA_SUBJECT, "MEALTIME APP FEEDBACK")
+                            putExtra(Intent.EXTRA_TEXT, feedback)
+                        }
+                        context.startActivity(intent)
+
+                        viewModel.setShowFeedbackDialogState(false)
+                        viewModel.setFeedbackState("")
+                    } catch (e: Exception) {
+                        Toast.makeText(context, "No Email Application Found", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            )
+        }
+
+        LazyColumn(
+            contentPadding = paddingValues,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(settingsOptions) { setting ->
+                SettingCard(
+                    title = setting.title,
+                    icon = setting.icon,
+                    onClick = { settingsOption ->
+                        when (settingsOption) {
+                            "Change Your Theme" -> {
+                                viewModel.setShowThemesDialogState(
+                                    !viewModel.shouldShowThemesDialog.value
+                                )
+                            }
+                            "Suggest or Report Anything" -> {
+                                viewModel.setShowFeedbackDialogState(
+                                    !viewModel.shouldShowFeedbackDialog.value
+                                )
+                            }
+                            "Rate Us on Play Store" -> {
+                                val rateIntent = Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse("market://details?id=" + context.packageName)
+                                )
+                                startActivity(context, rateIntent, null)
+                            }
+                            "Share the App with Friends" -> {
+                                val appPackageName = context.packageName
+                                val sendIntent = Intent()
+                                sendIntent.action = Intent.ACTION_SEND
+                                sendIntent.putExtra(
+                                    Intent.EXTRA_TEXT,
+                                    "Check out MealTime App on Play Store that helps your create your own recipes, search new ones online, create meal plans for a whole day, week or even a month: https://play.google.com/store/apps/details?id=$appPackageName"
+                                )
+                                sendIntent.type = "text/plain"
+                                context.startActivity(sendIntent)
+                            }
+                        }
                     }
                 )
             }
         }
     }
-
-    if (shouldShowSettingsDialog) {
-        ThemeDialog(
-            onDismiss = {
-                shouldShowSettingsDialog = !shouldShowSettingsDialog
-            },
-            onSelectTheme = viewModel::updateTheme
-        )
-    }
 }
 
-@Composable
-fun ThemeCard(
-    onClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onClick()
-            },
-        shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.dark_mode),
-                    contentDescription = null
-                )
-                Text(
-                    text = "Change Your Theme",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+data class Setting(
+    val title: String,
+    val icon: Int
+)
 
-            Icon(
-                painter = painterResource(id = R.drawable.chevron_right),
-                contentDescription = null
-            )
-        }
-    }
-}
-
-@Composable
-fun ThemeDialog(
-    onDismiss: () -> Unit,
-    onSelectTheme: (Int) -> Unit
-) {
-    AlertDialog(
-        containerColor = MaterialTheme.colorScheme.background,
-        onDismissRequest = { onDismiss() },
-        title = {
-            Text(
-                text = "Themes",
-                style = MaterialTheme.typography.titleLarge
-            )
-        },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                ThemeItem(
-                    themeName = "Use System Settings",
-                    themeValue = Theme.FOLLOW_SYSTEM.themeValue,
-                    icon = R.drawable.settings_suggest,
-                    onSelectTheme = onSelectTheme
-                )
-                ThemeItem(
-                    themeName = "Light Mode",
-                    themeValue = Theme.LIGHT_THEME.themeValue,
-                    icon = R.drawable.light_mode,
-                    onSelectTheme = onSelectTheme
-                )
-                ThemeItem(
-                    themeName = "Dark Mode",
-                    themeValue = Theme.DARK_THEME.themeValue,
-                    icon = R.drawable.dark_mode,
-                    onSelectTheme = onSelectTheme
-                )
-                ThemeItem(
-                    themeName = "Material You",
-                    themeValue = Theme.MATERIAL_YOU.themeValue,
-                    icon = R.drawable.wallpaper,
-                    onSelectTheme = onSelectTheme
-                )
-            }
-        },
-        confirmButton = {
-            Text(
-                text = "OK",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .clickable { onDismiss() }
-            )
-        }
+private val settingsOptions = listOf(
+    Setting(
+        title = "Change Your Theme",
+        icon = R.drawable.dark_mode
+    ),
+    Setting(
+        title = "Suggest or Report Anything",
+        icon = R.drawable.ic_feedback
+    ),
+    Setting(
+        title = "Rate Us on Play Store",
+        icon = R.drawable.ic_star
+    ),
+    Setting(
+        title = "Share the App with Friends",
+        icon = R.drawable.ic_share
     )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ThemeItem(
-    themeName: String,
-    themeValue: Int,
-    icon: Int,
-    onSelectTheme: (Int) -> Unit
-) {
-    Card(
-        shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        ),
-        onClick = {
-            onSelectTheme(themeValue)
-        }
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                painter = painterResource(id = icon),
-                contentDescription = null
-            )
-            Text(
-                modifier = Modifier
-                    .padding(12.dp),
-                text = themeName,
-                style = MaterialTheme.typography.labelMedium
-            )
-        }
-    }
-}
+)
