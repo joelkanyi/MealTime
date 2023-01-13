@@ -3,7 +3,13 @@
 # MealTime
 MealTime is a MultiModule meal planning app built with Jetpack Compose. It helps you create custom meal plans, add your own recipes, and search online recipes.
 
-# ⚠️ Not Stable - Under Heavy Development 🛠️ 🛠️ 🛠️
+[![PlayStore][playstore-image]][playstore-url]
+
+[playstore-image]: https://github.com/JoelKanyi/Muviz/blob/main/screenshots/get-it-on-playstore.png
+
+[playstore-url]: https://play.google.com/store/apps/details?id=com.kanyideveloper.mealtime
+
+# Under Constant Development 🛠️ 🛠️ 🛠️
 
 ## Modules
 <img src="screenshots/mealtime_modules.jpeg" width="1000"/>
