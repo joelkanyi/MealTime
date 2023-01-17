@@ -16,6 +16,7 @@
 package com.kanyideveloper.core.util
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
@@ -179,6 +180,17 @@ fun getTodaysDate(): String {
     val dateFormat = SimpleDateFormat("dd/MM/yyyy")
     val today = Calendar.getInstance().time
     return dateFormat.format(today)
+}
+
+fun getAppVersionName(context: Context): String {
+    var versionName = ""
+    try {
+        val info = context.packageManager?.getPackageInfo(context.packageName, 0)
+        versionName = info?.versionName ?: ""
+    } catch (e: PackageManager.NameNotFoundException) {
+        Timber.e(e.message)
+    }
+    return versionName
 }
 
 /*@SuppressLint("SimpleDateFormat")
