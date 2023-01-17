@@ -57,11 +57,11 @@ dependencies {
     implementation(project(Modules.core))
 
     // Room
-    implementation("androidx.room:room-runtime:2.4.3")
-    kapt("androidx.room:room-compiler:2.4.3")
-    testImplementation("androidx.room:room-testing:2.4.3")
-    androidTestImplementation("androidx.room:room-testing:2.4.3")
+    implementation("androidx.room:room-runtime:2.5.0")
+    kapt("androidx.room:room-compiler:2.5.0")
+    testImplementation("androidx.room:room-testing:2.5.0")
+    androidTestImplementation("androidx.room:room-testing:2.5.0")
 
     // Kotlin Extensions and Coroutines support for Room
-    implementation("androidx.room:room-ktx:2.4.3")
+    implementation("androidx.room:room-ktx:2.5.0")
 }
