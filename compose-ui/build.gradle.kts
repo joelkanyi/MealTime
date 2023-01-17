@@ -4,7 +4,6 @@ plugins {
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
     id("kotlin-parcelize")
-    id("com.google.devtools.ksp") version ("1.7.10-1.0.6")
 }
 
 apply {
@@ -46,7 +45,7 @@ android {
 
 dependencies {
     // Modules
-    implementation("androidx.appcompat:appcompat:1.5.1")
+    implementation("androidx.appcompat:appcompat:1.6.0")
 
     // Accompanist System UI controller
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.27.0")

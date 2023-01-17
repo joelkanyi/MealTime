@@ -3,7 +3,7 @@ plugins {
     id("kotlin-android")
     id("kotlin-kapt")
     id("kotlin-parcelize")
-    id("com.google.devtools.ksp") version ("1.7.10-1.0.6")
+    id("com.google.devtools.ksp") version ("1.7.20-1.0.8")
     id("org.jetbrains.kotlin.android")
 }
 
@@ -46,8 +46,8 @@ android {
 
 dependencies {
     // RamCosta Navigation
-    implementation("io.github.raamcosta.compose-destinations:animations-core:1.7.27-beta")
-    ksp("io.github.raamcosta.compose-destinations:ksp:1.7.27-beta")
+    implementation("io.github.raamcosta.compose-destinations:animations-core:1.7.32-beta")
+    ksp("io.github.raamcosta.compose-destinations:ksp:1.7.32-beta")
 
     // Firebase Storage
     implementation(platform("com.google.firebase:firebase-bom:31.1.0"))

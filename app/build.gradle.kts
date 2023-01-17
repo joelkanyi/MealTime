@@ -4,7 +4,7 @@ plugins {
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
     id("kotlin-parcelize")
-    id("com.google.devtools.ksp") version ("1.7.10-1.0.6")
+    id("com.google.devtools.ksp") version ("1.7.20-1.0.8")
     id("com.google.gms.google-services")
 }
 
@@ -19,8 +19,8 @@ android {
         applicationId = AndroidConfig.applicationId
         minSdk = AndroidConfig.minSDK
         targetSdk = AndroidConfig.targetSDK
-        versionCode = 3
-        versionName = "1.0.1"
+        versionCode = AndroidConfig.versionCode
+        versionName = AndroidConfig.versionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -79,6 +79,6 @@ dependencies {
     implementation(project(Modules.mealPlanner))
 
     // RamCosta Navigation
-    implementation("io.github.raamcosta.compose-destinations:animations-core:1.7.27-beta")
-    ksp("io.github.raamcosta.compose-destinations:ksp:1.7.27-beta")
+    implementation("io.github.raamcosta.compose-destinations:animations-core:1.7.32-beta")
+    ksp("io.github.raamcosta.compose-destinations:ksp:1.7.32-beta")
 }
