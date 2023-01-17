@@ -21,14 +21,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import com.kanyideveloper.core.domain.HomeRepository
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.core.util.getTodaysDate
-import com.kanyideveloper.mealplanner.data.paging.DayPagingSource
 import com.kanyideveloper.mealplanner.domain.repository.MealPlannerRepository
 import com.kanyideveloper.mealplanner.model.MealPlan
 import com.kanyideveloper.mealplanner.presentation.state.SearchMealState
@@ -80,18 +77,11 @@ class MealPlannerViewModel @Inject constructor(
         }
     }
 
-    fun deleteAMealFromPlan(id: Int) {
+    /*fun deleteAMealFromPlan(id: Int) {
         viewModelScope.launch {
             mealPlannerRepository.deleteAMealFromPlan(id = id)
         }
-    }
-
-    val days = Pager(
-        config = PagingConfig(enablePlaceholders = false, pageSize = 10),
-        pagingSourceFactory = {
-            DayPagingSource()
-        }
-    ).flow
+    }*/
 
     private val _mealType = mutableStateOf("")
     val mealType: State<String> = _mealType
