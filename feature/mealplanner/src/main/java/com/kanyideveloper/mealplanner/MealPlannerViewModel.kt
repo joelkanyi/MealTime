@@ -53,7 +53,7 @@ class MealPlannerViewModel @Inject constructor(
         _selectedDate.value = value
     }
 
-    fun getPlanMeals(filterDay: String = getTodaysDate()): LiveData<List<MealPlan>> {
+    fun getPlanMeals(filterDay: String = selectedDate.value): LiveData<List<MealPlan>> {
         return mealPlannerRepository.getMealsInMyPlan(filterDay = filterDay)
     }
 
@@ -77,11 +77,11 @@ class MealPlannerViewModel @Inject constructor(
         }
     }
 
-    fun deleteAMealFromPlan(id: Int) {
+    /*fun deleteAMealFromPlan(id: Int) {
         viewModelScope.launch {
             mealPlannerRepository.deleteAMealFromPlan(id = id)
         }
-    }
+    }*/
 
     private val _mealType = mutableStateOf("")
     val mealType: State<String> = _mealType

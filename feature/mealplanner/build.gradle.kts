@@ -55,14 +55,14 @@ dependencies {
     implementation(project(Modules.coreNetwork))
 
     // Joel Kanyi - HorizontalCalendarView
-    implementation("com.github.JoelKanyi:HorizontalCalendarView:1.0.1")
+    implementation("com.github.JoelKanyi:HorizontalCalendarView:1.0.3")
 
     // Room
-    implementation("androidx.room:room-runtime:2.4.3")
-    kapt("androidx.room:room-compiler:2.4.3")
+    implementation("androidx.room:room-runtime:2.5.0")
+    kapt("androidx.room:room-compiler:2.5.0")
 
     // Kotlin Extensions and Coroutines support for Room
-    implementation("androidx.room:room-ktx:2.4.3")
+    implementation("androidx.room:room-ktx:2.5.0")
 }
 
 kotlin {
