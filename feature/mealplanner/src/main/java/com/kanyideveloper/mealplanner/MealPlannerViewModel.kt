@@ -44,6 +44,9 @@ class MealPlannerViewModel @Inject constructor(
     private val _types = mutableStateOf<List<String>>(emptyList())
     val types: State<List<String>> = _types
 
+    private val _allergies = mutableStateOf<List<String>>(emptyList())
+    val allergies: State<List<String>> = _allergies
+
     private val _hasMealPlanPrefs = mutableStateOf(false)
     val hasMealPlanPrefs: State<Boolean> = _hasMealPlanPrefs
 
@@ -73,6 +76,7 @@ class MealPlannerViewModel @Inject constructor(
         viewModelScope.launch {
             mealPlannerRepository.hasMealPlanPref.collectLatest { result ->
                 _types.value = result?.dishTypes ?: emptyList()
+                _allergies.value = result?.allergies ?: emptyList()
             }
         }
     }
