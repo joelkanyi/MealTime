@@ -16,6 +16,7 @@
 package com.kanyideveloper.core_network
 
 import com.kanyideveloper.core_network.model.CategoriesResponse
+import com.kanyideveloper.core_network.model.IngredientsResponse
 import com.kanyideveloper.core_network.model.MealDetailsResponse
 import com.kanyideveloper.core_network.model.MealsResponse
 import retrofit2.http.GET
@@ -52,4 +53,9 @@ interface MealDbApi {
 
     @GET("random.php")
     suspend fun getRandomMeal(): MealDetailsResponse
+
+    @GET("list.php")
+    suspend fun getAllIngredients(
+        @Query("i") query: String = "list"
+    ): IngredientsResponse
 }

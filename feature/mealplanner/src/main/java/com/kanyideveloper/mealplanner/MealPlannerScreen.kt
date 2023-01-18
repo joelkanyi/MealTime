@@ -16,23 +16,29 @@
 package com.kanyideveloper.mealplanner
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -58,6 +64,7 @@ interface MealPlannerNavigator {
     fun openOnlineMealDetails(mealId: String)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
 fun MealPlannerScreen(
@@ -68,15 +75,17 @@ fun MealPlannerScreen(
     val shouldShowMealsDialog = viewModel.shouldShowMealsDialog.value
     val planMeals = viewModel.getPlanMeals().observeAsState().value
 
-    val scaffoldState = rememberScaffoldState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val meal = viewModel.singleMeal.observeAsState().value?.observeAsState()?.value
+
+    val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
         viewModel.eventsFlow.collectLatest { event ->
             when (event) {
                 is UiEvents.SnackbarEvent -> {
-                    scaffoldState.snackbarHostState.showSnackbar(message = event.message)
+                    snackbarHostState.showSnackbar(message = event.message)
                 }
                 else -> {}
             }
@@ -97,6 +106,20 @@ fun MealPlannerScreen(
                 viewModel.setShouldShowMealsDialogState(!viewModel.shouldShowMealsDialog.value)
             },
             onClickAdd = { meall, type ->
+
+                val allergies = viewModel.allergies.value
+
+                val allergy = allergies.find { it.lowercase() in meall.name.lowercase() }
+
+                if (allergy != null) {
+                    Toast.makeText(
+                        context,
+                        "You indicated that you are allergic to $allergy, if not you can go to settings and make changes",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@SelectMealDialog
+                }
+
                 viewModel.insertMealToPlan(
                     meal = meall,
                     mealTypePlan = type,
@@ -122,20 +145,24 @@ fun MealPlannerScreen(
         )
     }
 
-    Column(Modifier.fillMaxSize()) {
-        StandardToolbar(
-            navigate = {
-                navigator.popBackStack()
-            },
-            title = {
-                Text(text = "Meal Planner", fontSize = 18.sp)
-            },
-            showBackArrow = false,
-            navActions = {
-            }
-        )
-
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
+            StandardToolbar(
+                navigate = {
+                    navigator.popBackStack()
+                },
+                title = {
+                    Text(text = "Meal Planner", fontSize = 18.sp)
+                },
+                showBackArrow = false,
+                navActions = {
+                }
+            )
+        }
+    ) { paddingValues ->
         MealPlannerScreenContent(
+            modifier = Modifier.padding(paddingValues),
             hasMealPlan = hasMealPlan,
             navigator = navigator,
             mealTypes = viewModel.types.value,
@@ -181,6 +208,7 @@ fun MealPlannerScreen(
 @SuppressLint("FrequentlyChangedStateReadInComposition")
 @Composable
 private fun MealPlannerScreenContent(
+    modifier: Modifier = Modifier,
     hasMealPlan: Boolean,
     navigator: MealPlannerNavigator,
     onClickAdd: (String) -> Unit,
@@ -190,7 +218,7 @@ private fun MealPlannerScreenContent(
     onRemoveClick: (Int?, String?, String, Boolean) -> Unit,
     onMealClick: (Int?, String?, Boolean) -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = modifier.fillMaxSize()) {
         if (!hasMealPlan) {
             EmptyStateComponent(
                 anim = R.raw.women_thinking,
