@@ -29,11 +29,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @HiltViewModel
 class SetupViewModel @Inject constructor(
     private val mealPlannerRepository: MealPlannerRepository
 ) : ViewModel() {
+
+    val numberOfPeople = listOf("1", "2", "3", "10", "10+")
+    val dishTypes = listOf("Breakfast", "Lunch", "Dinner", "Dessert")
 
     val gson = Gson()
 
@@ -46,11 +50,10 @@ class SetupViewModel @Inject constructor(
     fun insertAllergicTo(value: String) {
         if (allergicTo.contains(value)) {
             _allergicTo.remove(value)
+            return
         }
         _allergicTo.add(value)
     }
-
-    val numberOfPeople = listOf("1", "2", "3", "10", "10+")
 
     private val _selectedNumberOfPeople = mutableStateOf("")
     val selectedNumberOfPeople: State<String> = _selectedNumberOfPeople
@@ -58,7 +61,6 @@ class SetupViewModel @Inject constructor(
         _selectedNumberOfPeople.value = value
     }
 
-    val dishTypes = listOf("Breakfast", "Lunch", "Dinner", "Dessert")
 
     val selectedDishType = mutableStateListOf<String>()
     fun insertSelectedDishType(value: String) {
