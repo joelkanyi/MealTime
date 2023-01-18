@@ -29,7 +29,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @HiltViewModel
 class SetupViewModel @Inject constructor(
@@ -60,7 +59,6 @@ class SetupViewModel @Inject constructor(
     fun setSelectedNumberOfPeople(value: String) {
         _selectedNumberOfPeople.value = value
     }
-
 
     val selectedDishType = mutableStateListOf<String>()
     fun insertSelectedDishType(value: String) {
