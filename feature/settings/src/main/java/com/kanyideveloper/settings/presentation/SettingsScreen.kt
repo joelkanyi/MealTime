@@ -15,9 +15,7 @@
  */
 package com.kanyideveloper.settings.presentation
 
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -53,8 +51,6 @@ import com.kanyideveloper.settings.presentation.components.FeedbackDialog
 import com.kanyideveloper.settings.presentation.components.SettingCard
 import com.kanyideveloper.settings.presentation.components.ThemesDialog
 import com.ramcosta.composedestinations.annotation.Destination
-import timber.log.Timber
-
 
 interface SettingsNavigator {
     fun openSettings(showId: Long)
@@ -64,7 +60,7 @@ interface SettingsNavigator {
 @Destination
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsViewModel = hiltViewModel(),
+    viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val shouldShowThemesDialog = viewModel.shouldShowThemesDialog.value
     val shouldShowFeedbackDialog = viewModel.shouldShowFeedbackDialog.value
@@ -217,7 +213,7 @@ fun SettingsScreen(
 
 data class Setting(
     val title: String,
-    val icon: Int,
+    val icon: Int
 )
 
 private val settingsOptions = listOf(
