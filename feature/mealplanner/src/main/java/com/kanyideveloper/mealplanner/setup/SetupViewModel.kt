@@ -21,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
+import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.mealplanner.destinations.MealPlannerScreenDestination
 import com.kanyideveloper.mealplanner.domain.repository.MealPlannerRepository
@@ -33,8 +34,11 @@ import kotlinx.coroutines.launch
 class SetupViewModel @Inject constructor(
     private val mealPlannerRepository: MealPlannerRepository
 ) : ViewModel() {
+
     val gson = Gson()
-    val allergies = listOf("Onions", "Tomatoes", "Chicken", "Pork")
+
+    private val _ingredients = mutableStateOf(IngredientsState())
+    val ingredients: State<IngredientsState> = _ingredients
 
     private val _allergicTo = mutableStateListOf<String>()
     val allergicTo: List<String> = _allergicTo
@@ -64,8 +68,6 @@ class SetupViewModel @Inject constructor(
         selectedDishType.add(value)
     }
 
-    val hasMealPlanPrefs = mealPlannerRepository.hasMealPlanPref
-
     private val _eventsFlow = MutableSharedFlow<UiEvents>()
     val eventsFlow = _eventsFlow
 
@@ -88,4 +90,45 @@ class SetupViewModel @Inject constructor(
             )
         }
     }
+
+    private fun getAllIngredients() {
+        _ingredients.value = ingredients.value.copy(
+            isLoading = true
+        )
+        viewModelScope.launch {
+            when (val result = mealPlannerRepository.getAllIngredients()) {
+                is Resource.Error -> {
+                    _ingredients.value = ingredients.value.copy(
+                        isLoading = false,
+                        error = result.message ?: "Unknown Error Occurred"
+                    )
+
+                    _eventsFlow.emit(
+                        UiEvents.SnackbarEvent(
+                            message = result.message ?: "Unknown Error Occurred"
+                        )
+                    )
+                }
+                is Resource.Success -> {
+                    _ingredients.value = ingredients.value.copy(
+                        isLoading = false,
+                        ingredients = result.data ?: emptyList()
+                    )
+                }
+                else -> {
+                    ingredients
+                }
+            }
+        }
+    }
+
+    init {
+        getAllIngredients()
+    }
 }
+
+data class IngredientsState(
+    val isLoading: Boolean = false,
+    val error: String? = null,
+    val ingredients: List<String> = emptyList()
+)

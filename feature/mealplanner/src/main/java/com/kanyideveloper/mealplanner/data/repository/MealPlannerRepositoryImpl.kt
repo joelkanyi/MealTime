@@ -43,6 +43,7 @@ import com.kanyideveloper.mealplanner.notifications.MyAlarm
 import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import timber.log.Timber
 
 class MealPlannerRepositoryImpl(
     private val mealTimePreferences: MealTimePreferences,
@@ -125,6 +126,14 @@ class MealPlannerRepositoryImpl(
 
     override suspend fun removeLocalMealFromPlan(localMealId: String, mealType: String) {
         // mealPlanDao.removeLocalMealFromPlan(localMealId = localMealId, mealType = mealType)
+    }
+
+    override suspend fun getAllIngredients(): Resource<List<String>> {
+        return safeApiCall(Dispatchers.IO) {
+            val response = mealDbApi.getAllIngredients()
+            Timber.d("Ingredients response: $response")
+            response.meals.map { it.strIngredient }
+        }
     }
 
     override suspend fun saveMealPlannerPreferences(

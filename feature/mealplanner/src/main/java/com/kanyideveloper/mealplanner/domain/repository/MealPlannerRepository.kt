@@ -44,4 +44,6 @@ interface MealPlannerRepository {
     suspend fun removeOnlineMealFromPlan(onlineMealId: Int, mealType: String)
 
     suspend fun removeLocalMealFromPlan(localMealId: String, mealType: String)
+
+    suspend fun getAllIngredients(): Resource<List<String>>
 }

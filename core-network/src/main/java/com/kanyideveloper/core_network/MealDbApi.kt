@@ -54,6 +54,8 @@ interface MealDbApi {
     @GET("random.php")
     suspend fun getRandomMeal(): MealDetailsResponse
 
-    @GET("list.php?i=list")
-    suspend fun getAllIngredients(): IngredientsResponse
+    @GET("list.php")
+    suspend fun getAllIngredients(
+        @Query("i") query: String = "list"
+    ): IngredientsResponse
 }

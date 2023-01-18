@@ -15,8 +15,11 @@
  */
 package com.kanyideveloper.mealplanner.setup
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -32,15 +35,22 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.compose_ui.theme.PrimaryColor
+import com.kanyideveloper.core.components.EmptyStateComponent
+import com.kanyideveloper.core.components.ErrorStateComponent
+import com.kanyideveloper.core.components.LoadingStateComponent
+import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.mealplanner.MealPlannerNavigator
 import com.ramcosta.composedestinations.annotation.Destination
+import kotlinx.coroutines.flow.collectLatest
 
 @Destination
 @Composable
@@ -48,9 +58,22 @@ fun AllergiesScreen(
     navigator: MealPlannerNavigator,
     viewModel: SetupViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = true) {
+        viewModel.eventsFlow.collectLatest { event ->
+            when (event) {
+                is UiEvents.SnackbarEvent -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+                else -> {}
+            }
+        }
+    }
+
     AllergiesScreenContent(
         navigator = navigator,
-        allergiesChoices = viewModel.allergies,
+        ingredientsState = viewModel.ingredients.value,
         allergies = viewModel.gson.toJson(viewModel.allergicTo),
         onCheck = { allergy ->
             viewModel.insertAllergicTo(allergy)
@@ -65,7 +88,7 @@ fun AllergiesScreen(
 private fun AllergiesScreenContent(
     navigator: MealPlannerNavigator,
     allergies: String,
-    allergiesChoices: List<String>,
+    ingredientsState: IngredientsState,
     isChecked: (String) -> Boolean,
     onCheck: (String) -> Unit
 ) {
@@ -92,6 +115,50 @@ private fun AllergiesScreenContent(
             }
         )
 
+        Box(modifier = Modifier.fillMaxSize()) {
+            IngredientsLoadingState(state = ingredientsState)
+
+            IngredientsErrorState(state = ingredientsState)
+
+            IngredientsEmptyState(state = ingredientsState)
+
+            IngredientsSuccessState(
+                state = ingredientsState,
+                isChecked = isChecked,
+                onCheck = onCheck
+            )
+        }
+    }
+}
+
+@Composable
+private fun BoxScope.IngredientsEmptyState(state: IngredientsState) {
+    if (!state.isLoading && state.error == null && state.ingredients.isEmpty()) {
+        EmptyStateComponent()
+    }
+}
+
+@Composable
+private fun BoxScope.IngredientsErrorState(state: IngredientsState) {
+    if (!state.isLoading && state.error != null) {
+        ErrorStateComponent(errorMessage = state.error)
+    }
+}
+
+@Composable
+private fun BoxScope.IngredientsLoadingState(state: IngredientsState) {
+    if (state.isLoading) {
+        LoadingStateComponent()
+    }
+}
+
+@Composable
+fun IngredientsSuccessState(
+    state: IngredientsState,
+    isChecked: (String) -> Boolean,
+    onCheck: (String) -> Unit
+) {
+    if (!state.isLoading && state.error == null && state.ingredients.isNotEmpty()) {
         LazyVerticalGrid(
             contentPadding = PaddingValues(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -107,7 +174,7 @@ private fun AllergiesScreenContent(
             item(span = { GridItemSpan(currentLineSpan = 3) }) {
                 Spacer(modifier = Modifier.height(12.dp))
             }
-            items(allergiesChoices) { allergy ->
+            items(state.ingredients) { allergy ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(
                         checked = isChecked(allergy),
