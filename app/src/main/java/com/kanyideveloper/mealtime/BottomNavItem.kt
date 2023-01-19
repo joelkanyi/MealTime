@@ -33,7 +33,7 @@ sealed class BottomNavItem(var title: String, var icon: Int, var screen: NavGrap
     )
 
     object MealPlanner : BottomNavItem(
-        title = "Meal Planner",
+        title = "Planner",
         icon = R.drawable.date_range,
         screen = NavGraphs.mealPlanner
     )
