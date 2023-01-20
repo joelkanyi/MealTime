@@ -81,4 +81,7 @@ dependencies {
     // RamCosta Navigation
     implementation("io.github.raamcosta.compose-destinations:animations-core:1.7.32-beta")
     ksp("io.github.raamcosta.compose-destinations:ksp:1.7.32-beta")
+
+    // Splash Screen API
+    implementation("androidx.core:core-splashscreen:1.0.0")
 }
