@@ -22,16 +22,27 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import com.kanyideveloper.mealplanner.domain.repository.MealPlannerRepository
 import com.kanyideveloper.mealtime.core.R
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import javax.inject.Inject
 
 class MyAlarm : BroadcastReceiver() {
 
-    override fun onReceive(context: Context, intent: Intent) {
-        try {
-            val param1 = intent.getStringExtra("MESSAGE") ?: ""
-            val param2 = intent.getStringExtra("DESCRIPTION") ?: ""
+    @Inject
+    lateinit var mealPlannerRepository: MealPlannerRepository
 
+    override fun onReceive(context: Context, intent: Intent) {
+
+        if ((Intent.ACTION_BOOT_COMPLETED) == intent.action) {
+            mealPlannerRepository.setAlarm()
+        }
+
+        val param1 = intent.getStringExtra("MESSAGE") ?: ""
+        val param2 = intent.getStringExtra("DESCRIPTION") ?: ""
+
+        try {
             showNotification(context = context, title = param1, description = param2)
         } catch (ex: Exception) {
             Timber.tag("Receive Ex").d("onReceive: %s", ex.printStackTrace())

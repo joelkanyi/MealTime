@@ -40,10 +40,15 @@ import com.kanyideveloper.mealplanner.data.mapper.toOnlineMeal
 import com.kanyideveloper.mealplanner.domain.repository.MealPlannerRepository
 import com.kanyideveloper.mealplanner.model.MealPlan
 import com.kanyideveloper.mealplanner.notifications.MyAlarm
-import java.util.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.*
 
 class MealPlannerRepositoryImpl(
     private val mealTimePreferences: MealTimePreferences,
@@ -51,7 +56,7 @@ class MealPlannerRepositoryImpl(
     private val favoritesDao: FavoritesDao,
     private val mealDao: MealDao,
     private val mealDbApi: MealDbApi,
-    private val context: Context
+    private val context: Context,
 ) : MealPlannerRepository {
 
     override suspend fun saveMealToPlan(mealPlan: MealPlan) {
@@ -61,7 +66,7 @@ class MealPlannerRepositoryImpl(
     override suspend fun searchMeal(
         source: String,
         searchBy: String,
-        searchString: String
+        searchString: String,
     ): Resource<LiveData<List<Meal>>> {
         return when (source) {
             "Online" -> {
@@ -139,10 +144,10 @@ class MealPlannerRepositoryImpl(
     override suspend fun saveMealPlannerPreferences(
         allergies: List<String>,
         numberOfPeople: String,
-        dishTypes: List<String>
+        dishTypes: List<String>,
     ) {
         // Set Alarms
-        setAlarm(dishTypes)
+        setAlarm()
 
         mealTimePreferences.saveMealPlanPreferences(
             allergies = allergies,
@@ -168,21 +173,25 @@ class MealPlannerRepositoryImpl(
         mealPlanDao.deleteAMealFromPlan(id = id)
     }
 
-    private fun setAlarm(mealTypes: List<String>) {
-        mealTypes.forEach {
-            if (it == "Breakfast") {
-                setBreakfastAlarm()
-            }
-            if (it == "Lunch") {
-                setLunchAlarm()
-            }
+    override fun setAlarm() {
+        CoroutineScope(Dispatchers.Default).launch {
+            hasMealPlanPref.collectLatest { mealPlanPreference ->
+                mealPlanPreference?.dishTypes?.forEach {
+                    if (it == "Breakfast") {
+                        setBreakfastAlarm()
+                    }
+                    if (it == "Lunch") {
+                        setLunchAlarm()
+                    }
 
-            if (it == "Dinner") {
-                setDinnerAlarm()
-            }
+                    if (it == "Dinner") {
+                        setDinnerAlarm()
+                    }
 
-            if (it == "Dessert") {
-                setDessertAlarm()
+                    if (it == "Dessert") {
+                        setDessertAlarm()
+                    }
+                }
             }
         }
     }
@@ -213,7 +222,12 @@ class MealPlannerRepositoryImpl(
             }
         )
 
-        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
+            pendingIntent
+        )
     }
 
     private fun setBreakfastAlarm() {
@@ -240,7 +254,12 @@ class MealPlannerRepositoryImpl(
             }
         )
 
-        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
+            pendingIntent
+        )
     }
 
     private fun setDinnerAlarm() {
@@ -267,7 +286,12 @@ class MealPlannerRepositoryImpl(
             }
         )
 
-        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
+            pendingIntent
+        )
     }
 
     private fun setDessertAlarm() {
@@ -294,6 +318,11 @@ class MealPlannerRepositoryImpl(
             }
         )
 
-        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
+            pendingIntent
+        )
     }
 }
