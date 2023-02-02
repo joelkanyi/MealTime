@@ -153,7 +153,7 @@ class FavoritesDaoTest {
             isOnline = false,
             mealName = "",
             mealImageUrl = "",
-            isFavorite = false
+            isFavorite = true
         )
 
         val expectedResult = true
@@ -176,7 +176,7 @@ class FavoritesDaoTest {
         val testMeal1 = FavoriteEntity(
             onlineMealId = "43",
             localMealId = null,
-            isOnline = false,
+            isOnline = true,
             mealName = "",
             mealImageUrl = "",
             isFavorite = false
@@ -185,7 +185,7 @@ class FavoritesDaoTest {
         val testMeal2 = FavoriteEntity(
             onlineMealId = "56",
             localMealId = null,
-            isOnline = false,
+            isOnline = true,
             mealName = "",
             mealImageUrl = "",
             isFavorite = false
@@ -194,10 +194,10 @@ class FavoritesDaoTest {
         val testMeal3 = FavoriteEntity(
             onlineMealId = "10",
             localMealId = null,
-            isOnline = false,
+            isOnline = true,
             mealName = "",
             mealImageUrl = "",
-            isFavorite = false
+            isFavorite = true
         )
 
         val expectedResult = true
