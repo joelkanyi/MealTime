@@ -204,9 +204,9 @@ internal fun AppNavigation(
     )
 }
 
-fun DestinationScope<*>.currentNavigator(/*openSettings: () -> Unit*/): CoreFeatureNavigator {
+fun DestinationScope<*>.currentNavigator(): CoreFeatureNavigator {
     return CoreFeatureNavigator(
-        navBackStackEntry.destination.navGraph(),
-        navController
+        navGraph = navBackStackEntry.destination.navGraph(),
+        navController = navController
     )
 }

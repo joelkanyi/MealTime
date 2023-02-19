@@ -64,7 +64,7 @@ fun PlanMealItem(
     type: String = "",
     onMealClick: (Int?, String?, Boolean) -> Unit,
     onClickAdd: (Meal, String) -> Unit,
-    onRemoveClick: (Int?, String?, String, Boolean) -> Unit
+    onRemoveClick: (Int?) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -137,12 +137,7 @@ fun PlanMealItem(
                 if (isAddingToPlan) {
                     onClickAdd(meal, type)
                 } else {
-                    onRemoveClick(
-                        meal.localMealId,
-                        meal.onlineMealId,
-                        type,
-                        meal.onlineMealId != null
-                    )
+                    onRemoveClick(meal.mealPlanId)
                 }
             }) {
                 Icon(
