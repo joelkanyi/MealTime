@@ -32,7 +32,6 @@ class MyAlarm : BroadcastReceiver() {
     lateinit var mealPlannerRepository: MealPlannerRepository*/
 
     override fun onReceive(context: Context, intent: Intent?) {
-
         /*if ((Intent.ACTION_BOOT_COMPLETED) == intent?.action) {
             mealPlannerRepository.setAlarm()
         }*/
