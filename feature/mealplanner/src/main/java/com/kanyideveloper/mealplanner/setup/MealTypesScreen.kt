@@ -52,6 +52,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Destination
 @Composable
 fun MealTypesScreen(
+    editMealPlanPreference: Boolean,
     allergies: String,
     numberOfPeople: String,
     navigator: MealPlannerNavigator,
@@ -61,7 +62,11 @@ fun MealTypesScreen(
         viewModel.eventsFlow.collectLatest { event ->
             when (event) {
                 is UiEvents.NavigationEvent -> {
-                    navigator.openMealPlanner()
+                    if (event.route == "settings") {
+                        navigator.navigateToSettings()
+                    } else {
+                        navigator.openMealPlanner()
+                    }
                 }
                 else -> {}
             }
@@ -75,7 +80,8 @@ fun MealTypesScreen(
             viewModel.saveMealPlanPreferences(
                 allergies = viewModel.gson.fromJson(allergies, Array<String>::class.java).toList(),
                 numberOfPeople = numberOfPeople,
-                dishTypes = viewModel.selectedDishType
+                dishTypes = viewModel.selectedDishType,
+                editMealPlan = editMealPlanPreference
             )
         },
         onClickAMealType = { type ->

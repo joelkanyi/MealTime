@@ -40,15 +40,13 @@ import com.kanyideveloper.mealplanner.data.mapper.toOnlineMeal
 import com.kanyideveloper.mealplanner.domain.repository.MealPlannerRepository
 import com.kanyideveloper.mealplanner.model.MealPlan
 import com.kanyideveloper.mealplanner.notifications.MyAlarm
+import java.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.*
 
 class MealPlannerRepositoryImpl(
     private val mealTimePreferences: MealTimePreferences,
@@ -56,7 +54,7 @@ class MealPlannerRepositoryImpl(
     private val favoritesDao: FavoritesDao,
     private val mealDao: MealDao,
     private val mealDbApi: MealDbApi,
-    private val context: Context,
+    private val context: Context
 ) : MealPlannerRepository {
 
     override suspend fun saveMealToPlan(mealPlan: MealPlan) {
@@ -66,7 +64,7 @@ class MealPlannerRepositoryImpl(
     override suspend fun searchMeal(
         source: String,
         searchBy: String,
-        searchString: String,
+        searchString: String
     ): Resource<LiveData<List<Meal>>> {
         return when (source) {
             "Online" -> {
@@ -125,12 +123,8 @@ class MealPlannerRepositoryImpl(
         }
     }
 
-    override suspend fun removeOnlineMealFromPlan(onlineMealId: Int, mealType: String) {
-        // mealPlanDao.removeOnlineMealFromPlan(onlineMealId = onlineMealId, mealType = mealType)
-    }
-
-    override suspend fun removeLocalMealFromPlan(localMealId: String, mealType: String) {
-        // mealPlanDao.removeLocalMealFromPlan(localMealId = localMealId, mealType = mealType)
+    override suspend fun removeMealFromPlan(id: Int) {
+        mealPlanDao.deleteAMealFromPlan(id = id)
     }
 
     override suspend fun getAllIngredients(): Resource<List<String>> {
@@ -144,7 +138,7 @@ class MealPlannerRepositoryImpl(
     override suspend fun saveMealPlannerPreferences(
         allergies: List<String>,
         numberOfPeople: String,
-        dishTypes: List<String>,
+        dishTypes: List<String>
     ) {
         // Set Alarms
         setAlarm()

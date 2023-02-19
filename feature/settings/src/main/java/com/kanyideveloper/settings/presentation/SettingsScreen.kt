@@ -53,13 +53,14 @@ import com.kanyideveloper.settings.presentation.components.ThemesDialog
 import com.ramcosta.composedestinations.annotation.Destination
 
 interface SettingsNavigator {
-    fun openSettings(showId: Long)
+    fun openAllergiesScreen(editMealPlanPreference: Boolean)
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Destination
 @Composable
 fun SettingsScreen(
+    navigator: SettingsNavigator,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val shouldShowThemesDialog = viewModel.shouldShowThemesDialog.value
@@ -159,6 +160,9 @@ fun SettingsScreen(
                                         !viewModel.shouldShowThemesDialog.value
                                     )
                                 }
+                                "Edit Meal Plan Preferences" -> {
+                                    navigator.openAllergiesScreen(editMealPlanPreference = true)
+                                }
                                 "Suggest or Report Anything" -> {
                                     viewModel.setShowFeedbackDialogState(
                                         !viewModel.shouldShowFeedbackDialog.value
@@ -220,6 +224,10 @@ private val settingsOptions = listOf(
     Setting(
         title = "Change Your Theme",
         icon = R.drawable.dark_mode
+    ),
+    Setting(
+        title = "Edit Meal Plan Preferences",
+        icon = R.drawable.ic_plan_edit
     ),
     Setting(
         title = "Suggest or Report Anything",

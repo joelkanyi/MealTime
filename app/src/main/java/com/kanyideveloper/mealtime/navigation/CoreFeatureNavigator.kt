@@ -34,10 +34,10 @@ import com.kanyideveloper.presentation.destinations.RandomOnlineMealDetailsScree
 import com.kanyideveloper.presentation.home.HomeNavigator
 import com.kanyideveloper.search.presentation.search.SearchNavigator
 import com.kanyideveloper.settings.presentation.SettingsNavigator
+import com.kanyideveloper.settings.presentation.destinations.SettingsScreenDestination
 import com.ramcosta.composedestinations.dynamic.within
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.spec.NavGraphSpec
-import timber.log.Timber
 
 class CoreFeatureNavigator(
     private val navGraph: NavGraphSpec,
@@ -50,10 +50,6 @@ class CoreFeatureNavigator(
     MealPlannerNavigator {
     override fun openAddMeal() {
         navController.navigate(AddMealScreenDestination within navGraph)
-    }
-
-    override fun openSettings(showId: Long) {
-        Timber.d("Settings")
     }
 
     override fun openHome() {
@@ -88,21 +84,31 @@ class CoreFeatureNavigator(
         navController.popBackStack()
     }
 
-    override fun openAllergiesScreen() {
-        navController.navigate(AllergiesScreenDestination within navGraph)
-    }
-
-    override fun openNoOfPeopleScreen(allergies: String) {
+    override fun openAllergiesScreen(editMealPlanPreference: Boolean) {
         navController.navigate(
-            NumberOfPeopleScreenDestination(allergies = allergies) within navGraph
+            AllergiesScreenDestination(editMealPlanPreference = editMealPlanPreference) within navGraph
         )
     }
 
-    override fun openMealTypesScreen(allergies: String, noOfPeople: String) {
+    override fun openNoOfPeopleScreen(allergies: String, editMealPlanPreference: Boolean) {
+        navController.navigate(
+            NumberOfPeopleScreenDestination(
+                allergies = allergies,
+                editMealPlanPreference = editMealPlanPreference
+            ) within navGraph
+        )
+    }
+
+    override fun openMealTypesScreen(
+        allergies: String,
+        noOfPeople: String,
+        editMealPlanPreference: Boolean
+    ) {
         navController.navigate(
             MealTypesScreenDestination(
                 allergies = allergies,
-                numberOfPeople = noOfPeople
+                numberOfPeople = noOfPeople,
+                editMealPlanPreference = editMealPlanPreference
             ) within navGraph
         )
     }
@@ -113,6 +119,10 @@ class CoreFeatureNavigator(
 
     override fun openOnlineMealDetails(mealId: String) {
         navController.navigate(OnlineMealDetailsScreenDestination(mealId = mealId) within navGraph)
+    }
+
+    override fun navigateToSettings() {
+        navController.navigate(SettingsScreenDestination within navGraph)
     }
 
     override fun openRandomMeals() {

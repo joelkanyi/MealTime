@@ -15,6 +15,10 @@
  */
 package com.kanyideveloper.mealplanner.presentation.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -40,12 +44,13 @@ import androidx.compose.ui.unit.dp
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.mealtime.core.R
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MealPlanItem(
     meals: List<Meal>,
     type: String,
     onClickAdd: (String) -> Unit,
-    onRemoveClick: (Int?, String?, String, Boolean) -> Unit,
+    onRemoveClick: (Int?) -> Unit,
     onMealClick: (Int?, String?, Boolean) -> Unit
 ) {
     Column(
@@ -88,17 +93,28 @@ fun MealPlanItem(
 
         Spacer(modifier = Modifier.height(6.dp))
 
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp)
+        AnimatedVisibility(
+            visible = meals.isNotEmpty(),
+            enter = fadeIn(),
+            exit = fadeOut()
         ) {
-            items(meals) { meal ->
-                PlanMealItem(
-                    meal = meal,
-                    onClickAdd = { _, _ -> },
-                    onRemoveClick = onRemoveClick,
-                    onMealClick = onMealClick
-                )
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp)
+            ) {
+                items(
+                    items = meals,
+                    key = { meal -> meal.mealPlanId!! }
+                ) { meal ->
+                    PlanMealItem(
+                        meal = meal,
+                        onClickAdd = { _, _ -> },
+                        onRemoveClick = onRemoveClick,
+                        onMealClick = onMealClick,
+                        modifier = Modifier
+                            .animateItemPlacement()
+                    )
+                }
             }
         }
 

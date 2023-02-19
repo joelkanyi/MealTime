@@ -81,12 +81,6 @@ class MealPlannerViewModel @Inject constructor(
         }
     }
 
-    /*fun deleteAMealFromPlan(id: Int) {
-        viewModelScope.launch {
-            mealPlannerRepository.deleteAMealFromPlan(id = id)
-        }
-    }*/
-
     private val _mealType = mutableStateOf("")
     val mealType: State<String> = _mealType
     fun setMealTypeState(value: String) {
@@ -185,39 +179,9 @@ class MealPlannerViewModel @Inject constructor(
         }
     }
 
-    fun removeOnlineMealFromPlan(onlineMealId: Int?, mealType: String) {
+    fun removeMealFromPlan(id: Int) {
         viewModelScope.launch {
-            if (onlineMealId == null) {
-                _eventsFlow.emit(
-                    UiEvents.SnackbarEvent(
-                        message = "No Meal ID Found"
-                    )
-                )
-                return@launch
-            }
-
-            mealPlannerRepository.removeOnlineMealFromPlan(
-                onlineMealId = onlineMealId,
-                mealType = mealType
-            )
-        }
-    }
-
-    fun removeLocalMealFromPlan(localMealId: String?, mealType: String) {
-        viewModelScope.launch {
-            if (localMealId == null) {
-                _eventsFlow.emit(
-                    UiEvents.SnackbarEvent(
-                        message = "No Meal ID Found"
-                    )
-                )
-                return@launch
-            }
-
-            mealPlannerRepository.removeLocalMealFromPlan(
-                localMealId = localMealId,
-                mealType = mealType
-            )
+            mealPlannerRepository.removeMealFromPlan(id = id)
         }
     }
 

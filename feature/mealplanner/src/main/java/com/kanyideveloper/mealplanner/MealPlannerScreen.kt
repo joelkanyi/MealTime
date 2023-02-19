@@ -17,6 +17,7 @@ package com.kanyideveloper.mealplanner
 
 import android.annotation.SuppressLint
 import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -56,12 +57,19 @@ import kotlinx.coroutines.flow.collectLatest
 
 interface MealPlannerNavigator {
     fun popBackStack()
-    fun openAllergiesScreen()
-    fun openNoOfPeopleScreen(allergies: String)
-    fun openMealTypesScreen(allergies: String, noOfPeople: String)
+    fun openAllergiesScreen(editMealPlanPreference: Boolean = false)
+    fun openNoOfPeopleScreen(allergies: String, editMealPlanPreference: Boolean = false)
+    fun openMealTypesScreen(
+        allergies: String,
+        noOfPeople: String,
+        editMealPlanPreference: Boolean = false
+    )
+
     fun openMealPlanner()
     fun openMealDetails(meal: Meal)
     fun openOnlineMealDetails(mealId: String)
+
+    fun navigateToSettings()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -175,18 +183,8 @@ fun MealPlannerScreen(
                 viewModel.setSelectedDateState(fullDate)
                 viewModel.getPlanMeals(filterDay = fullDate)
             },
-            onRemoveClick = { onlineMealId, localMealId, mealType, isOnline ->
-                if (isOnline) {
-                    viewModel.removeOnlineMealFromPlan(
-                        onlineMealId = onlineMealId,
-                        mealType = mealType
-                    )
-                } else {
-                    viewModel.removeLocalMealFromPlan(
-                        localMealId = localMealId,
-                        mealType = mealType
-                    )
-                }
+            onRemoveClick = { id ->
+                id?.let { viewModel.removeMealFromPlan(id = it) }
             },
             onMealClick = { localMealId, onlineMealId, isOnline ->
                 if (isOnline) {
@@ -205,6 +203,7 @@ fun MealPlannerScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("FrequentlyChangedStateReadInComposition")
 @Composable
 private fun MealPlannerScreenContent(
@@ -215,7 +214,7 @@ private fun MealPlannerScreenContent(
     mealsAndTheirTypes: List<MealPlan>,
     mealTypes: List<String>,
     onClickDay: (String) -> Unit,
-    onRemoveClick: (Int?, String?, String, Boolean) -> Unit,
+    onRemoveClick: (Int?) -> Unit,
     onMealClick: (Int?, String?, Boolean) -> Unit
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -238,7 +237,9 @@ private fun MealPlannerScreenContent(
             LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp)) {
                 item {
                     HorizontalCalendarView(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .animateItemPlacement(),
                         onDayClick = { day ->
                             onClickDay(day.fullDate)
                         },
@@ -255,15 +256,34 @@ private fun MealPlannerScreenContent(
 
                 items(mealTypes) { type ->
                     MealPlanItem(
-                        meals = mealsAndTheirTypes.filter { it.mealTypeName == type }
-                            .flatMap { it.meals },
                         onClickAdd = onClickAdd,
                         type = type,
                         onRemoveClick = onRemoveClick,
-                        onMealClick = onMealClick
+                        onMealClick = onMealClick,
+                        meals = mealsAndTheirTypes.filter { it.mealTypeName == type }
+                            .map { it.mapMealPlanToMeals() }.flatten()
                     )
                 }
             }
         }
+    }
+}
+
+fun MealPlan.mapMealPlanToMeals(): List<Meal> {
+    return this.meals.map { meal ->
+        Meal(
+            name = meal.name,
+            imageUrl = meal.imageUrl,
+            cookingTime = meal.cookingTime,
+            servingPeople = meal.servingPeople,
+            category = meal.category,
+            cookingDifficulty = meal.cookingDifficulty,
+            ingredients = meal.ingredients,
+            cookingDirections = meal.cookingDirections,
+            isFavorite = meal.isFavorite,
+            onlineMealId = meal.onlineMealId,
+            localMealId = meal.localMealId,
+            mealPlanId = this.id
+        )
     }
 }

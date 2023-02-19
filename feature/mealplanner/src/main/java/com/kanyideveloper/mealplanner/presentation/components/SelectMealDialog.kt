@@ -15,9 +15,12 @@
  */
 package com.kanyideveloper.mealplanner.presentation.components
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,7 +31,10 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -69,10 +75,28 @@ fun SelectMealDialog(
             .fillMaxHeight(.9f),
         onDismissRequest = { onDismiss() },
         title = {
-            Text(
-                text = mealType,
-                style = MaterialTheme.typography.titleLarge
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = mealType,
+                    style = MaterialTheme.typography.titleLarge
+                )
+
+                Icon(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .testTag("close_dialog")
+                        .clickable(MutableInteractionSource(), null) {
+                            onDismiss()
+                        },
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Close dialog",
+                    tint = Color.Red
+                )
+            }
         },
         text = {
             Box(modifier = Modifier.fillMaxSize()) {
@@ -179,7 +203,7 @@ fun SelectMealDialog(
                             isAddingToPlan = true,
                             onClickAdd = onClickAdd,
                             type = mealType,
-                            onRemoveClick = { _, _, _, _ ->
+                            onRemoveClick = { _ ->
                             },
                             onMealClick = onMealClick
                         )
