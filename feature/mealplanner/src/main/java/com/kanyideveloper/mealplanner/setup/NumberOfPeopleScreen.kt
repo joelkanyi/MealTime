@@ -49,6 +49,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 @Destination
 @Composable
 fun NumberOfPeopleScreen(
+    editMealPlanPreference: Boolean = false,
     allergies: String,
     navigator: MealPlannerNavigator,
     viewModel: SetupViewModel = hiltViewModel()
@@ -58,6 +59,7 @@ fun NumberOfPeopleScreen(
         allergies = allergies,
         numberOfPeople = viewModel.selectedNumberOfPeople.value,
         numberOfPeopleChoices = viewModel.numberOfPeople,
+        editMealPlanPreference = editMealPlanPreference,
         onNumberClick = { number ->
             viewModel.setSelectedNumberOfPeople(number)
         },
@@ -74,7 +76,8 @@ private fun NumberOfPeopleScreenContent(
     numberOfPeople: String,
     numberOfPeopleChoices: List<String>,
     onNumberClick: (String) -> Unit,
-    isSelected: (String) -> Boolean
+    isSelected: (String) -> Boolean,
+    editMealPlanPreference: Boolean
 ) {
     Column(Modifier.fillMaxSize()) {
         StandardToolbar(
@@ -90,7 +93,8 @@ private fun NumberOfPeopleScreenContent(
                         .clickable {
                             navigator.openMealTypesScreen(
                                 allergies = allergies,
-                                noOfPeople = numberOfPeople
+                                noOfPeople = numberOfPeople,
+                                editMealPlanPreference = editMealPlanPreference
                             )
                         },
                     text = "Next",

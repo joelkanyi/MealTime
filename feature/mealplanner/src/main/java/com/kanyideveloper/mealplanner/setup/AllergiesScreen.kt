@@ -55,6 +55,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Destination
 @Composable
 fun AllergiesScreen(
+    editMealPlanPreference: Boolean = false,
     navigator: MealPlannerNavigator,
     viewModel: SetupViewModel = hiltViewModel()
 ) {
@@ -75,6 +76,7 @@ fun AllergiesScreen(
         navigator = navigator,
         ingredientsState = viewModel.ingredients.value,
         allergies = viewModel.gson.toJson(viewModel.allergicTo),
+        editMealPlanPreference = editMealPlanPreference,
         onCheck = { allergy ->
             viewModel.insertAllergicTo(allergy)
         },
@@ -90,7 +92,8 @@ private fun AllergiesScreenContent(
     allergies: String,
     ingredientsState: IngredientsState,
     isChecked: (String) -> Boolean,
-    onCheck: (String) -> Unit
+    onCheck: (String) -> Unit,
+    editMealPlanPreference: Boolean
 ) {
     Column(Modifier.fillMaxSize()) {
         StandardToolbar(
@@ -105,7 +108,8 @@ private fun AllergiesScreenContent(
                         .padding(horizontal = 16.dp)
                         .clickable {
                             navigator.openNoOfPeopleScreen(
-                                allergies = allergies
+                                allergies = allergies,
+                                editMealPlanPreference = editMealPlanPreference
                             )
                         },
                     text = "Next",
