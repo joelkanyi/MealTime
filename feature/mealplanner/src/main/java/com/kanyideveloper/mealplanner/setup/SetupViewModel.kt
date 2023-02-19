@@ -74,7 +74,8 @@ class SetupViewModel @Inject constructor(
     fun saveMealPlanPreferences(
         allergies: List<String>,
         numberOfPeople: String,
-        dishTypes: List<String>
+        dishTypes: List<String>,
+        editMealPlan: Boolean
     ) {
         viewModelScope.launch {
             mealPlannerRepository.saveMealPlannerPreferences(
@@ -83,11 +84,19 @@ class SetupViewModel @Inject constructor(
                 dishTypes = dishTypes
             )
 
-            _eventsFlow.emit(
-                UiEvents.NavigationEvent(
-                    route = MealPlannerScreenDestination.route
+            if (editMealPlan) {
+                _eventsFlow.emit(
+                    UiEvents.NavigationEvent(
+                        route = "settings"
+                    )
                 )
-            )
+            } else {
+                _eventsFlow.emit(
+                    UiEvents.NavigationEvent(
+                        route = MealPlannerScreenDestination.route
+                    )
+                )
+            }
         }
     }
 

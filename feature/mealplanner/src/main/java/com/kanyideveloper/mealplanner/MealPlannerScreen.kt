@@ -17,9 +17,6 @@ package com.kanyideveloper.mealplanner
 
 import android.annotation.SuppressLint
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -60,12 +57,19 @@ import kotlinx.coroutines.flow.collectLatest
 
 interface MealPlannerNavigator {
     fun popBackStack()
-    fun openAllergiesScreen()
-    fun openNoOfPeopleScreen(allergies: String)
-    fun openMealTypesScreen(allergies: String, noOfPeople: String)
+    fun openAllergiesScreen(editMealPlanPreference: Boolean = false)
+    fun openNoOfPeopleScreen(allergies: String, editMealPlanPreference: Boolean = false)
+    fun openMealTypesScreen(
+        allergies: String,
+        noOfPeople: String,
+        editMealPlanPreference: Boolean = false
+    )
+
     fun openMealPlanner()
     fun openMealDetails(meal: Meal)
     fun openOnlineMealDetails(mealId: String)
+
+    fun navigateToSettings()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -229,11 +233,7 @@ private fun MealPlannerScreenContent(
             )
         }
 
-        AnimatedVisibility(
-            visible = hasMealPlan,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
+        if (hasMealPlan) {
             LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp)) {
                 item {
                     HorizontalCalendarView(

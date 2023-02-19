@@ -81,12 +81,6 @@ class MealPlannerViewModel @Inject constructor(
         }
     }
 
-    /*fun deleteAMealFromPlan(id: Int) {
-        viewModelScope.launch {
-            mealPlannerRepository.deleteAMealFromPlan(id = id)
-        }
-    }*/
-
     private val _mealType = mutableStateOf("")
     val mealType: State<String> = _mealType
     fun setMealTypeState(value: String) {
