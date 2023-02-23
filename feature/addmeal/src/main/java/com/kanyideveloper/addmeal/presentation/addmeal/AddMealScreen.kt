@@ -15,6 +15,11 @@
  */
 package com.kanyideveloper.addmeal.presentation.addmeal
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -48,6 +53,11 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,18 +72,24 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyidev.searchable_dropdown.SearchableExpandedDropDownMenu
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.core.util.imageUriToImageBitmap
 import com.ramcosta.composedestinations.annotation.Destination
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
 fun AddMealScreen(
     navigator: AddMealNavigator,
-    viewModel: AddMealsViewModel = hiltViewModel()
+    viewModel: AddMealsViewModel = hiltViewModel(),
 ) {
     val mealName = viewModel.mealName.value
     val category = viewModel.category.value
@@ -82,6 +98,34 @@ fun AddMealScreen(
     val cookingTime = viewModel.cookingTime.value
 
     val context = LocalContext.current
+
+    var hasCamPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.CAMERA,
+            ) == PackageManager.PERMISSION_GRANTED,
+        )
+    }
+
+    val cameraPermissionLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+            onResult = { granted ->
+                hasCamPermission = granted
+            },
+        )
+
+    val photoLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { photoBitmap ->
+            if (photoBitmap != null) {
+                viewModel.setMealImageUri(photoBitmap.toUri(context))
+            }
+        }
+
+    LaunchedEffect(key1 = true, block = {
+        cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+    })
 
     val sliderInteractionSource = MutableInteractionSource()
     val sliderColors =
@@ -122,12 +166,14 @@ fun AddMealScreen(
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                         .height(210.dp)
                         .clickable {
-                            galleryLauncher.launch("image/*")
+                            // galleryLauncher.launch("image/*")
+                            photoLauncher.launch(null)
                         }
                 ) {
                     if (viewModel.mealImageUri.value == null) {
                         IconButton(onClick = {
-                            galleryLauncher.launch("image/*")
+                            photoLauncher.launch(null)
+                            //galleryLauncher.launch("image/*")
                         }) {
                             Icon(
                                 imageVector = Icons.Default.Add,
@@ -423,13 +469,21 @@ fun AddMealScreen(
     }
 }
 
-/**
- * Select Image -DONE
- * Enter Food Title - DONE
- * Cooking Time - DONE
- * Serving People - DONE
- * Cooking Complexity - DONE
- * CategoryEntity - DONE
- * Ingredients - DONE
- * Cooking Directions - DONE
- */
+fun Bitmap.toUri(context: Context): Uri? {
+    // First, create a file to store the Bitmap
+    val file = File(context.cacheDir, "MEALTIME-${UUID.randomUUID()}.png")
+
+    return try {
+        // Write the Bitmap data to the file
+        FileOutputStream(file).use { fos ->
+            compress(Bitmap.CompressFormat.PNG, 100, fos)
+            fos.flush()
+        }
+
+        // Get the content URI for the file
+        FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+    } catch (e: IOException) {
+        e.printStackTrace()
+        null
+    }
+}
