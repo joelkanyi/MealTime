@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <external-files-path name="camera_image" path="Pictures/"/>
-
-    <external-files-path name="external_files" path="Android/data/com.kanyideveloper.mealtime/files/Pictures"/>
-
+    <cache-path
+        name="cache"
+        path="." />
 </paths>

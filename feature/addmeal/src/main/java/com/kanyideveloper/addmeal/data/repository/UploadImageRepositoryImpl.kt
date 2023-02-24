@@ -30,20 +30,14 @@ import kotlinx.coroutines.tasks.await
 
 class UploadImageRepositoryImpl(
     private val storageReference: StorageReference,
-    private val context: Context
+    private val context: Context,
 ) : UploadImageRepository {
     override suspend fun uploadImage(imageUri: Uri): Resource<String> {
         return safeApiCall(Dispatchers.IO) {
             val fileStorageReference =
                 storageReference.child("${UUID.randomUUID()}${imageUri.lastPathSegment}")
 
-            val bmp = context.imageUriToImageBitmap(imageUri)
-
-            val byteArrayOutputStream = ByteArrayOutputStream()
-            bmp.compress(Bitmap.CompressFormat.JPEG, 25, byteArrayOutputStream)
-            val fileInBytes: ByteArray = byteArrayOutputStream.toByteArray()
-
-            val uploadTask = fileStorageReference.putBytes(fileInBytes)
+            val uploadTask = fileStorageReference.putFile(imageUri)
 
             val result = uploadTask.continueWithTask {
                 fileStorageReference.downloadUrl
