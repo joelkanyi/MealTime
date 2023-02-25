@@ -16,17 +16,15 @@
 package com.kanyideveloper.addmeal.presentation.addmeal
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Environment
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -40,6 +38,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -75,7 +75,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -84,7 +83,10 @@ import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyidev.searchable_dropdown.SearchableExpandedDropDownMenu
 import com.kanyideveloper.compose_ui.components.StandardToolbar
+import com.kanyideveloper.core.util.compressImage
+import com.kanyideveloper.core.util.createImageFile
 import com.kanyideveloper.core.util.imageUriToImageBitmap
+import com.kanyideveloper.core.util.saveImage
 import com.mr0xf00.easycrop.CropError
 import com.mr0xf00.easycrop.CropResult
 import com.mr0xf00.easycrop.crop
@@ -92,12 +94,7 @@ import com.mr0xf00.easycrop.rememberImageCropper
 import com.mr0xf00.easycrop.ui.ImageCropperDialog
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
@@ -116,6 +113,8 @@ fun AddMealScreen(
 
     val imageCropper = rememberImageCropper()
     val scope = rememberCoroutineScope()
+    var imageUri by remember { mutableStateOf<File?>(null) }
+    var compressedImageUri by remember { mutableStateOf<Uri?>(null) }
 
 
     var hasCamPermission by remember {
@@ -136,34 +135,54 @@ fun AddMealScreen(
         )
 
     val photoLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { photoBitmap ->
-            if (photoBitmap != null) {
-                scope.launch {
-                    val result =
-                        imageCropper.crop(bmp = photoBitmap.asImageBitmap())
-                    when (result) {
-                        CropError.LoadingError -> {
-                            Toast.makeText(context, "CropError.LoadingError", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                        CropError.SavingError -> {
-                            Toast.makeText(context, "CropError.SavingError", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                        CropResult.Cancelled -> {
-                            Toast.makeText(context, "CropResult.Cancelled", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                        is CropResult.Success -> {
-                            val file = createImageFile(context)
-                            viewModel.setMealImageUri(
-                                result.bitmap.asAndroidBitmap().toFile(file).toUri()
-                            )
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.TakePicture(),
+            onResult = { success ->
+                if (success) {
+                    if (imageUri != null) {
+                        val bitmap = MediaStore.Images.Media.getBitmap(
+                            context.contentResolver,
+                            imageUri!!.toUri()
+                        )
+                        val compressedBitmap = compressImage(bitmap)
+                        compressedImageUri = saveImage(context, compressedBitmap)
+
+                        scope.launch {
+                            when (imageCropper.crop(uri = imageUri!!.toUri(), context = context)) {
+                                CropError.LoadingError -> {
+                                    Toast.makeText(
+                                        context,
+                                        "CropError.LoadingError",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                }
+                                CropError.SavingError -> {
+                                    Toast.makeText(
+                                        context,
+                                        "CropError.SavingError",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                }
+                                CropResult.Cancelled -> {
+                                    Toast.makeText(
+                                        context,
+                                        "CropResult.Cancelled",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                }
+                                is CropResult.Success -> {
+                                    viewModel.setMealImageUri(
+                                        compressedImageUri
+                                    )
+                                }
+                            }
                         }
                     }
                 }
-            }
-        }
+            })
 
 
     val galleryLauncher =
@@ -184,9 +203,11 @@ fun AddMealScreen(
                                 .show()
                         }
                         is CropResult.Success -> {
-                            val file = createImageFile(context)
                             viewModel.setMealImageUri(
-                                result.bitmap.asAndroidBitmap().toFile(file).toUri()
+                                saveImage(
+                                    context = context,
+                                    bitmap = result.bitmap.asAndroidBitmap()
+                                )
                             )
                         }
                     }
@@ -235,12 +256,32 @@ fun AddMealScreen(
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                         .height(210.dp)
                         .clickable {
-                            photoLauncher.launch(null)
+                            val photoFile = createImageFile(context)
+
+                            if (photoFile != null) {
+                                val photoURI = FileProvider.getUriForFile(
+                                    context,
+                                    context.applicationContext.packageName + ".fileprovider",
+                                    photoFile
+                                )
+                                imageUri = photoFile
+                                photoLauncher.launch(photoURI)
+                            }
                         }
                 ) {
                     if (viewModel.mealImageUri.value == null) {
                         IconButton(onClick = {
-                            photoLauncher.launch(null)
+                            val photoFile = createImageFile(context)
+
+                            if (photoFile != null) {
+                                val photoURI = FileProvider.getUriForFile(
+                                    context,
+                                    context.applicationContext.packageName + ".fileprovider",
+                                    photoFile
+                                )
+                                imageUri = photoFile
+                                photoLauncher.launch(photoURI)
+                            }
                         }) {
                             Icon(
                                 imageVector = Icons.Default.Add,
@@ -264,25 +305,35 @@ fun AddMealScreen(
             }
 
             item {
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(MutableInteractionSource(), null) {
-                            galleryLauncher.launch("image/*")
-                        },
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically
+                        .wrapContentHeight()
+                        .wrapContentWidth()
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = RoundedCornerShape(12.dp)
+                        )
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = null,
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "Add Image",
-                        style = MaterialTheme.typography.labelMedium
-                    )
+                    Row(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .clickable(MutableInteractionSource(), null) {
+                                galleryLauncher.launch("image/*")
+                            },
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null,
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Add image from gallery",
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -558,25 +609,4 @@ fun AddMealScreen(
             }
         }
     }
-}
-
-fun Bitmap.toFile(file: File): File {
-    val fos = FileOutputStream(file)
-    this.compress(Bitmap.CompressFormat.PNG, 100, fos)
-    fos.flush()
-    fos.close()
-    return file
-}
-
-@Throws(IOException::class)
-fun createImageFile(context: Context): File {
-    // Create an image file name
-    val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(Date())
-    val storageDir =
-        context.applicationContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-    return File.createTempFile(
-        "JPEG_${timeStamp}_",
-        ".jpg",
-        storageDir
-    )
 }
