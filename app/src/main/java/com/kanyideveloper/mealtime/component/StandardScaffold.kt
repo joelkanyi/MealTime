@@ -56,7 +56,7 @@ fun StandardScaffold(
         BottomNavItem.Favorites,
         BottomNavItem.Settings
     ),
-    content: @Composable (paddingValues: PaddingValues) -> Unit
+    content: @Composable (paddingValues: PaddingValues) -> Unit,
 ) {
     Scaffold(
         bottomBar = {
@@ -65,7 +65,6 @@ fun StandardScaffold(
 
                 BottomNavigation(
                     backgroundColor = MaterialTheme.colorScheme.background,
-                    // contentColor = MaterialTheme.colorScheme.onBackground,
                     elevation = 5.dp
                 ) {
                     items.forEach { item ->
