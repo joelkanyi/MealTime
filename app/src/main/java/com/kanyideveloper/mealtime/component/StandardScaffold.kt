@@ -65,7 +65,6 @@ fun StandardScaffold(
 
                 BottomNavigation(
                     backgroundColor = MaterialTheme.colorScheme.background,
-                    // contentColor = MaterialTheme.colorScheme.onBackground,
                     elevation = 5.dp
                 ) {
                     items.forEach { item ->

@@ -15,11 +15,16 @@
  */
 package com.kanyideveloper.addmeal.presentation.addmeal
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +37,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -48,10 +56,17 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -62,11 +77,24 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyidev.searchable_dropdown.SearchableExpandedDropDownMenu
 import com.kanyideveloper.compose_ui.components.StandardToolbar
+import com.kanyideveloper.core.util.compressImage
+import com.kanyideveloper.core.util.createImageFile
 import com.kanyideveloper.core.util.imageUriToImageBitmap
+import com.kanyideveloper.core.util.saveImage
+import com.mr0xf00.easycrop.CropError
+import com.mr0xf00.easycrop.CropResult
+import com.mr0xf00.easycrop.crop
+import com.mr0xf00.easycrop.rememberImageCropper
+import com.mr0xf00.easycrop.ui.ImageCropperDialog
 import com.ramcosta.composedestinations.annotation.Destination
+import java.io.File
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
@@ -83,6 +111,113 @@ fun AddMealScreen(
 
     val context = LocalContext.current
 
+    val imageCropper = rememberImageCropper()
+    val scope = rememberCoroutineScope()
+    var imageUri by remember { mutableStateOf<File?>(null) }
+    var compressedImageUri by remember { mutableStateOf<Uri?>(null) }
+
+    var hasCamPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        )
+    }
+
+    val cameraPermissionLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+            onResult = { granted ->
+                hasCamPermission = granted
+            }
+        )
+
+    val photoLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.TakePicture(),
+            onResult = { success ->
+                if (success) {
+                    if (imageUri != null) {
+                        val bitmap = MediaStore.Images.Media.getBitmap(
+                            context.contentResolver,
+                            imageUri!!.toUri()
+                        )
+                        val compressedBitmap = compressImage(bitmap)
+                        compressedImageUri = saveImage(context, compressedBitmap)
+
+                        scope.launch {
+                            when (imageCropper.crop(uri = imageUri!!.toUri(), context = context)) {
+                                CropError.LoadingError -> {
+                                    Toast.makeText(
+                                        context,
+                                        "CropError.LoadingError",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                }
+                                CropError.SavingError -> {
+                                    Toast.makeText(
+                                        context,
+                                        "CropError.SavingError",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                }
+                                CropResult.Cancelled -> {
+                                    Toast.makeText(
+                                        context,
+                                        "CropResult.Cancelled",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                }
+                                is CropResult.Success -> {
+                                    viewModel.setMealImageUri(
+                                        compressedImageUri
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        )
+
+    val galleryLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            if (uri != null) {
+                scope.launch {
+                    when (val result = imageCropper.crop(uri = uri, context = context)) {
+                        CropError.LoadingError -> {
+                            Toast.makeText(context, "CropError.LoadingError", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                        CropError.SavingError -> {
+                            Toast.makeText(context, "CropError.SavingError", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                        CropResult.Cancelled -> {
+                            Toast.makeText(context, "CropResult.Cancelled", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                        is CropResult.Success -> {
+                            viewModel.setMealImageUri(
+                                saveImage(
+                                    context = context,
+                                    bitmap = result.bitmap.asAndroidBitmap()
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+    LaunchedEffect(key1 = true, block = {
+        cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+    })
+
     val sliderInteractionSource = MutableInteractionSource()
     val sliderColors =
         SliderDefaults.colors(
@@ -91,10 +226,8 @@ fun AddMealScreen(
             inactiveTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = .5f)
         )
 
-    val galleryLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            viewModel.setMealImageUri(uri)
-        }
+    val cropState = imageCropper.cropState
+    if (cropState != null) ImageCropperDialog(state = cropState)
 
     Column(Modifier.fillMaxSize()) {
         StandardToolbar(
@@ -122,12 +255,32 @@ fun AddMealScreen(
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                         .height(210.dp)
                         .clickable {
-                            galleryLauncher.launch("image/*")
+                            val photoFile = createImageFile(context)
+
+                            if (photoFile != null) {
+                                val photoURI = FileProvider.getUriForFile(
+                                    context,
+                                    context.applicationContext.packageName + ".fileprovider",
+                                    photoFile
+                                )
+                                imageUri = photoFile
+                                photoLauncher.launch(photoURI)
+                            }
                         }
                 ) {
                     if (viewModel.mealImageUri.value == null) {
                         IconButton(onClick = {
-                            galleryLauncher.launch("image/*")
+                            val photoFile = createImageFile(context)
+
+                            if (photoFile != null) {
+                                val photoURI = FileProvider.getUriForFile(
+                                    context,
+                                    context.applicationContext.packageName + ".fileprovider",
+                                    photoFile
+                                )
+                                imageUri = photoFile
+                                photoLauncher.launch(photoURI)
+                            }
                         }) {
                             Icon(
                                 imageVector = Icons.Default.Add,
@@ -148,6 +301,40 @@ fun AddMealScreen(
                         )
                     }
                 }
+            }
+
+            item {
+                Box(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .wrapContentWidth()
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .clickable(MutableInteractionSource(), null) {
+                                galleryLauncher.launch("image/*")
+                            },
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Add image from gallery",
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
             }
 
             item {
@@ -422,14 +609,3 @@ fun AddMealScreen(
         }
     }
 }
-
-/**
- * Select Image -DONE
- * Enter Food Title - DONE
- * Cooking Time - DONE
- * Serving People - DONE
- * Cooking Complexity - DONE
- * CategoryEntity - DONE
- * Ingredients - DONE
- * Cooking Directions - DONE
- */
