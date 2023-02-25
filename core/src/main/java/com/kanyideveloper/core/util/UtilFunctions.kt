@@ -18,9 +18,11 @@ package com.kanyideveloper.core.util
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.provider.MediaStore
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,9 +37,13 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.gson.Gson
 import com.kanyideveloper.core.model.ErrorResponse
+import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -193,52 +199,40 @@ fun getAppVersionName(context: Context): String {
     return versionName
 }
 
-/*@SuppressLint("SimpleDateFormat")
-fun generateDaysAndMonths(): List<Day> {
-    val calendar = Calendar.getInstance()
+fun compressImage(bitmap: Bitmap): Bitmap {
+    val outputStream = ByteArrayOutputStream()
+    bitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
+    val byteArray = outputStream.toByteArray()
+    return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+}
 
-    val days = mutableListOf<Day>()
+@Throws(IOException::class)
+fun saveImage(context: Context, bitmap: Bitmap): Uri? {
+    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+    val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+    val imageFile = File.createTempFile(
+        "JPEG_${timeStamp}_",
+        ".jpg",
+        storageDir
+    )
 
-    val startYear = 2023
-    val endYear = 2050
-
-    // Create a SimpleDateFormat instance for formatting the fullDate field
-    val dateFormat = SimpleDateFormat("dd/MM/yyyy")
-
-    // Iterate over the years in the given range
-    for (year in startYear..endYear) {
-        // Set the calendar to the first day of the year
-        calendar.set(Calendar.YEAR, year)
-
-        // Iterate over the months of the year
-        for (month in 0..11) {
-            // Set the calendar to the first day of the month
-            calendar.set(Calendar.MONTH, month)
-
-            // Get the number of days in the month
-            val numDaysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-
-            // Iterate over the days of the month
-            for (day in 1..numDaysInMonth) {
-                calendar.set(Calendar.DAY_OF_MONTH, day)
-                val dayOfWeek = calendar.getDisplayName(
-                    Calendar.DAY_OF_WEEK,
-                    Calendar.SHORT,
-                    Locale.getDefault()
-                )
-                val displayDate = String.format("%02d", day) // format the day to always have two digits
-                val fullDate = dateFormat.format(calendar.time) // use the SimpleDateFormat to format the fullDate field
-                val displayMonth = calendar.getDisplayName(
-                    Calendar.MONTH,
-                    Calendar.SHORT,
-                    Locale.getDefault()
-                )
-                val year = calendar.get(Calendar.YEAR).toString()
-                val day = Day(dayOfWeek, displayDate, fullDate, displayMonth, year)
-                days.add(day)
-            }
+    return try {
+        imageFile.outputStream().use { outputStream ->
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
         }
+        Uri.fromFile(imageFile)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
+}
 
-    return days
-}*/
+fun createImageFile(context: Context): File? {
+    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+    val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+    return File.createTempFile(
+        "JPEG_${timeStamp}_",
+        ".jpg",
+        storageDir
+    )
+}

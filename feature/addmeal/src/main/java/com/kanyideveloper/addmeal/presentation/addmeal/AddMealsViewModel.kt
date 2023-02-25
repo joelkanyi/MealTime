@@ -28,6 +28,7 @@ import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.state.TextFieldState
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.UiEvents
+import com.mr0xf00.easycrop.ImageCropper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -39,6 +40,7 @@ class AddMealsViewModel @Inject constructor(
     private val uploadImageRepository: UploadImageRepository,
     private val saveMealRepository: SaveMealRepository
 ) : ViewModel() {
+    val imageCropper = ImageCropper()
 
     private val _mealImageUri = mutableStateOf<Uri?>(null)
     val mealImageUri: State<Uri?> = _mealImageUri
