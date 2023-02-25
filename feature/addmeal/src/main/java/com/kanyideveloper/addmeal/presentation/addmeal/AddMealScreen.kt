@@ -93,15 +93,15 @@ import com.mr0xf00.easycrop.crop
 import com.mr0xf00.easycrop.rememberImageCropper
 import com.mr0xf00.easycrop.ui.ImageCropperDialog
 import com.ramcosta.composedestinations.annotation.Destination
-import kotlinx.coroutines.launch
 import java.io.File
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
 fun AddMealScreen(
     navigator: AddMealNavigator,
-    viewModel: AddMealsViewModel = hiltViewModel(),
+    viewModel: AddMealsViewModel = hiltViewModel()
 ) {
     val mealName = viewModel.mealName.value
     val category = viewModel.category.value
@@ -116,13 +116,12 @@ fun AddMealScreen(
     var imageUri by remember { mutableStateOf<File?>(null) }
     var compressedImageUri by remember { mutableStateOf<Uri?>(null) }
 
-
     var hasCamPermission by remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(
                 context,
-                Manifest.permission.CAMERA,
-            ) == PackageManager.PERMISSION_GRANTED,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
         )
     }
 
@@ -131,7 +130,7 @@ fun AddMealScreen(
             contract = ActivityResultContracts.RequestPermission(),
             onResult = { granted ->
                 hasCamPermission = granted
-            },
+            }
         )
 
     val photoLauncher =
@@ -182,8 +181,8 @@ fun AddMealScreen(
                         }
                     }
                 }
-            })
-
+            }
+        )
 
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -326,7 +325,7 @@ fun AddMealScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
-                            contentDescription = null,
+                            contentDescription = null
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
