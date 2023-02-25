@@ -56,7 +56,7 @@ fun StandardScaffold(
         BottomNavItem.Favorites,
         BottomNavItem.Settings
     ),
-    content: @Composable (paddingValues: PaddingValues) -> Unit,
+    content: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
     Scaffold(
         bottomBar = {
