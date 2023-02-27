@@ -7,7 +7,7 @@ object AndroidConfig {
     const val minSDK = 21
     const val targetSDK = 33
     const val compileSDK = 33
-    const val versionCode = 11
+    const val versionCode = 12
     const val versionName = "1.0.9"
     const val applicationId = "com.kanyideveloper.mealtime"
 

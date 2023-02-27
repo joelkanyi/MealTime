@@ -15,6 +15,7 @@
  */
 package com.kanyideveloper.core.util
 
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
@@ -33,4 +34,7 @@ object Constants {
     val ALLERGIES = stringSetPreferencesKey("allergies")
     val NUMBER_OF_PEOPLE = stringPreferencesKey("number_of_people")
     val DISH_TYPES = stringSetPreferencesKey("dish_types")
+    val SUBSCRIPTION = booleanPreferencesKey("subscription")
+    val PURCHASE_ID = "product_premium_subscription"
+    val QONVERSION_PROJECT_KEY = "fuin-2K_eXiH5zYAUIlXaIPEn0BDiWI9"
 }

@@ -16,14 +16,29 @@
 package com.kanyideveloper.mealtime
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.kanyideveloper.core.domain.SubscriptionRepository
 import com.kanyideveloper.core.domain.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    userDataRepository: UserDataRepository
+    userDataRepository: UserDataRepository,
+    private val subscriptionRepository: SubscriptionRepository,
 ) : ViewModel() {
 
     val theme = userDataRepository.themeStream
+
+    val subscriptionStatusUiState = subscriptionRepository.subscriptionStatusUiState
+    fun updateSubscriptionStatus() {
+        viewModelScope.launch {
+            subscriptionRepository.updateSubscriptionStatus()
+        }
+    }
+
+    init {
+        updateSubscriptionStatus()
+    }
 }

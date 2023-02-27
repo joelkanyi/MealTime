@@ -91,4 +91,11 @@ dependencies {
 
     // Compose Image Cropper
     implementation("io.github.mr0xf00:easycrop:0.1.1")
+
+    // Billing
+    def billing_version = "5.1.0" // for today, it's the latest
+    implementation("com.android.billingclient:billing:$billing_version")
+
+    // Qonversion
+    implementation("io.qonversion.android.sdk:sdk:4.2.0")
 }

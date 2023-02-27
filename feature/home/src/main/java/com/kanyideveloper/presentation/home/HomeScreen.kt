@@ -17,14 +17,18 @@ package com.kanyideveloper.presentation.home
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.TextButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -32,6 +36,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -43,6 +48,7 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.state.SubscriptionStatusUiState
 import com.kanyideveloper.mealtime.core.R
 import com.kanyideveloper.presentation.home.composables.TabItem
 import com.kanyideveloper.presentation.home.composables.Tabs
@@ -55,6 +61,8 @@ interface HomeNavigator {
     fun popBackStack()
     fun openOnlineMealDetails(mealId: String)
     fun openRandomMeals()
+
+    fun subscribe()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,68 +71,100 @@ interface HomeNavigator {
 @Composable
 fun HomeScreen(
     navigator: HomeNavigator,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
-    Scaffold(
-        topBar = {
-            StandardToolbar(
-                navigate = {},
-                title = {
-                    Image(
-                        modifier = Modifier.size(100.dp, 100.dp),
-                        painter = painterResource(id = R.drawable.ic_meal_time_banner),
-                        contentDescription = null
-                    )
-                },
-                showBackArrow = false,
-                navActions = {}
-            )
-        },
-        floatingActionButton = {
-            if (viewModel.isMyMeal.value) {
-                FloatingActionButton(
-                    modifier = Modifier
-                        .height(50.dp),
-                    shape = MaterialTheme.shapes.large,
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    content = {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.fork_knife_thin),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onTertiary
-                            )
-                            Spacer(modifier = Modifier.width(5.dp))
-                            Text(
-                                text = "Add Meal",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onTertiary
+    val isSubscribed = viewModel.isSubscribed.collectAsState().value
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        when (isSubscribed) {
+            is SubscriptionStatusUiState.Success -> {
+                Scaffold(
+                    topBar = {
+                        StandardToolbar(
+                            navigate = {},
+                            title = {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Image(
+                                        modifier = Modifier.size(100.dp, 100.dp),
+                                        painter = painterResource(id = R.drawable.ic_meal_time_banner),
+                                        contentDescription = null
+                                    )
+
+                                    if (!isSubscribed.isSubscribed) {
+                                        TextButton(
+                                            onClick = {
+                                                navigator.subscribe()
+                                            }
+                                        ) {
+                                            Text(
+                                                text = "Upgrade to Premium",
+                                                style = MaterialTheme.typography.titleSmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    }
+                                }
+                            },
+                            showBackArrow = false,
+                            navActions = {}
+                        )
+                    },
+                    floatingActionButton = {
+                        if (viewModel.isMyMeal.value && isSubscribed.isSubscribed) {
+                            FloatingActionButton(
+                                modifier = Modifier
+                                    .height(50.dp),
+                                shape = MaterialTheme.shapes.large,
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                content = {
+                                    Row(
+                                        modifier = Modifier.padding(
+                                            horizontal = 12.dp,
+                                            vertical = 8.dp
+                                        ),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.fork_knife_thin),
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.onTertiary
+                                        )
+                                        Spacer(modifier = Modifier.width(5.dp))
+                                        Text(
+                                            text = "Add Meal",
+                                            style = MaterialTheme.typography.labelMedium,
+                                            color = MaterialTheme.colorScheme.onTertiary
+                                        )
+                                    }
+                                },
+                                onClick = {
+                                    navigator.openAddMeal()
+                                }
                             )
                         }
-                    },
-                    onClick = {
-                        navigator.openAddMeal()
                     }
-                )
-            }
-        }
-    ) { paddingValues ->
-        MainContent(
-            navigator = navigator,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues = paddingValues),
-            onClick = { page ->
-                if (page == 0) {
-                    viewModel.setIsMyMeal(true)
-                } else {
-                    viewModel.setIsMyMeal(false)
+                ) { paddingValues ->
+                    MainContent(
+                        navigator = navigator,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues = paddingValues),
+                        onClick = { page ->
+                            if (page == 0) {
+                                viewModel.setIsMyMeal(true)
+                            } else {
+                                viewModel.setIsMyMeal(false)
+                            }
+                        }
+                    )
                 }
             }
-        )
+            else -> {}
+        }
     }
 }
 
@@ -133,7 +173,7 @@ fun HomeScreen(
 fun MainContent(
     navigator: HomeNavigator,
     modifier: Modifier = Modifier,
-    onClick: (Int) -> Unit
+    onClick: (Int) -> Unit,
 ) {
     val listOfTabs = listOf(
         TabItem.Outgoing(navigator = navigator),
@@ -160,7 +200,7 @@ fun MainContent(
 @Composable
 fun TabContent(
     tabs: List<TabItem>,
-    pagerState: PagerState
+    pagerState: PagerState,
 ) {
     HorizontalPager(
         count = tabs.size,

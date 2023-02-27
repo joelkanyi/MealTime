@@ -24,17 +24,33 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kanyideveloper.core.domain.FavoritesRepository
 import com.kanyideveloper.core.domain.HomeRepository
+import com.kanyideveloper.core.domain.SubscriptionRepository
 import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.state.SubscriptionStatusUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
-    private val favoritesRepository: FavoritesRepository
+    private val favoritesRepository: FavoritesRepository,
+    subscriptionRepository: SubscriptionRepository,
 ) : ViewModel() {
+
+    val isSubscribed: StateFlow<SubscriptionStatusUiState> =
+        subscriptionRepository.isSubscribed
+            .map(SubscriptionStatusUiState::Success)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = SubscriptionStatusUiState.Loading,
+            )
 
     private val _myMeals = MutableLiveData<LiveData<List<Meal>>>()
     val myMeals: LiveData<LiveData<List<Meal>>> = _myMeals
@@ -74,7 +90,7 @@ class HomeViewModel @Inject constructor(
         onlineMealId: String? = null,
         localMealId: Int? = null,
         mealImageUrl: String,
-        mealName: String
+        mealName: String,
     ) {
         viewModelScope.launch {
             val favorite = Favorite(

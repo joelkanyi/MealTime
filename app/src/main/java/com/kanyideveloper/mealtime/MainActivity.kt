@@ -16,8 +16,10 @@
 package com.kanyideveloper.mealtime
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,13 +32,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.kanyideveloper.compose_ui.theme.MealTimeTheme
 import com.kanyideveloper.compose_ui.theme.Theme
+import com.kanyideveloper.core.util.Constants.PURCHASE_ID
 import com.kanyideveloper.favorites.presentation.favorites.presentation.destinations.FavoritesScreenDestination
 import com.kanyideveloper.mealplanner.destinations.MealPlannerScreenDestination
 import com.kanyideveloper.mealtime.component.StandardScaffold
@@ -50,6 +52,10 @@ import com.kanyideveloper.mealtime.navigation.scaleOutPopExitTransition
 import com.kanyideveloper.presentation.destinations.HomeScreenDestination
 import com.kanyideveloper.search.presentation.search.destinations.SearchScreenDestination
 import com.kanyideveloper.settings.presentation.destinations.SettingsScreenDestination
+import com.qonversion.android.sdk.Qonversion
+import com.qonversion.android.sdk.dto.QEntitlement
+import com.qonversion.android.sdk.dto.QonversionError
+import com.qonversion.android.sdk.listeners.QonversionEntitlementsCallback
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.NestedNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
@@ -64,11 +70,17 @@ class MainActivity : ComponentActivity() {
 
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        installSplashScreen()
-        setContent {
-            val viewModel: MainViewModel = hiltViewModel()
+        val viewModel: MainViewModel by viewModels()
 
+        super.onCreate(savedInstanceState)
+        installSplashScreen().apply {
+            setKeepOnScreenCondition(
+                condition = {
+                    viewModel.subscriptionStatusUiState
+                }
+            )
+        }
+        setContent {
             val themeValue by viewModel.theme.collectAsState(
                 initial = Theme.FOLLOW_SYSTEM.themeValue,
                 context = Dispatchers.Main.immediate
@@ -99,7 +111,13 @@ class MainActivity : ComponentActivity() {
                             AppNavigation(
                                 navController = navController,
                                 modifier = Modifier
-                                    .fillMaxSize()
+                                    .fillMaxSize(),
+                                subscribe = {
+                                    subscribeUser(onSuccess = {
+                                        Qonversion.shared.syncPurchases()
+                                        viewModel.updateSubscriptionStatus()
+                                    })
+                                }
                             )
                         }
                     }
@@ -107,14 +125,44 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    private fun subscribeUser(onSuccess: () -> Unit) {
+        Qonversion.shared.purchase(
+            this@MainActivity,
+            id = PURCHASE_ID,
+            object : QonversionEntitlementsCallback {
+                override fun onError(error: QonversionError) {
+                    Toast
+                        .makeText(
+                            this@MainActivity,
+                            "Purchase failed: ${error.description}, ${error.additionalMessage}",
+                            Toast.LENGTH_LONG
+                        )
+                        .show()
+                }
+
+                override fun onSuccess(entitlements: Map<String, QEntitlement>) {
+                    onSuccess()
+                    Toast
+                        .makeText(
+                            this@MainActivity,
+                            "Purchase successful",
+                            Toast.LENGTH_LONG
+                        )
+                        .show()
+                }
+            }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterialNavigationApi::class)
 @ExperimentalAnimationApi
 @Composable
 internal fun AppNavigation(
+    subscribe: () -> Unit,
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val navHostEngine = rememberAnimatedNavHostEngine(
         navHostContentAlignment = Alignment.TopCenter,
@@ -199,14 +247,15 @@ internal fun AppNavigation(
         navGraph = NavGraphs.root,
         modifier = modifier,
         dependenciesContainerBuilder = {
-            dependency(currentNavigator())
+            dependency(currentNavigator(subscribe = subscribe))
         }
     )
 }
 
-fun DestinationScope<*>.currentNavigator(): CoreFeatureNavigator {
+fun DestinationScope<*>.currentNavigator(subscribe: () -> Unit): CoreFeatureNavigator {
     return CoreFeatureNavigator(
         navGraph = navBackStackEntry.destination.navGraph(),
-        navController = navController
+        navController = navController,
+        subscribe = subscribe
     )
 }

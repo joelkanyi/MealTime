@@ -21,6 +21,8 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.google.gson.Gson
+import com.kanyideveloper.core.data.SubscriptionRepositoryImpl
+import com.kanyideveloper.core.domain.SubscriptionRepository
 import com.kanyideveloper.core.util.Constants.MEALTIME_PREFERENCES
 import dagger.Module
 import dagger.Provides
@@ -51,4 +53,12 @@ object AppModule {
                 context.preferencesDataStoreFile(MEALTIME_PREFERENCES)
             }
         )
+
+    @Provides
+    @Singleton
+    fun provideSubscriptionRepository(dataStore: DataStore<Preferences>): SubscriptionRepository {
+        return SubscriptionRepositoryImpl(
+            dataStore = dataStore
+        )
+    }
 }
