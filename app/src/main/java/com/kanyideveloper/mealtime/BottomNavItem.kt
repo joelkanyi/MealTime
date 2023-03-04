@@ -29,7 +29,7 @@ sealed class BottomNavItem(var title: String, var icon: Int, var screen: NavGrap
     object KitchenTimer : BottomNavItem(
         title = "Timer",
         icon = R.drawable.ic_timer,
-        screen = NavGraphs.search
+        screen = NavGraphs.kitchenTimer
     )
 
     object MealPlanner : BottomNavItem(

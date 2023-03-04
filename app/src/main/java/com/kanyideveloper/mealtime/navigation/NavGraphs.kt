@@ -15,6 +15,8 @@
  */
 package com.kanyideveloper.mealtime.navigation
 
+import com.joelkanyi.kitchen_timer.presentation.KitchenTimerScreen
+import com.joelkanyi.kitchen_timer.presentation.destinations.KitchenTimerScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
 import com.kanyideveloper.favorites.presentation.favorites.presentation.destinations.FavoritesScreenDestination
@@ -63,6 +65,17 @@ object NavGraphs {
         override val destinationsByRoute = listOf<DestinationSpec<*>>(
             SearchScreenDestination,
             OnlineMealDetailsScreenDestination
+        ).routedIn(this)
+            .associateBy { it.route }
+    }
+
+    val kitchenTimer = object : NavGraphSpec {
+        override val route = "kitchen-timer"
+
+        override val startRoute = KitchenTimerScreenDestination routedIn this
+
+        override val destinationsByRoute = listOf<DestinationSpec<*>>(
+            KitchenTimerScreenDestination
         ).routedIn(this)
             .associateBy { it.route }
     }
@@ -120,7 +133,8 @@ object NavGraphs {
             search,
             mealPlanner,
             favorites,
-            settings
+            settings,
+            kitchenTimer
         )
     }
 }

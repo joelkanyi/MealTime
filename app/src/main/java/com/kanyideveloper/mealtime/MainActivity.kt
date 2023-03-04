@@ -36,6 +36,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
+import com.joelkanyi.kitchen_timer.presentation.destinations.KitchenTimerScreenDestination
 import com.kanyideveloper.compose_ui.theme.MealTimeTheme
 import com.kanyideveloper.compose_ui.theme.Theme
 import com.kanyideveloper.core.util.Constants.PURCHASE_ID
@@ -101,6 +102,7 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         showBottomBar = route in listOf(
                             "home/${HomeScreenDestination.route}",
+                            "kitchen-timer/${KitchenTimerScreenDestination.route}",
                             "meal_planner/${MealPlannerScreenDestination.route}",
                             "favorites/${FavoritesScreenDestination.route}",
                             "settings/${SettingsScreenDestination.route}"

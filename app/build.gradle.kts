@@ -77,6 +77,7 @@ dependencies {
     implementation(project(Modules.settings))
     implementation(project(Modules.addMeal))
     implementation(project(Modules.mealPlanner))
+    implementation(project(Modules.kitchenTimer))
 
     // RamCosta Navigation
     implementation("io.github.raamcosta.compose-destinations:animations-core:1.7.32-beta")
