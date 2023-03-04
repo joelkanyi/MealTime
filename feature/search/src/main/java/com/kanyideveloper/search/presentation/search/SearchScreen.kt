@@ -85,13 +85,15 @@ import kotlinx.coroutines.flow.collectLatest
 
 interface SearchNavigator {
     fun openOnlineMealDetails(mealId: String)
+
+    fun popBackStack()
 }
 
 @Destination
 @Composable
 fun SearchScreen(
     navigator: SearchNavigator,
-    viewModel: SearchViewModel = hiltViewModel()
+    viewModel: SearchViewModel = hiltViewModel(),
 ) {
     val searchState = viewModel.searchState.value
     val context = LocalContext.current
@@ -139,6 +141,9 @@ fun SearchScreen(
         },
         onMealClick = { mealId ->
             navigator.openOnlineMealDetails(mealId = mealId)
+        },
+        onClickBack = {
+            navigator.popBackStack()
         }
     )
 }
@@ -153,7 +158,8 @@ private fun SearchScreenContent(
     onSearch: (String) -> Unit,
     currentSearchString: String,
     isSelected: (String) -> Boolean,
-    onSearchOptionClick: (String) -> Unit
+    onSearchOptionClick: (String) -> Unit,
+    onClickBack: () -> Unit,
 ) {
     Column(
         Modifier
@@ -162,12 +168,14 @@ private fun SearchScreenContent(
     ) {
         StandardToolbar(
             navigate = {
+                onClickBack()
             },
             title = {
                 Text(text = "Search", fontSize = 18.sp)
             },
-            showBackArrow = false,
+            showBackArrow = true,
             navActions = {
+
             }
         )
 
@@ -230,7 +238,7 @@ private val searchOptions = listOf("Meal Name", "Ingredient", "Meal Category")
 fun SearchOptionsComponent(
     options: List<String>,
     onClick: (String) -> Unit,
-    isSelected: (String) -> Boolean
+    isSelected: (String) -> Boolean,
 ) {
     LazyRow {
         items(options) { option ->
@@ -247,7 +255,7 @@ fun SearchOptionsComponent(
 fun SearchOption(
     option: String,
     onClick: (String) -> Unit,
-    isSelected: (String) -> Boolean
+    isSelected: (String) -> Boolean,
 ) {
     Card(
         Modifier
@@ -293,7 +301,7 @@ fun SearchBar(
     modifier: Modifier = Modifier,
     onSearch: (String) -> Unit = {},
     onSearchStringChange: (String) -> Unit,
-    currentSearchString: String
+    currentSearchString: String,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -350,7 +358,7 @@ fun OnlineMealItem(
     onClick: (String) -> Unit,
     addToFavorites: (String, String, String) -> Unit,
     removeFromFavorites: (String) -> Unit,
-    viewModel: SearchViewModel = hiltViewModel()
+    viewModel: SearchViewModel = hiltViewModel(),
 ) {
     val isFavorite = viewModel.inOnlineFavorites(id = meal.mealId).observeAsState().value != null
 

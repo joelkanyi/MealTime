@@ -51,7 +51,7 @@ fun StandardScaffold(
     showBottomBar: Boolean = true,
     items: List<BottomNavItem> = listOf(
         BottomNavItem.Home,
-        BottomNavItem.Search,
+        BottomNavItem.KitchenTimer,
         BottomNavItem.MealPlanner,
         BottomNavItem.Favorites,
         BottomNavItem.Settings

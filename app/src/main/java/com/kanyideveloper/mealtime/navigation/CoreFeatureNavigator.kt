@@ -33,6 +33,7 @@ import com.kanyideveloper.presentation.destinations.OnlineMealDetailsScreenDesti
 import com.kanyideveloper.presentation.destinations.RandomOnlineMealDetailsScreenDestination
 import com.kanyideveloper.presentation.home.HomeNavigator
 import com.kanyideveloper.search.presentation.search.SearchNavigator
+import com.kanyideveloper.search.presentation.search.destinations.SearchScreenDestination
 import com.kanyideveloper.settings.presentation.SettingsNavigator
 import com.kanyideveloper.settings.presentation.destinations.SettingsScreenDestination
 import com.ramcosta.composedestinations.dynamic.within
@@ -128,6 +129,10 @@ class CoreFeatureNavigator(
 
     override fun openRandomMeals() {
         navController.navigate(RandomOnlineMealDetailsScreenDestination within navGraph)
+    }
+
+    override fun onSearchClick() {
+        navController.navigate(SearchScreenDestination within navGraph)
     }
 
     override fun subscribe() {

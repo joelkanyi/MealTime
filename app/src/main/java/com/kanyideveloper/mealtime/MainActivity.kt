@@ -101,7 +101,6 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         showBottomBar = route in listOf(
                             "home/${HomeScreenDestination.route}",
-                            "search/${SearchScreenDestination.route}",
                             "meal_planner/${MealPlannerScreenDestination.route}",
                             "favorites/${FavoritesScreenDestination.route}",
                             "settings/${SettingsScreenDestination.route}"

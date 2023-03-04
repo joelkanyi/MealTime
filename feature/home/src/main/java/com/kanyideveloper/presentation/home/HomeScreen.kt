@@ -17,6 +17,10 @@ package com.kanyideveloper.presentation.home
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +33,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.TextButton
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -47,6 +53,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.kanyideveloper.compose_ui.components.StandardToolbar
+import com.kanyideveloper.compose_ui.theme.Shapes
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.state.SubscriptionStatusUiState
 import com.kanyideveloper.mealtime.core.R
@@ -61,6 +68,8 @@ interface HomeNavigator {
     fun popBackStack()
     fun openOnlineMealDetails(mealId: String)
     fun openRandomMeals()
+
+    fun onSearchClick()
 
     fun subscribe()
 }
@@ -84,7 +93,9 @@ fun HomeScreen(
                             navigate = {},
                             title = {
                                 Row(
-                                    modifier = Modifier.fillMaxWidth(),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp),
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
@@ -94,7 +105,7 @@ fun HomeScreen(
                                         contentDescription = null
                                     )
 
-                                    if (!isSubscribed.isSubscribed) {
+                                    /* if (!isSubscribed.isSubscribed) {
                                         TextButton(
                                             onClick = {
                                                 navigator.subscribe()
@@ -104,6 +115,33 @@ fun HomeScreen(
                                                 text = "Upgrade to Premium",
                                                 style = MaterialTheme.typography.titleSmall,
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    } */
+
+                                    Card(
+                                        modifier = Modifier
+                                            .size(42.dp),
+                                        shape = Shapes.large,
+                                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                                        onClick = {
+                                            navigator.onSearchClick()
+                                        },
+                                        elevation = CardDefaults.cardElevation(
+                                            defaultElevation = 4.dp
+                                        )
+                                    ) {
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .padding(8.dp),
+                                            verticalArrangement = Arrangement.Center,
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Icon(
+                                                painterResource(id = R.drawable.ic_search),
+                                                contentDescription = "Search",
+                                                tint = MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         }
                                     }

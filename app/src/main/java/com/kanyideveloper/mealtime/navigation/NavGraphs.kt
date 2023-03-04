@@ -49,7 +49,8 @@ object NavGraphs {
             DetailsScreenDestination,
             AddMealScreenDestination,
             NextAddMealScreenDestination,
-            RandomOnlineMealDetailsScreenDestination
+            RandomOnlineMealDetailsScreenDestination,
+            SearchScreenDestination
         ).routedIn(this)
             .associateBy { it.route }
     }
