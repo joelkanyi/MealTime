@@ -39,7 +39,7 @@ import com.kanyideveloper.mealplanner.data.mapper.toMealPlan
 import com.kanyideveloper.mealplanner.data.mapper.toOnlineMeal
 import com.kanyideveloper.mealplanner.domain.repository.MealPlannerRepository
 import com.kanyideveloper.mealplanner.model.MealPlan
-import com.kanyideveloper.mealplanner.notifications.MyAlarm
+import com.kanyideveloper.core.notifications.NotificationReceiver
 import java.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -197,7 +197,7 @@ class MealPlannerRepositoryImpl(
         calendar.set(Calendar.SECOND, 0)
 
         val alarmManager = context.getSystemService(ComponentActivity.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, MyAlarm::class.java)
+        val intent = Intent(context, NotificationReceiver::class.java)
 
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
@@ -231,7 +231,7 @@ class MealPlannerRepositoryImpl(
         calendar.set(Calendar.SECOND, 0)
 
         val alarmManager = context.getSystemService(ComponentActivity.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, MyAlarm::class.java)
+        val intent = Intent(context, NotificationReceiver::class.java)
 
         // Add the desired parameters to the intent
         intent.putExtra("MESSAGE", "Breakfast")
@@ -263,7 +263,7 @@ class MealPlannerRepositoryImpl(
         calendar.set(Calendar.SECOND, 0)
 
         val alarmManager = context.getSystemService(ComponentActivity.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, MyAlarm::class.java)
+        val intent = Intent(context, NotificationReceiver::class.java)
 
         // Add the desired parameters to the intent
         intent.putExtra("MESSAGE", "Dinner")
@@ -295,7 +295,7 @@ class MealPlannerRepositoryImpl(
         calendar.set(Calendar.SECOND, 0)
 
         val alarmManager = context.getSystemService(ComponentActivity.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, MyAlarm::class.java)
+        val intent = Intent(context, NotificationReceiver::class.java)
 
         // Add the desired parameters to the intent
         intent.putExtra("MESSAGE", "Dessert")

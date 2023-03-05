@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.mealplanner.notifications
+package com.kanyideveloper.core.notifications
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -26,7 +26,7 @@ import com.kanyideveloper.mealtime.core.R
 import timber.log.Timber
 
 // @AndroidEntryPoint
-class MyAlarm : BroadcastReceiver() {
+class NotificationReceiver : BroadcastReceiver() {
 
     /*@Inject
     lateinit var mealPlannerRepository: MealPlannerRepository*/
