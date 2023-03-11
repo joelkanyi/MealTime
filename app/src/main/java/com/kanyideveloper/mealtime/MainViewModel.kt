@@ -19,7 +19,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kanyideveloper.core.domain.SubscriptionRepository
 import com.kanyideveloper.core.domain.UserDataRepository
+import com.kanyideveloper.core.state.SubscriptionStatusUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,6 +35,15 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     val theme = userDataRepository.themeStream
+
+    val isSubscribed: StateFlow<SubscriptionStatusUiState> =
+        subscriptionRepository.isSubscribed
+            .map(SubscriptionStatusUiState::Success)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = SubscriptionStatusUiState.Loading,
+            )
 
     val subscriptionStatusUiState = subscriptionRepository.subscriptionStatusUiState
     fun updateSubscriptionStatus() {

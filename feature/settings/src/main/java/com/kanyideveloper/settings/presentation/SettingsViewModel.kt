@@ -19,18 +19,34 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kanyideveloper.core.domain.SubscriptionRepository
 import com.kanyideveloper.core.domain.UserDataRepository
+import com.kanyideveloper.core.state.SubscriptionStatusUiState
 import com.kanyideveloper.core.state.TextFieldState
 import com.kanyideveloper.core.util.UiEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val userDataRepository: UserDataRepository
+    private val userDataRepository: UserDataRepository,
+    subscriptionRepository: SubscriptionRepository,
 ) : ViewModel() {
+
+    val isSubscribed: StateFlow<SubscriptionStatusUiState> =
+        subscriptionRepository.isSubscribed
+            .map(SubscriptionStatusUiState::Success)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = SubscriptionStatusUiState.Loading
+            )
 
     private val _eventsFlow = MutableSharedFlow<UiEvents>()
     val eventsFlow = _eventsFlow
@@ -39,6 +55,12 @@ class SettingsViewModel @Inject constructor(
     val shouldShowThemesDialog: State<Boolean> = _shouldShowThemesDialog
     fun setShowThemesDialogState(value: Boolean) {
         _shouldShowThemesDialog.value = value
+    }
+
+    private val _shouldShowSubscriptionDialog = mutableStateOf(false)
+    val shouldShowSubscriptionDialog: State<Boolean> = _shouldShowSubscriptionDialog
+    fun setShowSubscriptionDialogState(value: Boolean) {
+        _shouldShowSubscriptionDialog.value = value
     }
 
     private val _shouldShowFeedbackDialog = mutableStateOf(false)

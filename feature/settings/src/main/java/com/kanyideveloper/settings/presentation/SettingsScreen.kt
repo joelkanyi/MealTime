@@ -15,12 +15,14 @@
  */
 package com.kanyideveloper.settings.presentation
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,6 +35,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -44,6 +47,8 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.compose_ui.components.StandardToolbar
+import com.kanyideveloper.core.components.PremiumCard
+import com.kanyideveloper.core.state.SubscriptionStatusUiState
 import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.core.util.getAppVersionName
 import com.kanyideveloper.mealtime.core.R
@@ -54,6 +59,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 
 interface SettingsNavigator {
     fun openAllergiesScreen(editMealPlanPreference: Boolean)
+    fun subscribe()
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -61,13 +67,14 @@ interface SettingsNavigator {
 @Composable
 fun SettingsScreen(
     navigator: SettingsNavigator,
-    viewModel: SettingsViewModel = hiltViewModel()
+    viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val shouldShowThemesDialog = viewModel.shouldShowThemesDialog.value
     val shouldShowFeedbackDialog = viewModel.shouldShowFeedbackDialog.value
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val isSubscribed = viewModel.isSubscribed.collectAsState().value
 
     LaunchedEffect(key1 = true) {
         viewModel.eventsFlow.collect { event ->
@@ -144,80 +151,170 @@ fun SettingsScreen(
             )
         }
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            LazyColumn(
-                contentPadding = paddingValues,
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(settingsOptions) { setting ->
-                    SettingCard(
-                        title = setting.title,
-                        icon = setting.icon,
-                        onClick = { settingsOption ->
-                            when (settingsOption) {
-                                "Change Your Theme" -> {
-                                    viewModel.setShowThemesDialogState(
-                                        !viewModel.shouldShowThemesDialog.value
-                                    )
-                                }
-                                "Edit Meal Plan Preferences" -> {
-                                    navigator.openAllergiesScreen(editMealPlanPreference = true)
-                                }
-                                "Suggest or Report Anything" -> {
-                                    viewModel.setShowFeedbackDialogState(
-                                        !viewModel.shouldShowFeedbackDialog.value
-                                    )
-                                }
-                                "Rate Us on Play Store" -> {
-                                    val rateIntent = Intent(
-                                        Intent.ACTION_VIEW,
-                                        Uri.parse("market://details?id=" + context.packageName)
-                                    )
-                                    startActivity(context, rateIntent, null)
-                                }
-                                "Share the App with Friends" -> {
-                                    val appPackageName = context.packageName
-                                    val sendIntent = Intent()
-                                    sendIntent.action = Intent.ACTION_SEND
-                                    sendIntent.putExtra(
-                                        Intent.EXTRA_TEXT,
-                                        "Check out MealTime App on Play Store that helps your create your own recipes, search new ones online, create meal plans for a whole day, week or even a month: https://play.google.com/store/apps/details?id=$appPackageName"
-                                    )
-                                    sendIntent.type = "text/plain"
-                                    context.startActivity(sendIntent)
-                                }
-                            }
-                        }
-                    )
+        if (viewModel.shouldShowSubscriptionDialog.value) {
+            PremiumCard(
+                onDismiss = {
+                    viewModel.setShowSubscriptionDialogState(false)
+                },
+                onClickSubscribe = {
+                    navigator.subscribe()
+                    viewModel.setShowSubscriptionDialogState(false)
+                }
+            )
+        }
+
+        when (isSubscribed) {
+            SubscriptionStatusUiState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "Loading...")
                 }
             }
-
-            Column(
-                modifier = Modifier.padding(16.dp).align(Alignment.BottomCenter),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(2.dp)
-            ) {
-                Text(
-                    text = "App Version: ${getAppVersionName(context)}",
-                    modifier = Modifier,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontSize = 11.sp
+            is SubscriptionStatusUiState.Success -> {
+                SettingsScreenContent(
+                    isSubscribed = isSubscribed.isSubscribed,
+                    paddingValues = paddingValues,
+                    navigator = navigator,
+                    context = context,
+                    onChangeTheme = {
+                        viewModel.setShowThemesDialogState(
+                            !viewModel.shouldShowThemesDialog.value
+                        )
+                    },
+                    onReportOrSuggest = {
+                        viewModel.setShowFeedbackDialogState(
+                            !viewModel.shouldShowFeedbackDialog.value
+                        )
+                    },
+                    onSubscribe = {
+                        viewModel.setShowSubscriptionDialogState(true)
+                    }
                 )
+            }
+        }
 
-                Text(
-                    text = "Made with ❤️ by Joel Kanyi 🇰🇪",
-                    modifier = Modifier,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontSize = 12.sp
+
+        when (isSubscribed) {
+            SubscriptionStatusUiState.Loading -> {
+
+            }
+            is SubscriptionStatusUiState.Success -> {
+                SettingsScreenContent(
+                    isSubscribed = isSubscribed.isSubscribed,
+                    paddingValues = paddingValues,
+                    navigator = navigator,
+                    context = context,
+                    onChangeTheme = {
+                        viewModel.setShowThemesDialogState(
+                            !viewModel.shouldShowThemesDialog.value
+                        )
+                    },
+                    onReportOrSuggest = {
+                        viewModel.setShowFeedbackDialogState(
+                            !viewModel.shouldShowFeedbackDialog.value
+                        )
+                    },
+                    onSubscribe = {
+                        viewModel.setShowSubscriptionDialogState(true)
+                    }
                 )
             }
         }
     }
 }
 
+@Composable
+private fun SettingsScreenContent(
+    paddingValues: PaddingValues,
+    navigator: SettingsNavigator,
+    context: Context,
+    onChangeTheme: () -> Unit,
+    onReportOrSuggest: () -> Unit,
+    isSubscribed: Boolean,
+    onSubscribe: () -> Unit,
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            contentPadding = paddingValues,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            val filteredSettingsOptions = if (isSubscribed) {
+                settingsOptions.filter { it.title != "Upgrade to Premium" }
+            } else {
+                settingsOptions
+            }
+            items(filteredSettingsOptions) { setting ->
+                SettingCard(
+                    title = setting.title,
+                    icon = setting.icon,
+                    onClick = { settingsOption ->
+                        when (settingsOption) {
+                            "Change Your Theme" -> {
+                                onChangeTheme()
+                            }
+                            "Edit Meal Plan Preferences" -> {
+                                navigator.openAllergiesScreen(editMealPlanPreference = true)
+                            }
+                            "Suggest or Report Anything" -> {
+                                onReportOrSuggest()
+                            }
+                            "Rate Us on Play Store" -> {
+                                val rateIntent = Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse("market://details?id=" + context.packageName)
+                                )
+                                startActivity(context, rateIntent, null)
+                            }
+                            "Share the App with Friends" -> {
+                                val appPackageName = context.packageName
+                                val sendIntent = Intent()
+                                sendIntent.action = Intent.ACTION_SEND
+                                sendIntent.putExtra(
+                                    Intent.EXTRA_TEXT,
+                                    "Check out MealTime App on Play Store that helps your create your own recipes, search new ones online, create meal plans for a whole day, week or even a month: https://play.google.com/store/apps/details?id=$appPackageName"
+                                )
+                                sendIntent.type = "text/plain"
+                                context.startActivity(sendIntent)
+                            }
+
+                            "Upgrade to Premium" -> {
+                                onSubscribe()
+                            }
+                        }
+                    }
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.BottomCenter),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            Text(
+                text = "App Version: ${getAppVersionName(context)}",
+                modifier = Modifier,
+                style = MaterialTheme.typography.titleSmall,
+                fontSize = 11.sp
+            )
+
+            Text(
+                text = "Made with ❤️ by Joel Kanyi 🇰🇪",
+                modifier = Modifier,
+                style = MaterialTheme.typography.titleSmall,
+                fontSize = 12.sp
+            )
+        }
+    }
+}
+
 data class Setting(
     val title: String,
-    val icon: Int
+    val icon: Int,
 )
 
 private val settingsOptions = listOf(
@@ -232,6 +329,10 @@ private val settingsOptions = listOf(
     Setting(
         title = "Suggest or Report Anything",
         icon = R.drawable.ic_feedback
+    ),
+    Setting(
+        title = "Upgrade to Premium",
+        icon = R.drawable.ic_premium
     ),
     Setting(
         title = "Rate Us on Play Store",

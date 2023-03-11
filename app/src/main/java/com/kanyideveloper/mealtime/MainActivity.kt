@@ -39,6 +39,7 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import com.joelkanyi.kitchen_timer.presentation.destinations.KitchenTimerScreenDestination
 import com.kanyideveloper.compose_ui.theme.MealTimeTheme
 import com.kanyideveloper.compose_ui.theme.Theme
+import com.kanyideveloper.core.state.SubscriptionStatusUiState
 import com.kanyideveloper.core.util.Constants.PURCHASE_ID
 import com.kanyideveloper.favorites.presentation.favorites.presentation.destinations.FavoritesScreenDestination
 import com.kanyideveloper.mealplanner.destinations.MealPlannerScreenDestination
@@ -51,7 +52,6 @@ import com.kanyideveloper.mealtime.navigation.scaleInPopEnterTransition
 import com.kanyideveloper.mealtime.navigation.scaleOutExitTransition
 import com.kanyideveloper.mealtime.navigation.scaleOutPopExitTransition
 import com.kanyideveloper.presentation.destinations.HomeScreenDestination
-import com.kanyideveloper.search.presentation.search.destinations.SearchScreenDestination
 import com.kanyideveloper.settings.presentation.destinations.SettingsScreenDestination
 import com.qonversion.android.sdk.Qonversion
 import com.qonversion.android.sdk.dto.QEntitlement
@@ -82,44 +82,69 @@ class MainActivity : ComponentActivity() {
             )
         }
         setContent {
+            val isSubscribed = viewModel.isSubscribed.collectAsState().value
+
             val themeValue by viewModel.theme.collectAsState(
                 initial = Theme.FOLLOW_SYSTEM.themeValue,
                 context = Dispatchers.Main.immediate
             )
 
-            MealTimeTheme(
-                theme = themeValue
-            ) {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    val navController = rememberAnimatedNavController()
-                    val newBackStackEntry by navController.currentBackStackEntryAsState()
-                    val route = newBackStackEntry?.destination?.route
+            when (isSubscribed) {
+                SubscriptionStatusUiState.Loading -> {}
+                is SubscriptionStatusUiState.Success -> {
+                    MealTimeTheme(
+                        theme = themeValue
+                    ) {
+                        Surface(
+                            modifier = Modifier.fillMaxSize(),
+                            color = MaterialTheme.colorScheme.background
+                        ) {
+                            val navController = rememberAnimatedNavController()
+                            val newBackStackEntry by navController.currentBackStackEntryAsState()
+                            val route = newBackStackEntry?.destination?.route
 
-                    StandardScaffold(
-                        navController = navController,
-                        showBottomBar = route in listOf(
-                            "home/${HomeScreenDestination.route}",
-                            "kitchen-timer/${KitchenTimerScreenDestination.route}",
-                            "meal_planner/${MealPlannerScreenDestination.route}",
-                            "favorites/${FavoritesScreenDestination.route}",
-                            "settings/${SettingsScreenDestination.route}"
-                        )
-                    ) { innerPadding ->
-                        Box(modifier = Modifier.padding(innerPadding)) {
-                            AppNavigation(
+                            val bottomBarItems = if (isSubscribed.isSubscribed) {
+                                listOf(
+                                    BottomNavItem.Home,
+                                    BottomNavItem.KitchenTimer,
+                                    BottomNavItem.MealPlanner,
+                                    BottomNavItem.Favorites,
+                                    BottomNavItem.Settings
+                                )
+                            } else {
+                                listOf(
+                                    BottomNavItem.Home,
+                                    BottomNavItem.MealPlanner,
+                                    BottomNavItem.Favorites,
+                                    BottomNavItem.Settings
+                                )
+                            }
+
+                            StandardScaffold(
                                 navController = navController,
-                                modifier = Modifier
-                                    .fillMaxSize(),
-                                subscribe = {
-                                    subscribeUser(onSuccess = {
-                                        Qonversion.shared.syncPurchases()
-                                        viewModel.updateSubscriptionStatus()
-                                    })
+                                items = bottomBarItems,
+                                showBottomBar = route in listOf(
+                                    "home/${HomeScreenDestination.route}",
+                                    "kitchen-timer/${KitchenTimerScreenDestination.route}",
+                                    "meal_planner/${MealPlannerScreenDestination.route}",
+                                    "favorites/${FavoritesScreenDestination.route}",
+                                    "settings/${SettingsScreenDestination.route}"
+                                )
+                            ) { innerPadding ->
+                                Box(modifier = Modifier.padding(innerPadding)) {
+                                    AppNavigation(
+                                        navController = navController,
+                                        modifier = Modifier
+                                            .fillMaxSize(),
+                                        subscribe = {
+                                            subscribeUser(onSuccess = {
+                                                Qonversion.shared.syncPurchases()
+                                                viewModel.updateSubscriptionStatus()
+                                            })
+                                        }
+                                    )
                                 }
-                            )
+                            }
                         }
                     }
                 }

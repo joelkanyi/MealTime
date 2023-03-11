@@ -52,6 +52,13 @@ class HomeViewModel @Inject constructor(
                 initialValue = SubscriptionStatusUiState.Loading,
             )
 
+
+    private val _shouldShowSubscriptionDialog = mutableStateOf(false)
+    val shouldShowSubscriptionDialog: State<Boolean> = _shouldShowSubscriptionDialog
+    fun setShowSubscriptionDialogState(value: Boolean) {
+        _shouldShowSubscriptionDialog.value = value
+    }
+
     private val _myMeals = MutableLiveData<LiveData<List<Meal>>>()
     val myMeals: LiveData<LiveData<List<Meal>>> = _myMeals
 

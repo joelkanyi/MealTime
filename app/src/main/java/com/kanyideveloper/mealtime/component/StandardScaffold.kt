@@ -49,13 +49,7 @@ import com.ramcosta.composedestinations.spec.NavGraphSpec
 fun StandardScaffold(
     navController: NavController,
     showBottomBar: Boolean = true,
-    items: List<BottomNavItem> = listOf(
-        BottomNavItem.Home,
-        BottomNavItem.KitchenTimer,
-        BottomNavItem.MealPlanner,
-        BottomNavItem.Favorites,
-        BottomNavItem.Settings
-    ),
+    items: List<BottomNavItem>,
     content: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
     Scaffold(
