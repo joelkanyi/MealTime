@@ -15,21 +15,24 @@
  */
 package com.joelkanyi.kitchen_timer.data.repository
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.Manifest
+import android.app.Notification
+import android.content.ContentResolver
 import android.content.Context
-import android.content.Context.NOTIFICATION_SERVICE
-import android.media.MediaPlayer
-import android.media.RingtoneManager
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.CountDownTimer
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.joelkanyi.kitchen_timer.domain.model.KitchenTimer
 import com.joelkanyi.kitchen_timer.domain.repository.KitchenTimerRepository
-
+import com.kanyideveloper.mealtime.kitchen_timer.R
+import kotlin.random.Random
 
 class KitchenTimerRepositoryImpl(
     private val applicationContext: Context,
@@ -61,41 +64,20 @@ class KitchenTimerRepositoryImpl(
         }
 
     override fun startTimer() {
+
+        removeBrokenChannel()
+        initNotificationChannel()
+
         countDownTimer = object : CountDownTimer(timeRemaining, 1000) {
             override fun onFinish() {
                 finished.value = true
                 _isTimerRunning.value = false
+                _timeRemaining = 0L
+                _timeLeft.value = KitchenTimer()
+                _percentage.value = 0f
 
-                // When the timer finishes, trigger the notification
-                val notificationManager =
-                    applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-                val notificationBuilder =
-                    NotificationCompat.Builder(applicationContext, "your_channel_id")
-                        .setContentTitle("Timer")
-                        .setContentText("Time's up!")
-                        .setSmallIcon(com.kanyideveloper.mealtime.core.R.drawable.fork_knife_bold)
-                        .setPriority(NotificationCompat.PRIORITY_HIGH)
-                        .setCategory(NotificationCompat.CATEGORY_ALARM)
-                        .setOngoing(true)
-                        //.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    // Create notification channel for Android O and later
-                    val channel = NotificationChannel(
-                        "your_channel_id",
-                        "Your Channel Name",
-                        NotificationManager.IMPORTANCE_HIGH
-                    )
-                    notificationManager.createNotificationChannel(channel)
-                }
-
-                notificationManager.notify(0, notificationBuilder.build())
-                val notification: Uri =
-                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-
-                val player: MediaPlayer = MediaPlayer.create(applicationContext, notification)
-                player.isLooping = true
-                player.start()
+                // When the timer finishes ...
+                showNotification()
             }
 
             override fun onTick(millisUntilFinished: Long) {
@@ -137,5 +119,56 @@ class KitchenTimerRepositoryImpl(
         _isTimerRunning.value = false
         _timeRemaining = _timeLeft.value?.remainingTime ?: 0L
         _percentage.value = _timeLeft.value?.sweepAnglePercentage ?: 0f
+    }
+
+    private fun showNotification() {
+        val builder = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
+            .setSmallIcon(com.kanyideveloper.mealtime.core.R.drawable.fork_knife_bold)
+            .setContentTitle("Kitchen Timer").setContentText("Time's up!")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setSound(Uri.parse("${ContentResolver.SCHEME_ANDROID_RESOURCE}://${applicationContext.packageName}/${R.raw.kitchen_timer_ringtone}"))
+        val notificationManager = NotificationManagerCompat.from(applicationContext)
+        if (ActivityCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        notificationManager.notify(Random.nextInt(), builder.build())
+    }
+
+    private fun initNotificationChannel() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+        val channelName = "General"
+        val channelDescription = "General notifications"
+        val importance = NotificationManagerCompat.IMPORTANCE_HIGH
+        val channel = NotificationChannelCompat.Builder(CHANNEL_ID, importance).apply {
+            setName(channelName)
+            setDescription(channelDescription)
+            setSound(
+                Uri.parse("${ContentResolver.SCHEME_ANDROID_RESOURCE}://${applicationContext.packageName}/raw/kitchen_timer_ringtone"),
+                Notification.AUDIO_ATTRIBUTES_DEFAULT
+            )
+        }
+        NotificationManagerCompat.from(applicationContext)
+            .createNotificationChannel(channel.build())
+    }
+
+    private fun removeBrokenChannel() {
+        NotificationManagerCompat.from(applicationContext)
+            .deleteNotificationChannel(BROKEN_CHANNEL_ID)
+    }
+
+    companion object {
+        const val BROKEN_CHANNEL_ID: String = "general_channel"
+        const val CHANNEL_ID: String = "general_channel_new"
     }
 }

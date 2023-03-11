@@ -15,7 +15,13 @@
  */
 package com.joelkanyi.kitchen_timer.presentation
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,17 +51,19 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -64,16 +72,20 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joelkanyi.kitchen_timer.domain.model.KitchenTimer
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.compose_ui.theme.PrimaryColor
 import com.kanyideveloper.compose_ui.theme.Shapes
+import com.kanyideveloper.core.util.convertMillisecondsToTimeString
+import com.kanyideveloper.core.util.minutesToMilliseconds
 import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
 
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Destination
 @Composable
@@ -82,6 +94,27 @@ fun KitchenTimerScreen(
 ) {
     val timerValue = viewModel.remainingTimerValue.observeAsState(initial = KitchenTimer()).value
     val isTimerRunning = viewModel.isTimerRunning.observeAsState(initial = false).value
+    val context = LocalContext.current
+
+    var hasCamPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS,
+            ) == PackageManager.PERMISSION_GRANTED,
+        )
+    }
+
+    val notificationsPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { granted ->
+            hasCamPermission = granted
+        },
+    )
+
+    LaunchedEffect(key1 = true, block = {
+        notificationsPermissionLauncher.launch(Manifest.permission.CAMERA)
+    })
 
     if (viewModel.showHowLongDialog.value) {
         HowLongDialog(
@@ -94,6 +127,7 @@ fun KitchenTimerScreen(
             },
             onTimerSet = {
                 viewModel.setShowHowLongDialog(false)
+                viewModel.startTimer()
             }
         )
     }
@@ -101,6 +135,7 @@ fun KitchenTimerScreen(
     KitchenTimerScreenContent(
         timerValue = timerValue,
         isTimerRunning = isTimerRunning,
+        originalTime = minutesToMilliseconds(viewModel.currentTimerValue.value),
         percentage = viewModel.percentage.value ?: 0f,
         onStop = { viewModel.stopTimer() },
         onStart = {
@@ -119,6 +154,7 @@ fun KitchenTimerScreen(
 private fun KitchenTimerScreenContent(
     timerValue: KitchenTimer,
     isTimerRunning: Boolean,
+    originalTime: Long,
     percentage: Float,
     onStop: () -> Unit,
     onStart: () -> Unit,
@@ -185,7 +221,8 @@ private fun KitchenTimerScreenContent(
                 mainColor = PrimaryColor,
                 radius = 40.dp,
                 strokeWidth = 10.dp,
-                percentage = percentage
+                percentage = percentage,
+                originalTime = originalTime
             )
 
 
@@ -263,6 +300,7 @@ fun TimerProgressIndicator(
     radius: Dp = 20.dp,
     mainColor: Color,
     strokeWidth: Dp = 6.dp,
+    originalTime: Long,
 ) {
     Box(
         contentAlignment = Alignment.Center,
@@ -292,8 +330,6 @@ fun TimerProgressIndicator(
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .size(90.dp)
-                .clip(CircleShape)
         ) {
             Column(
                 verticalArrangement = Arrangement.Center,
@@ -308,6 +344,14 @@ fun TimerProgressIndicator(
                     text = "Remaining",
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.labelMedium,
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "Original Time: ${convertMillisecondsToTimeString(originalTime)}",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.labelSmall,
                 )
             }
         }

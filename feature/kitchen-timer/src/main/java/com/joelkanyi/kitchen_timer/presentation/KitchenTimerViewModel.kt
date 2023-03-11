@@ -18,8 +18,8 @@ package com.joelkanyi.kitchen_timer.presentation
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.joelkanyi.kitchen_timer.domain.model.KitchenTimer
 import com.joelkanyi.kitchen_timer.domain.repository.KitchenTimerRepository
+import com.kanyideveloper.core.util.minutesToMilliseconds
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -33,7 +33,7 @@ class KitchenTimerViewModel @Inject constructor(
     val currentTimerValue: State<Int> = _currentTimerValue
     fun setCurrentTimerValue(value: Int) {
         _currentTimerValue.value = value
-        repository.timeRemaining = minutesToMilliseconds(value)
+        repository.timeRemaining = minutesToMilliseconds(currentTimerValue.value)
     }
 
     private val _showHowLongDialog = mutableStateOf(false)
@@ -54,11 +54,9 @@ class KitchenTimerViewModel @Inject constructor(
     }
 
     fun stopTimer() {
-        repository.stopTimer()
+        _currentTimerValue.value = 0
+        if (repository.isTimerRunning.value == true) {
+            repository.stopTimer()
+        }
     }
-}
-
-fun minutesToMilliseconds(minutes: Int): Long {
-    val millisecondsInMinute = 60 * 1000 // 60 seconds * 1000 milliseconds
-    return minutes * millisecondsInMinute.toLong()
 }
