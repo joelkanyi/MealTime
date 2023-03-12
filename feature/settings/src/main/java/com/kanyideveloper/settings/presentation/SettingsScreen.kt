@@ -23,10 +23,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material3.Button
+import androidx.compose.material.Icon
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -42,6 +51,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
@@ -60,6 +70,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 interface SettingsNavigator {
     fun openAllergiesScreen(editMealPlanPreference: Boolean)
     fun subscribe()
+    fun openAuth()
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -81,6 +92,9 @@ fun SettingsScreen(
             when (event) {
                 is UiEvents.SnackbarEvent -> {
                     snackbarHostState.showSnackbar(message = event.message)
+                }
+                is UiEvents.NavigationEvent -> {
+                    navigator.openAuth()
                 }
                 else -> {}
             }
@@ -178,6 +192,7 @@ fun SettingsScreen(
                     paddingValues = paddingValues,
                     navigator = navigator,
                     context = context,
+                    logoutState = viewModel.logoutState.value,
                     onChangeTheme = {
                         viewModel.setShowThemesDialogState(
                             !viewModel.shouldShowThemesDialog.value
@@ -190,34 +205,9 @@ fun SettingsScreen(
                     },
                     onSubscribe = {
                         viewModel.setShowSubscriptionDialogState(true)
-                    }
-                )
-            }
-        }
-
-
-        when (isSubscribed) {
-            SubscriptionStatusUiState.Loading -> {
-
-            }
-            is SubscriptionStatusUiState.Success -> {
-                SettingsScreenContent(
-                    isSubscribed = isSubscribed.isSubscribed,
-                    paddingValues = paddingValues,
-                    navigator = navigator,
-                    context = context,
-                    onChangeTheme = {
-                        viewModel.setShowThemesDialogState(
-                            !viewModel.shouldShowThemesDialog.value
-                        )
                     },
-                    onReportOrSuggest = {
-                        viewModel.setShowFeedbackDialogState(
-                            !viewModel.shouldShowFeedbackDialog.value
-                        )
-                    },
-                    onSubscribe = {
-                        viewModel.setShowSubscriptionDialogState(true)
+                    logout = {
+                        viewModel.logoutUser()
                     }
                 )
             }
@@ -234,6 +224,8 @@ private fun SettingsScreenContent(
     onReportOrSuggest: () -> Unit,
     isSubscribed: Boolean,
     onSubscribe: () -> Unit,
+    logout: () -> Unit,
+    logoutState: LogoutState,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -285,6 +277,45 @@ private fun SettingsScreenContent(
                         }
                     }
                 )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    onClick = {
+                        logout()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
+                ) {
+                    if (logoutState.isLoading) {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(18.dp),
+                            strokeWidth = 1.dp
+                        )
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_logout),
+                            contentDescription = "Logout",
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+
+                        Text(
+                            modifier = Modifier.padding(8.dp),
+                            text = "Sign Out"
+                        )
+                    }
+                }
             }
         }
 

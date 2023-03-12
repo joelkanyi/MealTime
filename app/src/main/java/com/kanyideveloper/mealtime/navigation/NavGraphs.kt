@@ -15,7 +15,10 @@
  */
 package com.kanyideveloper.mealtime.navigation
 
-import com.joelkanyi.kitchen_timer.presentation.KitchenTimerScreen
+import com.joelkanyi.auth.presentation.destinations.ForgotPasswordScreenDestination
+import com.joelkanyi.auth.presentation.destinations.LandingPageScreenDestination
+import com.joelkanyi.auth.presentation.destinations.SignInScreenDestination
+import com.joelkanyi.auth.presentation.destinations.SignUpScreenDestination
 import com.joelkanyi.kitchen_timer.presentation.destinations.KitchenTimerScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
@@ -36,7 +39,24 @@ import com.ramcosta.composedestinations.dynamic.routedIn
 import com.ramcosta.composedestinations.spec.DestinationSpec
 import com.ramcosta.composedestinations.spec.NavGraphSpec
 
-object NavGraphs {
+object NavGraphs{
+    fun setRoot(isLoggedIn: Boolean) = root(isLoggedIn)
+
+
+    val auth = object : NavGraphSpec {
+        override val route = "auth"
+
+        override val startRoute = LandingPageScreenDestination routedIn this
+
+        override val destinationsByRoute = listOf<DestinationSpec<*>>(
+            HomeScreenDestination,
+            LandingPageScreenDestination,
+            SignInScreenDestination,
+            SignUpScreenDestination,
+            ForgotPasswordScreenDestination
+        ).routedIn(this)
+            .associateBy { it.route }
+    }
 
     val home = object : NavGraphSpec {
         override val route = "home"
@@ -52,7 +72,8 @@ object NavGraphs {
             AddMealScreenDestination,
             NextAddMealScreenDestination,
             RandomOnlineMealDetailsScreenDestination,
-            SearchScreenDestination
+            SearchScreenDestination,
+            LandingPageScreenDestination
         ).routedIn(this)
             .associateBy { it.route }
     }
@@ -119,16 +140,18 @@ object NavGraphs {
             AllergiesScreenDestination,
             NumberOfPeopleScreenDestination,
             MealTypesScreenDestination,
-            MealPlannerScreenDestination
+            MealPlannerScreenDestination,
+            LandingPageScreenDestination
         ).routedIn(this)
             .associateBy { it.route }
     }
 
-    val root = object : NavGraphSpec {
+    fun root(isLoggedIn: Boolean) = object : NavGraphSpec {
         override val route = "root"
-        override val startRoute = home
+        override val startRoute = if (isLoggedIn) home else auth
         override val destinationsByRoute = emptyMap<String, DestinationSpec<*>>()
         override val nestedNavGraphs = listOf(
+            auth,
             home,
             search,
             mealPlanner,

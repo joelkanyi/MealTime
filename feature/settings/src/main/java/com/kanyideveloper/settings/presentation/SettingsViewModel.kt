@@ -19,6 +19,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.kanyideveloper.core.domain.SubscriptionRepository
 import com.kanyideveloper.core.domain.UserDataRepository
 import com.kanyideveloper.core.state.SubscriptionStatusUiState
@@ -92,4 +94,22 @@ class SettingsViewModel @Inject constructor(
             )
         }
     }
+
+    private val _logoutState = mutableStateOf(LogoutState())
+    val logoutState: State<LogoutState> = _logoutState
+    fun logoutUser() {
+        viewModelScope.launch {
+            _logoutState.value = LogoutState(isLoading = true)
+            Firebase.auth.signOut()
+            val user = Firebase.auth.currentUser
+            if (user == null) {
+                _logoutState.value = LogoutState(isLoading = false)
+                _eventsFlow.emit(UiEvents.NavigationEvent(""))
+            }
+        }
+    }
 }
+
+data class LogoutState(
+    val isLoading: Boolean = false
+)

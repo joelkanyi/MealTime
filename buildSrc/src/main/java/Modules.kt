@@ -12,4 +12,5 @@ object Modules {
     const val settings = ":feature:settings"
     const val mealPlanner = ":feature:mealplanner"
     const val kitchenTimer = ":feature:kitchen-timer"
+    const val auth = ":feature:auth"
 }

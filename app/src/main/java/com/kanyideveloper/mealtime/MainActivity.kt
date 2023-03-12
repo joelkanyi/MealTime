@@ -68,11 +68,10 @@ import kotlinx.coroutines.Dispatchers
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val viewModel: MainViewModel by viewModels()
 
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-        val viewModel: MainViewModel by viewModels()
-
         super.onCreate(savedInstanceState)
         installSplashScreen().apply {
             setKeepOnScreenCondition(
@@ -82,6 +81,7 @@ class MainActivity : ComponentActivity() {
             )
         }
         setContent {
+            val isLogged = viewModel.user.value != null
             val isSubscribed = viewModel.isSubscribed.collectAsState().value
 
             val themeValue by viewModel.theme.collectAsState(
@@ -123,6 +123,7 @@ class MainActivity : ComponentActivity() {
                             StandardScaffold(
                                 navController = navController,
                                 items = bottomBarItems,
+                                isLoggedIn = isLogged,
                                 showBottomBar = route in listOf(
                                     "home/${HomeScreenDestination.route}",
                                     "kitchen-timer/${KitchenTimerScreenDestination.route}",
@@ -134,6 +135,7 @@ class MainActivity : ComponentActivity() {
                                 Box(modifier = Modifier.padding(innerPadding)) {
                                     AppNavigation(
                                         navController = navController,
+                                        isLoggedIn = isLogged,
                                         modifier = Modifier
                                             .fillMaxSize(),
                                         subscribe = {
@@ -189,6 +191,7 @@ internal fun AppNavigation(
     subscribe: () -> Unit,
     navController: NavHostController,
     modifier: Modifier = Modifier,
+    isLoggedIn: Boolean,
 ) {
     val navHostEngine = rememberAnimatedNavHostEngine(
         navHostContentAlignment = Alignment.TopCenter,
@@ -263,6 +266,20 @@ internal fun AppNavigation(
                 popExitTransition = {
                     scaleOutPopExitTransition()
                 }
+            ),
+            NavGraphs.auth to NestedNavGraphDefaultAnimations(
+                enterTransition = {
+                    scaleInEnterTransition()
+                },
+                exitTransition = {
+                    scaleOutExitTransition()
+                },
+                popEnterTransition = {
+                    scaleInPopEnterTransition()
+                },
+                popExitTransition = {
+                    scaleOutPopExitTransition()
+                }
             )
         )
     )
@@ -270,17 +287,25 @@ internal fun AppNavigation(
     DestinationsNavHost(
         engine = navHostEngine,
         navController = navController,
-        navGraph = NavGraphs.root,
+        navGraph = NavGraphs.root(isLoggedIn = isLoggedIn),
         modifier = modifier,
         dependenciesContainerBuilder = {
-            dependency(currentNavigator(subscribe = subscribe))
+            dependency(
+                currentNavigator(
+                    subscribe = subscribe,
+                    isLoggedIn = isLoggedIn,
+                )
+            )
         }
     )
 }
 
-fun DestinationScope<*>.currentNavigator(subscribe: () -> Unit): CoreFeatureNavigator {
+fun DestinationScope<*>.currentNavigator(
+    isLoggedIn: Boolean,
+    subscribe: () -> Unit,
+): CoreFeatureNavigator {
     return CoreFeatureNavigator(
-        navGraph = navBackStackEntry.destination.navGraph(),
+        navGraph = navBackStackEntry.destination.navGraph(isLoggedIn),
         navController = navController,
         subscribe = subscribe
     )

@@ -17,6 +17,10 @@ package com.kanyideveloper.mealtime.navigation
 
 import android.net.Uri
 import androidx.navigation.NavController
+import com.joelkanyi.auth.presentation.destinations.ForgotPasswordScreenDestination
+import com.joelkanyi.auth.presentation.destinations.SignInScreenDestination
+import com.joelkanyi.auth.presentation.destinations.SignUpScreenDestination
+import com.joelkanyi.auth.presentation.landing.AuthNavigation
 import com.kanyideveloper.addmeal.presentation.addmeal.AddMealNavigator
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
@@ -49,13 +53,24 @@ class CoreFeatureNavigator(
     FavoritesNavigator,
     SettingsNavigator,
     AddMealNavigator,
-    MealPlannerNavigator {
+    MealPlannerNavigator,
+    AuthNavigation {
     override fun openAddMeal() {
         navController.navigate(AddMealScreenDestination within navGraph)
     }
 
     override fun openHome() {
         navController.navigate(HomeScreenDestination within navGraph)
+    }
+
+    override fun switchNavGraphRoot() {
+        navController.navigate(
+            NavGraphs.root(isLoggedIn = true)
+        ) {
+            popUpTo(NavGraphs.auth.route) {
+                inclusive = false
+            }
+        }
     }
 
     override fun openMealDetails(meal: Meal) {
@@ -139,9 +154,31 @@ class CoreFeatureNavigator(
         subscribe.invoke()
     }
 
+    override fun openAuth() {
+        navController.navigate(
+            NavGraphs.auth
+        ) {
+            popUpTo(NavGraphs.root(isLoggedIn = false).route) {
+                inclusive = true
+            }
+        }
+    }
+
     override
     fun navigateBackToHome() {
         navController.navigate(HomeScreenDestination within navGraph)
         navController.clearBackStack("home")
+    }
+
+    override fun openForgotPassword() {
+        navController.navigate(ForgotPasswordScreenDestination within navGraph)
+    }
+
+    override fun openSignUp() {
+        navController.navigate(SignUpScreenDestination within navGraph)
+    }
+
+    override fun openSignIn() {
+        navController.navigate(SignInScreenDestination within navGraph)
     }
 }
