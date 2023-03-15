@@ -70,7 +70,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 interface SettingsNavigator {
     fun openAllergiesScreen(editMealPlanPreference: Boolean)
     fun subscribe()
-    fun openAuth()
+    fun logout()
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -94,7 +94,7 @@ fun SettingsScreen(
                     snackbarHostState.showSnackbar(message = event.message)
                 }
                 is UiEvents.NavigationEvent -> {
-                    navigator.openAuth()
+                    navigator.logout()
                 }
                 else -> {}
             }

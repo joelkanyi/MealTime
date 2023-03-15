@@ -40,8 +40,6 @@ import com.ramcosta.composedestinations.spec.DestinationSpec
 import com.ramcosta.composedestinations.spec.NavGraphSpec
 
 object NavGraphs{
-    fun setRoot(isLoggedIn: Boolean) = root(isLoggedIn)
-
 
     val auth = object : NavGraphSpec {
         override val route = "auth"

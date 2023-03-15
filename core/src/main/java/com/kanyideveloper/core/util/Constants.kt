@@ -37,4 +37,5 @@ object Constants {
     val SUBSCRIPTION = booleanPreferencesKey("subscription")
     val PURCHASE_ID = "product_premium_subscription"
     val QONVERSION_PROJECT_KEY = "fuin-2K_eXiH5zYAUIlXaIPEn0BDiWI9"
+    val CLIENT_ID = "185726691445-ke95p4s6bk7315ni58ek2m718nkk6bal.apps.googleusercontent.com"
 }

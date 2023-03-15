@@ -20,7 +20,7 @@ import androidx.navigation.NavController
 import com.joelkanyi.auth.presentation.destinations.ForgotPasswordScreenDestination
 import com.joelkanyi.auth.presentation.destinations.SignInScreenDestination
 import com.joelkanyi.auth.presentation.destinations.SignUpScreenDestination
-import com.joelkanyi.auth.presentation.landing.AuthNavigation
+import com.joelkanyi.auth.presentation.landing.AuthNavigator
 import com.kanyideveloper.addmeal.presentation.addmeal.AddMealNavigator
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
@@ -54,7 +54,7 @@ class CoreFeatureNavigator(
     SettingsNavigator,
     AddMealNavigator,
     MealPlannerNavigator,
-    AuthNavigation {
+    AuthNavigator {
     override fun openAddMeal() {
         navController.navigate(AddMealScreenDestination within navGraph)
     }
@@ -65,7 +65,7 @@ class CoreFeatureNavigator(
 
     override fun switchNavGraphRoot() {
         navController.navigate(
-            NavGraphs.root(isLoggedIn = true)
+            NavGraphs.home
         ) {
             popUpTo(NavGraphs.auth.route) {
                 inclusive = false
@@ -154,12 +154,12 @@ class CoreFeatureNavigator(
         subscribe.invoke()
     }
 
-    override fun openAuth() {
+    override fun logout() {
         navController.navigate(
             NavGraphs.auth
         ) {
-            popUpTo(NavGraphs.root(isLoggedIn = false).route) {
-                inclusive = true
+            popUpTo(NavGraphs.root(false).route) {
+                inclusive = false
             }
         }
     }
