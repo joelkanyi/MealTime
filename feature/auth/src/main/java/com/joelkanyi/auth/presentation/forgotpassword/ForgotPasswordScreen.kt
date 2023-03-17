@@ -47,6 +47,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joelkanyi.auth.presentation.landing.AuthNavigator
+import com.joelkanyi.auth.presentation.state.LoginState
 import com.kanyideveloper.core.util.UiEvents
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
@@ -57,10 +58,11 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun ForgotPasswordScreen(
     navigator: AuthNavigator,
-    viewModel: ForgotPasswordViewModel = hiltViewModel()
+    viewModel: ForgotPasswordViewModel = hiltViewModel(),
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val forgotPasswordState = viewModel.forgotPasswordState.value
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -93,60 +95,78 @@ fun ForgotPasswordScreen(
             }
         }
 
-        LazyColumn(
-            contentPadding = PaddingValues(16.dp)
-        ) {
-            item {
-                Spacer(modifier = Modifier.height(100.dp))
+        ForgotPasswordScreenContent(
+            currentEmailText = viewModel.emailState.value.text,
+            forgotPasswordState = forgotPasswordState,
+            onCurrentEmailTextChange = {
+                viewModel.setEmailState(it)
+            },
+            onClickSend = {
+                keyboardController?.hide()
+                viewModel.sendPasswordResetLink()
+            }
+        )
+    }
+}
 
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = viewModel.emailState.value.text,
-                    onValueChange = {
-                        viewModel.setEmailState(it)
-                    },
-                    label = {
-                        Text(text = "Email")
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        autoCorrect = true,
-                        keyboardType = KeyboardType.Email,
-                    ),
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun ForgotPasswordScreenContent(
+    currentEmailText: String,
+    forgotPasswordState: LoginState,
+    onCurrentEmailTextChange: (String) -> Unit,
+    onClickSend: () -> Unit,
+) {
+    LazyColumn(
+        contentPadding = PaddingValues(16.dp)
+    ) {
+        item {
+            Spacer(modifier = Modifier.height(100.dp))
+
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = currentEmailText,
+                onValueChange = {
+                    onCurrentEmailTextChange(it)
+                },
+                label = {
+                    Text(text = "Email")
+                },
+                keyboardOptions = KeyboardOptions(
+                    autoCorrect = true,
+                    keyboardType = KeyboardType.Email,
+                ),
+            )
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Button(
+                onClick = onClickSend,
+                shape = RoundedCornerShape(8)
+            ) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    text = "Continue",
+                    textAlign = TextAlign.Center
                 )
             }
+        }
 
-            item {
+        item {
+            if (forgotPasswordState.isLoading) {
                 Spacer(modifier = Modifier.height(32.dp))
-
-                Button(
-                    onClick = {
-                        keyboardController?.hide()
-                        viewModel.sendPasswordResetLink()
-                    },
-                    shape = RoundedCornerShape(8)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(
+                    CircularProgressIndicator(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(12.dp),
-                        text = "Continue",
-                        textAlign = TextAlign.Center
                     )
-                }
-            }
-
-            item {
-                if (viewModel.forgotPasswordState.value.isLoading) {
-                    Spacer(modifier = Modifier.height(32.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                        )
-                    }
                 }
             }
         }

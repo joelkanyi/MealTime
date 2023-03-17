@@ -20,17 +20,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.Composable
 import com.ramcosta.composedestinations.annotation.Destination
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.SnackbarHost
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,7 +42,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -55,10 +52,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joelkanyi.auth.presentation.landing.AuthNavigator
+import com.joelkanyi.auth.presentation.state.LoginState
 import com.kanyideveloper.compose_ui.theme.robotoCondensed
+import com.kanyideveloper.core.state.TextFieldState
 import com.kanyideveloper.core.util.UiEvents
 import kotlinx.coroutines.flow.collectLatest
 
@@ -68,7 +66,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun SignInScreen(
     navigator: AuthNavigator,
-    viewModel: SignInViewModel = hiltViewModel()
+    viewModel: SignInViewModel = hiltViewModel(),
 ) {
     val emailState = viewModel.emailState.value
     val passwordState = viewModel.passwordState.value
@@ -115,13 +113,44 @@ fun SignInScreen(
             }
         },
     ) {
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = CenterHorizontally
-        ) {
+        SignInScreenContent(
+            emailState = emailState,
+            passwordState = passwordState,
+            loginState = loginState,
+            onCurrentEmailTextChange = {
+                viewModel.setUsername(it)
+            },
+            onCurrentPasswordTextChange = {
+                viewModel.setPassword(it)
+            },
+            onClickSignIn = {
+                keyboardController?.hide()
+                viewModel.loginUser()
+            },
+            onClickForgotPassword = {
+                navigator.openForgotPassword()
+            },
+            onClickDontHaveAccount = {
+                navigator.openSignUp()
+            }
+        )
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun SignInScreenContent(
+    emailState: TextFieldState,
+    passwordState: TextFieldState,
+    loginState: LoginState,
+    onCurrentEmailTextChange: (String) -> Unit,
+    onCurrentPasswordTextChange: (String) -> Unit,
+    onClickSignIn: () -> Unit,
+    onClickForgotPassword: () -> Unit,
+    onClickDontHaveAccount: () -> Unit,
+) {
+    LazyColumn(contentPadding = PaddingValues(16.dp)) {
+        item {
             Spacer(modifier = Modifier.height(64.dp))
 
             Column {
@@ -129,7 +158,7 @@ fun SignInScreen(
                     modifier = Modifier.fillMaxWidth(),
                     value = emailState.text,
                     onValueChange = {
-                        viewModel.setUsername(it)
+                        onCurrentEmailTextChange(it)
                     },
                     label = {
                         Text(text = "Email")
@@ -150,7 +179,9 @@ fun SignInScreen(
                     )
                 }
             }
+        }
 
+        item {
             Spacer(modifier = Modifier.height(8.dp))
 
             Column {
@@ -158,7 +189,7 @@ fun SignInScreen(
                     modifier = Modifier.fillMaxWidth(),
                     value = passwordState.text,
                     onValueChange = {
-                        viewModel.setPassword(it)
+                        onCurrentPasswordTextChange(it)
                     },
                     label = {
                         Text(text = "Password")
@@ -179,7 +210,9 @@ fun SignInScreen(
                     )
                 }
             }
+        }
 
+        item {
             Spacer(modifier = Modifier.height(8.dp))
 
             Row(
@@ -187,20 +220,17 @@ fun SignInScreen(
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                TextButton(onClick = {
-                    navigator.openForgotPassword()
-                }) {
+                TextButton(onClick = onClickForgotPassword) {
                     Text(text = "Forgot password?")
                 }
             }
+        }
 
+        item {
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = {
-                    keyboardController?.hide()
-                    viewModel.loginUser()
-                },
+                onClick = onClickSignIn,
                 shape = RoundedCornerShape(8)
             ) {
                 Text(
@@ -211,13 +241,13 @@ fun SignInScreen(
                     textAlign = TextAlign.Center
                 )
             }
+        }
 
+        item {
             Spacer(modifier = Modifier.height(24.dp))
 
             TextButton(
-                onClick = {
-                    navigator.openSignUp()
-                },
+                onClick = onClickDontHaveAccount,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
@@ -237,9 +267,14 @@ fun SignInScreen(
                     textAlign = TextAlign.Center
                 )
             }
+        }
 
-            if (loginState.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.align(CenterHorizontally))
+        item {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Spacer(modifier = Modifier.height(16.dp))
+                if (loginState.isLoading) {
+                    CircularProgressIndicator()
+                }
             }
         }
     }
