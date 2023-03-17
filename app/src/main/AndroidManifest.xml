@@ -33,7 +33,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="com.kanyideveloper.core.notifications.MyAlarm"
+        <receiver android:name="com.kanyideveloper.core.notifications.NotificationReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
