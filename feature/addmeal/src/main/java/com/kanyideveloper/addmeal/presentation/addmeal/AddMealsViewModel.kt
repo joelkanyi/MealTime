@@ -24,23 +24,37 @@ import androidx.lifecycle.viewModelScope
 import com.kanyideveloper.addmeal.domain.repository.SaveMealRepository
 import com.kanyideveloper.addmeal.domain.repository.UploadImageRepository
 import com.kanyideveloper.addmeal.presentation.addmeal.state.SaveMealState
+import com.kanyideveloper.core.domain.SubscriptionRepository
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.state.SubscriptionStatusUiState
 import com.kanyideveloper.core.state.TextFieldState
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.UiEvents
-import com.mr0xf00.easycrop.ImageCropper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AddMealsViewModel @Inject constructor(
     private val uploadImageRepository: UploadImageRepository,
-    private val saveMealRepository: SaveMealRepository
+    private val saveMealRepository: SaveMealRepository,
+    subscriptionRepository: SubscriptionRepository,
 ) : ViewModel() {
-    val imageCropper = ImageCropper()
+
+    val isSubscribed: StateFlow<SubscriptionStatusUiState> =
+        subscriptionRepository.isSubscribed
+            .map(SubscriptionStatusUiState::Success)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = SubscriptionStatusUiState.Loading,
+            )
 
     private val _mealImageUri = mutableStateOf<Uri?>(null)
     val mealImageUri: State<Uri?> = _mealImageUri
@@ -111,7 +125,8 @@ class AddMealsViewModel @Inject constructor(
         category: String,
         complexity: String,
         cookingTime: Int,
-        servingPeople: Int
+        servingPeople: Int,
+        isSubscribed: Boolean,
     ) {
         viewModelScope.launch {
             if (ingredientsList.isEmpty()) {
@@ -165,8 +180,32 @@ class AddMealsViewModel @Inject constructor(
                         servingPeople = servingPeople
                     )
 
-                    saveMealRepository.saveMeal(meal = meal)
+                    saveMyMeal(
+                        meal = meal,
+                        isSubscribed = isSubscribed
+                    )
+                }
+                else -> {
+                    saveMeal
+                }
+            }
+        }
+    }
 
+    private fun saveMyMeal(meal: Meal, isSubscribed: Boolean) {
+        viewModelScope.launch {
+            when (val result = saveMealRepository.saveMeal(
+                meal = meal,
+                isSubscribed = isSubscribed
+            )) {
+                is Resource.Error -> {
+                    _eventFlow.emit(
+                        UiEvents.SnackbarEvent(
+                            message = result.message ?: "Unknown Error Occurred"
+                        )
+                    )
+                }
+                is Resource.Success -> {
                     _saveMeal.value = saveMeal.value.copy(
                         isLoading = false,
                         mealIsSaved = true
@@ -177,10 +216,14 @@ class AddMealsViewModel @Inject constructor(
                             message = "Meal Saved Successful"
                         )
                     )
+
+                    _eventFlow.emit(
+                        UiEvents.NavigationEvent(
+                            route = ""
+                        )
+                    )
                 }
-                else -> {
-                    saveMeal
-                }
+                else -> {}
             }
         }
     }

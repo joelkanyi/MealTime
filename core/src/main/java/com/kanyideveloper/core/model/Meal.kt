@@ -20,14 +20,14 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Meal(
-    val name: String,
-    val imageUrl: String,
-    val cookingTime: Int,
-    val servingPeople: Int,
-    val category: String,
-    val cookingDifficulty: String,
-    val ingredients: List<String>,
-    val cookingDirections: List<String>,
+    val name: String = "",
+    val imageUrl: String = "",
+    val cookingTime: Int = -1,
+    val servingPeople: Int = -1,
+    val category: String = "",
+    val cookingDifficulty: String = "",
+    val ingredients: List<String> = emptyList(),
+    val cookingDirections: List<String> = emptyList(),
     val isFavorite: Boolean = false,
     val onlineMealId: String? = null,
     val localMealId: Int? = null,

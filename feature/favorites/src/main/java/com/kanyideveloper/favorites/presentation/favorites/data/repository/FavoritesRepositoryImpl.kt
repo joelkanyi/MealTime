@@ -17,22 +17,111 @@ package com.kanyideveloper.favorites.presentation.favorites.data.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
 import com.kanyideveloper.core.domain.FavoritesRepository
 import com.kanyideveloper.core.model.Favorite
+import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core_database.dao.FavoritesDao
+import com.kanyideveloper.core_database.model.FavoriteEntity
 import com.kanyideveloper.favorites.presentation.favorites.data.mapper.toEntity
 import com.kanyideveloper.favorites.presentation.favorites.data.mapper.toFavorite
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withTimeoutOrNull
+import java.util.UUID
 
 class FavoritesRepositoryImpl(
-    private val favoritesDao: FavoritesDao
+    private val favoritesDao: FavoritesDao,
+    private val databaseReference: DatabaseReference,
+    private val firebaseAuth: FirebaseAuth,
 ) : FavoritesRepository {
-    override suspend fun insertFavorite(favorite: Favorite) {
-        favoritesDao.insertAFavorite(favorite.toEntity())
+    override suspend fun insertFavorite(
+        isSubscribed: Boolean,
+        favorite: Favorite
+    ): Resource<Boolean> {
+        return if (isSubscribed) {
+            saveFavoriteToRemoteDatasource(favorite)
+        }else{
+            favoritesDao.insertAFavorite(favorite.toEntity())
+            Resource.Success(data = true)
+        }
     }
 
-    override fun getFavorites(): LiveData<List<Favorite>> {
-        return Transformations.map(favoritesDao.getFavorites()) { favoritesEntity ->
-            favoritesEntity.map { it.toFavorite() }
+    override suspend fun getFavorites(isSubscribed: Boolean): Resource<Flow<List<Favorite>>> {
+        return if (isSubscribed) {
+            /**
+             * Do offline caching
+             */
+            // first read from the local database
+            val favorites = favoritesDao.getFavorites()
+
+            try {
+                val newFavorites = withTimeoutOrNull(10000L) {
+                    // fetch from the remote database
+                    val favoritesRemote: MutableList<Favorite> = mutableListOf()
+                    val favs = databaseReference
+                        .child("favorites")
+                        .child(firebaseAuth.currentUser?.uid.toString())
+                    val auctionsListFromDb = favs.get().await()
+                    for (i in auctionsListFromDb.children) {
+                        val result = i.getValue(Favorite::class.java)
+                        favoritesRemote.add(result!!)
+                    }
+
+                    // clear the local database
+                    favoritesDao.deleteAllFavorites()
+
+                    // save the remote data to the local database
+                    favoritesRemote.forEach { onlineFavorite ->
+                        favoritesDao.insertAFavorite(
+                            FavoriteEntity(
+                                id = onlineFavorite.id,
+                                onlineMealId = onlineFavorite.onlineMealId,
+                                localMealId = onlineFavorite.localMealId,
+                                isOnline = onlineFavorite.isOnline,
+                                mealName = onlineFavorite.mealName,
+                                mealImageUrl = onlineFavorite.mealImageUrl,
+                                isFavorite = onlineFavorite.isFavorite
+                            )
+                        )
+                    }
+
+                    // read from the local database
+                    favoritesDao.getFavorites().map { favoriteEntities ->
+                        favoriteEntities.map { favoriteEntity ->
+                            favoriteEntity.toFavorite()
+                        }
+                    }
+                }
+
+                if (newFavorites == null) {
+                    Resource.Error(
+                        "Viewing offline data",
+                        data = favorites.map {
+                            it.map { favoriteEntity ->
+                                favoriteEntity.toFavorite()
+                            }
+                        }
+                    )
+                } else {
+                    Resource.Success(data = newFavorites)
+                }
+            } catch (e: Exception) {
+                Resource.Error(
+                    e.localizedMessage ?: "Unknown error occurred",
+                    data = favorites.map {
+                        it.map { favoriteEntity ->
+                            favoriteEntity.toFavorite()
+                        }
+                    }
+                )
+            }
+        } else {
+            Resource.Success(data = favoritesDao.getFavorites().map { favoritesEntity ->
+                favoritesEntity.map { it.toFavorite() }
+            })
         }
     }
 
@@ -64,5 +153,18 @@ class FavoritesRepositoryImpl(
 
     override suspend fun deleteAnOnlineFavorite(onlineMealId: String) {
         favoritesDao.deleteAnOnlineFavorite(mealId = onlineMealId)
+    }
+
+    private suspend fun saveFavoriteToRemoteDatasource(favorite: Favorite): Resource<Boolean>{
+        return try {
+            databaseReference
+                .child("favorites")
+                .child(firebaseAuth.currentUser?.uid.toString())
+                .child(UUID.randomUUID().toString())
+                .setValue(favorite).await()
+            Resource.Success(data = true)
+        } catch (e: Exception) {
+            return Resource.Error(e.localizedMessage ?: "Unknown error occurred")
+        }
     }
 }

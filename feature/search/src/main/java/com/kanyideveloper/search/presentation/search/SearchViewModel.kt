@@ -125,9 +125,26 @@ class SearchViewModel @Inject constructor(
                 isOnline = isOnline,
                 isFavorite = true
             )
-            favoritesRepository.insertFavorite(
-                favorite = favorite
-            )
+            when (val result = favoritesRepository.insertFavorite(
+                favorite = favorite,
+                isSubscribed = true
+            )) {
+                is Resource.Error -> {
+                    _eventsFlow.emit(
+                        UiEvents.SnackbarEvent(
+                            message = result.message ?: "An error occurred"
+                        )
+                    )
+                }
+                is Resource.Success -> {
+                    _eventsFlow.emit(
+                        UiEvents.SnackbarEvent(
+                            message = "Added to favorites"
+                        )
+                    )
+                }
+                else -> {}
+            }
         }
     }
 

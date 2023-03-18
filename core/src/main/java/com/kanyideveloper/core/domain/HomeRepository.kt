@@ -17,8 +17,10 @@ package com.kanyideveloper.core.domain
 
 import androidx.lifecycle.LiveData
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.util.Resource
+import kotlinx.coroutines.flow.Flow
 
 interface HomeRepository {
-    fun getMyMeals(): LiveData<List<Meal>>
+    suspend fun getMyMeals(isSubscribed: Boolean): Resource<Flow<List<Meal>>>
     fun getMealById(id: Int): LiveData<Meal?>
 }

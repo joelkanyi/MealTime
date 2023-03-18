@@ -111,6 +111,9 @@ dependencies {
     // Firebase Auth
     implementation 'com.google.firebase:firebase-auth-ktx'
 
+    // Firebase Database
+    implementation 'com.google.firebase:firebase-database-ktx'
+
     // Compose One Tap
     implementation 'com.github.stevdza-san:OneTapCompose:1.0.0'
 }

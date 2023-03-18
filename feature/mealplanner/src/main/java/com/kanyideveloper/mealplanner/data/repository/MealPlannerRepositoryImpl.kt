@@ -23,6 +23,7 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import androidx.lifecycle.asLiveData
 import com.kanyideveloper.core.data.MealTimePreferences
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.model.MealPlanPreference
@@ -45,6 +46,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -54,7 +56,7 @@ class MealPlannerRepositoryImpl(
     private val favoritesDao: FavoritesDao,
     private val mealDao: MealDao,
     private val mealDbApi: MealDbApi,
-    private val context: Context
+    private val context: Context,
 ) : MealPlannerRepository {
 
     override suspend fun saveMealToPlan(mealPlan: MealPlan) {
@@ -64,7 +66,7 @@ class MealPlannerRepositoryImpl(
     override suspend fun searchMeal(
         source: String,
         searchBy: String,
-        searchString: String
+        searchString: String,
     ): Resource<LiveData<List<Meal>>> {
         return when (source) {
             "Online" -> {
@@ -105,15 +107,16 @@ class MealPlannerRepositoryImpl(
                 }
             }
             "My Meals" -> {
-                val a = Transformations.map(mealDao.getAllMeals()) { it ->
-                    it.map { it.toMeal() }
-                }
+                val a = mealDao.getAllMeals().map { meals ->
+                    meals.map { it.toMeal() }
+                }.asLiveData()
+
                 Resource.Success(a)
             }
             "My Favorites" -> {
-                val meals = Transformations.map(favoritesDao.getFavorites()) { favs ->
+                val meals = favoritesDao.getFavorites().map { favs ->
                     favs.map { it.toMeal() }
-                }
+                }.asLiveData()
 
                 Resource.Success(meals)
             }
@@ -138,7 +141,7 @@ class MealPlannerRepositoryImpl(
     override suspend fun saveMealPlannerPreferences(
         allergies: List<String>,
         numberOfPeople: String,
-        dishTypes: List<String>
+        dishTypes: List<String>,
     ) {
         // Set Alarms
         setAlarm()

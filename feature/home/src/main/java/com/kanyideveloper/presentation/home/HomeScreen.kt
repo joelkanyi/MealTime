@@ -165,7 +165,7 @@ fun HomeScreen(
                         )
                     },
                     floatingActionButton = {
-                        if (viewModel.isMyMeal.value && isSubscribed.isSubscribed) {
+                        if (viewModel.isMyMeal.value) {
                             FloatingActionButton(
                                 modifier = Modifier
                                     .height(50.dp),

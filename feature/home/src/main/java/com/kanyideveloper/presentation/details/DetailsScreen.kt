@@ -16,37 +16,69 @@
 package com.kanyideveloper.presentation.details
 
 import android.annotation.SuppressLint
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.presentation.details.common.DetailsCollapsingToolbar
 import com.kanyideveloper.presentation.home.HomeNavigator
 import com.ramcosta.composedestinations.annotation.Destination
+import kotlinx.coroutines.flow.collectLatest
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter", "UnusedMaterial3ScaffoldPaddingParameter")
 @Destination
 @Composable
 fun DetailsScreen(
     meal: Meal,
     navigator: HomeNavigator,
-    viewModel: DetailsViewModel = hiltViewModel()
+    viewModel: DetailsViewModel = hiltViewModel(),
 ) {
-    DetailsScreenContent(
-        meal = meal,
-        navigateBack = {
-            navigator.popBackStack()
-        },
-        onRemoveFavorite = { localMealId, _ ->
-            viewModel.deleteALocalFavorite(localMealId = localMealId)
-        },
-        addToFavorites = { mealId, imageUrl, name ->
-            viewModel.insertAFavorite(
-                localMealId = mealId.toInt(),
-                mealImageUrl = imageUrl,
-                mealName = name
-            )
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(key1 = true, block = {
+        viewModel.eventsFlow.collectLatest { event ->
+            when (event) {
+                is UiEvents.SnackbarEvent -> {
+                    snackbarHostState.showSnackbar(
+                        message = event.message,
+                    )
+                }
+                else -> {}
+            }
         }
-    )
+    })
+
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(
+                snackbarHostState
+            )
+        },
+    ) {
+        DetailsScreenContent(
+            meal = meal,
+            navigateBack = {
+                navigator.popBackStack()
+            },
+            onRemoveFavorite = { localMealId, _ ->
+                viewModel.deleteALocalFavorite(localMealId = localMealId)
+            },
+            addToFavorites = { mealId, imageUrl, name ->
+                viewModel.insertAFavorite(
+                    localMealId = mealId.toInt(),
+                    mealImageUrl = imageUrl,
+                    mealName = name
+                )
+            }
+        )
+    }
 }
 
 @Composable
@@ -54,7 +86,7 @@ private fun DetailsScreenContent(
     meal: Meal,
     navigateBack: () -> Unit,
     onRemoveFavorite: (Int, String) -> Unit,
-    addToFavorites: (String, String, String) -> Unit
+    addToFavorites: (String, String, String) -> Unit,
 ) {
     DetailsCollapsingToolbar(
         meal = meal,

@@ -21,6 +21,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.kanyideveloper.core_database.model.FavoriteEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FavoritesDao {
@@ -28,7 +29,7 @@ interface FavoritesDao {
     suspend fun insertAFavorite(favoriteEntity: FavoriteEntity)
 
     @Query("SELECT * FROM favorites_table ORDER BY id DESC")
-    fun getFavorites(): LiveData<List<FavoriteEntity>>
+    fun getFavorites(): Flow<List<FavoriteEntity>>
 
     @Query("SELECT * FROM favorites_table WHERE id  == :id")
     fun getAFavoriteById(id: Int): LiveData<FavoriteEntity?>

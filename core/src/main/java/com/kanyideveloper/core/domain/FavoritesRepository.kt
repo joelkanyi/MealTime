@@ -17,11 +17,16 @@ package com.kanyideveloper.core.domain
 
 import androidx.lifecycle.LiveData
 import com.kanyideveloper.core.model.Favorite
+import com.kanyideveloper.core.util.Resource
+import kotlinx.coroutines.flow.Flow
 
 interface FavoritesRepository {
-    suspend fun insertFavorite(favorite: Favorite)
+    suspend fun insertFavorite(
+        isSubscribed: Boolean,
+        favorite: Favorite
+    ): Resource<Boolean>
 
-    fun getFavorites(): LiveData<List<Favorite>>
+    suspend fun getFavorites(isSubscribed: Boolean): Resource<Flow<List<Favorite>>>
 
     fun getASingleFavorite(id: Int): LiveData<Favorite?>
 

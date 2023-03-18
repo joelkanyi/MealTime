@@ -18,8 +18,6 @@ package com.kanyideveloper.presentation.home
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kanyideveloper.core.domain.FavoritesRepository
@@ -28,9 +26,14 @@ import com.kanyideveloper.core.domain.SubscriptionRepository
 import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.state.SubscriptionStatusUiState
+import com.kanyideveloper.core.util.Resource
+import com.kanyideveloper.core.util.UiEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
@@ -42,6 +45,9 @@ class HomeViewModel @Inject constructor(
     private val favoritesRepository: FavoritesRepository,
     subscriptionRepository: SubscriptionRepository,
 ) : ViewModel() {
+
+    private val _eventsFlow = MutableSharedFlow<UiEvents>()
+    val eventsFlow = _eventsFlow.asSharedFlow()
 
     val isSubscribed: StateFlow<SubscriptionStatusUiState> =
         subscriptionRepository.isSubscribed
@@ -59,15 +65,46 @@ class HomeViewModel @Inject constructor(
         _shouldShowSubscriptionDialog.value = value
     }
 
-    private val _myMeals = MutableLiveData<LiveData<List<Meal>>>()
-    val myMeals: LiveData<LiveData<List<Meal>>> = _myMeals
+    private val _myMealsState = mutableStateOf(MyMealState())
+    val myMealsState: State<MyMealState> = _myMealsState
 
     fun getMyMeals(filterCategory: String = "All") {
-        _myMeals.value = if (filterCategory == "All") {
-            homeRepository.getMyMeals()
-        } else {
-            Transformations.map(homeRepository.getMyMeals()) { meals ->
-                meals.filter { it.category == filterCategory }
+        _myMealsState.value = MyMealState(isLoading = true, error = null, meals = emptyList())
+        viewModelScope.launch {
+            when (val result = homeRepository.getMyMeals(true)) {
+                is Resource.Error -> {
+                    _eventsFlow.emit(
+                        UiEvents.SnackbarEvent(
+                            result.message ?: "An unexpected error occurred"
+                        )
+                    )
+
+                    result.data?.collectLatest { meals ->
+                        _myMealsState.value = myMealsState.value.copy(
+                            isLoading = false,
+                            meals = if (filterCategory == "All") {
+                                meals
+                            } else {
+                                meals.filter { it.category == filterCategory }
+                            }
+                        )
+                    }
+                }
+                is Resource.Success -> {
+                    result.data?.collectLatest { meals ->
+                        _myMealsState.value = myMealsState.value.copy(
+                            isLoading = false,
+                            meals = if (filterCategory == "All") {
+                                meals
+                            } else {
+                                meals.filter { it.category == filterCategory }
+                            }
+                        )
+                    }
+                }
+                else -> {
+                    myMealsState
+                }
             }
         }
     }
@@ -108,9 +145,26 @@ class HomeViewModel @Inject constructor(
                 isOnline = isOnline,
                 isFavorite = true
             )
-            favoritesRepository.insertFavorite(
-                favorite = favorite
-            )
+            when (val result = favoritesRepository.insertFavorite(
+                favorite = favorite,
+                isSubscribed = true
+            )) {
+                is Resource.Error -> {
+                    _eventsFlow.emit(
+                        UiEvents.SnackbarEvent(
+                            message = result.message ?: "An error occurred"
+                        )
+                    )
+                }
+                is Resource.Success -> {
+                    _eventsFlow.emit(
+                        UiEvents.SnackbarEvent(
+                            message = "Added to favorites"
+                        )
+                    )
+                }
+                else -> {}
+            }
         }
     }
 
@@ -120,3 +174,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 }
+
+data class MyMealState(
+    val meals: List<Meal> = emptyList(),
+    val isLoading: Boolean = false,
+    val error: String? = null,
+)
