@@ -57,7 +57,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.compose_ui.theme.Shapes
-import com.kanyideveloper.core.components.ErrorStateComponent
 import com.kanyideveloper.core.components.LoadingStateComponent
 import com.kanyideveloper.core.components.SwipeRefreshComponent
 import com.kanyideveloper.core.model.Meal
@@ -72,6 +71,7 @@ import com.kanyideveloper.presentation.home.MyMealState
 import com.kanyideveloper.presentation.home.composables.MealItem
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
+import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -85,6 +85,9 @@ fun MyMealScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(key1 = true, block = {
+
+        viewModel.getMyMeals()
+
         viewModel.eventsFlow.collectLatest { event ->
             when (event) {
                 is UiEvents.SnackbarEvent -> {
@@ -118,10 +121,12 @@ fun MyMealScreen(
                     navigator.openMealDetails(meal = meal)
                 },
                 addToFavorites = { localMealId, imageUrl, name ->
+                    Timber.e("Adding to favorites: $localMealId, $imageUrl, $name")
                     viewModel.insertAFavorite(
                         localMealId = localMealId,
                         mealImageUrl = imageUrl,
-                        mealName = name
+                        mealName = name,
+                        isOnline = false
                     )
                 },
                 removeFromFavorites = { id ->
@@ -147,14 +152,14 @@ private fun MyMealScreenContent(
     viewModel: HomeViewModel,
     navigator: HomeNavigator,
     openMealDetails: (Meal) -> Unit = {},
-    addToFavorites: (Int, String, String) -> Unit,
-    removeFromFavorites: (Int) -> Unit,
+    addToFavorites: (String, String, String) -> Unit,
+    removeFromFavorites: (String) -> Unit,
     isSelected: (String) -> Boolean,
     onCategoryClick: (String) -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         // Loaded Data and the list is not empty
-        if (!myMealState.isLoading && myMealState.error == null) {
+        if (!myMealState.isLoading) {
             LazyVerticalGrid(
                 modifier = Modifier.fillMaxSize(),
                 columns = GridCells.Fixed(2),

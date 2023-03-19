@@ -109,10 +109,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    init {
-        getMyMeals()
-    }
-
     private val _isMyMeal = mutableStateOf(true)
     val isMyMeal: State<Boolean> = _isMyMeal
     fun setIsMyMeal(value: Boolean) {
@@ -125,14 +121,14 @@ class HomeViewModel @Inject constructor(
         _selectedCategory.value = value
     }
 
-    fun inFavorites(id: Int): LiveData<Boolean> {
+    fun inFavorites(id: String): LiveData<Boolean> {
         return favoritesRepository.isLocalFavorite(id = id)
     }
 
     fun insertAFavorite(
-        isOnline: Boolean = false,
+        isOnline: Boolean,
         onlineMealId: String? = null,
-        localMealId: Int? = null,
+        localMealId: String,
         mealImageUrl: String,
         mealName: String,
     ) {
@@ -142,8 +138,8 @@ class HomeViewModel @Inject constructor(
                 localMealId = localMealId,
                 mealName = mealName,
                 mealImageUrl = mealImageUrl,
-                isOnline = isOnline,
-                isFavorite = true
+                online = isOnline,
+                favorite = true
             )
             when (val result = favoritesRepository.insertFavorite(
                 favorite = favorite,
@@ -168,9 +164,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun deleteALocalFavorite(localMealId: Int) {
+    fun deleteALocalFavorite(localMealId: String) {
         viewModelScope.launch {
-            favoritesRepository.deleteALocalFavorite(localMealId = localMealId)
+            favoritesRepository.deleteALocalFavorite(
+                localMealId = localMealId,
+                isSubscribed = true
+            )
         }
     }
 }

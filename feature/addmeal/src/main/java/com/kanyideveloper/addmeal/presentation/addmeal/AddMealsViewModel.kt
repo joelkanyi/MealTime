@@ -39,6 +39,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 @HiltViewModel
 class AddMealsViewModel @Inject constructor(
@@ -170,6 +171,7 @@ class AddMealsViewModel @Inject constructor(
                     val imageUrl = uploadResult.data.toString()
 
                     val meal = Meal(
+                        id = UUID.randomUUID().toString(),
                         name = mealName,
                         imageUrl = imageUrl,
                         cookingTime = cookingTime,

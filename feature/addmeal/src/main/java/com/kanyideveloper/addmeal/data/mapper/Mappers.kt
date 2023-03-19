@@ -17,9 +17,11 @@ package com.kanyideveloper.addmeal.data.mapper
 
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core_database.model.MealEntity
+import java.util.UUID
 
 internal fun Meal.toMealEntity(): MealEntity {
     return MealEntity(
+        id = id ?: UUID.randomUUID().toString(),
         name = name,
         imageUrl = imageUrl,
         cookingTime = cookingTime,
@@ -27,7 +29,7 @@ internal fun Meal.toMealEntity(): MealEntity {
         cookingDifficulty = cookingDifficulty,
         ingredients = ingredients,
         cookingInstructions = cookingDirections,
-        isFavorite = isFavorite,
+        isFavorite = favorite,
         servingPeople = servingPeople
     )
 }

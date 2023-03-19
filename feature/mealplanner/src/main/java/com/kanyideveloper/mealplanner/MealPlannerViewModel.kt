@@ -187,7 +187,7 @@ class MealPlannerViewModel @Inject constructor(
 
     private val _singleMeal = MutableLiveData<LiveData<Meal?>>()
     val singleMeal: LiveData<LiveData<Meal?>> = _singleMeal
-    fun getASingleMeal(id: Int) {
+    fun getASingleMeal(id: String) {
         _singleMeal.value = homeRepository.getMealById(id = id)
     }
 }

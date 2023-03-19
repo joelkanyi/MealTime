@@ -72,9 +72,10 @@ fun DetailsScreen(
             },
             addToFavorites = { mealId, imageUrl, name ->
                 viewModel.insertAFavorite(
-                    localMealId = mealId.toInt(),
+                    localMealId = mealId,
                     mealImageUrl = imageUrl,
-                    mealName = name
+                    mealName = name,
+                    isOnline = false
                 )
             }
         )
@@ -85,7 +86,7 @@ fun DetailsScreen(
 private fun DetailsScreenContent(
     meal: Meal,
     navigateBack: () -> Unit,
-    onRemoveFavorite: (Int, String) -> Unit,
+    onRemoveFavorite: (String, String) -> Unit,
     addToFavorites: (String, String, String) -> Unit,
 ) {
     DetailsCollapsingToolbar(

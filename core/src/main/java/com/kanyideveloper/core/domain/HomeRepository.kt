@@ -22,5 +22,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface HomeRepository {
     suspend fun getMyMeals(isSubscribed: Boolean): Resource<Flow<List<Meal>>>
-    fun getMealById(id: Int): LiveData<Meal?>
+    fun getMealById(id: String): LiveData<Meal?>
 }

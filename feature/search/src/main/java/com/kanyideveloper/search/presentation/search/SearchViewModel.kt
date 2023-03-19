@@ -110,9 +110,9 @@ class SearchViewModel @Inject constructor(
     }
 
     fun insertAFavorite(
-        isOnline: Boolean = false,
+        isOnline: Boolean,
         onlineMealId: String? = null,
-        localMealId: Int? = null,
+        localMealId: String? = null,
         mealImageUrl: String,
         mealName: String
     ) {
@@ -122,8 +122,8 @@ class SearchViewModel @Inject constructor(
                 localMealId = localMealId,
                 mealName = mealName,
                 mealImageUrl = mealImageUrl,
-                isOnline = isOnline,
-                isFavorite = true
+                online = isOnline,
+                favorite = true
             )
             when (val result = favoritesRepository.insertFavorite(
                 favorite = favorite,
@@ -150,7 +150,10 @@ class SearchViewModel @Inject constructor(
 
     fun deleteAnOnlineFavorite(onlineMealId: String) {
         viewModelScope.launch {
-            favoritesRepository.deleteAnOnlineFavorite(onlineMealId = onlineMealId)
+            favoritesRepository.deleteAnOnlineFavorite(
+                onlineMealId = onlineMealId,
+                isSubscribed = true
+            )
         }
     }
 }

@@ -96,7 +96,7 @@ class DetailsViewModel @Inject constructor(
         }
     }
 
-    fun inLocalFavorites(id: Int): LiveData<Boolean> {
+    fun inLocalFavorites(id: String): LiveData<Boolean> {
         return favoritesRepository.isLocalFavorite(id = id)
     }
 
@@ -104,22 +104,28 @@ class DetailsViewModel @Inject constructor(
         return favoritesRepository.isOnlineFavorite(id = id)
     }
 
-    fun deleteALocalFavorite(localMealId: Int) {
+    fun deleteALocalFavorite(localMealId: String) {
         viewModelScope.launch {
-            favoritesRepository.deleteALocalFavorite(localMealId = localMealId)
+            favoritesRepository.deleteALocalFavorite(
+                localMealId = localMealId,
+                isSubscribed = true,
+            )
         }
     }
 
     fun deleteAnOnlineFavorite(onlineMealId: String) {
         viewModelScope.launch {
-            favoritesRepository.deleteAnOnlineFavorite(onlineMealId = onlineMealId)
+            favoritesRepository.deleteAnOnlineFavorite(
+                onlineMealId = onlineMealId,
+                isSubscribed = true
+            )
         }
     }
 
     fun insertAFavorite(
-        isOnline: Boolean = false,
+        isOnline: Boolean,
         onlineMealId: String? = null,
-        localMealId: Int? = null,
+        localMealId: String? = null,
         mealImageUrl: String,
         mealName: String,
     ) {
@@ -129,8 +135,8 @@ class DetailsViewModel @Inject constructor(
                 localMealId = localMealId,
                 mealName = mealName,
                 mealImageUrl = mealImageUrl,
-                isOnline = isOnline,
-                isFavorite = true
+                online = isOnline,
+                favorite = true
             )
             when (val result = favoritesRepository.insertFavorite(
                 favorite = favorite,

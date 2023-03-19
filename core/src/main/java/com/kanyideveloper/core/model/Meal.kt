@@ -20,6 +20,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Meal(
+    val id: String? = null,
     val name: String = "",
     val imageUrl: String = "",
     val cookingTime: Int = -1,
@@ -28,8 +29,8 @@ data class Meal(
     val cookingDifficulty: String = "",
     val ingredients: List<String> = emptyList(),
     val cookingDirections: List<String> = emptyList(),
-    val isFavorite: Boolean = false,
+    val favorite: Boolean = false,
     val onlineMealId: String? = null,
-    val localMealId: Int? = null,
+    val localMealId: String? = null,
     val mealPlanId: Int? = null
 ) : Parcelable

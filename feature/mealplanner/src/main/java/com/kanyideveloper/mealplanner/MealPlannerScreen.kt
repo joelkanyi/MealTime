@@ -215,7 +215,7 @@ private fun MealPlannerScreenContent(
     mealTypes: List<String>,
     onClickDay: (String) -> Unit,
     onRemoveClick: (Int?) -> Unit,
-    onMealClick: (Int?, String?, Boolean) -> Unit
+    onMealClick: (String?, String?, Boolean) -> Unit
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         if (!hasMealPlan) {
@@ -280,7 +280,7 @@ fun MealPlan.mapMealPlanToMeals(): List<Meal> {
             cookingDifficulty = meal.cookingDifficulty,
             ingredients = meal.ingredients,
             cookingDirections = meal.cookingDirections,
-            isFavorite = meal.isFavorite,
+            favorite = meal.favorite,
             onlineMealId = meal.onlineMealId,
             localMealId = meal.localMealId,
             mealPlanId = this.id

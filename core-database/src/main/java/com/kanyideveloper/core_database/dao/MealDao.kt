@@ -33,7 +33,7 @@ interface MealDao {
     fun getAllMeals(): Flow<List<MealEntity>>
 
     @Query("SELECT * FROM meal_table WHERE id = :id")
-    fun getSingleMeal(id: Int): LiveData<MealEntity?>
+    fun getSingleMeal(id: String): LiveData<MealEntity?>
 
     @Delete
     suspend fun deleteMeal(mealEntity: MealEntity)

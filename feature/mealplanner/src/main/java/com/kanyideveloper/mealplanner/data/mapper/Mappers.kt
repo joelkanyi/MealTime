@@ -17,11 +17,9 @@ package com.kanyideveloper.mealplanner.data.mapper
 
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.model.OnlineMeal
-import com.kanyideveloper.core.util.stringToList
 import com.kanyideveloper.core_database.model.FavoriteEntity
 import com.kanyideveloper.core_database.model.MealEntity
 import com.kanyideveloper.core_database.model.MealPlanEntity
-import com.kanyideveloper.core_network.model.MealDetailsResponse
 import com.kanyideveloper.core_network.model.MealsResponse
 import com.kanyideveloper.mealplanner.model.MealPlan
 
@@ -60,7 +58,7 @@ internal fun OnlineMeal.toGeneralMeal(): Meal {
         cookingDifficulty = "",
         ingredients = emptyList(),
         cookingDirections = emptyList(),
-        isFavorite = false,
+        favorite = false,
         servingPeople = 0,
         localMealId = null
     )
@@ -75,7 +73,7 @@ internal fun MealEntity.toMeal(): Meal {
         cookingDifficulty = cookingDifficulty,
         ingredients = ingredients,
         cookingDirections = cookingInstructions,
-        isFavorite = isFavorite,
+        favorite = isFavorite,
         servingPeople = servingPeople,
         localMealId = id
     )
@@ -85,9 +83,9 @@ internal fun FavoriteEntity.toMeal(): Meal {
     return Meal(
         name = mealName,
         imageUrl = mealImageUrl,
-        localMealId = id,
+        localMealId = localMealId,
         onlineMealId = onlineMealId,
-        isFavorite = isFavorite,
+        favorite = isFavorite,
         cookingTime = 0,
         category = "",
         cookingDifficulty = "",
@@ -97,6 +95,7 @@ internal fun FavoriteEntity.toMeal(): Meal {
     )
 }
 
+/*
 internal fun MealDetailsResponse.Meal.toMeal(): Meal {
     return Meal(
         name = strMeal,
@@ -127,8 +126,9 @@ internal fun MealDetailsResponse.Meal.toMeal(): Meal {
             strIngredient20
         ).filter { !it.isNullOrEmpty() },
         cookingDirections = strInstructions.stringToList(),
-        isFavorite = false,
+        favorite = false,
         servingPeople = 0,
         onlineMealId = idMeal
     )
 }
+*/

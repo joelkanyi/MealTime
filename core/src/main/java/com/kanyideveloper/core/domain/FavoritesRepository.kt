@@ -23,22 +23,30 @@ import kotlinx.coroutines.flow.Flow
 interface FavoritesRepository {
     suspend fun insertFavorite(
         isSubscribed: Boolean,
-        favorite: Favorite
+        favorite: Favorite,
     ): Resource<Boolean>
 
     suspend fun getFavorites(isSubscribed: Boolean): Resource<Flow<List<Favorite>>>
 
     fun getASingleFavorite(id: Int): LiveData<Favorite?>
 
-    fun isLocalFavorite(id: Int): LiveData<Boolean>
+    fun isLocalFavorite(id: String): LiveData<Boolean>
 
     fun isOnlineFavorite(id: String): LiveData<Boolean>
 
-    suspend fun deleteOneFavorite(favorite: Favorite)
+    suspend fun deleteOneFavorite(
+        favorite: Favorite,
+        isSubscribed: Boolean,
+    )
 
     suspend fun deleteAllFavorites()
 
-    suspend fun deleteALocalFavorite(localMealId: Int)
+    suspend fun deleteALocalFavorite(
+        localMealId: String, isSubscribed: Boolean,
+    )
 
-    suspend fun deleteAnOnlineFavorite(onlineMealId: String)
+    suspend fun deleteAnOnlineFavorite(
+        onlineMealId: String,
+        isSubscribed: Boolean,
+    )
 }

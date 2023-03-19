@@ -65,7 +65,7 @@ import timber.log.Timber
 fun DetailsCollapsingToolbar(
     meal: Meal,
     navigateBack: () -> Unit,
-    onRemoveFavorite: (Int, String) -> Unit,
+    onRemoveFavorite: (String, String) -> Unit,
     addToFavorites: (String, String, String) -> Unit,
     isOnlineMeal: Boolean = false,
     viewModel: DetailsViewModel = hiltViewModel()
@@ -81,7 +81,7 @@ fun DetailsCollapsingToolbar(
         meal.localMealId?.let { viewModel.inLocalFavorites(id = it).observeAsState().value } != null
     }
 
-    Timber.e("Meal Details is favorite: $isFavorite")
+    Timber.e("Meal Details is isFavorite: $isFavorite")
 
     CollapsingToolbarScaffold(
         modifier = Modifier.fillMaxSize(),
@@ -163,7 +163,7 @@ fun DetailsCollapsingToolbar(
                                 .clickable {
                                     if (isFavorite) {
                                         if (isOnlineMeal) {
-                                            onRemoveFavorite(0, meal.onlineMealId!!)
+                                            onRemoveFavorite("", meal.onlineMealId!!)
                                         } else {
                                             onRemoveFavorite(meal.localMealId!!, "")
                                         }
@@ -179,7 +179,7 @@ fun DetailsCollapsingToolbar(
                                         } else {
                                             meal.localMealId?.let {
                                                 addToFavorites(
-                                                    it.toString(),
+                                                    it,
                                                     meal.imageUrl,
                                                     meal.name
                                                 )

@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeoutOrNull
+import java.util.UUID
 
 
 class HomeRepositoryImpl(
@@ -65,6 +66,7 @@ class HomeRepositoryImpl(
                     myMealsRemote.forEach { onlineMeal ->
                         mealDao.insertMeal(
                             mealEntity = MealEntity(
+                                id = onlineMeal.id ?: UUID.randomUUID().toString(),
                                 name = onlineMeal.name,
                                 imageUrl = onlineMeal.imageUrl,
                                 cookingTime = onlineMeal.cookingTime,
@@ -72,8 +74,8 @@ class HomeRepositoryImpl(
                                 cookingDifficulty = onlineMeal.cookingDifficulty,
                                 ingredients = onlineMeal.ingredients,
                                 cookingInstructions = onlineMeal.cookingDirections,
-                                isFavorite = onlineMeal.isFavorite,
-                                servingPeople = onlineMeal.servingPeople
+                                isFavorite = onlineMeal.favorite,
+                                servingPeople = onlineMeal.servingPeople,
                             )
                         )
                     }
@@ -118,7 +120,7 @@ class HomeRepositoryImpl(
     }
 
 
-    override fun getMealById(id: Int): LiveData<Meal?> {
+    override fun getMealById(id: String): LiveData<Meal?> {
         return Transformations.map(mealDao.getSingleMeal(id = id)) { mealEntity ->
             mealEntity?.toMeal()
         }

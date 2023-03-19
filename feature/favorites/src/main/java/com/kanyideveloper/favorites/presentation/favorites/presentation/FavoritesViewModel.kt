@@ -47,10 +47,20 @@ class FavoritesViewModel @Inject constructor(
 
     fun getFavorites() {
         _favoritesUiState.value =
-            _favoritesUiState.value.copy(isLoading = true, favorites = emptyList(), error = null)
+            _favoritesUiState.value.copy(
+                isLoading = true,
+                favorites = emptyList(),
+                error = null
+            )
         viewModelScope.launch {
             when (val result = favoritesRepository.getFavorites(isSubscribed = true)) {
                 is Resource.Error -> {
+                    _eventsFlow.emit(
+                        UiEvents.SnackbarEvent(
+                            message = result.message ?: "An unexpected error occurred"
+                        )
+                    )
+
                     result.data?.collectLatest { favorites ->
                         _favoritesUiState.value = _favoritesUiState.value.copy(
                             isLoading = false,
@@ -58,12 +68,6 @@ class FavoritesViewModel @Inject constructor(
                             error = result.message
                         )
                     }
-
-                    _eventsFlow.emit(
-                        UiEvents.SnackbarEvent(
-                            message = result.message ?: "An unexpected error occurred"
-                        )
-                    )
                 }
                 is Resource.Success -> {
                     result.data?.collectLatest { favorites ->
@@ -83,13 +87,19 @@ class FavoritesViewModel @Inject constructor(
 
     private val _singleMeal = MutableLiveData<LiveData<Meal?>>()
     val singleMeal: LiveData<LiveData<Meal?>> = _singleMeal
-    fun getASingleMeal(id: Int) {
+    fun getASingleMeal(id: String) {
         _singleMeal.value = homeRepository.getMealById(id = id)
     }
 
-    fun deleteAFavorite(favorite: Favorite) {
+    fun deleteAFavorite(
+        favorite: Favorite,
+        isSubscribed: Boolean = true
+    ) {
         viewModelScope.launch {
-            favoritesRepository.deleteOneFavorite(favorite = favorite)
+            favoritesRepository.deleteOneFavorite(
+                favorite = favorite,
+                isSubscribed = isSubscribed
+            )
         }
     }
 

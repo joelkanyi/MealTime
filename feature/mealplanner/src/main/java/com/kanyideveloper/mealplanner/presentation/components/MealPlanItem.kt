@@ -51,7 +51,7 @@ fun MealPlanItem(
     type: String,
     onClickAdd: (String) -> Unit,
     onRemoveClick: (Int?) -> Unit,
-    onMealClick: (Int?, String?, Boolean) -> Unit
+    onMealClick: (String?, String?, Boolean) -> Unit
 ) {
     Column(
         modifier = Modifier

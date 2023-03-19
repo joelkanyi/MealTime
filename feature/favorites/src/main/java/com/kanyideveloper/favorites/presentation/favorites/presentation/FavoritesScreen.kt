@@ -15,21 +15,19 @@
  */
 package com.kanyideveloper.favorites.presentation.favorites.presentation
 
-import android.annotation.SuppressLint
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -84,7 +82,6 @@ interface FavoritesNavigator {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Destination
 @Composable
 fun FavoritesScreen(
@@ -94,6 +91,9 @@ fun FavoritesScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(key1 = true, block = {
+
+        viewModel.getFavorites()
+
         viewModel.eventsFlow.collectLatest { event ->
             when (event) {
                 is UiEvents.SnackbarEvent -> {
@@ -112,6 +112,7 @@ fun FavoritesScreen(
 
 
     Scaffold(
+        modifier = Modifier.fillMaxSize(),
         snackbarHost = {
             SnackbarHost(
                 snackbarHostState
@@ -155,7 +156,7 @@ fun FavoritesScreen(
                 }
             )
         }
-    ) {
+    ) { paddingValues ->
         SwipeRefreshComponent(
             isRefreshingState = favoritesUiState.isLoading,
             onRefreshData = {
@@ -163,6 +164,9 @@ fun FavoritesScreen(
             }
         ) {
             FavoritesScreenContent(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
                 favoritesUiState = favoritesUiState,
                 onClick = { _, onlineMealId, localMealId, isOnline ->
                     if (isOnline) {
@@ -185,20 +189,24 @@ fun FavoritesScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun FavoritesScreenContent(
+    modifier: Modifier = Modifier,
     favoritesUiState: FavoritesUiState,
-    onClick: (Int?, String?, Int?, Boolean) -> Unit,
+    onClick: (Int?, String?, String?, Boolean) -> Unit,
     onFavoriteClick: (Favorite) -> Unit,
 ) {
-
-    Box(modifier = Modifier.fillMaxSize()) {
-
+    Box(modifier = modifier) {
         // Favorites list
-        if (favoritesUiState.favorites.isNotEmpty() && !favoritesUiState.isLoading) {
+        if (!favoritesUiState.isLoading) {
             LazyColumn {
-                items(favoritesUiState.favorites) { favorite ->
+                items(
+                    favoritesUiState.favorites,
+                    key = { favorite -> favorite.id!! }
+                ) { favorite ->
                     FoodItem(
+                        modifier = Modifier.animateItemPlacement(),
                         favorite = favorite,
                         onClick = onClick,
                         onFavoriteClick = onFavoriteClick
@@ -224,13 +232,13 @@ private fun FavoritesScreenContent(
 fun FoodItem(
     favorite: Favorite,
     modifier: Modifier = Modifier,
-    onClick: (Int?, String?, Int?, Boolean) -> Unit,
+    onClick: (Int?, String?, String?, Boolean) -> Unit,
     onFavoriteClick: (Favorite) -> Unit,
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(130.dp)
+            .wrapContentHeight()
             .padding(horizontal = 8.dp, vertical = 5.dp),
         shape = Shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
@@ -243,50 +251,46 @@ fun FoodItem(
             )
         }
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Row(Modifier.fillMaxWidth()) {
-                Image(
-                    modifier = Modifier
-                        .fillMaxWidth(0.4f)
-                        .fillMaxHeight(),
-                    contentDescription = null,
-                    painter = rememberAsyncImagePainter(
-                        ImageRequest.Builder(LocalContext.current)
-                            .data(data = favorite.mealImageUrl)
-                            .apply(block = fun ImageRequest.Builder.() {
-                                placeholder(R.drawable.placeholder)
-                            }).build()
-                    ),
-                    contentScale = ContentScale.Crop
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Column(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = favorite.mealName,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
-            }
-
-            Icon(
+        Column {
+            Image(
                 modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.BottomEnd)
-                    .size(32.dp)
-                    .padding(0.dp)
-                    .clickable {
-                        onFavoriteClick(favorite)
-                    },
-                imageVector = Icons.Filled.Favorite,
+                    .fillMaxWidth()
+                    .height(200.dp),
                 contentDescription = null,
-                tint = Color(0xFFfa4a0c)
+                painter = rememberAsyncImagePainter(
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(data = favorite.mealImageUrl)
+                        .apply(block = fun ImageRequest.Builder.() {
+                            placeholder(R.drawable.placeholder)
+                        }).build()
+                ),
+                contentScale = ContentScale.Crop
             )
+
+            Row(
+                Modifier.fillMaxWidth().padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .wrapContentHeight(),
+                    text = favorite.mealName,
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Icon(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clickable {
+                            onFavoriteClick(favorite)
+                        },
+                    imageVector = Icons.Filled.Favorite,
+                    contentDescription = null,
+                    tint = Color(0xFFfa4a0c)
+                )
+            }
         }
     }
 }

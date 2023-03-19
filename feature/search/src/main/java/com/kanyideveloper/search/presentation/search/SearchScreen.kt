@@ -131,7 +131,8 @@ fun SearchScreen(
             viewModel.insertAFavorite(
                 onlineMealId = onlineMealId,
                 mealImageUrl = imageUrl,
-                mealName = name
+                mealName = name,
+                isOnline = true
             )
         },
         removeFromFavorites = { id ->

@@ -50,17 +50,21 @@ import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.util.convertMinutesToHours
 import com.kanyideveloper.mealtime.core.R
 import com.kanyideveloper.presentation.home.HomeViewModel
+import timber.log.Timber
 
 @Composable
 fun MealItem(
     meal: Meal,
-    addToFavorites: (Int, String, String) -> Unit,
-    removeFromFavorites: (Int) -> Unit,
+    addToFavorites: (String, String, String) -> Unit,
+    removeFromFavorites: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel
 ) {
+    Timber.e("MealItem: $meal")
     val isFavorite =
         meal.localMealId?.let { viewModel.inFavorites(id = it).observeAsState().value } != null
+
+    Timber.e("isFavorite: $isFavorite")
 
     Card(
         modifier = modifier

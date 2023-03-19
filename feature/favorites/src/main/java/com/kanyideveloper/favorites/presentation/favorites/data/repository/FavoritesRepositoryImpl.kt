@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeoutOrNull
+import timber.log.Timber
 import java.util.UUID
 
 class FavoritesRepositoryImpl(
@@ -39,11 +40,11 @@ class FavoritesRepositoryImpl(
 ) : FavoritesRepository {
     override suspend fun insertFavorite(
         isSubscribed: Boolean,
-        favorite: Favorite
+        favorite: Favorite,
     ): Resource<Boolean> {
         return if (isSubscribed) {
             saveFavoriteToRemoteDatasource(favorite)
-        }else{
+        } else {
             favoritesDao.insertAFavorite(favorite.toEntity())
             Resource.Success(data = true)
         }
@@ -80,10 +81,10 @@ class FavoritesRepositoryImpl(
                                 id = onlineFavorite.id,
                                 onlineMealId = onlineFavorite.onlineMealId,
                                 localMealId = onlineFavorite.localMealId,
-                                isOnline = onlineFavorite.isOnline,
+                                isOnline = onlineFavorite.online,
                                 mealName = onlineFavorite.mealName,
                                 mealImageUrl = onlineFavorite.mealImageUrl,
-                                isFavorite = onlineFavorite.isFavorite
+                                isFavorite = onlineFavorite.favorite
                             )
                         )
                     }
@@ -131,7 +132,7 @@ class FavoritesRepositoryImpl(
         }
     }
 
-    override fun isLocalFavorite(id: Int): LiveData<Boolean> {
+    override fun isLocalFavorite(id: String): LiveData<Boolean> {
         return favoritesDao.localInFavorites(id = id)
     }
 
@@ -139,31 +140,98 @@ class FavoritesRepositoryImpl(
         return favoritesDao.onlineInFavorites(id = id)
     }
 
-    override suspend fun deleteOneFavorite(favorite: Favorite) {
-        favoritesDao.deleteAFavorite(favorite.toEntity())
+    override suspend fun deleteOneFavorite(
+        favorite: Favorite,
+        isSubscribed: Boolean,
+    ) {
+        if (isSubscribed) {
+            deleteAFavoriteFromRemoteDatasource(
+                mealId = if (favorite.online) {
+                    favorite.onlineMealId ?: UUID.randomUUID().toString()
+                } else {
+                    favorite.localMealId.toString()
+                },
+                isOnlineMeal = favorite.online,
+            )
+        } else {
+            favoritesDao.deleteAFavorite(favorite.toEntity())
+        }
     }
 
     override suspend fun deleteAllFavorites() {
         favoritesDao.deleteAllFavorites()
     }
 
-    override suspend fun deleteALocalFavorite(localMealId: Int) {
-        favoritesDao.deleteALocalFavorite(localMealId = localMealId)
+    override suspend fun deleteALocalFavorite(
+        localMealId: String,
+        isSubscribed: Boolean,
+    ) {
+        if (isSubscribed) {
+            deleteAFavoriteFromRemoteDatasource(
+                mealId = localMealId,
+                isOnlineMeal = false,
+            )
+        } else {
+            favoritesDao.deleteALocalFavorite(localMealId = localMealId)
+        }
+
     }
 
-    override suspend fun deleteAnOnlineFavorite(onlineMealId: String) {
-        favoritesDao.deleteAnOnlineFavorite(mealId = onlineMealId)
+    override suspend fun deleteAnOnlineFavorite(
+        onlineMealId: String,
+        isSubscribed: Boolean,
+    ) {
+        if (isSubscribed) {
+            deleteAFavoriteFromRemoteDatasource(
+                mealId = onlineMealId,
+                isOnlineMeal = true
+            )
+        } else {
+            favoritesDao.deleteAnOnlineFavorite(mealId = onlineMealId)
+        }
     }
 
-    private suspend fun saveFavoriteToRemoteDatasource(favorite: Favorite): Resource<Boolean>{
+    private suspend fun saveFavoriteToRemoteDatasource(favorite: Favorite): Resource<Boolean> {
         return try {
             databaseReference
                 .child("favorites")
                 .child(firebaseAuth.currentUser?.uid.toString())
-                .child(UUID.randomUUID().toString())
+                .child(
+                    if (favorite.online) {
+                        favorite.onlineMealId ?: UUID.randomUUID().toString()
+                    } else {
+                        favorite.localMealId.toString()
+                    }
+                )
                 .setValue(favorite).await()
+            favoritesDao.insertAFavorite(favorite.toEntity())
             Resource.Success(data = true)
         } catch (e: Exception) {
+            return Resource.Error(e.localizedMessage ?: "Unknown error occurred")
+        }
+    }
+
+    private suspend fun deleteAFavoriteFromRemoteDatasource(
+        mealId: String,
+        isOnlineMeal: Boolean,
+    ): Resource<Boolean> {
+        return try {
+            databaseReference
+                .child("favorites")
+                .child(firebaseAuth.currentUser?.uid.toString())
+                .child(mealId)
+                .removeValue()
+                .await()
+
+            if (isOnlineMeal) {
+                favoritesDao.deleteAnOnlineFavorite(mealId = mealId)
+            } else {
+                favoritesDao.deleteALocalFavorite(localMealId = mealId)
+            }
+
+            Resource.Success(data = true)
+        } catch (e: Exception) {
+            Timber.e("Error deleting isFavorite: $e")
             return Resource.Error(e.localizedMessage ?: "Unknown error occurred")
         }
     }
