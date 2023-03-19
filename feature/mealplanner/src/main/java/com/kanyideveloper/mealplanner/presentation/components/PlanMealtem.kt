@@ -64,7 +64,7 @@ fun PlanMealItem(
     type: String = "",
     onMealClick: (String?, String?, Boolean) -> Unit,
     onClickAdd: (Meal, String) -> Unit,
-    onRemoveClick: (Int?) -> Unit
+    onRemoveClick: (String?) -> Unit
 ) {
     Box(
         modifier = Modifier

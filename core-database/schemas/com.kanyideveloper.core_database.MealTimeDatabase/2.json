@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "cd92549ff9146b69173a73fdf62a6bcc",
+    "identityHash": "bd3d9d72028b9c3afaf6b968e3fa5429",
     "entities": [
       {
         "tableName": "meal_table",
@@ -136,7 +136,7 @@
       },
       {
         "tableName": "meal_plan_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mealTypeName` TEXT NOT NULL, `meals` TEXT NOT NULL, `mealDate` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mealTypeName` TEXT NOT NULL, `meals` TEXT NOT NULL, `mealDate` TEXT NOT NULL, `id` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "mealTypeName",
@@ -159,12 +159,12 @@
           {
             "fieldPath": "id",
             "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
-          "autoGenerate": true,
+          "autoGenerate": false,
           "columnNames": [
             "id"
           ]
@@ -176,7 +176,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cd92549ff9146b69173a73fdf62a6bcc')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bd3d9d72028b9c3afaf6b968e3fa5429')"
     ]
   }
 }

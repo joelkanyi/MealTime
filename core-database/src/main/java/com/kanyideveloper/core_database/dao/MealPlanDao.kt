@@ -15,12 +15,12 @@
  */
 package com.kanyideveloper.core_database.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.kanyideveloper.core_database.model.MealPlanEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MealPlanDao {
@@ -28,11 +28,14 @@ interface MealPlanDao {
     suspend fun insertMealPlan(mealPlanEntity: MealPlanEntity)
 
     @Query("SELECT * FROM meal_plan_table WHERE mealDate = :filterDay")
-    fun getPlanMeals(filterDay: String): LiveData<List<MealPlanEntity>>
+    fun getPlanMeals(filterDay: String): Flow<List<MealPlanEntity>>
 
     @Query("DELETE FROM meal_plan_table WHERE id = :id")
-    suspend fun deleteAMealFromPlan(id: Int)
+    suspend fun deleteAMealFromPlan(id: String)
 
     @Query("DELETE FROM meal_plan_table WHERE id = :id")
     suspend fun removeMealFromPlan(id: Int)
+
+    @Query("DELETE FROM meal_plan_table")
+    suspend fun deleteAllMealsFromPlan()
 }

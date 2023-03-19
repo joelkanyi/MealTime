@@ -50,7 +50,7 @@ fun MealPlanItem(
     meals: List<Meal>,
     type: String,
     onClickAdd: (String) -> Unit,
-    onRemoveClick: (Int?) -> Unit,
+    onRemoveClick: (String?) -> Unit,
     onMealClick: (String?, String?, Boolean) -> Unit
 ) {
     Column(

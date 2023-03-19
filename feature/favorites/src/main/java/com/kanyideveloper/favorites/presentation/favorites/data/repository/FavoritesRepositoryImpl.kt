@@ -52,77 +52,81 @@ class FavoritesRepositoryImpl(
 
     override suspend fun getFavorites(isSubscribed: Boolean): Resource<Flow<List<Favorite>>> {
         return if (isSubscribed) {
-            /**
-             * Do offline caching
-             */
-            // first read from the local database
-            val favorites = favoritesDao.getFavorites()
+            getFavoritesFromRemoteDataSource()
+        } else {
+            Resource.Success(data = favoritesDao.getFavorites().map { favoritesEntity ->
+                favoritesEntity.map { it.toFavorite() }
+            })
+        }
+    }
 
-            try {
-                val newFavorites = withTimeoutOrNull(10000L) {
-                    // fetch from the remote database
-                    val favoritesRemote: MutableList<Favorite> = mutableListOf()
-                    val favs = databaseReference
-                        .child("favorites")
-                        .child(firebaseAuth.currentUser?.uid.toString())
-                    val auctionsListFromDb = favs.get().await()
-                    for (i in auctionsListFromDb.children) {
-                        val result = i.getValue(Favorite::class.java)
-                        favoritesRemote.add(result!!)
-                    }
+    private suspend fun getFavoritesFromRemoteDataSource(): Resource<Flow<List<Favorite>>> {
+        /**
+         * Do offline caching
+         */
+        // first read from the local database
+        val favorites = favoritesDao.getFavorites()
 
-                    // clear the local database
-                    favoritesDao.deleteAllFavorites()
+        return try {
+            val newFavorites = withTimeoutOrNull(10000L) {
+                // fetch from the remote database
+                val favoritesRemote: MutableList<Favorite> = mutableListOf()
+                val favs = databaseReference
+                    .child("favorites")
+                    .child(firebaseAuth.currentUser?.uid.toString())
+                val auctionsListFromDb = favs.get().await()
+                for (i in auctionsListFromDb.children) {
+                    val result = i.getValue(Favorite::class.java)
+                    favoritesRemote.add(result!!)
+                }
 
-                    // save the remote data to the local database
-                    favoritesRemote.forEach { onlineFavorite ->
-                        favoritesDao.insertAFavorite(
-                            FavoriteEntity(
-                                id = onlineFavorite.id,
-                                onlineMealId = onlineFavorite.onlineMealId,
-                                localMealId = onlineFavorite.localMealId,
-                                isOnline = onlineFavorite.online,
-                                mealName = onlineFavorite.mealName,
-                                mealImageUrl = onlineFavorite.mealImageUrl,
-                                isFavorite = onlineFavorite.favorite
-                            )
+                // clear the local database
+                favoritesDao.deleteAllFavorites()
+
+                // save the remote data to the local database
+                favoritesRemote.forEach { onlineFavorite ->
+                    favoritesDao.insertAFavorite(
+                        FavoriteEntity(
+                            id = onlineFavorite.id,
+                            onlineMealId = onlineFavorite.onlineMealId,
+                            localMealId = onlineFavorite.localMealId,
+                            isOnline = onlineFavorite.online,
+                            mealName = onlineFavorite.mealName,
+                            mealImageUrl = onlineFavorite.mealImageUrl,
+                            isFavorite = onlineFavorite.favorite
                         )
-                    }
-
-                    // read from the local database
-                    favoritesDao.getFavorites().map { favoriteEntities ->
-                        favoriteEntities.map { favoriteEntity ->
-                            favoriteEntity.toFavorite()
-                        }
-                    }
-                }
-
-                if (newFavorites == null) {
-                    Resource.Error(
-                        "Viewing offline data",
-                        data = favorites.map {
-                            it.map { favoriteEntity ->
-                                favoriteEntity.toFavorite()
-                            }
-                        }
                     )
-                } else {
-                    Resource.Success(data = newFavorites)
                 }
-            } catch (e: Exception) {
+
+                // read from the local database
+                favoritesDao.getFavorites().map { favoriteEntities ->
+                    favoriteEntities.map { favoriteEntity ->
+                        favoriteEntity.toFavorite()
+                    }
+                }
+            }
+
+            if (newFavorites == null) {
                 Resource.Error(
-                    e.localizedMessage ?: "Unknown error occurred",
+                    "Viewing offline data",
                     data = favorites.map {
                         it.map { favoriteEntity ->
                             favoriteEntity.toFavorite()
                         }
                     }
                 )
+            } else {
+                Resource.Success(data = newFavorites)
             }
-        } else {
-            Resource.Success(data = favoritesDao.getFavorites().map { favoritesEntity ->
-                favoritesEntity.map { it.toFavorite() }
-            })
+        } catch (e: Exception) {
+            Resource.Error(
+                e.localizedMessage ?: "Unknown error occurred",
+                data = favorites.map {
+                    it.map { favoriteEntity ->
+                        favoriteEntity.toFavorite()
+                    }
+                }
+            )
         }
     }
 

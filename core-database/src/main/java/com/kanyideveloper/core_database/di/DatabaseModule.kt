@@ -19,7 +19,7 @@ import android.content.Context
 import androidx.room.Room
 import com.google.gson.Gson
 import com.kanyideveloper.core.util.Constants
-import com.kanyideveloper.core_database.DatabaseMigrations.migration_1_2
+import com.kanyideveloper.core_database.DatabaseMigrations.migration_1_3
 import com.kanyideveloper.core_database.MealTimeDatabase
 import dagger.Module
 import dagger.Provides
@@ -48,7 +48,7 @@ object DatabaseModule {
             MealTimeDatabase::class.java,
             Constants.MEALTIME_DATABASE
         )
-            .addMigrations(migration_1_2)
+            .addMigrations(migration_1_3)
             .fallbackToDestructiveMigration()
             .addTypeConverter(converters)
             .build()

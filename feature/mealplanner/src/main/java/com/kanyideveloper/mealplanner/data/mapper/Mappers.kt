@@ -22,12 +22,14 @@ import com.kanyideveloper.core_database.model.MealEntity
 import com.kanyideveloper.core_database.model.MealPlanEntity
 import com.kanyideveloper.core_network.model.MealsResponse
 import com.kanyideveloper.mealplanner.model.MealPlan
+import java.util.UUID
 
 internal fun MealPlan.toEntity(): MealPlanEntity {
     return MealPlanEntity(
         mealTypeName = mealTypeName,
         meals = meals,
-        mealDate = date
+        mealDate = date,
+        id = id ?: UUID.randomUUID().toString()
     )
 }
 

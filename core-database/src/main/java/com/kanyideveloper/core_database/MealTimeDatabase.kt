@@ -32,7 +32,7 @@ import com.kanyideveloper.core_database.model.MealPlanEntity
         FavoriteEntity::class,
         MealPlanEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 @TypeConverters(Converters::class)

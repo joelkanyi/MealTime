@@ -46,6 +46,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.joelkanyi.horizontalcalendar.HorizontalCalendarView
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.core.components.EmptyStateComponent
+import com.kanyideveloper.core.components.SwipeRefreshComponent
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.mealplanner.model.MealPlan
@@ -62,7 +63,7 @@ interface MealPlannerNavigator {
     fun openMealTypesScreen(
         allergies: String,
         noOfPeople: String,
-        editMealPlanPreference: Boolean = false
+        editMealPlanPreference: Boolean = false,
     )
 
     fun openMealPlanner()
@@ -77,13 +78,26 @@ interface MealPlannerNavigator {
 @Composable
 fun MealPlannerScreen(
     navigator: MealPlannerNavigator,
-    viewModel: MealPlannerViewModel = hiltViewModel()
+    viewModel: MealPlannerViewModel = hiltViewModel(),
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(key1 = true, block = {
+        viewModel.getPlanMeals()
+
+        viewModel.eventsFlow.collectLatest { event ->
+            when (event) {
+                is UiEvents.SnackbarEvent -> {
+                    snackbarHostState.showSnackbar(message = event.message)
+                }
+                else -> {}
+            }
+        }
+    })
+
     val hasMealPlan = viewModel.hasMealPlanPrefs.value
     val shouldShowMealsDialog = viewModel.shouldShowMealsDialog.value
-    val planMeals = viewModel.getPlanMeals().observeAsState().value
-
-    val snackbarHostState = remember { SnackbarHostState() }
+    val planMealsUiState = viewModel.mealsInPlanState.value
 
     val meal = viewModel.singleMeal.observeAsState().value?.observeAsState()?.value
 
@@ -103,7 +117,7 @@ fun MealPlannerScreen(
     if (shouldShowMealsDialog) {
         SelectMealDialog(
             mealType = viewModel.mealType.value,
-            meals = viewModel.searchMeals.value.meals?.observeAsState()?.value ?: emptyList(),
+            meals = viewModel.searchMeals.value.meals,
             currentSearchString = viewModel.searchString.value,
             sources = listOf("Online", "My Meals", "My Favorites"),
             searchOptions = listOf("Name", "Ingredient", "Category"),
@@ -169,37 +183,44 @@ fun MealPlannerScreen(
             )
         }
     ) { paddingValues ->
-        MealPlannerScreenContent(
-            modifier = Modifier.padding(paddingValues),
-            hasMealPlan = hasMealPlan,
-            navigator = navigator,
-            mealTypes = viewModel.types.value,
-            mealsAndTheirTypes = planMeals ?: emptyList(),
-            onClickAdd = { mealType ->
-                viewModel.setMealTypeState(mealType)
-                viewModel.setShouldShowMealsDialogState(!viewModel.shouldShowMealsDialog.value)
-            },
-            onClickDay = { fullDate ->
-                viewModel.setSelectedDateState(fullDate)
-                viewModel.getPlanMeals(filterDay = fullDate)
-            },
-            onRemoveClick = { id ->
-                id?.let { viewModel.removeMealFromPlan(id = it) }
-            },
-            onMealClick = { localMealId, onlineMealId, isOnline ->
-                if (isOnline) {
-                    onlineMealId?.let { navigator.openOnlineMealDetails(mealId = it) }
-                } else {
-                    if (localMealId != null) {
-                        viewModel.getASingleMeal(id = localMealId)
+        SwipeRefreshComponent(
+            isRefreshingState = planMealsUiState.isLoading,
+            onRefreshData = {
+                viewModel.getPlanMeals()
+            }
+        ) {
+            MealPlannerScreenContent(
+                modifier = Modifier.padding(paddingValues),
+                hasMealPlan = hasMealPlan,
+                navigator = navigator,
+                mealTypes = viewModel.types.value,
+                mealsAndTheirTypes = planMealsUiState.meals,
+                onClickAdd = { mealType ->
+                    viewModel.setMealTypeState(mealType)
+                    viewModel.setShouldShowMealsDialogState(!viewModel.shouldShowMealsDialog.value)
+                },
+                onClickDay = { fullDate ->
+                    viewModel.setSelectedDateState(fullDate)
+                    viewModel.getPlanMeals(filterDay = fullDate)
+                },
+                onRemoveClick = { id ->
+                    id?.let { viewModel.removeMealFromPlan(id = it) }
+                },
+                onMealClick = { localMealId, onlineMealId, isOnline ->
+                    if (isOnline) {
+                        onlineMealId?.let { navigator.openOnlineMealDetails(mealId = it) }
+                    } else {
+                        if (localMealId != null) {
+                            viewModel.getASingleMeal(id = localMealId)
 
-                        if (meal != null) {
-                            navigator.openMealDetails(meal = meal)
+                            if (meal != null) {
+                                navigator.openMealDetails(meal = meal)
+                            }
                         }
                     }
                 }
-            }
-        )
+            )
+        }
     }
 }
 
@@ -214,8 +235,8 @@ private fun MealPlannerScreenContent(
     mealsAndTheirTypes: List<MealPlan>,
     mealTypes: List<String>,
     onClickDay: (String) -> Unit,
-    onRemoveClick: (Int?) -> Unit,
-    onMealClick: (String?, String?, Boolean) -> Unit
+    onRemoveClick: (String?) -> Unit,
+    onMealClick: (String?, String?, Boolean) -> Unit,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         if (!hasMealPlan) {
