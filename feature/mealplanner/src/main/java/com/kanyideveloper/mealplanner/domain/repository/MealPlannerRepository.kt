@@ -22,7 +22,7 @@ import com.kanyideveloper.mealplanner.model.MealPlan
 import kotlinx.coroutines.flow.Flow
 
 interface MealPlannerRepository {
-    suspend fun hasMealPlanPref(): Flow<MealPlanPreference?>
+    suspend fun hasMealPlanPref(isSubscribed: Boolean): Flow<MealPlanPreference?>
 
     suspend fun saveMealPlannerPreferences(
         allergies: List<String>,
@@ -31,7 +31,10 @@ interface MealPlannerRepository {
         isSubscribed: Boolean
     )
 
-    suspend fun getMealsInMyPlan(filterDay: String, isSubscribed: Boolean): Resource<Flow<List<MealPlan>>>
+    suspend fun getMealsInMyPlan(
+        filterDay: String,
+        isSubscribed: Boolean
+    ): Resource<Flow<List<MealPlan>>>
 
     fun getExistingMeals(mealType: String, date: String): List<Meal>
 
@@ -50,5 +53,5 @@ interface MealPlannerRepository {
 
     suspend fun getAllIngredients(): Resource<List<String>>
 
-    fun setAlarm()
+    fun setAlarm(isSubscribed: Boolean)
 }

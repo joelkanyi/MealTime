@@ -48,6 +48,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -71,6 +72,7 @@ import com.kanyideveloper.core.components.LoadingStateComponent
 import com.kanyideveloper.core.components.SwipeRefreshComponent
 import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.state.SubscriptionStatusUiState
 import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
@@ -86,106 +88,118 @@ interface FavoritesNavigator {
 @Composable
 fun FavoritesScreen(
     navigator: FavoritesNavigator,
-    viewModel: FavoritesViewModel = hiltViewModel(),
+    viewModel: FavoritesViewModel = hiltViewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
-
-    LaunchedEffect(key1 = true, block = {
-
-        viewModel.getFavorites()
-
-        viewModel.eventsFlow.collectLatest { event ->
-            when (event) {
-                is UiEvents.SnackbarEvent -> {
-                    snackbarHostState.showSnackbar(
-                        message = event.message,
-                    )
-                }
-                else -> {}
-            }
-        }
-    })
-
     val favoritesUiState = viewModel.favoritesUiState.value
     val meal = viewModel.singleMeal.observeAsState().value?.observeAsState()?.value
     var mDisplayMenu by remember { mutableStateOf(false) }
 
+    when (val isSubscribed = viewModel.isSubscribed.collectAsState().value) {
+        is SubscriptionStatusUiState.Success -> {
+            LaunchedEffect(key1 = true, block = {
+                viewModel.getFavorites(
+                    isSubscribed = isSubscribed.isSubscribed
+                )
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        snackbarHost = {
-            SnackbarHost(
-                snackbarHostState
-            )
-        },
-        topBar = {
-            StandardToolbar(
-                navigate = {},
-                title = {
-                    Text(text = "Favorite meals", fontSize = 18.sp)
-                },
-                showBackArrow = false,
-                navActions = {
-                    IconButton(onClick = { mDisplayMenu = !mDisplayMenu }) {
-                        Icon(Icons.Default.MoreVert, "")
+                viewModel.eventsFlow.collectLatest { event ->
+                    when (event) {
+                        is UiEvents.SnackbarEvent -> {
+                            snackbarHostState.showSnackbar(
+                                message = event.message
+                            )
+                        }
+                        else -> {}
                     }
+                }
+            })
 
-                    DropdownMenu(
-                        expanded = mDisplayMenu,
-                        onDismissRequest = { mDisplayMenu = false }
-                    ) {
-                        DropdownMenuItem(
-                            onClick = {
-                                viewModel.deleteAllFavorites()
-                                mDisplayMenu = false
-                            },
-                            text = {
-                                Text(text = "Delete All Favorites")
-                            },
-                            leadingIcon = {
-                                Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
-                            },
-                            trailingIcon = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.chevron_right),
-                                    contentDescription = null
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                snackbarHost = {
+                    SnackbarHost(
+                        snackbarHostState
+                    )
+                },
+                topBar = {
+                    StandardToolbar(
+                        navigate = {},
+                        title = {
+                            Text(text = "Favorite meals", fontSize = 18.sp)
+                        },
+                        showBackArrow = false,
+                        navActions = {
+                            IconButton(onClick = { mDisplayMenu = !mDisplayMenu }) {
+                                Icon(Icons.Default.MoreVert, "")
+                            }
+
+                            DropdownMenu(
+                                expanded = mDisplayMenu,
+                                onDismissRequest = { mDisplayMenu = false }
+                            ) {
+                                DropdownMenuItem(
+                                    onClick = {
+                                        viewModel.deleteAllFavorites()
+                                        mDisplayMenu = false
+                                    },
+                                    text = {
+                                        Text(text = "Delete All Favorites")
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Delete,
+                                            contentDescription = null
+                                        )
+                                    },
+                                    trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.chevron_right),
+                                            contentDescription = null
+                                        )
+                                    }
                                 )
                             }
+                        }
+                    )
+                }
+            ) { paddingValues ->
+                SwipeRefreshComponent(
+                    isRefreshingState = favoritesUiState.isLoading,
+                    onRefreshData = {
+                        viewModel.getFavorites(
+                            isSubscribed = isSubscribed.isSubscribed
                         )
                     }
-                }
-            )
-        }
-    ) { paddingValues ->
-        SwipeRefreshComponent(
-            isRefreshingState = favoritesUiState.isLoading,
-            onRefreshData = {
-                viewModel.getFavorites()
-            }
-        ) {
-            FavoritesScreenContent(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                favoritesUiState = favoritesUiState,
-                onClick = { _, onlineMealId, localMealId, isOnline ->
-                    if (isOnline) {
-                        onlineMealId?.let { navigator.openOnlineMealDetails(mealId = it) }
-                    } else {
-                        if (localMealId != null) {
-                            viewModel.getASingleMeal(id = localMealId)
+                ) {
+                    FavoritesScreenContent(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                        favoritesUiState = favoritesUiState,
+                        onClick = { _, onlineMealId, localMealId, isOnline ->
+                            if (isOnline) {
+                                onlineMealId?.let { navigator.openOnlineMealDetails(mealId = it) }
+                            } else {
+                                if (localMealId != null) {
+                                    viewModel.getASingleMeal(id = localMealId)
 
-                            if (meal != null) {
-                                navigator.openMealDetails(meal = meal)
+                                    if (meal != null) {
+                                        navigator.openMealDetails(meal = meal)
+                                    }
+                                }
                             }
+                        },
+                        onFavoriteClick = { favorite ->
+                            viewModel.deleteAFavorite(
+                                favorite = favorite,
+                                isSubscribed = isSubscribed.isSubscribed
+                            )
                         }
-                    }
-                },
-                onFavoriteClick = { favorite ->
-                    viewModel.deleteAFavorite(favorite = favorite)
+                    )
                 }
-            )
+            }
         }
+        else -> {}
     }
 }
 
@@ -195,7 +209,7 @@ private fun FavoritesScreenContent(
     modifier: Modifier = Modifier,
     favoritesUiState: FavoritesUiState,
     onClick: (Int?, String?, String?, Boolean) -> Unit,
-    onFavoriteClick: (Favorite) -> Unit,
+    onFavoriteClick: (Favorite) -> Unit
 ) {
     Box(modifier = modifier) {
         // Favorites list
@@ -233,7 +247,7 @@ fun FoodItem(
     favorite: Favorite,
     modifier: Modifier = Modifier,
     onClick: (Int?, String?, String?, Boolean) -> Unit,
-    onFavoriteClick: (Favorite) -> Unit,
+    onFavoriteClick: (Favorite) -> Unit
 ) {
     Card(
         modifier = modifier
@@ -268,7 +282,9 @@ fun FoodItem(
             )
 
             Row(
-                Modifier.fillMaxWidth().padding(8.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {

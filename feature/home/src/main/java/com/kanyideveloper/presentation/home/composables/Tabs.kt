@@ -37,11 +37,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun Tabs(
-    tabs: List<TabItem>,
-    pagerState: PagerState,
-    onClick: (Int) -> Unit
-) {
+fun Tabs(tabs: List<TabItem>, pagerState: PagerState, onClick: (Int) -> Unit) {
     val scope = rememberCoroutineScope()
 
     TabRow(
@@ -60,18 +56,21 @@ fun Tabs(
         tabs.forEachIndexed { index, tabItem ->
             val selected = pagerState.currentPage == index
             Tab(
-                modifier = if (selected) Modifier
-                    .padding(4.dp)
-                    .background(
-                        MaterialTheme.colorScheme.primary,
-                        shape = RoundedCornerShape(50)
-                    )
-                else Modifier
-                    .padding(4.dp)
-                    .background(
-                        Color.Transparent
-                    )
-                    .border(1.dp, MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(50)),
+                modifier = if (selected) {
+                    Modifier
+                        .padding(4.dp)
+                        .background(
+                            MaterialTheme.colorScheme.primary,
+                            shape = RoundedCornerShape(50)
+                        )
+                } else {
+                    Modifier
+                        .padding(4.dp)
+                        .background(
+                            Color.Transparent
+                        )
+                        .border(1.dp, MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(50))
+                },
                 selected = pagerState.currentPage == index,
                 onClick = {
                     scope.launch {

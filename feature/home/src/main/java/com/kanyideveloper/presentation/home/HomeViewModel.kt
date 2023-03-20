@@ -36,14 +36,14 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
     private val favoritesRepository: FavoritesRepository,
-    subscriptionRepository: SubscriptionRepository,
+    subscriptionRepository: SubscriptionRepository
 ) : ViewModel() {
 
     private val _eventsFlow = MutableSharedFlow<UiEvents>()
@@ -55,9 +55,8 @@ class HomeViewModel @Inject constructor(
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = SubscriptionStatusUiState.Loading,
+                initialValue = SubscriptionStatusUiState.Loading
             )
-
 
     private val _shouldShowSubscriptionDialog = mutableStateOf(false)
     val shouldShowSubscriptionDialog: State<Boolean> = _shouldShowSubscriptionDialog
@@ -131,6 +130,7 @@ class HomeViewModel @Inject constructor(
         localMealId: String,
         mealImageUrl: String,
         mealName: String,
+        isSubscribed: Boolean
     ) {
         viewModelScope.launch {
             val favorite = Favorite(
@@ -141,10 +141,12 @@ class HomeViewModel @Inject constructor(
                 online = isOnline,
                 favorite = true
             )
-            when (val result = favoritesRepository.insertFavorite(
-                favorite = favorite,
-                isSubscribed = true
-            )) {
+            when (
+                val result = favoritesRepository.insertFavorite(
+                    favorite = favorite,
+                    isSubscribed = isSubscribed
+                )
+            ) {
                 is Resource.Error -> {
                     _eventsFlow.emit(
                         UiEvents.SnackbarEvent(
@@ -164,11 +166,11 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun deleteALocalFavorite(localMealId: String) {
+    fun deleteALocalFavorite(localMealId: String, isSubscribed: Boolean) {
         viewModelScope.launch {
             favoritesRepository.deleteALocalFavorite(
                 localMealId = localMealId,
-                isSubscribed = true
+                isSubscribed = isSubscribed
             )
         }
     }
@@ -177,5 +179,5 @@ class HomeViewModel @Inject constructor(
 data class MyMealState(
     val meals: List<Meal> = emptyList(),
     val isLoading: Boolean = false,
-    val error: String? = null,
+    val error: String? = null
 )

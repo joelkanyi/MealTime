@@ -33,7 +33,7 @@ class MealTimeApp : Application() {
         val qonversionConfig = QonversionConfig.Builder(
             this,
             QONVERSION_PROJECT_KEY,
-            QLaunchMode.Analytics
+            QLaunchMode.SubscriptionManagement
         ).build()
         Qonversion.initialize(qonversionConfig)
     }

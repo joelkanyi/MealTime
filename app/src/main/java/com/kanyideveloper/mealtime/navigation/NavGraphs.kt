@@ -39,7 +39,7 @@ import com.ramcosta.composedestinations.dynamic.routedIn
 import com.ramcosta.composedestinations.spec.DestinationSpec
 import com.ramcosta.composedestinations.spec.NavGraphSpec
 
-object NavGraphs{
+object NavGraphs {
 
     val auth = object : NavGraphSpec {
         override val route = "auth"

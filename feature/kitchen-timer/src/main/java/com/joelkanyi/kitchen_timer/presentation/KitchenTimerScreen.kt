@@ -84,14 +84,11 @@ import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
 
-
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Destination
 @Composable
-fun KitchenTimerScreen(
-    viewModel: KitchenTimerViewModel = hiltViewModel(),
-) {
+fun KitchenTimerScreen(viewModel: KitchenTimerViewModel = hiltViewModel()) {
     val timerValue = viewModel.remainingTimerValue.observeAsState(initial = KitchenTimer()).value
     val isTimerRunning = viewModel.isTimerRunning.observeAsState(initial = false).value
     val context = LocalContext.current
@@ -100,8 +97,8 @@ fun KitchenTimerScreen(
         mutableStateOf(
             ContextCompat.checkSelfPermission(
                 context,
-                Manifest.permission.POST_NOTIFICATIONS,
-            ) == PackageManager.PERMISSION_GRANTED,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
         )
     }
 
@@ -109,7 +106,7 @@ fun KitchenTimerScreen(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { granted ->
             hasCamPermission = granted
-        },
+        }
     )
 
     LaunchedEffect(key1 = true, block = {
@@ -158,10 +155,10 @@ private fun KitchenTimerScreenContent(
     percentage: Float,
     onStop: () -> Unit,
     onStart: () -> Unit,
-    showSetTimerDialog: () -> Unit,
+    showSetTimerDialog: () -> Unit
 ) {
     Column(
-        Modifier.fillMaxSize(),
+        Modifier.fillMaxSize()
     ) {
         StandardToolbar(
             navigate = {},
@@ -176,14 +173,16 @@ private fun KitchenTimerScreenContent(
                     Text(
                         text = "Kitchen Timer",
                         color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.titleLarge
                     )
 
                     Card(
                         modifier = Modifier
                             .size(36.dp),
                         shape = Shapes.large,
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        ),
                         onClick = {
                             showSetTimerDialog()
                         },
@@ -211,7 +210,7 @@ private fun KitchenTimerScreenContent(
             navActions = {}
         )
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
         ) {
             TimerProgressIndicator(
                 modifier = Modifier
@@ -225,20 +224,21 @@ private fun KitchenTimerScreenContent(
                 originalTime = originalTime
             )
 
-
             Row(
                 Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp, bottom = 56.dp),
                 horizontalArrangement = Arrangement.SpaceAround,
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Card(
                     modifier = Modifier
                         .size(70.dp),
                     shape = CircleShape,
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    ),
                     onClick = onStop,
                     elevation = CardDefaults.cardElevation(
                         defaultElevation = 4.dp
@@ -264,7 +264,9 @@ private fun KitchenTimerScreenContent(
                     modifier = Modifier
                         .size(70.dp),
                     shape = CircleShape,
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    ),
                     onClick = {
                         onStart()
                     },
@@ -281,7 +283,9 @@ private fun KitchenTimerScreenContent(
                     ) {
                         Icon(
                             modifier = Modifier.size(42.dp),
-                            painter = painterResource(id = if (isTimerRunning) R.drawable.ic_pause else R.drawable.ic_play),
+                            painter = painterResource(
+                                id = if (isTimerRunning) R.drawable.ic_pause else R.drawable.ic_play
+                            ),
                             contentDescription = "Add Timer",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -300,7 +304,7 @@ fun TimerProgressIndicator(
     radius: Dp = 20.dp,
     mainColor: Color,
     strokeWidth: Dp = 6.dp,
-    originalTime: Long,
+    originalTime: Long
 ) {
     Box(
         contentAlignment = Alignment.Center,
@@ -338,12 +342,12 @@ fun TimerProgressIndicator(
                 Text(
                     text = timerValue.hour + ":" + timerValue.minute + ":" + timerValue.second,
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleLarge
                 )
                 Text(
                     text = "Remaining",
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.labelMedium
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -351,7 +355,7 @@ fun TimerProgressIndicator(
                 Text(
                     text = "Original Time: ${convertMillisecondsToTimeString(originalTime)}",
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.labelSmall
                 )
             }
         }
@@ -363,7 +367,7 @@ fun HowLongDialog(
     onDismiss: () -> Unit,
     onTimerSet: (Int) -> Unit,
     currentTimerValue: Int,
-    setCurrentTimerValue: (Int) -> Unit,
+    setCurrentTimerValue: (Int) -> Unit
 ) {
     AlertDialog(
         containerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -379,7 +383,6 @@ fun HowLongDialog(
             )
         },
         text = {
-
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -423,13 +426,12 @@ fun HowLongDialog(
     )
 }
 
-
 @Composable
 fun InfiniteNumberPicker(
     modifier: Modifier = Modifier,
     list: List<Int>,
     firstIndex: Int,
-    onSelect: (Int) -> Unit,
+    onSelect: (Int) -> Unit
 ) {
     val listState = rememberLazyListState(firstIndex)
     val coroutineScope = rememberCoroutineScope()
@@ -460,7 +462,9 @@ fun InfiniteNumberPicker(
                 }
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    modifier = modifier.alpha(if (it == remember { derivedStateOf { listState.firstVisibleItemIndex } }.value + 1) 1f else 0.3f),
+                    modifier = modifier.alpha(
+                        if (it == remember { derivedStateOf { listState.firstVisibleItemIndex } }.value + 1) 1f else 0.3f
+                    ),
                     text = list[index].toString(),
                     style = TextStyle(
                         textAlign = TextAlign.Center,

@@ -15,8 +15,12 @@
  */
 package com.kanyideveloper.mealtime.navigation
 
-import androidx.compose.animation.*
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 
 private const val AnimDurationLong = 500
 private const val AnimDurationShort = 300

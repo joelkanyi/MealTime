@@ -84,7 +84,7 @@ fun NextAddMealScreen(
     cookingTime: Int,
     servingPeople: Int,
     navigator: AddMealNavigator,
-    viewModel: AddMealsViewModel = hiltViewModel(),
+    viewModel: AddMealsViewModel = hiltViewModel()
 ) {
     NextAddMealScreenDestination
     val context = LocalContext.current
@@ -95,7 +95,6 @@ fun NextAddMealScreen(
     val ingredient = viewModel.ingredient.value
 
     val isSubscribed = viewModel.isSubscribed.collectAsState().value
-
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -135,7 +134,7 @@ fun NextAddMealScreen(
                                         servingPeople = servingPeople,
                                         complexity = complexity,
                                         category = category,
-                                        isSubscribed = true /* isSubscribed.isSubscribed */
+                                        isSubscribed = true // isSubscribed.isSubscribed
                                     )
                                 }
                             )
@@ -188,10 +187,7 @@ fun NextAddMealScreen(
 }
 
 @Composable
-private fun SaveTextButtonContent(
-    isLoading: Boolean,
-    onClick: () -> Unit,
-) {
+private fun SaveTextButtonContent(isLoading: Boolean, onClick: () -> Unit) {
     if (isLoading) {
         CircularProgressIndicator(
             modifier = Modifier.size(24.dp)
@@ -213,7 +209,7 @@ private fun SaveTextButtonContent(
 private fun DirectionComponent(
     direction: TextFieldState,
     viewModel: AddMealsViewModel,
-    keyboardController: SoftwareKeyboardController?,
+    keyboardController: SoftwareKeyboardController?
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -271,7 +267,7 @@ private fun DirectionComponent(
 private fun IngredientComponent(
     ingredient: TextFieldState,
     viewModel: AddMealsViewModel,
-    keyboardController: SoftwareKeyboardController?,
+    keyboardController: SoftwareKeyboardController?
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -324,10 +320,7 @@ private fun IngredientComponent(
 }
 
 @Composable
-fun IngredientItem(
-    ingredient: String,
-    viewModel: AddMealsViewModel,
-) {
+fun IngredientItem(ingredient: String, viewModel: AddMealsViewModel) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
@@ -360,11 +353,7 @@ fun IngredientItem(
 }
 
 @Composable
-fun DirectionItem(
-    direction: String,
-    viewModel: AddMealsViewModel,
-    onClick: () -> Unit,
-) {
+fun DirectionItem(direction: String, viewModel: AddMealsViewModel, onClick: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,

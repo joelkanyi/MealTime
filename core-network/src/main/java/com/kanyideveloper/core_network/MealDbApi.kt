@@ -27,35 +27,23 @@ interface MealDbApi {
     suspend fun getCategories(): CategoriesResponse
 
     @GET("filter.php")
-    suspend fun getMeals(
-        @Query("c") category: String = "Beef"
-    ): MealsResponse
+    suspend fun getMeals(@Query("c") category: String = "Beef"): MealsResponse
 
     @GET("lookup.php")
-    suspend fun getMealDetails(
-        @Query("i") mealId: String
-    ): MealDetailsResponse
+    suspend fun getMealDetails(@Query("i") mealId: String): MealDetailsResponse
 
     @GET("search.php")
-    suspend fun searchMealsByName(
-        @Query("s") query: String
-    ): MealsResponse
+    suspend fun searchMealsByName(@Query("s") query: String): MealsResponse
 
     @GET("filter.php")
-    suspend fun searchMealsByIngredient(
-        @Query("i") query: String
-    ): MealsResponse
+    suspend fun searchMealsByIngredient(@Query("i") query: String): MealsResponse
 
     @GET("filter.php")
-    suspend fun searchMealsByCategory(
-        @Query("c") query: String
-    ): MealsResponse
+    suspend fun searchMealsByCategory(@Query("c") query: String): MealsResponse
 
     @GET("random.php")
     suspend fun getRandomMeal(): MealDetailsResponse
 
     @GET("list.php")
-    suspend fun getAllIngredients(
-        @Query("i") query: String = "list"
-    ): IngredientsResponse
+    suspend fun getAllIngredients(@Query("i") query: String = "list"): IngredientsResponse
 }

@@ -33,8 +33,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material3.Button
 import androidx.compose.material.Icon
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -76,117 +76,113 @@ interface SettingsNavigator {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Destination
 @Composable
-fun SettingsScreen(
-    navigator: SettingsNavigator,
-    viewModel: SettingsViewModel = hiltViewModel(),
-) {
+fun SettingsScreen(navigator: SettingsNavigator, viewModel: SettingsViewModel = hiltViewModel()) {
     val shouldShowThemesDialog = viewModel.shouldShowThemesDialog.value
     val shouldShowFeedbackDialog = viewModel.shouldShowFeedbackDialog.value
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val snackbarHostState = remember { SnackbarHostState() }
-    val isSubscribed = viewModel.isSubscribed.collectAsState().value
 
-    LaunchedEffect(key1 = true) {
-        viewModel.eventsFlow.collect { event ->
-            when (event) {
-                is UiEvents.SnackbarEvent -> {
-                    snackbarHostState.showSnackbar(message = event.message)
-                }
-                is UiEvents.NavigationEvent -> {
-                    navigator.logout()
-                }
-                else -> {}
-            }
-        }
-    }
-
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            StandardToolbar(
-                navigate = {
-                },
-                title = {
-                    Text(text = "Settings", fontSize = 16.sp)
-                },
-                showBackArrow = false,
-                navActions = {
-                }
-            )
-        }
-    ) { paddingValues ->
-
-        if (shouldShowThemesDialog) {
-            ThemesDialog(
-                onDismiss = {
-                    viewModel.setShowThemesDialogState(!viewModel.shouldShowThemesDialog.value)
-                },
-                onSelectTheme = viewModel::updateTheme
-            )
-        }
-
-        if (shouldShowFeedbackDialog) {
-            FeedbackDialog(
-                currentFeedbackString = viewModel.feedback.value.text,
-                isError = viewModel.feedback.value.error != null,
-                error = viewModel.feedback.value.error,
-                onDismiss = {
-                    viewModel.setShowFeedbackDialogState(!viewModel.shouldShowFeedbackDialog.value)
-                },
-                onFeedbackChange = { newValue ->
-                    viewModel.setFeedbackState(newValue)
-                },
-                onClickSend = { feedback ->
-                    keyboardController?.hide()
-                    viewModel.validateFeedbackTextfield(message = feedback)
-
-                    if (feedback.isEmpty()) {
-                        return@FeedbackDialog
-                    }
-
-                    try {
-                        val intent = Intent(Intent.ACTION_SENDTO).apply {
-                            data = Uri.parse("mailto:")
-                            putExtra(Intent.EXTRA_EMAIL, arrayOf("joelkanyi98@gmail.com"))
-                            putExtra(Intent.EXTRA_SUBJECT, "MEALTIME APP FEEDBACK")
-                            putExtra(Intent.EXTRA_TEXT, feedback)
+    when (val isSubscribed = viewModel.isSubscribed.collectAsState().value) {
+        is SubscriptionStatusUiState.Success -> {
+            LaunchedEffect(key1 = true) {
+                viewModel.eventsFlow.collect { event ->
+                    when (event) {
+                        is UiEvents.SnackbarEvent -> {
+                            snackbarHostState.showSnackbar(message = event.message)
                         }
-                        context.startActivity(intent)
-
-                        viewModel.setShowFeedbackDialogState(false)
-                        viewModel.setFeedbackState("")
-                    } catch (e: Exception) {
-                        Toast.makeText(context, "No Email Application Found", Toast.LENGTH_SHORT)
-                            .show()
+                        is UiEvents.NavigationEvent -> {
+                            navigator.logout()
+                        }
+                        else -> {}
                     }
                 }
-            )
-        }
-
-        if (viewModel.shouldShowSubscriptionDialog.value) {
-            PremiumCard(
-                onDismiss = {
-                    viewModel.setShowSubscriptionDialogState(false)
-                },
-                onClickSubscribe = {
-                    navigator.subscribe()
-                    viewModel.setShowSubscriptionDialogState(false)
-                }
-            )
-        }
-
-        when (isSubscribed) {
-            SubscriptionStatusUiState.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(text = "Loading...")
-                }
             }
-            is SubscriptionStatusUiState.Success -> {
+
+            Scaffold(
+                snackbarHost = { SnackbarHost(snackbarHostState) },
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    StandardToolbar(
+                        navigate = {
+                        },
+                        title = {
+                            Text(text = "Settings", fontSize = 16.sp)
+                        },
+                        showBackArrow = false,
+                        navActions = {
+                        }
+                    )
+                }
+            ) { paddingValues ->
+
+                if (shouldShowThemesDialog) {
+                    ThemesDialog(
+                        onDismiss = {
+                            viewModel.setShowThemesDialogState(
+                                !viewModel.shouldShowThemesDialog.value
+                            )
+                        },
+                        onSelectTheme = viewModel::updateTheme
+                    )
+                }
+
+                if (shouldShowFeedbackDialog) {
+                    FeedbackDialog(
+                        currentFeedbackString = viewModel.feedback.value.text,
+                        isError = viewModel.feedback.value.error != null,
+                        error = viewModel.feedback.value.error,
+                        onDismiss = {
+                            viewModel.setShowFeedbackDialogState(
+                                !viewModel.shouldShowFeedbackDialog.value
+                            )
+                        },
+                        onFeedbackChange = { newValue ->
+                            viewModel.setFeedbackState(newValue)
+                        },
+                        onClickSend = { feedback ->
+                            keyboardController?.hide()
+                            viewModel.validateFeedbackTextfield(message = feedback)
+
+                            if (feedback.isEmpty()) {
+                                return@FeedbackDialog
+                            }
+
+                            try {
+                                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                    data = Uri.parse("mailto:")
+                                    putExtra(Intent.EXTRA_EMAIL, arrayOf("joelkanyi98@gmail.com"))
+                                    putExtra(Intent.EXTRA_SUBJECT, "MEALTIME APP FEEDBACK")
+                                    putExtra(Intent.EXTRA_TEXT, feedback)
+                                }
+                                context.startActivity(intent)
+
+                                viewModel.setShowFeedbackDialogState(false)
+                                viewModel.setFeedbackState("")
+                            } catch (e: Exception) {
+                                Toast.makeText(
+                                    context,
+                                    "No Email Application Found",
+                                    Toast.LENGTH_SHORT
+                                )
+                                    .show()
+                            }
+                        }
+                    )
+                }
+
+                if (viewModel.shouldShowSubscriptionDialog.value) {
+                    PremiumCard(
+                        onDismiss = {
+                            viewModel.setShowSubscriptionDialogState(false)
+                        },
+                        onClickSubscribe = {
+                            navigator.subscribe()
+                            viewModel.setShowSubscriptionDialogState(false)
+                        }
+                    )
+                }
+
                 SettingsScreenContent(
                     isSubscribed = isSubscribed.isSubscribed,
                     paddingValues = paddingValues,
@@ -212,6 +208,7 @@ fun SettingsScreen(
                 )
             }
         }
+        else -> {}
     }
 }
 
@@ -225,7 +222,7 @@ private fun SettingsScreenContent(
     isSubscribed: Boolean,
     onSubscribe: () -> Unit,
     logout: () -> Unit,
-    logoutState: LogoutState,
+    logoutState: LogoutState
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -345,7 +342,7 @@ private fun SettingsScreenContent(
 
 data class Setting(
     val title: String,
-    val icon: Int,
+    val icon: Int
 )
 
 private val settingsOptions = listOf(

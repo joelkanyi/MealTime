@@ -31,11 +31,10 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeoutOrNull
 import java.util.UUID
 
-
 class HomeRepositoryImpl(
     private val mealDao: MealDao,
     private val databaseReference: DatabaseReference,
-    private val firebaseAuth: FirebaseAuth,
+    private val firebaseAuth: FirebaseAuth
 ) : HomeRepository {
 
     override suspend fun getMyMeals(isSubscribed: Boolean): Resource<Flow<List<Meal>>> {
@@ -75,7 +74,7 @@ class HomeRepositoryImpl(
                                 ingredients = onlineMeal.ingredients,
                                 cookingInstructions = onlineMeal.cookingDirections,
                                 isFavorite = onlineMeal.favorite,
-                                servingPeople = onlineMeal.servingPeople,
+                                servingPeople = onlineMeal.servingPeople
                             )
                         )
                     }
@@ -111,14 +110,15 @@ class HomeRepositoryImpl(
                 )
             }
         } else {
-            Resource.Success(data = mealDao.getAllMeals().map { mealEntityList ->
-                mealEntityList.map { mealEntity ->
-                    mealEntity.toMeal()
+            Resource.Success(
+                data = mealDao.getAllMeals().map { mealEntityList ->
+                    mealEntityList.map { mealEntity ->
+                        mealEntity.toMeal()
+                    }
                 }
-            })
+            )
         }
     }
-
 
     override fun getMealById(id: String): LiveData<Meal?> {
         return Transformations.map(mealDao.getSingleMeal(id = id)) { mealEntity ->

@@ -75,10 +75,7 @@ interface HomeNavigator {
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Destination
 @Composable
-fun HomeScreen(
-    navigator: HomeNavigator,
-    viewModel: HomeViewModel = hiltViewModel(),
-) {
+fun HomeScreen(navigator: HomeNavigator, viewModel: HomeViewModel = hiltViewModel()) {
     val isSubscribed = viewModel.isSubscribed.collectAsState().value
 
     if (viewModel.shouldShowSubscriptionDialog.value) {
@@ -110,12 +107,14 @@ fun HomeScreen(
                                 ) {
                                     Image(
                                         modifier = Modifier.size(100.dp, 100.dp),
-                                        painter = painterResource(id = R.drawable.ic_meal_time_banner),
+                                        painter = painterResource(
+                                            id = R.drawable.ic_meal_time_banner
+                                        ),
                                         contentDescription = null
                                     )
 
                                     Row(
-                                        verticalAlignment = Alignment.CenterVertically,
+                                        verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         if (!isSubscribed.isSubscribed) {
                                             TextButton(
@@ -135,7 +134,9 @@ fun HomeScreen(
                                             modifier = Modifier
                                                 .size(42.dp),
                                             shape = Shapes.large,
-                                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                                            colors = CardDefaults.cardColors(
+                                                containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                            ),
                                             onClick = {
                                                 navigator.onSearchClick()
                                             },
@@ -180,7 +181,9 @@ fun HomeScreen(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Icon(
-                                            painter = painterResource(id = R.drawable.fork_knife_thin),
+                                            painter = painterResource(
+                                                id = R.drawable.fork_knife_thin
+                                            ),
                                             contentDescription = null,
                                             tint = MaterialTheme.colorScheme.onTertiary
                                         )
@@ -201,6 +204,7 @@ fun HomeScreen(
                 ) { paddingValues ->
                     MainContent(
                         navigator = navigator,
+                        isSubscribed = isSubscribed.isSubscribed,
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(paddingValues = paddingValues),
@@ -225,6 +229,7 @@ fun MainContent(
     navigator: HomeNavigator,
     modifier: Modifier = Modifier,
     onClick: (Int) -> Unit,
+    isSubscribed: Boolean
 ) {
     val listOfTabs = listOf(
         TabItem.Outgoing(navigator = navigator),
@@ -242,17 +247,15 @@ fun MainContent(
         )
         TabContent(
             tabs = listOfTabs,
-            pagerState = pagerState
+            pagerState = pagerState,
+            isSubscribed = isSubscribed
         )
     }
 }
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun TabContent(
-    tabs: List<TabItem>,
-    pagerState: PagerState,
-) {
+fun TabContent(tabs: List<TabItem>, pagerState: PagerState, isSubscribed: Boolean) {
     HorizontalPager(
         count = tabs.size,
         state = pagerState,
@@ -260,8 +263,7 @@ fun TabContent(
         userScrollEnabled = false
     ) { page ->
         tabs[page].screen(
-            onClick = {
-            }
+            isSubscribed
         )
     }
 }

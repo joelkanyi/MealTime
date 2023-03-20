@@ -22,5 +22,5 @@ data class KitchenTimer(
     val totalMilliseconds: Long = 0L,
     val elapsedTime: Long = 0L,
     val remainingTime: Long = 0L,
-    val sweepAnglePercentage: Float = 0f,
+    val sweepAnglePercentage: Float = 0f
 )

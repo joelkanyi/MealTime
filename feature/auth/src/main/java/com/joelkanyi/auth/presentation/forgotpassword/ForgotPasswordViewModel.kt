@@ -60,9 +60,11 @@ class ForgotPasswordViewModel @Inject constructor(
 
             _forgotPasswordState.value = forgotPasswordState.value.copy(isLoading = true)
 
-            when (val result = authenticationRepository.forgotPassword(
-                email = emailState.value.text,
-            )) {
+            when (
+                val result = authenticationRepository.forgotPassword(
+                    email = emailState.value.text
+                )
+            ) {
                 is Resource.Error -> {
                     _forgotPasswordState.value = forgotPasswordState.value.copy(
                         isLoading = false,
@@ -74,7 +76,6 @@ class ForgotPasswordViewModel @Inject constructor(
                             message = result.message ?: "Unknown Error Occurred"
                         )
                     )
-
                 }
 
                 is Resource.Success -> {
@@ -83,7 +84,9 @@ class ForgotPasswordViewModel @Inject constructor(
                         data = null
                     )
                     _eventFlow.emit(
-                        UiEvents.SnackbarEvent(message = "Password Reset link sent to your email Successfully")
+                        UiEvents.SnackbarEvent(
+                            message = "Password Reset link sent to your email Successfully"
+                        )
                     )
                     _eventFlow.emit(
                         UiEvents.NavigationEvent(SignInScreenDestination.route)

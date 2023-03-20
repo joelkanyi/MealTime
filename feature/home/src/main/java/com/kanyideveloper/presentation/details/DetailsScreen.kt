@@ -38,7 +38,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun DetailsScreen(
     meal: Meal,
     navigator: HomeNavigator,
-    viewModel: DetailsViewModel = hiltViewModel(),
+    viewModel: DetailsViewModel = hiltViewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -47,7 +47,7 @@ fun DetailsScreen(
             when (event) {
                 is UiEvents.SnackbarEvent -> {
                     snackbarHostState.showSnackbar(
-                        message = event.message,
+                        message = event.message
                     )
                 }
                 else -> {}
@@ -60,7 +60,7 @@ fun DetailsScreen(
             SnackbarHost(
                 snackbarHostState
             )
-        },
+        }
     ) {
         DetailsScreenContent(
             meal = meal,
@@ -87,7 +87,7 @@ private fun DetailsScreenContent(
     meal: Meal,
     navigateBack: () -> Unit,
     onRemoveFavorite: (String, String) -> Unit,
-    addToFavorites: (String, String, String) -> Unit,
+    addToFavorites: (String, String, String) -> Unit
 ) {
     DetailsCollapsingToolbar(
         meal = meal,

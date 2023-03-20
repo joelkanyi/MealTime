@@ -27,10 +27,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -73,9 +73,7 @@ interface AuthNavigator {
 
 @Destination
 @Composable
-fun LandingPageScreen(
-    navigatar: AuthNavigator,
-) {
+fun LandingPageScreen(navigatar: AuthNavigator) {
     val auth = Firebase.auth
     val context = LocalContext.current
 
@@ -97,7 +95,6 @@ fun LandingPageScreen(
         }
     )
 
-
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             modifier = Modifier
@@ -115,7 +112,6 @@ fun LandingPageScreen(
                     Alignment.BottomCenter
                 )
         ) {
-
             Button(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -132,14 +128,14 @@ fun LandingPageScreen(
                 Image(
                     modifier = Modifier.padding(6.dp),
                     painter = painterResource(id = R.drawable.ic_google),
-                    contentDescription = "Google Icon",
+                    contentDescription = "Google Icon"
                 )
 
                 Text(
                     text = "Sign In with Google",
                     style = TextStyle(
                         color = Color.Black,
-                        fontSize = 14.sp,
+                        fontSize = 14.sp
                     )
                 )
             }
@@ -169,7 +165,7 @@ fun LandingPageScreen(
                         text = "Sign Up with Email",
                         style = TextStyle(
                             color = MaterialTheme.colorScheme.onPrimary,
-                            fontSize = 14.sp,
+                            fontSize = 14.sp
                         )
                     )
                 }
@@ -177,13 +173,13 @@ fun LandingPageScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-
             TextButton(
                 modifier = Modifier
                     .fillMaxWidth(),
                 onClick = {
                     navigatar.openSignIn()
-                }) {
+                }
+            ) {
                 Text(
                     text = buildAnnotatedString {
                         withStyle(
@@ -205,7 +201,7 @@ fun LandingPageScreen(
                         ) {
                             append("Sign In")
                         }
-                    },
+                    }
                 )
             }
         }

@@ -44,10 +44,7 @@ import androidx.compose.ui.unit.dp
 import com.kanyideveloper.mealtime.core.R
 
 @Composable
-fun PremiumCard(
-    onDismiss: () -> Unit,
-    onClickSubscribe: () -> Unit,
-) {
+fun PremiumCard(onDismiss: () -> Unit, onClickSubscribe: () -> Unit) {
     AlertDialog(
         modifier = Modifier
             .fillMaxWidth()
@@ -91,7 +88,6 @@ fun PremiumCard(
                 }
 
                 item {
-
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Button(
@@ -108,7 +104,7 @@ fun PremiumCard(
                                 .fillMaxWidth()
                                 .padding(8.dp),
                             text = "Subscribe",
-                            textAlign = TextAlign.Center,
+                            textAlign = TextAlign.Center
                         )
                     }
                 }
@@ -120,9 +116,7 @@ fun PremiumCard(
 }
 
 @Composable
-fun PremiumFeaturesCard(
-    premium: Premium,
-) {
+fun PremiumFeaturesCard(premium: Premium) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -165,7 +159,7 @@ fun PremiumFeaturesCard(
 data class Premium(
     val title: String,
     val description: String,
-    val icon: Int,
+    val icon: Int
 )
 
 private val premiumFeatures = listOf(

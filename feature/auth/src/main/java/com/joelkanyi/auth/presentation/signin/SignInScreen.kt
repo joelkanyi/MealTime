@@ -17,8 +17,6 @@ package com.joelkanyi.auth.presentation.signin
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.runtime.Composable
-import com.ramcosta.composedestinations.annotation.Destination
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -39,6 +37,7 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -58,16 +57,14 @@ import com.joelkanyi.auth.presentation.state.LoginState
 import com.kanyideveloper.compose_ui.theme.robotoCondensed
 import com.kanyideveloper.core.state.TextFieldState
 import com.kanyideveloper.core.util.UiEvents
+import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Destination
 @Composable
-fun SignInScreen(
-    navigator: AuthNavigator,
-    viewModel: SignInViewModel = hiltViewModel(),
-) {
+fun SignInScreen(navigator: AuthNavigator, viewModel: SignInViewModel = hiltViewModel()) {
     val emailState = viewModel.emailState.value
     val passwordState = viewModel.passwordState.value
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -111,7 +108,7 @@ fun SignInScreen(
                     style = MaterialTheme.typography.labelMedium
                 )
             }
-        },
+        }
     ) {
         SignInScreenContent(
             emailState = emailState,
@@ -147,7 +144,7 @@ private fun SignInScreenContent(
     onCurrentPasswordTextChange: (String) -> Unit,
     onClickSignIn: () -> Unit,
     onClickForgotPassword: () -> Unit,
-    onClickDontHaveAccount: () -> Unit,
+    onClickDontHaveAccount: () -> Unit
 ) {
     LazyColumn(contentPadding = PaddingValues(16.dp)) {
         item {

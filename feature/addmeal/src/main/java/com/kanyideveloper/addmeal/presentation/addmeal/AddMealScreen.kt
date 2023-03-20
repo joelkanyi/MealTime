@@ -93,16 +93,13 @@ import com.mr0xf00.easycrop.crop
 import com.mr0xf00.easycrop.rememberImageCropper
 import com.mr0xf00.easycrop.ui.ImageCropperDialog
 import com.ramcosta.composedestinations.annotation.Destination
-import java.io.File
 import kotlinx.coroutines.launch
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
-fun AddMealScreen(
-    navigator: AddMealNavigator,
-    viewModel: AddMealsViewModel = hiltViewModel()
-) {
+fun AddMealScreen(navigator: AddMealNavigator, viewModel: AddMealsViewModel = hiltViewModel()) {
     val mealName = viewModel.mealName.value
     val category = viewModel.category.value
     val complexity = viewModel.cookingComplexity.value

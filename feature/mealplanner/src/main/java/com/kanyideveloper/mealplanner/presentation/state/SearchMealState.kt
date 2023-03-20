@@ -15,7 +15,6 @@
  */
 package com.kanyideveloper.mealplanner.presentation.state
 
-import androidx.lifecycle.LiveData
 import com.kanyideveloper.core.model.Meal
 
 data class SearchMealState(

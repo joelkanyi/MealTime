@@ -29,10 +29,7 @@ import com.kanyideveloper.compose_ui.theme.Theme
 import com.kanyideveloper.mealtime.core.R
 
 @Composable
-fun ThemesDialog(
-    onDismiss: () -> Unit,
-    onSelectTheme: (Int) -> Unit
-) {
+fun ThemesDialog(onDismiss: () -> Unit, onSelectTheme: (Int) -> Unit) {
     AlertDialog(
         containerColor = MaterialTheme.colorScheme.background,
         onDismissRequest = { onDismiss() },

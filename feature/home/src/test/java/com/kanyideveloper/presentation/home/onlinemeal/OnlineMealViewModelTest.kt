@@ -15,10 +15,4 @@
  */
 package com.kanyideveloper.presentation.home.onlinemeal
 
-import org.junit.Assert.*
-
-class OnlineMealViewModelTest {
-
-    /*@get:Rule
-    val testDispatcher = MainDispatcherRule()*/
-}
+class OnlineMealViewModelTest

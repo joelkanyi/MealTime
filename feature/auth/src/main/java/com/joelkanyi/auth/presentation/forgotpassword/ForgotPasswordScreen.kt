@@ -27,13 +27,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -58,7 +58,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun ForgotPasswordScreen(
     navigator: AuthNavigator,
-    viewModel: ForgotPasswordViewModel = hiltViewModel(),
+    viewModel: ForgotPasswordViewModel = hiltViewModel()
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val snackbarHostState = remember { SnackbarHostState() }
@@ -84,7 +84,7 @@ fun ForgotPasswordScreen(
                 when (event) {
                     is UiEvents.SnackbarEvent -> {
                         snackbarHostState.showSnackbar(
-                            message = event.message,
+                            message = event.message
                         )
                     }
 
@@ -115,7 +115,7 @@ private fun ForgotPasswordScreenContent(
     currentEmailText: String,
     forgotPasswordState: LoginState,
     onCurrentEmailTextChange: (String) -> Unit,
-    onClickSend: () -> Unit,
+    onClickSend: () -> Unit
 ) {
     LazyColumn(
         contentPadding = PaddingValues(16.dp)
@@ -134,8 +134,8 @@ private fun ForgotPasswordScreenContent(
                 },
                 keyboardOptions = KeyboardOptions(
                     autoCorrect = true,
-                    keyboardType = KeyboardType.Email,
-                ),
+                    keyboardType = KeyboardType.Email
+                )
             )
         }
 

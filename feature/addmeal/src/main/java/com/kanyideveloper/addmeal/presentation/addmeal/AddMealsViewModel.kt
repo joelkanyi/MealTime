@@ -31,7 +31,6 @@ import com.kanyideveloper.core.state.TextFieldState
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.UiEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -40,12 +39,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.UUID
+import javax.inject.Inject
 
 @HiltViewModel
 class AddMealsViewModel @Inject constructor(
     private val uploadImageRepository: UploadImageRepository,
     private val saveMealRepository: SaveMealRepository,
-    subscriptionRepository: SubscriptionRepository,
+    subscriptionRepository: SubscriptionRepository
 ) : ViewModel() {
 
     val isSubscribed: StateFlow<SubscriptionStatusUiState> =
@@ -54,7 +54,7 @@ class AddMealsViewModel @Inject constructor(
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = SubscriptionStatusUiState.Loading,
+                initialValue = SubscriptionStatusUiState.Loading
             )
 
     private val _mealImageUri = mutableStateOf<Uri?>(null)
@@ -127,7 +127,7 @@ class AddMealsViewModel @Inject constructor(
         complexity: String,
         cookingTime: Int,
         servingPeople: Int,
-        isSubscribed: Boolean,
+        isSubscribed: Boolean
     ) {
         viewModelScope.launch {
             if (ingredientsList.isEmpty()) {
@@ -196,10 +196,12 @@ class AddMealsViewModel @Inject constructor(
 
     private fun saveMyMeal(meal: Meal, isSubscribed: Boolean) {
         viewModelScope.launch {
-            when (val result = saveMealRepository.saveMeal(
-                meal = meal,
-                isSubscribed = isSubscribed
-            )) {
+            when (
+                val result = saveMealRepository.saveMeal(
+                    meal = meal,
+                    isSubscribed = isSubscribed
+                )
+            ) {
                 is Resource.Error -> {
                     _eventFlow.emit(
                         UiEvents.SnackbarEvent(

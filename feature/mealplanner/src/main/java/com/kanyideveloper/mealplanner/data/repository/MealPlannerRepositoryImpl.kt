@@ -26,11 +26,15 @@ import com.kanyideveloper.core.data.MealTimePreferences
 import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.model.MealPlanPreference
+import com.kanyideveloper.core.notifications.NotificationReceiver
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.safeApiCall
 import com.kanyideveloper.core_database.dao.FavoritesDao
 import com.kanyideveloper.core_database.dao.MealDao
 import com.kanyideveloper.core_database.dao.MealPlanDao
+import com.kanyideveloper.core_database.model.FavoriteEntity
+import com.kanyideveloper.core_database.model.MealEntity
+import com.kanyideveloper.core_database.model.MealPlanEntity
 import com.kanyideveloper.core_network.MealDbApi
 import com.kanyideveloper.mealplanner.data.mapper.toEntity
 import com.kanyideveloper.mealplanner.data.mapper.toGeneralMeal
@@ -39,17 +43,11 @@ import com.kanyideveloper.mealplanner.data.mapper.toMealPlan
 import com.kanyideveloper.mealplanner.data.mapper.toOnlineMeal
 import com.kanyideveloper.mealplanner.domain.repository.MealPlannerRepository
 import com.kanyideveloper.mealplanner.model.MealPlan
-import com.kanyideveloper.core.notifications.NotificationReceiver
-import com.kanyideveloper.core_database.model.FavoriteEntity
-import com.kanyideveloper.core_database.model.MealEntity
-import com.kanyideveloper.core_database.model.MealPlanEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -66,11 +64,11 @@ class MealPlannerRepositoryImpl(
     private val mealDbApi: MealDbApi,
     private val context: Context,
     private val databaseReference: DatabaseReference,
-    private val firebaseAuth: FirebaseAuth,
+    private val firebaseAuth: FirebaseAuth
 ) : MealPlannerRepository {
 
-    override suspend fun hasMealPlanPref(): Flow<MealPlanPreference?> {
-        return mealTimePreferences.mealPlanPreferences(isSubscribed = true)
+    override suspend fun hasMealPlanPref(isSubscribed: Boolean): Flow<MealPlanPreference?> {
+        return mealTimePreferences.mealPlanPreferences(isSubscribed = isSubscribed)
     }
 
     override suspend fun saveMealToPlan(mealPlan: MealPlan, isSubscribed: Boolean) {
@@ -101,13 +99,13 @@ class MealPlannerRepositoryImpl(
         source: String,
         searchBy: String,
         searchString: String,
-        isSubscribed: Boolean,
+        isSubscribed: Boolean
     ): Resource<Flow<List<Meal>>> {
         return when (source) {
             "Online" -> {
                 searchFromInternet(
                     searchString = searchString,
-                    searchBy = searchBy,
+                    searchBy = searchBy
                 )
             }
             "My Meals" -> {
@@ -160,16 +158,16 @@ class MealPlannerRepositoryImpl(
         allergies: List<String>,
         numberOfPeople: String,
         dishTypes: List<String>,
-        isSubscribed: Boolean,
+        isSubscribed: Boolean
     ) {
         // Set Alarms
-        setAlarm()
+        setAlarm(isSubscribed = isSubscribed)
 
         if (isSubscribed) {
             saveMealPlannerPreferencesToRemoteDataSource(
                 allergies = allergies,
                 numberOfPeople = numberOfPeople,
-                dishTypes = dishTypes,
+                dishTypes = dishTypes
             )
         } else {
             mealTimePreferences.saveMealPlanPreferences(
@@ -183,7 +181,7 @@ class MealPlannerRepositoryImpl(
     private suspend fun saveMealPlannerPreferencesToRemoteDataSource(
         allergies: List<String>,
         numberOfPeople: String,
-        dishTypes: List<String>,
+        dishTypes: List<String>
     ): Resource<Boolean> {
         return try {
             databaseReference
@@ -207,12 +205,11 @@ class MealPlannerRepositoryImpl(
         } catch (e: Exception) {
             return Resource.Error(e.localizedMessage ?: "Unknown error occurred")
         }
-
     }
 
     override suspend fun getMealsInMyPlan(
         filterDay: String,
-        isSubscribed: Boolean,
+        isSubscribed: Boolean
     ): Resource<Flow<List<MealPlan>>> {
         return if (isSubscribed) {
             getMealsInMyPlanRemoteDataSource(filterDay = filterDay)
@@ -225,7 +222,9 @@ class MealPlannerRepositoryImpl(
         }
     }
 
-    private suspend fun getMealsInMyPlanRemoteDataSource(filterDay: String): Resource<Flow<List<MealPlan>>> {
+    private suspend fun getMealsInMyPlanRemoteDataSource(
+        filterDay: String
+    ): Resource<Flow<List<MealPlan>>> {
         /**
          * Do offline caching
          */
@@ -292,9 +291,9 @@ class MealPlannerRepositoryImpl(
         mealPlanDao.deleteAMealFromPlan(id = id)
     }
 
-    override fun setAlarm() {
+    override fun setAlarm(isSubscribed: Boolean) {
         CoroutineScope(Dispatchers.Default).launch {
-            hasMealPlanPref().collectLatest { mealPlanPreference ->
+            hasMealPlanPref(isSubscribed = isSubscribed).collectLatest { mealPlanPreference ->
                 mealPlanPreference?.dishTypes?.forEach {
                     if (it == "Breakfast") {
                         setBreakfastAlarm()
@@ -527,7 +526,6 @@ class MealPlannerRepositoryImpl(
         }
     }
 
-
     private suspend fun getMyMeals(isSubscribed: Boolean): Resource<Flow<List<Meal>>> {
         return if (isSubscribed) {
             getMyMealsFromRemoteDataSource()
@@ -576,7 +574,7 @@ class MealPlannerRepositoryImpl(
                             ingredients = onlineMeal.ingredients,
                             cookingInstructions = onlineMeal.cookingDirections,
                             isFavorite = onlineMeal.favorite,
-                            servingPeople = onlineMeal.servingPeople,
+                            servingPeople = onlineMeal.servingPeople
                         )
                     )
                 }
@@ -615,7 +613,7 @@ class MealPlannerRepositoryImpl(
 
     private suspend fun searchFromInternet(
         searchString: String,
-        searchBy: String,
+        searchBy: String
     ): Resource<Flow<List<Meal>>> {
         return when (searchBy) {
             "Name" -> {

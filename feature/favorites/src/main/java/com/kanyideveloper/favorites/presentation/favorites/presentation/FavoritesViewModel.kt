@@ -22,22 +22,38 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kanyideveloper.core.domain.FavoritesRepository
 import com.kanyideveloper.core.domain.HomeRepository
+import com.kanyideveloper.core.domain.SubscriptionRepository
 import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.state.SubscriptionStatusUiState
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.UiEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
-import javax.inject.Inject
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
     private val favoritesRepository: FavoritesRepository,
     private val homeRepository: HomeRepository,
+    subscriptionRepository: SubscriptionRepository
 ) : ViewModel() {
+
+    val isSubscribed: StateFlow<SubscriptionStatusUiState> =
+        subscriptionRepository.isSubscribed
+            .map(SubscriptionStatusUiState::Success)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = SubscriptionStatusUiState.Loading
+            )
 
     private val _eventsFlow = MutableSharedFlow<UiEvents>()
     val eventsFlow = _eventsFlow.asSharedFlow()
@@ -45,7 +61,7 @@ class FavoritesViewModel @Inject constructor(
     private val _favoritesUiState = mutableStateOf(FavoritesUiState())
     val favoritesUiState = _favoritesUiState
 
-    fun getFavorites() {
+    fun getFavorites(isSubscribed: Boolean) {
         _favoritesUiState.value =
             _favoritesUiState.value.copy(
                 isLoading = true,
@@ -53,7 +69,7 @@ class FavoritesViewModel @Inject constructor(
                 error = null
             )
         viewModelScope.launch {
-            when (val result = favoritesRepository.getFavorites(isSubscribed = true)) {
+            when (val result = favoritesRepository.getFavorites(isSubscribed = isSubscribed)) {
                 is Resource.Error -> {
                     _eventsFlow.emit(
                         UiEvents.SnackbarEvent(
@@ -91,10 +107,7 @@ class FavoritesViewModel @Inject constructor(
         _singleMeal.value = homeRepository.getMealById(id = id)
     }
 
-    fun deleteAFavorite(
-        favorite: Favorite,
-        isSubscribed: Boolean = true
-    ) {
+    fun deleteAFavorite(favorite: Favorite, isSubscribed: Boolean) {
         viewModelScope.launch {
             favoritesRepository.deleteOneFavorite(
                 favorite = favorite,
@@ -113,5 +126,5 @@ class FavoritesViewModel @Inject constructor(
 data class FavoritesUiState(
     val favorites: List<Favorite> = emptyList(),
     val isLoading: Boolean = false,
-    val error: String? = null,
+    val error: String? = null
 )

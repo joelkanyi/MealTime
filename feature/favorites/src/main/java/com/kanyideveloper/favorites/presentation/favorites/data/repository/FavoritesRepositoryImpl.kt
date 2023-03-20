@@ -36,11 +36,11 @@ import java.util.UUID
 class FavoritesRepositoryImpl(
     private val favoritesDao: FavoritesDao,
     private val databaseReference: DatabaseReference,
-    private val firebaseAuth: FirebaseAuth,
+    private val firebaseAuth: FirebaseAuth
 ) : FavoritesRepository {
     override suspend fun insertFavorite(
         isSubscribed: Boolean,
-        favorite: Favorite,
+        favorite: Favorite
     ): Resource<Boolean> {
         return if (isSubscribed) {
             saveFavoriteToRemoteDatasource(favorite)
@@ -54,9 +54,11 @@ class FavoritesRepositoryImpl(
         return if (isSubscribed) {
             getFavoritesFromRemoteDataSource()
         } else {
-            Resource.Success(data = favoritesDao.getFavorites().map { favoritesEntity ->
-                favoritesEntity.map { it.toFavorite() }
-            })
+            Resource.Success(
+                data = favoritesDao.getFavorites().map { favoritesEntity ->
+                    favoritesEntity.map { it.toFavorite() }
+                }
+            )
         }
     }
 
@@ -144,10 +146,7 @@ class FavoritesRepositoryImpl(
         return favoritesDao.onlineInFavorites(id = id)
     }
 
-    override suspend fun deleteOneFavorite(
-        favorite: Favorite,
-        isSubscribed: Boolean,
-    ) {
+    override suspend fun deleteOneFavorite(favorite: Favorite, isSubscribed: Boolean) {
         if (isSubscribed) {
             deleteAFavoriteFromRemoteDatasource(
                 mealId = if (favorite.online) {
@@ -155,7 +154,7 @@ class FavoritesRepositoryImpl(
                 } else {
                     favorite.localMealId.toString()
                 },
-                isOnlineMeal = favorite.online,
+                isOnlineMeal = favorite.online
             )
         } else {
             favoritesDao.deleteAFavorite(favorite.toEntity())
@@ -166,25 +165,18 @@ class FavoritesRepositoryImpl(
         favoritesDao.deleteAllFavorites()
     }
 
-    override suspend fun deleteALocalFavorite(
-        localMealId: String,
-        isSubscribed: Boolean,
-    ) {
+    override suspend fun deleteALocalFavorite(localMealId: String, isSubscribed: Boolean) {
         if (isSubscribed) {
             deleteAFavoriteFromRemoteDatasource(
                 mealId = localMealId,
-                isOnlineMeal = false,
+                isOnlineMeal = false
             )
         } else {
             favoritesDao.deleteALocalFavorite(localMealId = localMealId)
         }
-
     }
 
-    override suspend fun deleteAnOnlineFavorite(
-        onlineMealId: String,
-        isSubscribed: Boolean,
-    ) {
+    override suspend fun deleteAnOnlineFavorite(onlineMealId: String, isSubscribed: Boolean) {
         if (isSubscribed) {
             deleteAFavoriteFromRemoteDatasource(
                 mealId = onlineMealId,
@@ -217,7 +209,7 @@ class FavoritesRepositoryImpl(
 
     private suspend fun deleteAFavoriteFromRemoteDatasource(
         mealId: String,
-        isOnlineMeal: Boolean,
+        isOnlineMeal: Boolean
     ): Resource<Boolean> {
         return try {
             databaseReference

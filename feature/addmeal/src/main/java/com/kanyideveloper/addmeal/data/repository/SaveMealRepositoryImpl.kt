@@ -33,7 +33,7 @@ class SaveMealRepositoryImpl(
     override suspend fun saveMeal(meal: Meal, isSubscribed: Boolean): Resource<Boolean> {
         return if (isSubscribed) {
             saveMealToRemoteDatasource(meal)
-        }else{
+        } else {
             mealTimeDatabase.mealDao.insertMeal(
                 mealEntity = meal.toMealEntity()
             )

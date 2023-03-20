@@ -34,7 +34,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     userDataRepository: UserDataRepository,
-    private val subscriptionRepository: SubscriptionRepository,
+    private val subscriptionRepository: SubscriptionRepository
 ) : ViewModel() {
     val user = mutableStateOf(Firebase.auth.currentUser)
 
@@ -46,7 +46,7 @@ class MainViewModel @Inject constructor(
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = SubscriptionStatusUiState.Loading,
+                initialValue = SubscriptionStatusUiState.Loading
             )
 
     val subscriptionStatusUiState = subscriptionRepository.subscriptionStatusUiState

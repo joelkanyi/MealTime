@@ -25,7 +25,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class KitchenTimerViewModel @Inject constructor(
-    private val repository: KitchenTimerRepository,
+    private val repository: KitchenTimerRepository
 ) : ViewModel() {
     val percentage = repository.percentage
 

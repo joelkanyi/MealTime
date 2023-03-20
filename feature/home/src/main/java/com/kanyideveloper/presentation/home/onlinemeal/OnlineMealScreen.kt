@@ -83,8 +83,9 @@ import kotlinx.coroutines.flow.collectLatest
 @Destination
 @Composable
 fun OnlineMealScreen(
+    isSubscribed: Boolean,
     navigator: HomeNavigator,
-    viewModel: OnlineMealViewModel = hiltViewModel(),
+    viewModel: OnlineMealViewModel = hiltViewModel()
 ) {
     val mealsState = viewModel.meals.value
     val categoriesState = viewModel.categories.value
@@ -96,7 +97,7 @@ fun OnlineMealScreen(
             when (event) {
                 is UiEvents.SnackbarEvent -> {
                     snackbarHostState.showSnackbar(
-                        message = event.message,
+                        message = event.message
                     )
                 }
                 else -> {}
@@ -109,7 +110,7 @@ fun OnlineMealScreen(
             SnackbarHost(
                 snackbarHostState
             )
-        },
+        }
     ) {
         SwipeRefreshComponent(
             isRefreshingState = mealsState.isLoading,
@@ -133,12 +134,14 @@ fun OnlineMealScreen(
                         onlineMealId = onlineMealId,
                         mealImageUrl = imageUrl,
                         mealName = name,
-                        isOnline = true
+                        isOnline = true,
+                        isSubscribed = isSubscribed
                     )
                 },
                 removeFromFavorites = { id ->
                     viewModel.deleteAnOnlineFavorite(
-                        onlineMealId = id
+                        onlineMealId = id,
+                        isSubscribed = isSubscribed
                     )
                 }
             )
@@ -155,7 +158,7 @@ fun OnlineMealScreenContent(
     onSelectCategory: (String) -> Unit,
     onMealClick: (String) -> Unit,
     addToFavorites: (String, String, String) -> Unit,
-    removeFromFavorites: (String) -> Unit,
+    removeFromFavorites: (String) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         // Data Loaded Successfully
@@ -211,7 +214,7 @@ fun OnlineMealItem(
     onClick: (String) -> Unit,
     addToFavorites: (String, String, String) -> Unit,
     removeFromFavorites: (String) -> Unit,
-    viewModel: OnlineMealViewModel = hiltViewModel(),
+    viewModel: OnlineMealViewModel = hiltViewModel()
 ) {
     val isFavorite = viewModel.inOnlineFavorites(id = meal.mealId).observeAsState().value != null
 
@@ -290,11 +293,7 @@ fun OnlineMealItem(
 }
 
 @Composable
-fun CategorySelection(
-    state: CategoriesState,
-    onClick: (String) -> Unit,
-    selectedCategory: String,
-) {
+fun CategorySelection(state: CategoriesState, onClick: (String) -> Unit, selectedCategory: String) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -312,11 +311,7 @@ fun CategorySelection(
 }
 
 @Composable
-fun CategoryItem(
-    category: Category,
-    selectedCategory: String,
-    onClick: () -> Unit,
-) {
+fun CategoryItem(category: Category, selectedCategory: String, onClick: () -> Unit) {
     val selected = selectedCategory == category.categoryName
     Card(
         Modifier

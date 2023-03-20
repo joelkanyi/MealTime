@@ -23,10 +23,10 @@ import com.kanyideveloper.addmeal.domain.repository.UploadImageRepository
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.imageUriToImageBitmap
 import com.kanyideveloper.core.util.safeApiCall
-import java.io.ByteArrayOutputStream
-import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
+import java.io.ByteArrayOutputStream
+import java.util.UUID
 
 class UploadImageRepositoryImpl(
     private val storageReference: StorageReference,

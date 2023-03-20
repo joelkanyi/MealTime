@@ -15,7 +15,6 @@
  */
 package com.joelkanyi.auth.presentation.signup
 
-
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -87,11 +86,13 @@ class SignUpViewModel @Inject constructor(
 
             _registerState.value = registerState.value.copy(isLoading = true)
 
-            when (val result = authRepository.registerUser(
-                email = emailState.value.text,
-                name = usernameState.value.text,
-                password = passwordState.value.text,
-            )) {
+            when (
+                val result = authRepository.registerUser(
+                    email = emailState.value.text,
+                    name = usernameState.value.text,
+                    password = passwordState.value.text
+                )
+            ) {
                 is Resource.Error -> {
                     _registerState.value = registerState.value.copy(
                         isLoading = false,
@@ -101,7 +102,6 @@ class SignUpViewModel @Inject constructor(
                     _eventsFlow.emit(
                         UiEvents.SnackbarEvent(message = result.message ?: "Unknown Error Occurred")
                     )
-
                 }
 
                 is Resource.Success -> {

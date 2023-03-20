@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class SubscriptionRepositoryImpl(
-    private val dataStore: DataStore<Preferences>,
+    private val dataStore: DataStore<Preferences>
 ) : SubscriptionRepository {
     override val isSubscribed: Flow<Boolean>
         get() = dataStore.data.map { preferences ->
@@ -47,7 +47,6 @@ class SubscriptionRepositoryImpl(
         get() = _subscriptionStatusUiState
 
     override suspend fun updateSubscriptionStatus() {
-
         this@SubscriptionRepositoryImpl._subscriptionStatusUiState = true
 
         Qonversion.shared.checkEntitlements(object : QonversionEntitlementsCallback {

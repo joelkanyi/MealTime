@@ -78,14 +78,14 @@ import timber.log.Timber
 @Destination
 @Composable
 fun MyMealScreen(
+    isSubscribed: Boolean,
     navigator: HomeNavigator,
-    viewModel: HomeViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val myMealsState = viewModel.myMealsState.value
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(key1 = true, block = {
-
         viewModel.getMyMeals()
 
         viewModel.eventsFlow.collectLatest { event ->
@@ -105,7 +105,7 @@ fun MyMealScreen(
             SnackbarHost(
                 snackbarHostState
             )
-        },
+        }
     ) {
         SwipeRefreshComponent(
             isRefreshingState = myMealsState.isLoading,
@@ -126,12 +126,14 @@ fun MyMealScreen(
                         localMealId = localMealId,
                         mealImageUrl = imageUrl,
                         mealName = name,
-                        isOnline = false
+                        isOnline = false,
+                        isSubscribed = isSubscribed
                     )
                 },
                 removeFromFavorites = { id ->
                     viewModel.deleteALocalFavorite(
-                        localMealId = id
+                        localMealId = id,
+                        isSubscribed = isSubscribed
                     )
                 },
                 isSelected = { category ->
@@ -155,7 +157,7 @@ private fun MyMealScreenContent(
     addToFavorites: (String, String, String) -> Unit,
     removeFromFavorites: (String) -> Unit,
     isSelected: (String) -> Boolean,
-    onCategoryClick: (String) -> Unit,
+    onCategoryClick: (String) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         // Loaded Data and the list is not empty
@@ -199,7 +201,9 @@ private fun MyMealScreenContent(
                             .padding(vertical = 8.dp)
                             .height(180.dp),
                         shape = Shapes.large,
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surface
+                        )
                     ) {
                         Box(Modifier.fillMaxSize()) {
                             Image(
@@ -295,7 +299,7 @@ private fun MyMealScreenContent(
 private fun MyMealsCategoryItem(
     category: MealCategory,
     isSelected: (String) -> Boolean,
-    onCategoryClick: (String) -> Unit,
+    onCategoryClick: (String) -> Unit
 ) {
     Card(
         modifier = Modifier

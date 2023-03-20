@@ -91,10 +91,7 @@ interface SearchNavigator {
 
 @Destination
 @Composable
-fun SearchScreen(
-    navigator: SearchNavigator,
-    viewModel: SearchViewModel = hiltViewModel(),
-) {
+fun SearchScreen(navigator: SearchNavigator, viewModel: SearchViewModel = hiltViewModel()) {
     val searchState = viewModel.searchState.value
     val context = LocalContext.current
 
@@ -160,7 +157,7 @@ private fun SearchScreenContent(
     currentSearchString: String,
     isSelected: (String) -> Boolean,
     onSearchOptionClick: (String) -> Unit,
-    onClickBack: () -> Unit,
+    onClickBack: () -> Unit
 ) {
     Column(
         Modifier
@@ -176,7 +173,6 @@ private fun SearchScreenContent(
             },
             showBackArrow = true,
             navActions = {
-
             }
         )
 
@@ -239,7 +235,7 @@ private val searchOptions = listOf("Meal Name", "Ingredient", "Meal Category")
 fun SearchOptionsComponent(
     options: List<String>,
     onClick: (String) -> Unit,
-    isSelected: (String) -> Boolean,
+    isSelected: (String) -> Boolean
 ) {
     LazyRow {
         items(options) { option ->
@@ -253,11 +249,7 @@ fun SearchOptionsComponent(
 }
 
 @Composable
-fun SearchOption(
-    option: String,
-    onClick: (String) -> Unit,
-    isSelected: (String) -> Boolean,
-) {
+fun SearchOption(option: String, onClick: (String) -> Unit, isSelected: (String) -> Boolean) {
     Card(
         Modifier
             .wrapContentWidth()
@@ -302,7 +294,7 @@ fun SearchBar(
     modifier: Modifier = Modifier,
     onSearch: (String) -> Unit = {},
     onSearchStringChange: (String) -> Unit,
-    currentSearchString: String,
+    currentSearchString: String
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -359,7 +351,7 @@ fun OnlineMealItem(
     onClick: (String) -> Unit,
     addToFavorites: (String, String, String) -> Unit,
     removeFromFavorites: (String) -> Unit,
-    viewModel: SearchViewModel = hiltViewModel(),
+    viewModel: SearchViewModel = hiltViewModel()
 ) {
     val isFavorite = viewModel.inOnlineFavorites(id = meal.mealId).observeAsState().value != null
 

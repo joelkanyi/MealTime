@@ -35,7 +35,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 class MealTimePreferences(
     private val dataStore: DataStore<Preferences>,
     private val databaseReference: DatabaseReference,
-    private val firebaseAuth: FirebaseAuth,
+    private val firebaseAuth: FirebaseAuth
 ) {
     suspend fun saveTheme(themeValue: Int) {
         dataStore.edit { preferences ->
@@ -46,7 +46,7 @@ class MealTimePreferences(
     suspend fun saveMealPlanPreferences(
         allergies: List<String>,
         numberOfPeople: String,
-        dishTypes: List<String>,
+        dishTypes: List<String>
     ) {
         dataStore.edit { preferences ->
             preferences[ALLERGIES] = allergies.toSet()

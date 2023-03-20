@@ -22,7 +22,6 @@ import com.joelkanyi.auth.domain.repository.AuthRepository
 import com.kanyideveloper.core.util.Resource
 import kotlinx.coroutines.tasks.await
 
-
 class AuthRepositoryImpl(
     private val firebaseAuth: FirebaseAuth
 ) : AuthRepository {

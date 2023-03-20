@@ -50,7 +50,6 @@ class SignInViewModel @Inject constructor(
         _passwordState.value = _passwordState.value.copy(text = value)
     }
 
-
     private val _eventFlow = MutableSharedFlow<UiEvents>()
     val eventFlow = _eventFlow.asSharedFlow()
 
@@ -72,10 +71,12 @@ class SignInViewModel @Inject constructor(
 
             _loginState.value = loginState.value.copy(isLoading = true)
 
-            when (val result = authRepository.loginUser(
-                email = emailState.value.text.trim(),
-                password = passwordState.value.text.trim(),
-            )) {
+            when (
+                val result = authRepository.loginUser(
+                    email = emailState.value.text.trim(),
+                    password = passwordState.value.text.trim()
+                )
+            ) {
                 is Resource.Error -> {
                     _loginState.value = loginState.value.copy(
                         isLoading = false,
@@ -85,7 +86,6 @@ class SignInViewModel @Inject constructor(
                     _eventFlow.emit(
                         UiEvents.SnackbarEvent(message = result.message ?: "Unknown Error Occurred")
                     )
-
                 }
 
                 is Resource.Success -> {

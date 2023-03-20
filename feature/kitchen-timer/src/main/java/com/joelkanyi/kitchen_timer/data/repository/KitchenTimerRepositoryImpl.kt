@@ -35,7 +35,7 @@ import com.kanyideveloper.mealtime.kitchen_timer.R
 import kotlin.random.Random
 
 class KitchenTimerRepositoryImpl(
-    private val applicationContext: Context,
+    private val applicationContext: Context
 ) : KitchenTimerRepository {
 
     private lateinit var countDownTimer: CountDownTimer
@@ -64,7 +64,6 @@ class KitchenTimerRepositoryImpl(
         }
 
     override fun startTimer() {
-
         removeBrokenChannel()
         initNotificationChannel()
 
@@ -81,7 +80,6 @@ class KitchenTimerRepositoryImpl(
             }
 
             override fun onTick(millisUntilFinished: Long) {
-
                 _isTimerRunning.value = true
 
                 var seconds = (millisUntilFinished / 1000).toInt()
@@ -102,7 +100,6 @@ class KitchenTimerRepositoryImpl(
 
                 _percentage.value = _timeLeft.value?.sweepAnglePercentage ?: 0f
             }
-
         }.start()
     }
 
@@ -126,7 +123,11 @@ class KitchenTimerRepositoryImpl(
             .setSmallIcon(com.kanyideveloper.mealtime.core.R.drawable.fork_knife_bold)
             .setContentTitle("Kitchen Timer").setContentText("Time's up!")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setSound(Uri.parse("${ContentResolver.SCHEME_ANDROID_RESOURCE}://${applicationContext.packageName}/${R.raw.kitchen_timer_ringtone}"))
+            .setSound(
+                Uri.parse(
+                    "${ContentResolver.SCHEME_ANDROID_RESOURCE}://${applicationContext.packageName}/${R.raw.kitchen_timer_ringtone}"
+                )
+            )
         val notificationManager = NotificationManagerCompat.from(applicationContext)
         if (ActivityCompat.checkSelfPermission(
                 applicationContext,
@@ -154,7 +155,9 @@ class KitchenTimerRepositoryImpl(
             setName(channelName)
             setDescription(channelDescription)
             setSound(
-                Uri.parse("${ContentResolver.SCHEME_ANDROID_RESOURCE}://${applicationContext.packageName}/raw/kitchen_timer_ringtone"),
+                Uri.parse(
+                    "${ContentResolver.SCHEME_ANDROID_RESOURCE}://${applicationContext.packageName}/raw/kitchen_timer_ringtone"
+                ),
                 Notification.AUDIO_ATTRIBUTES_DEFAULT
             )
         }

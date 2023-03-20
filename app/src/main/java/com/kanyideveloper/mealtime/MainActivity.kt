@@ -191,7 +191,7 @@ internal fun AppNavigation(
     subscribe: () -> Unit,
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    isLoggedIn: Boolean,
+    isLoggedIn: Boolean
 ) {
     val navHostEngine = rememberAnimatedNavHostEngine(
         navHostContentAlignment = Alignment.TopCenter,
@@ -293,7 +293,7 @@ internal fun AppNavigation(
             dependency(
                 currentNavigator(
                     subscribe = subscribe,
-                    isLoggedIn = isLoggedIn,
+                    isLoggedIn = isLoggedIn
                 )
             )
         }
@@ -302,7 +302,7 @@ internal fun AppNavigation(
 
 fun DestinationScope<*>.currentNavigator(
     isLoggedIn: Boolean,
-    subscribe: () -> Unit,
+    subscribe: () -> Unit
 ): CoreFeatureNavigator {
     return CoreFeatureNavigator(
         navGraph = navBackStackEntry.destination.navGraph(isLoggedIn),

@@ -47,7 +47,7 @@ import com.ramcosta.composedestinations.spec.NavGraphSpec
 class CoreFeatureNavigator(
     private val navGraph: NavGraphSpec,
     private val navController: NavController,
-    private val subscribe: () -> Unit,
+    private val subscribe: () -> Unit
 ) : HomeNavigator,
     SearchNavigator,
     FavoritesNavigator,
@@ -83,7 +83,7 @@ class CoreFeatureNavigator(
         category: String,
         complexity: String,
         cookingTime: Int,
-        servingPeople: Int,
+        servingPeople: Int
     ) {
         navController.navigate(
             NextAddMealScreenDestination(
@@ -119,7 +119,7 @@ class CoreFeatureNavigator(
     override fun openMealTypesScreen(
         allergies: String,
         noOfPeople: String,
-        editMealPlanPreference: Boolean,
+        editMealPlanPreference: Boolean
     ) {
         navController.navigate(
             MealTypesScreenDestination(
@@ -164,8 +164,7 @@ class CoreFeatureNavigator(
         }
     }
 
-    override
-    fun navigateBackToHome() {
+    override fun navigateBackToHome() {
         navController.navigate(HomeScreenDestination within navGraph)
         navController.clearBackStack("home")
     }

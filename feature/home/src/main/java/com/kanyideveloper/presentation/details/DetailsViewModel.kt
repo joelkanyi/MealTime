@@ -28,13 +28,13 @@ import com.kanyideveloper.domain.repository.OnlineMealsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     private val onlineMealsRepository: OnlineMealsRepository,
-    private val favoritesRepository: FavoritesRepository,
+    private val favoritesRepository: FavoritesRepository
 ) : ViewModel() {
 
     private val _eventsFlow = MutableSharedFlow<UiEvents>()
@@ -108,7 +108,7 @@ class DetailsViewModel @Inject constructor(
         viewModelScope.launch {
             favoritesRepository.deleteALocalFavorite(
                 localMealId = localMealId,
-                isSubscribed = true,
+                isSubscribed = true
             )
         }
     }
@@ -127,7 +127,7 @@ class DetailsViewModel @Inject constructor(
         onlineMealId: String? = null,
         localMealId: String? = null,
         mealImageUrl: String,
-        mealName: String,
+        mealName: String
     ) {
         viewModelScope.launch {
             val favorite = Favorite(
@@ -138,10 +138,12 @@ class DetailsViewModel @Inject constructor(
                 online = isOnline,
                 favorite = true
             )
-            when (val result = favoritesRepository.insertFavorite(
-                favorite = favorite,
-                isSubscribed = true
-            )) {
+            when (
+                val result = favoritesRepository.insertFavorite(
+                    favorite = favorite,
+                    isSubscribed = true
+                )
+            ) {
                 is Resource.Error -> {
                     _eventsFlow.emit(
                         UiEvents.SnackbarEvent(

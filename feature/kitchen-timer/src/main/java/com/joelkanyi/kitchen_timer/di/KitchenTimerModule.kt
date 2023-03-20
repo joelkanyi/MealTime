@@ -31,7 +31,9 @@ object KitchenTimerModule {
 
     @Provides
     @Singleton
-    fun provideKitchenTimerRepository(@ApplicationContext context: Context): KitchenTimerRepository{
+    fun provideKitchenTimerRepository(
+        @ApplicationContext context: Context
+    ): KitchenTimerRepository {
         return KitchenTimerRepositoryImpl(context)
     }
 }

@@ -22,5 +22,5 @@ data class Favorite(
     val online: Boolean = false,
     val mealName: String = "",
     val mealImageUrl: String = "",
-    val favorite: Boolean = false,
+    val favorite: Boolean = false
 )

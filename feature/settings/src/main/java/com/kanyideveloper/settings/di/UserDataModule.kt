@@ -38,12 +38,11 @@ object UserDataModule {
         dataStore: DataStore<Preferences>,
         databaseReference: DatabaseReference,
         firebaseAuth: FirebaseAuth
-    ) =
-        MealTimePreferences(
-            dataStore = dataStore,
-            databaseReference = databaseReference,
-            firebaseAuth = firebaseAuth
-        )
+    ) = MealTimePreferences(
+        dataStore = dataStore,
+        databaseReference = databaseReference,
+        firebaseAuth = firebaseAuth
+    )
 
     @Provides
     @Singleton

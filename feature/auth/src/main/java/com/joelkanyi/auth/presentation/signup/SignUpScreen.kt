@@ -17,8 +17,6 @@ package com.joelkanyi.auth.presentation.signup
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.runtime.Composable
-import com.ramcosta.composedestinations.annotation.Destination
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -33,14 +31,15 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -61,16 +60,14 @@ import com.joelkanyi.auth.presentation.state.RegisterState
 import com.kanyideveloper.compose_ui.theme.robotoCondensed
 import com.kanyideveloper.core.state.TextFieldState
 import com.kanyideveloper.core.util.UiEvents
+import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Destination
 @Composable
-fun SignUpScreen(
-    navigator: AuthNavigator,
-    viewModel: SignUpViewModel = hiltViewModel(),
-) {
+fun SignUpScreen(navigator: AuthNavigator, viewModel: SignUpViewModel = hiltViewModel()) {
     val snackbarHostState = remember { SnackbarHostState() }
     val registerState by viewModel.registerState
     val userName by viewModel.usernameState
@@ -105,7 +102,7 @@ fun SignUpScreen(
                 )
                 Text(
                     text = "Create an account to continue with the app",
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.labelMedium
                 )
             }
         }
@@ -146,7 +143,7 @@ private fun SignUpScreenContent(
     onCurrentEmailChange: (String) -> Unit,
     onCurrentPasswordChange: (String) -> Unit,
     onClickSignUp: () -> Unit,
-    onClickHaveAccount: () -> Unit,
+    onClickHaveAccount: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -167,8 +164,8 @@ private fun SignUpScreenContent(
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Words,
                     autoCorrect = true,
-                    keyboardType = KeyboardType.Email,
-                ),
+                    keyboardType = KeyboardType.Email
+                )
             )
         }
 
@@ -186,8 +183,8 @@ private fun SignUpScreenContent(
                 },
                 keyboardOptions = KeyboardOptions(
                     autoCorrect = true,
-                    keyboardType = KeyboardType.Email,
-                ),
+                    keyboardType = KeyboardType.Email
+                )
             )
         }
 
@@ -205,8 +202,8 @@ private fun SignUpScreenContent(
                 },
                 keyboardOptions = KeyboardOptions(
                     autoCorrect = true,
-                    keyboardType = KeyboardType.Password,
-                ),
+                    keyboardType = KeyboardType.Password
+                )
             )
         }
 

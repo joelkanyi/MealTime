@@ -29,13 +29,13 @@ import com.kanyideveloper.presentation.home.onlinemeal.state.CategoriesState
 import com.kanyideveloper.presentation.home.onlinemeal.state.MealState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class OnlineMealViewModel @Inject constructor(
     private val onlineMealsRepository: OnlineMealsRepository,
-    private val favoritesRepository: FavoritesRepository,
+    private val favoritesRepository: FavoritesRepository
 ) : ViewModel() {
 
     private val _eventsFlow = MutableSharedFlow<UiEvents>()
@@ -120,6 +120,7 @@ class OnlineMealViewModel @Inject constructor(
         localMealId: String? = null,
         mealImageUrl: String,
         mealName: String,
+        isSubscribed: Boolean
     ) {
         viewModelScope.launch {
             val favorite = Favorite(
@@ -130,10 +131,12 @@ class OnlineMealViewModel @Inject constructor(
                 online = isOnline,
                 favorite = true
             )
-            when (val result = favoritesRepository.insertFavorite(
-                favorite = favorite,
-                isSubscribed = true
-            )) {
+            when (
+                val result = favoritesRepository.insertFavorite(
+                    favorite = favorite,
+                    isSubscribed = isSubscribed
+                )
+            ) {
                 is Resource.Error -> {
                     _eventsFlow.emit(
                         UiEvents.SnackbarEvent(
@@ -153,11 +156,11 @@ class OnlineMealViewModel @Inject constructor(
         }
     }
 
-    fun deleteAnOnlineFavorite(onlineMealId: String) {
+    fun deleteAnOnlineFavorite(onlineMealId: String, isSubscribed: Boolean) {
         viewModelScope.launch {
             favoritesRepository.deleteAnOnlineFavorite(
                 onlineMealId = onlineMealId,
-                isSubscribed = true
+                isSubscribed = isSubscribed
             )
         }
     }
