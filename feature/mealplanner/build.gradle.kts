@@ -55,7 +55,7 @@ dependencies {
     implementation(project(Modules.coreNetwork))
 
     // Joel Kanyi - HorizontalCalendarView
-    implementation("com.github.JoelKanyi:HorizontalCalendarView:1.0.3")
+    implementation("com.github.JoelKanyi:HorizontalCalendarView:1.0.4")
 
     // Room
     implementation("androidx.room:room-runtime:2.5.0")

@@ -15,6 +15,8 @@
  */
 package com.kanyideveloper.di
 
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
 import com.kanyideveloper.core.domain.HomeRepository
 import com.kanyideveloper.core_database.dao.MealDao
 import com.kanyideveloper.core_network.MealDbApi
@@ -33,8 +35,16 @@ object HomeModule {
 
     @Provides
     @Singleton
-    fun provideHomeRepository(mealDao: MealDao): HomeRepository {
-        return HomeRepositoryImpl(mealDao = mealDao)
+    fun provideHomeRepository(
+        mealDao: MealDao,
+        databaseReference: DatabaseReference,
+        firebaseAuth: FirebaseAuth
+    ): HomeRepository {
+        return HomeRepositoryImpl(
+            mealDao = mealDao,
+            databaseReference = databaseReference,
+            firebaseAuth = firebaseAuth
+        )
     }
 
     @Provides

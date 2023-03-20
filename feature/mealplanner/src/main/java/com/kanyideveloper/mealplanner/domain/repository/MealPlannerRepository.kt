@@ -15,7 +15,6 @@
  */
 package com.kanyideveloper.mealplanner.domain.repository
 
-import androidx.lifecycle.LiveData
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.model.MealPlanPreference
 import com.kanyideveloper.core.util.Resource
@@ -23,31 +22,36 @@ import com.kanyideveloper.mealplanner.model.MealPlan
 import kotlinx.coroutines.flow.Flow
 
 interface MealPlannerRepository {
-    val hasMealPlanPref: Flow<MealPlanPreference?>
+    suspend fun hasMealPlanPref(isSubscribed: Boolean): Flow<MealPlanPreference?>
 
     suspend fun saveMealPlannerPreferences(
         allergies: List<String>,
         numberOfPeople: String,
-        dishTypes: List<String>
+        dishTypes: List<String>,
+        isSubscribed: Boolean
     )
 
-    fun getMealsInMyPlan(filterDay: String): LiveData<List<MealPlan>>
+    suspend fun getMealsInMyPlan(
+        filterDay: String,
+        isSubscribed: Boolean
+    ): Resource<Flow<List<MealPlan>>>
 
     fun getExistingMeals(mealType: String, date: String): List<Meal>
 
-    suspend fun deleteAMealFromPlan(id: Int)
+    suspend fun deleteAMealFromPlan(id: String)
 
-    suspend fun saveMealToPlan(mealPlan: MealPlan)
+    suspend fun saveMealToPlan(mealPlan: MealPlan, isSubscribed: Boolean)
 
     suspend fun searchMeal(
         source: String,
         searchBy: String,
-        searchString: String
-    ): Resource<LiveData<List<Meal>>>
+        searchString: String,
+        isSubscribed: Boolean
+    ): Resource<Flow<List<Meal>>>
 
-    suspend fun removeMealFromPlan(id: Int)
+    suspend fun removeMealFromPlan(id: String, isSubscribed: Boolean)
 
     suspend fun getAllIngredients(): Resource<List<String>>
 
-    fun setAlarm()
+    fun setAlarm(isSubscribed: Boolean)
 }

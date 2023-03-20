@@ -166,11 +166,7 @@ private fun MealTypesScreenContent(
 }
 
 @Composable
-fun MealTypeItemCard(
-    mealType: String,
-    onClick: () -> Unit,
-    isSelected: (String) -> Boolean
-) {
+fun MealTypeItemCard(mealType: String, onClick: () -> Unit, isSelected: (String) -> Boolean) {
     Card(
         Modifier
             .wrapContentWidth()

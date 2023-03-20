@@ -20,12 +20,22 @@ import com.kanyideveloper.presentation.home.HomeNavigator
 import com.kanyideveloper.presentation.home.mymeal.MyMealScreen
 import com.kanyideveloper.presentation.home.onlinemeal.OnlineMealScreen
 
-typealias ComposableFun = @Composable (onClick: () -> Unit) -> Unit
+typealias ComposableFun = @Composable (Boolean) -> Unit
 
 sealed class TabItem(val title: String, val screen: ComposableFun) {
     data class Outgoing(val navigator: HomeNavigator) :
-        TabItem("My Meals", screen = { MyMealScreen(navigator = navigator) })
+        TabItem("My Meals", screen = { isSubscribed ->
+            MyMealScreen(
+                isSubscribed = isSubscribed,
+                navigator = navigator
+            )
+        })
 
     data class Incoming(val navigator: HomeNavigator) :
-        TabItem("Online Meals", screen = { OnlineMealScreen(navigator = navigator) })
+        TabItem("Online Meals", screen = { isSubscribed ->
+            OnlineMealScreen(
+                isSubscribed = isSubscribed,
+                navigator = navigator
+            )
+        })
 }

@@ -6,6 +6,9 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.BILLIN" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name=".MealTimeApp"
@@ -30,7 +33,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="com.kanyideveloper.mealplanner.notifications.MyAlarm"
+        <receiver android:name="com.kanyideveloper.core.notifications.NotificationReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

@@ -56,7 +56,8 @@ fun RandomOnlineMealDetailsScreen(
             viewModel.insertAFavorite(
                 onlineMealId = onlineMealId,
                 mealImageUrl = imageUrl,
-                mealName = name
+                mealName = name,
+                isOnline = true
             )
         }
     )
@@ -66,7 +67,7 @@ fun RandomOnlineMealDetailsScreen(
 private fun RandomOnlineMealScreenContent(
     randomMealState: DetailsState,
     navigateBack: () -> Unit = {},
-    onRemoveFavorite: (Int, String) -> Unit,
+    onRemoveFavorite: (String, String) -> Unit,
     addToFavorites: (String, String, String) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {

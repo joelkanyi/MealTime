@@ -62,9 +62,9 @@ fun PlanMealItem(
     imageHeight: Dp = 120.dp,
     isAddingToPlan: Boolean = false,
     type: String = "",
-    onMealClick: (Int?, String?, Boolean) -> Unit,
+    onMealClick: (String?, String?, Boolean) -> Unit,
     onClickAdd: (Meal, String) -> Unit,
-    onRemoveClick: (Int?) -> Unit
+    onRemoveClick: (String?) -> Unit
 ) {
     Box(
         modifier = Modifier

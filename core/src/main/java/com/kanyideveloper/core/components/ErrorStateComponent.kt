@@ -31,9 +31,7 @@ import com.kanyideveloper.core.util.LottieAnim
 import com.kanyideveloper.mealtime.core.R
 
 @Composable
-fun BoxScope.ErrorStateComponent(
-    errorMessage: String
-) {
+fun BoxScope.ErrorStateComponent(errorMessage: String) {
     Column(
         Modifier
             .fillMaxWidth()

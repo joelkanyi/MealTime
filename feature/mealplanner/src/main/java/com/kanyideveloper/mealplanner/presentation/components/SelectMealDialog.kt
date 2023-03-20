@@ -61,7 +61,7 @@ fun SelectMealDialog(
     currentSearchString: String,
     onSearchByChange: (String) -> Unit,
     onSourceChange: (String) -> Unit,
-    onMealClick: (Int?, String?, Boolean) -> Unit,
+    onMealClick: (String?, String?, Boolean) -> Unit,
     sources: List<String>,
     searchOptions: List<String>,
     currentSource: String,

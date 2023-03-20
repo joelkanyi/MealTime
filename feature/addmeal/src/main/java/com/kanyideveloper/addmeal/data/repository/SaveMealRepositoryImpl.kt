@@ -15,17 +15,42 @@
  */
 package com.kanyideveloper.addmeal.data.repository
 
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
 import com.kanyideveloper.addmeal.data.mapper.toMealEntity
 import com.kanyideveloper.addmeal.domain.repository.SaveMealRepository
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core_database.MealTimeDatabase
+import java.util.UUID
+import kotlinx.coroutines.tasks.await
 
 class SaveMealRepositoryImpl(
-    private val mealTimeDatabase: MealTimeDatabase
+    private val mealTimeDatabase: MealTimeDatabase,
+    private val databaseReference: DatabaseReference,
+    private val firebaseAuth: FirebaseAuth
 ) : SaveMealRepository {
-    override suspend fun saveMeal(meal: Meal) {
-        mealTimeDatabase.mealDao.insertMeal(
-            mealEntity = meal.toMealEntity()
-        )
+    override suspend fun saveMeal(meal: Meal, isSubscribed: Boolean): Resource<Boolean> {
+        return if (isSubscribed) {
+            saveMealToRemoteDatasource(meal)
+        } else {
+            mealTimeDatabase.mealDao.insertMeal(
+                mealEntity = meal.toMealEntity()
+            )
+            Resource.Success(data = true)
+        }
+    }
+
+    private suspend fun saveMealToRemoteDatasource(meal: Meal): Resource<Boolean> {
+        return try {
+            databaseReference
+                .child("mymeals")
+                .child(firebaseAuth.currentUser?.uid.toString())
+                .child(UUID.randomUUID().toString())
+                .setValue(meal).await()
+            Resource.Success(data = true)
+        } catch (e: Exception) {
+            return Resource.Error(e.localizedMessage ?: "Unknown error occurred")
+        }
     }
 }

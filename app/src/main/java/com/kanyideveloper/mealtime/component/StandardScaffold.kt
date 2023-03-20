@@ -49,19 +49,14 @@ import com.ramcosta.composedestinations.spec.NavGraphSpec
 fun StandardScaffold(
     navController: NavController,
     showBottomBar: Boolean = true,
-    items: List<BottomNavItem> = listOf(
-        BottomNavItem.Home,
-        BottomNavItem.Search,
-        BottomNavItem.MealPlanner,
-        BottomNavItem.Favorites,
-        BottomNavItem.Settings
-    ),
+    isLoggedIn: Boolean,
+    items: List<BottomNavItem>,
     content: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
     Scaffold(
         bottomBar = {
             if (showBottomBar) {
-                val currentSelectedItem by navController.currentScreenAsState()
+                val currentSelectedItem by navController.currentScreenAsState(isLoggedIn)
 
                 BottomNavigation(
                     backgroundColor = MaterialTheme.colorScheme.background,
@@ -124,12 +119,12 @@ fun StandardScaffold(
  */
 @Stable
 @Composable
-fun NavController.currentScreenAsState(): State<NavGraphSpec> {
+fun NavController.currentScreenAsState(isLoggedIn: Boolean): State<NavGraphSpec> {
     val selectedItem = remember { mutableStateOf(NavGraphs.home) }
 
     DisposableEffect(this) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
-            selectedItem.value = destination.navGraph()
+            selectedItem.value = destination.navGraph(isLoggedIn)
         }
         addOnDestinationChangedListener(listener)
 
@@ -141,9 +136,9 @@ fun NavController.currentScreenAsState(): State<NavGraphSpec> {
     return selectedItem
 }
 
-fun NavDestination.navGraph(): NavGraphSpec {
+fun NavDestination.navGraph(isLoggedIn: Boolean): NavGraphSpec {
     hierarchy.forEach { destination ->
-        NavGraphs.root.nestedNavGraphs.forEach { navGraph ->
+        NavGraphs.root(isLoggedIn).nestedNavGraphs.forEach { navGraph ->
             if (destination.route == navGraph.route) {
                 return navGraph
             }

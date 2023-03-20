@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "8a1622efdf9f106761f0f210dd68f84f",
+    "identityHash": "cd92549ff9146b69173a73fdf62a6bcc",
     "entities": [
       {
         "tableName": "meal_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `cookingTime` INTEGER NOT NULL, `servingPeople` INTEGER NOT NULL, `category` TEXT NOT NULL, `cookingDifficulty` TEXT NOT NULL, `ingredients` TEXT NOT NULL, `cookingInstructions` TEXT NOT NULL, `isFavorite` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `cookingTime` INTEGER NOT NULL, `servingPeople` INTEGER NOT NULL, `category` TEXT NOT NULL, `cookingDifficulty` TEXT NOT NULL, `ingredients` TEXT NOT NULL, `cookingInstructions` TEXT NOT NULL, `isFavorite` INTEGER NOT NULL, `id` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "name",
@@ -65,22 +65,22 @@
           {
             "fieldPath": "id",
             "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
+          "autoGenerate": false,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [],
         "foreignKeys": []
       },
       {
         "tableName": "favorites_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `onlineMealId` TEXT, `localMealId` INTEGER, `isOnline` INTEGER NOT NULL, `mealName` TEXT NOT NULL, `mealImageUrl` TEXT NOT NULL, `isFavorite` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `onlineMealId` TEXT, `localMealId` TEXT, `isOnline` INTEGER NOT NULL, `mealName` TEXT NOT NULL, `mealImageUrl` TEXT NOT NULL, `isFavorite` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -97,7 +97,7 @@
           {
             "fieldPath": "localMealId",
             "columnName": "localMealId",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": false
           },
           {
@@ -126,10 +126,10 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [],
         "foreignKeys": []
@@ -164,10 +164,10 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [],
         "foreignKeys": []
@@ -176,7 +176,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8a1622efdf9f106761f0f210dd68f84f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cd92549ff9146b69173a73fdf62a6bcc')"
     ]
   }
 }

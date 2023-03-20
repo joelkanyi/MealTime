@@ -15,11 +15,10 @@
  */
 package com.kanyideveloper.mealplanner.presentation.state
 
-import androidx.lifecycle.LiveData
 import com.kanyideveloper.core.model.Meal
 
 data class SearchMealState(
     val isLoading: Boolean = false,
     val error: String? = null,
-    val meals: LiveData<List<Meal>>? = null
+    val meals: List<Meal> = emptyList()
 )

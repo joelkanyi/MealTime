@@ -21,6 +21,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.kanyideveloper.core_database.model.MealEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MealDao {
@@ -29,14 +30,17 @@ interface MealDao {
     suspend fun insertMeal(mealEntity: MealEntity)
 
     @Query("SELECT * FROM meal_table ORDER BY id DESC")
-    fun getAllMeals(): LiveData<List<MealEntity>>
+    fun getAllMeals(): Flow<List<MealEntity>>
 
     @Query("SELECT * FROM meal_table WHERE id = :id")
-    fun getSingleMeal(id: Int): LiveData<MealEntity?>
+    fun getSingleMeal(id: String): LiveData<MealEntity?>
 
     @Delete
     suspend fun deleteMeal(mealEntity: MealEntity)
 
     @Query("DELETE FROM meal_table WHERE id = :id")
     suspend fun deleteMealById(id: Int)
+
+    @Query("DELETE FROM meal_table")
+    suspend fun deleteAllMeals()
 }

@@ -84,11 +84,36 @@ dependencies {
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 
     // Compose livedata
-    implementation ("androidx.compose.runtime:runtime-livedata:${Versions.composeCompiler}")
+    implementation("androidx.compose.runtime:runtime-livedata:${Versions.composeCompiler}")
 
     // Compose Paging
-    implementation ("androidx.paging:paging-runtime:3.1.1")
+    implementation("androidx.paging:paging-runtime:3.1.1")
 
     // Compose Image Cropper
     implementation("io.github.mr0xf00:easycrop:0.1.1")
+
+    // Billing
+    def billing_version = "5.1.0" // for today, it's the latest
+    implementation("com.android.billingclient:billing:$billing_version")
+
+    // Qonversion
+    implementation("io.qonversion.android.sdk:sdk:4.2.0")
+
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:31.1.0"))
+
+    // Firebase Storage
+    implementation("com.google.firebase:firebase-storage-ktx")
+
+    // Firebase Coroutine
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
+
+    // Firebase Auth
+    implementation 'com.google.firebase:firebase-auth-ktx'
+
+    // Firebase Database
+    implementation 'com.google.firebase:firebase-database-ktx'
+
+    // Compose One Tap
+    implementation 'com.github.stevdza-san:OneTapCompose:1.0.0'
 }

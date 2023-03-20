@@ -24,7 +24,7 @@ import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.imageUriToImageBitmap
 import com.kanyideveloper.core.util.safeApiCall
 import java.io.ByteArrayOutputStream
-import java.util.*
+import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 

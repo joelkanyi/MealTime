@@ -16,8 +16,10 @@
 package com.kanyideveloper.mealtime
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,13 +32,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
+import com.joelkanyi.kitchen_timer.presentation.destinations.KitchenTimerScreenDestination
 import com.kanyideveloper.compose_ui.theme.MealTimeTheme
 import com.kanyideveloper.compose_ui.theme.Theme
+import com.kanyideveloper.core.state.SubscriptionStatusUiState
+import com.kanyideveloper.core.util.Constants.PURCHASE_ID
 import com.kanyideveloper.favorites.presentation.favorites.presentation.destinations.FavoritesScreenDestination
 import com.kanyideveloper.mealplanner.destinations.MealPlannerScreenDestination
 import com.kanyideveloper.mealtime.component.StandardScaffold
@@ -48,8 +52,11 @@ import com.kanyideveloper.mealtime.navigation.scaleInPopEnterTransition
 import com.kanyideveloper.mealtime.navigation.scaleOutExitTransition
 import com.kanyideveloper.mealtime.navigation.scaleOutPopExitTransition
 import com.kanyideveloper.presentation.destinations.HomeScreenDestination
-import com.kanyideveloper.search.presentation.search.destinations.SearchScreenDestination
 import com.kanyideveloper.settings.presentation.destinations.SettingsScreenDestination
+import com.qonversion.android.sdk.Qonversion
+import com.qonversion.android.sdk.dto.QEntitlement
+import com.qonversion.android.sdk.dto.QonversionError
+import com.qonversion.android.sdk.listeners.QonversionEntitlementsCallback
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.NestedNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
@@ -61,51 +68,119 @@ import kotlinx.coroutines.Dispatchers
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val viewModel: MainViewModel by viewModels()
 
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        installSplashScreen()
+        installSplashScreen().apply {
+            setKeepOnScreenCondition(
+                condition = {
+                    viewModel.subscriptionStatusUiState
+                }
+            )
+        }
         setContent {
-            val viewModel: MainViewModel = hiltViewModel()
+            val isLogged = viewModel.user.value != null
+            val isSubscribed = viewModel.isSubscribed.collectAsState().value
 
             val themeValue by viewModel.theme.collectAsState(
                 initial = Theme.FOLLOW_SYSTEM.themeValue,
                 context = Dispatchers.Main.immediate
             )
 
-            MealTimeTheme(
-                theme = themeValue
-            ) {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    val navController = rememberAnimatedNavController()
-                    val newBackStackEntry by navController.currentBackStackEntryAsState()
-                    val route = newBackStackEntry?.destination?.route
+            when (isSubscribed) {
+                SubscriptionStatusUiState.Loading -> {}
+                is SubscriptionStatusUiState.Success -> {
+                    MealTimeTheme(
+                        theme = themeValue
+                    ) {
+                        Surface(
+                            modifier = Modifier.fillMaxSize(),
+                            color = MaterialTheme.colorScheme.background
+                        ) {
+                            val navController = rememberAnimatedNavController()
+                            val newBackStackEntry by navController.currentBackStackEntryAsState()
+                            val route = newBackStackEntry?.destination?.route
 
-                    StandardScaffold(
-                        navController = navController,
-                        showBottomBar = route in listOf(
-                            "home/${HomeScreenDestination.route}",
-                            "search/${SearchScreenDestination.route}",
-                            "meal_planner/${MealPlannerScreenDestination.route}",
-                            "favorites/${FavoritesScreenDestination.route}",
-                            "settings/${SettingsScreenDestination.route}"
-                        )
-                    ) { innerPadding ->
-                        Box(modifier = Modifier.padding(innerPadding)) {
-                            AppNavigation(
+                            val bottomBarItems = if (isSubscribed.isSubscribed) {
+                                listOf(
+                                    BottomNavItem.Home,
+                                    BottomNavItem.KitchenTimer,
+                                    BottomNavItem.MealPlanner,
+                                    BottomNavItem.Favorites,
+                                    BottomNavItem.Settings
+                                )
+                            } else {
+                                listOf(
+                                    BottomNavItem.Home,
+                                    BottomNavItem.MealPlanner,
+                                    BottomNavItem.Favorites,
+                                    BottomNavItem.Settings
+                                )
+                            }
+
+                            StandardScaffold(
                                 navController = navController,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                            )
+                                items = bottomBarItems,
+                                isLoggedIn = isLogged,
+                                showBottomBar = route in listOf(
+                                    "home/${HomeScreenDestination.route}",
+                                    "kitchen-timer/${KitchenTimerScreenDestination.route}",
+                                    "meal_planner/${MealPlannerScreenDestination.route}",
+                                    "favorites/${FavoritesScreenDestination.route}",
+                                    "settings/${SettingsScreenDestination.route}"
+                                )
+                            ) { innerPadding ->
+                                Box(modifier = Modifier.padding(innerPadding)) {
+                                    AppNavigation(
+                                        navController = navController,
+                                        isLoggedIn = isLogged,
+                                        modifier = Modifier
+                                            .fillMaxSize(),
+                                        subscribe = {
+                                            subscribeUser(onSuccess = {
+                                                Qonversion.shared.syncPurchases()
+                                                viewModel.updateSubscriptionStatus()
+                                            })
+                                        }
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun subscribeUser(onSuccess: () -> Unit) {
+        Qonversion.shared.purchase(
+            this@MainActivity,
+            id = PURCHASE_ID,
+            object : QonversionEntitlementsCallback {
+                override fun onError(error: QonversionError) {
+                    Toast
+                        .makeText(
+                            this@MainActivity,
+                            "Purchase failed: ${error.description}, ${error.additionalMessage}",
+                            Toast.LENGTH_LONG
+                        )
+                        .show()
+                }
+
+                override fun onSuccess(entitlements: Map<String, QEntitlement>) {
+                    onSuccess()
+                    Toast
+                        .makeText(
+                            this@MainActivity,
+                            "Purchase successful",
+                            Toast.LENGTH_LONG
+                        )
+                        .show()
+                }
+            }
+        )
     }
 }
 
@@ -113,8 +188,10 @@ class MainActivity : ComponentActivity() {
 @ExperimentalAnimationApi
 @Composable
 internal fun AppNavigation(
+    subscribe: () -> Unit,
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isLoggedIn: Boolean
 ) {
     val navHostEngine = rememberAnimatedNavHostEngine(
         navHostContentAlignment = Alignment.TopCenter,
@@ -189,6 +266,20 @@ internal fun AppNavigation(
                 popExitTransition = {
                     scaleOutPopExitTransition()
                 }
+            ),
+            NavGraphs.auth to NestedNavGraphDefaultAnimations(
+                enterTransition = {
+                    scaleInEnterTransition()
+                },
+                exitTransition = {
+                    scaleOutExitTransition()
+                },
+                popEnterTransition = {
+                    scaleInPopEnterTransition()
+                },
+                popExitTransition = {
+                    scaleOutPopExitTransition()
+                }
             )
         )
     )
@@ -196,17 +287,26 @@ internal fun AppNavigation(
     DestinationsNavHost(
         engine = navHostEngine,
         navController = navController,
-        navGraph = NavGraphs.root,
+        navGraph = NavGraphs.root(isLoggedIn = isLoggedIn),
         modifier = modifier,
         dependenciesContainerBuilder = {
-            dependency(currentNavigator())
+            dependency(
+                currentNavigator(
+                    subscribe = subscribe,
+                    isLoggedIn = isLoggedIn
+                )
+            )
         }
     )
 }
 
-fun DestinationScope<*>.currentNavigator(): CoreFeatureNavigator {
+fun DestinationScope<*>.currentNavigator(
+    isLoggedIn: Boolean,
+    subscribe: () -> Unit
+): CoreFeatureNavigator {
     return CoreFeatureNavigator(
-        navGraph = navBackStackEntry.destination.navGraph(),
-        navController = navController
+        navGraph = navBackStackEntry.destination.navGraph(isLoggedIn),
+        navController = navController,
+        subscribe = subscribe
     )
 }

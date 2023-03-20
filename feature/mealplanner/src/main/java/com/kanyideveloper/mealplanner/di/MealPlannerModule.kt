@@ -16,6 +16,8 @@
 package com.kanyideveloper.mealplanner.di
 
 import android.content.Context
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
 import com.kanyideveloper.core.data.MealTimePreferences
 import com.kanyideveloper.core_database.dao.FavoritesDao
 import com.kanyideveloper.core_database.dao.MealDao
@@ -41,7 +43,9 @@ object MealPlannerModule {
         mealDbApi: MealDbApi,
         mealDao: MealDao,
         favoritesDao: FavoritesDao,
-        context: Context
+        context: Context,
+        databaseReference: DatabaseReference,
+        firebaseAuth: FirebaseAuth
     ): MealPlannerRepository {
         return MealPlannerRepositoryImpl(
             mealTimePreferences = mealTimePreferences,
@@ -49,7 +53,9 @@ object MealPlannerModule {
             mealDao = mealDao,
             mealDbApi = mealDbApi,
             favoritesDao = favoritesDao,
-            context = context
+            context = context,
+            databaseReference = databaseReference,
+            firebaseAuth = firebaseAuth
         )
     }
 }

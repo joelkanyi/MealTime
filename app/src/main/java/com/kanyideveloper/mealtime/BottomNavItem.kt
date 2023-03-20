@@ -26,10 +26,10 @@ sealed class BottomNavItem(var title: String, var icon: Int, var screen: NavGrap
         screen = NavGraphs.home
     )
 
-    object Search : BottomNavItem(
-        title = "Search",
-        icon = R.drawable.ic_search,
-        screen = NavGraphs.search
+    object KitchenTimer : BottomNavItem(
+        title = "Timer",
+        icon = R.drawable.ic_timer,
+        screen = NavGraphs.kitchenTimer
     )
 
     object MealPlanner : BottomNavItem(

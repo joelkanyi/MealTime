@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanyideveloper.compose_ui.theme // ktlint-disable filename
+package com.kanyideveloper.compose_ui.theme
 
 import android.os.Build
 import androidx.annotation.ChecksSdkIntAtLeast
@@ -69,10 +69,7 @@ private val DarkColors = darkColorScheme(
 )
 
 @Composable
-fun MealTimeTheme(
-    theme: Int,
-    content: @Composable () -> Unit
-) {
+fun MealTimeTheme(theme: Int, content: @Composable () -> Unit) {
     val autoColors = if (isSystemInDarkTheme()) DarkColors else LightColors
 
     val dynamicColors = if (supportsDynamicTheming()) {

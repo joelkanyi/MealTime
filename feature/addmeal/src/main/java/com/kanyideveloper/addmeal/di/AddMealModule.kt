@@ -16,6 +16,8 @@
 package com.kanyideveloper.addmeal.di
 
 import android.content.Context
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.kanyideveloper.addmeal.data.repository.SaveMealRepositoryImpl
@@ -48,8 +50,16 @@ object AddMealModule {
 
     @Provides
     @Singleton
-    fun provideSaveMealRepository(mealTimeDatabase: MealTimeDatabase): SaveMealRepository {
-        return SaveMealRepositoryImpl(mealTimeDatabase = mealTimeDatabase)
+    fun provideSaveMealRepository(
+        mealTimeDatabase: MealTimeDatabase,
+        databaseReference: DatabaseReference,
+        firebaseAuth: FirebaseAuth
+    ): SaveMealRepository {
+        return SaveMealRepositoryImpl(
+            mealTimeDatabase = mealTimeDatabase,
+            databaseReference = databaseReference,
+            firebaseAuth = firebaseAuth
+        )
     }
 
     @Provides

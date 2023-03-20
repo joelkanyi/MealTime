@@ -23,11 +23,13 @@ import androidx.lifecycle.viewModelScope
 import com.kanyideveloper.core.domain.FavoritesRepository
 import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core.util.Resource
+import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.domain.repository.OnlineMealsRepository
 import com.kanyideveloper.presentation.home.onlinemeal.state.CategoriesState
 import com.kanyideveloper.presentation.home.onlinemeal.state.MealState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -35,6 +37,9 @@ class OnlineMealViewModel @Inject constructor(
     private val onlineMealsRepository: OnlineMealsRepository,
     private val favoritesRepository: FavoritesRepository
 ) : ViewModel() {
+
+    private val _eventsFlow = MutableSharedFlow<UiEvents>()
+    val eventsFlow = _eventsFlow
 
     private val _categories = mutableStateOf(CategoriesState())
     val categories: State<CategoriesState> = _categories
@@ -110,11 +115,12 @@ class OnlineMealViewModel @Inject constructor(
     }
 
     fun insertAFavorite(
-        isOnline: Boolean = false,
+        isOnline: Boolean,
         onlineMealId: String? = null,
-        localMealId: Int? = null,
+        localMealId: String? = null,
         mealImageUrl: String,
-        mealName: String
+        mealName: String,
+        isSubscribed: Boolean
     ) {
         viewModelScope.launch {
             val favorite = Favorite(
@@ -122,18 +128,40 @@ class OnlineMealViewModel @Inject constructor(
                 localMealId = localMealId,
                 mealName = mealName,
                 mealImageUrl = mealImageUrl,
-                isOnline = isOnline,
-                isFavorite = true
+                online = isOnline,
+                favorite = true
             )
-            favoritesRepository.insertFavorite(
-                favorite = favorite
-            )
+            when (
+                val result = favoritesRepository.insertFavorite(
+                    favorite = favorite,
+                    isSubscribed = isSubscribed
+                )
+            ) {
+                is Resource.Error -> {
+                    _eventsFlow.emit(
+                        UiEvents.SnackbarEvent(
+                            message = result.message ?: "An error occurred"
+                        )
+                    )
+                }
+                is Resource.Success -> {
+                    _eventsFlow.emit(
+                        UiEvents.SnackbarEvent(
+                            message = "Added to favorites"
+                        )
+                    )
+                }
+                else -> {}
+            }
         }
     }
 
-    fun deleteAnOnlineFavorite(onlineMealId: String) {
+    fun deleteAnOnlineFavorite(onlineMealId: String, isSubscribed: Boolean) {
         viewModelScope.launch {
-            favoritesRepository.deleteAnOnlineFavorite(onlineMealId = onlineMealId)
+            favoritesRepository.deleteAnOnlineFavorite(
+                onlineMealId = onlineMealId,
+                isSubscribed = isSubscribed
+            )
         }
     }
 }

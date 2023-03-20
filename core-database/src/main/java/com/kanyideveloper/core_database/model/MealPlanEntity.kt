@@ -24,7 +24,6 @@ import com.kanyideveloper.core.util.Constants.MEAL_PLAN_TABLE
 data class MealPlanEntity(
     val mealTypeName: String,
     val meals: List<Meal> = emptyList(),
-    // @ColumnInfo(name = "mealDate", defaultValue = "27/07/2023")
     val mealDate: String,
-    @PrimaryKey(autoGenerate = true) val id: Int? = null
+    @PrimaryKey val id: String
 )
