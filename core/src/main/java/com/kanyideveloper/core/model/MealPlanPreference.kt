@@ -16,7 +16,7 @@
 package com.kanyideveloper.core.model
 
 data class MealPlanPreference(
-    val numberOfPeople: String,
-    val dishTypes: List<String>,
-    val allergies: List<String>
+    val numberOfPeople: String = "",
+    val dishTypes: List<String> = emptyList(),
+    val allergies: List<String> = emptyList()
 )

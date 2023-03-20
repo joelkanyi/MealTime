@@ -122,11 +122,7 @@ fun errorBodyAsString(throwable: HttpException): String? {
 }
 
 @Composable
-fun LottieAnim(
-    resId: Int,
-    modifier: Modifier = Modifier,
-    height: Dp = 300.dp
-) {
+fun LottieAnim(resId: Int, modifier: Modifier = Modifier, height: Dp = 300.dp) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(resId = resId))
     LottieAnimation(
         modifier = modifier
@@ -235,4 +231,16 @@ fun createImageFile(context: Context): File? {
         ".jpg",
         storageDir
     )
+}
+
+fun minutesToMilliseconds(minutes: Int): Long {
+    val millisecondsInMinute = 60 * 1000 // 60 seconds * 1000 milliseconds
+    return minutes * millisecondsInMinute.toLong()
+}
+
+fun convertMillisecondsToTimeString(millis: Long): String {
+    val seconds = (millis / 1000) % 60
+    val minutes = (millis / (1000 * 60) % 60)
+    val hours = (millis / (1000 * 60 * 60) % 24)
+    return String.format("%02d:%02d:%02d", hours, minutes, seconds)
 }

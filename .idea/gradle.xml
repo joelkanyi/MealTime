@@ -19,8 +19,10 @@
             <option value="$PROJECT_DIR$/core-network" />
             <option value="$PROJECT_DIR$/feature" />
             <option value="$PROJECT_DIR$/feature/addmeal" />
+            <option value="$PROJECT_DIR$/feature/auth" />
             <option value="$PROJECT_DIR$/feature/favorites" />
             <option value="$PROJECT_DIR$/feature/home" />
+            <option value="$PROJECT_DIR$/feature/kitchen-timer" />
             <option value="$PROJECT_DIR$/feature/mealplanner" />
             <option value="$PROJECT_DIR$/feature/search" />
             <option value="$PROJECT_DIR$/feature/settings" />

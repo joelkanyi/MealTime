@@ -81,7 +81,8 @@ class SetupViewModel @Inject constructor(
             mealPlannerRepository.saveMealPlannerPreferences(
                 allergies = allergies,
                 numberOfPeople = numberOfPeople,
-                dishTypes = dishTypes
+                dishTypes = dishTypes,
+                isSubscribed = true
             )
 
             if (editMealPlan) {

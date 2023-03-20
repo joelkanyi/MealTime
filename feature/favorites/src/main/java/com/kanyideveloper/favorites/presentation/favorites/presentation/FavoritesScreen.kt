@@ -15,20 +15,19 @@
  */
 package com.kanyideveloper.favorites.presentation.favorites.presentation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -43,8 +42,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -64,110 +68,175 @@ import coil.request.ImageRequest
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.compose_ui.theme.Shapes
 import com.kanyideveloper.core.components.EmptyStateComponent
+import com.kanyideveloper.core.components.LoadingStateComponent
+import com.kanyideveloper.core.components.SwipeRefreshComponent
 import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.state.SubscriptionStatusUiState
+import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
+import kotlinx.coroutines.flow.collectLatest
 
 interface FavoritesNavigator {
     fun openOnlineMealDetails(mealId: String)
     fun openMealDetails(meal: Meal)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
 fun FavoritesScreen(
     navigator: FavoritesNavigator,
     viewModel: FavoritesViewModel = hiltViewModel()
 ) {
-    val favorites by viewModel.favorites.observeAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val favoritesUiState = viewModel.favoritesUiState.value
     val meal = viewModel.singleMeal.observeAsState().value?.observeAsState()?.value
-
-    FavoritesScreenContent(
-        favorites = favorites,
-        onClick = { _, onlineMealId, localMealId, isOnline ->
-            if (isOnline) {
-                onlineMealId?.let { navigator.openOnlineMealDetails(mealId = it) }
-            } else {
-                if (localMealId != null) {
-                    viewModel.getASingleMeal(id = localMealId)
-
-                    if (meal != null) {
-                        navigator.openMealDetails(meal = meal)
-                    }
-                }
-            }
-        },
-        onFavoriteClick = { favorite ->
-            viewModel.deleteAFavorite(favorite = favorite)
-        },
-        onClickDeleteAllFavorites = {
-            viewModel.deleteAllFavorites()
-        }
-    )
-}
-
-@Composable
-private fun FavoritesScreenContent(
-    favorites: List<Favorite>?,
-    onClick: (Int?, String?, Int?, Boolean) -> Unit,
-    onFavoriteClick: (Favorite) -> Unit,
-    onClickDeleteAllFavorites: () -> Unit
-) {
     var mDisplayMenu by remember { mutableStateOf(false) }
 
-    Column(Modifier.fillMaxSize()) {
-        StandardToolbar(
-            navigate = {},
-            title = {
-                Text(text = "Favorite meals", fontSize = 18.sp)
-            },
-            showBackArrow = false,
-            navActions = {
-                IconButton(onClick = { mDisplayMenu = !mDisplayMenu }) {
-                    Icon(Icons.Default.MoreVert, "")
-                }
+    when (val isSubscribed = viewModel.isSubscribed.collectAsState().value) {
+        is SubscriptionStatusUiState.Success -> {
+            LaunchedEffect(key1 = true, block = {
+                viewModel.getFavorites(
+                    isSubscribed = isSubscribed.isSubscribed
+                )
 
-                DropdownMenu(
-                    expanded = mDisplayMenu,
-                    onDismissRequest = { mDisplayMenu = false }
+                viewModel.eventsFlow.collectLatest { event ->
+                    when (event) {
+                        is UiEvents.SnackbarEvent -> {
+                            snackbarHostState.showSnackbar(
+                                message = event.message
+                            )
+                        }
+                        else -> {}
+                    }
+                }
+            })
+
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                snackbarHost = {
+                    SnackbarHost(
+                        snackbarHostState
+                    )
+                },
+                topBar = {
+                    StandardToolbar(
+                        navigate = {},
+                        title = {
+                            Text(text = "Favorite meals", fontSize = 18.sp)
+                        },
+                        showBackArrow = false,
+                        navActions = {
+                            IconButton(onClick = { mDisplayMenu = !mDisplayMenu }) {
+                                Icon(Icons.Default.MoreVert, "")
+                            }
+
+                            DropdownMenu(
+                                expanded = mDisplayMenu,
+                                onDismissRequest = { mDisplayMenu = false }
+                            ) {
+                                DropdownMenuItem(
+                                    onClick = {
+                                        viewModel.deleteAllFavorites()
+                                        mDisplayMenu = false
+                                    },
+                                    text = {
+                                        Text(text = "Delete All Favorites")
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Delete,
+                                            contentDescription = null
+                                        )
+                                    },
+                                    trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.chevron_right),
+                                            contentDescription = null
+                                        )
+                                    }
+                                )
+                            }
+                        }
+                    )
+                }
+            ) { paddingValues ->
+                SwipeRefreshComponent(
+                    isRefreshingState = favoritesUiState.isLoading,
+                    onRefreshData = {
+                        viewModel.getFavorites(
+                            isSubscribed = isSubscribed.isSubscribed
+                        )
+                    }
                 ) {
-                    DropdownMenuItem(
-                        onClick = {
-                            onClickDeleteAllFavorites()
-                            mDisplayMenu = false
+                    FavoritesScreenContent(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                        favoritesUiState = favoritesUiState,
+                        onClick = { _, onlineMealId, localMealId, isOnline ->
+                            if (isOnline) {
+                                onlineMealId?.let { navigator.openOnlineMealDetails(mealId = it) }
+                            } else {
+                                if (localMealId != null) {
+                                    viewModel.getASingleMeal(id = localMealId)
+
+                                    if (meal != null) {
+                                        navigator.openMealDetails(meal = meal)
+                                    }
+                                }
+                            }
                         },
-                        text = {
-                            Text(text = "Delete All Favorites")
-                        },
-                        leadingIcon = {
-                            Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
-                        },
-                        trailingIcon = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.chevron_right),
-                                contentDescription = null
+                        onFavoriteClick = { favorite ->
+                            viewModel.deleteAFavorite(
+                                favorite = favorite,
+                                isSubscribed = isSubscribed.isSubscribed
                             )
                         }
                     )
                 }
             }
-        )
+        }
+        else -> {}
+    }
+}
 
-        Box(modifier = Modifier.fillMaxSize()) {
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun FavoritesScreenContent(
+    modifier: Modifier = Modifier,
+    favoritesUiState: FavoritesUiState,
+    onClick: (Int?, String?, String?, Boolean) -> Unit,
+    onFavoriteClick: (Favorite) -> Unit
+) {
+    Box(modifier = modifier) {
+        // Favorites list
+        if (!favoritesUiState.isLoading) {
             LazyColumn {
-                items(favorites ?: emptyList()) { favorite ->
+                items(
+                    favoritesUiState.favorites,
+                    key = { favorite -> favorite.id!! }
+                ) { favorite ->
                     FoodItem(
+                        modifier = Modifier.animateItemPlacement(),
                         favorite = favorite,
                         onClick = onClick,
                         onFavoriteClick = onFavoriteClick
                     )
                 }
             }
+        }
 
-            if (favorites.isNullOrEmpty()) {
-                EmptyStateComponent()
-            }
+        // Empty state
+        if (favoritesUiState.favorites.isEmpty() && !favoritesUiState.isLoading) {
+            EmptyStateComponent()
+        }
+
+        // Loading state
+        if (favoritesUiState.isLoading) {
+            LoadingStateComponent()
         }
     }
 }
@@ -177,13 +246,13 @@ private fun FavoritesScreenContent(
 fun FoodItem(
     favorite: Favorite,
     modifier: Modifier = Modifier,
-    onClick: (Int?, String?, Int?, Boolean) -> Unit,
+    onClick: (Int?, String?, String?, Boolean) -> Unit,
     onFavoriteClick: (Favorite) -> Unit
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(130.dp)
+            .wrapContentHeight()
             .padding(horizontal = 8.dp, vertical = 5.dp),
         shape = Shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
@@ -196,50 +265,48 @@ fun FoodItem(
             )
         }
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Row(Modifier.fillMaxWidth()) {
-                Image(
-                    modifier = Modifier
-                        .fillMaxWidth(0.4f)
-                        .fillMaxHeight(),
-                    contentDescription = null,
-                    painter = rememberAsyncImagePainter(
-                        ImageRequest.Builder(LocalContext.current)
-                            .data(data = favorite.mealImageUrl)
-                            .apply(block = fun ImageRequest.Builder.() {
-                                placeholder(R.drawable.placeholder)
-                            }).build()
-                    ),
-                    contentScale = ContentScale.Crop
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Column(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = favorite.mealName,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
-            }
-
-            Icon(
+        Column {
+            Image(
                 modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.BottomEnd)
-                    .size(32.dp)
-                    .padding(0.dp)
-                    .clickable {
-                        onFavoriteClick(favorite)
-                    },
-                imageVector = Icons.Filled.Favorite,
+                    .fillMaxWidth()
+                    .height(200.dp),
                 contentDescription = null,
-                tint = Color(0xFFfa4a0c)
+                painter = rememberAsyncImagePainter(
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(data = favorite.mealImageUrl)
+                        .apply(block = fun ImageRequest.Builder.() {
+                            placeholder(R.drawable.placeholder)
+                        }).build()
+                ),
+                contentScale = ContentScale.Crop
             )
+
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .wrapContentHeight(),
+                    text = favorite.mealName,
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Icon(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clickable {
+                            onFavoriteClick(favorite)
+                        },
+                    imageVector = Icons.Filled.Favorite,
+                    contentDescription = null,
+                    tint = Color(0xFFfa4a0c)
+                )
+            }
         }
     }
 }

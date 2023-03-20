@@ -21,6 +21,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.kanyideveloper.core_database.model.FavoriteEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FavoritesDao {
@@ -28,13 +29,13 @@ interface FavoritesDao {
     suspend fun insertAFavorite(favoriteEntity: FavoriteEntity)
 
     @Query("SELECT * FROM favorites_table ORDER BY id DESC")
-    fun getFavorites(): LiveData<List<FavoriteEntity>>
+    fun getFavorites(): Flow<List<FavoriteEntity>>
 
     @Query("SELECT * FROM favorites_table WHERE id  == :id")
     fun getAFavoriteById(id: Int): LiveData<FavoriteEntity?>
 
     @Query("SELECT isFavorite FROM favorites_table WHERE localMealId = :id")
-    fun localInFavorites(id: Int): LiveData<Boolean>
+    fun localInFavorites(id: String): LiveData<Boolean>
 
     @Query("SELECT isFavorite FROM favorites_table WHERE onlineMealId = :id")
     fun onlineInFavorites(id: String): LiveData<Boolean>
@@ -43,7 +44,7 @@ interface FavoritesDao {
     suspend fun deleteAFavorite(favoriteEntity: FavoriteEntity)
 
     @Query("DELETE FROM favorites_table WHERE localMealId = :localMealId")
-    suspend fun deleteALocalFavorite(localMealId: Int)
+    suspend fun deleteALocalFavorite(localMealId: String)
 
     @Query("DELETE FROM favorites_table WHERE onlineMealId = :mealId")
     suspend fun deleteAnOnlineFavorite(mealId: String)

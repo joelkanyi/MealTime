@@ -85,14 +85,13 @@ import kotlinx.coroutines.flow.collectLatest
 
 interface SearchNavigator {
     fun openOnlineMealDetails(mealId: String)
+
+    fun popBackStack()
 }
 
 @Destination
 @Composable
-fun SearchScreen(
-    navigator: SearchNavigator,
-    viewModel: SearchViewModel = hiltViewModel()
-) {
+fun SearchScreen(navigator: SearchNavigator, viewModel: SearchViewModel = hiltViewModel()) {
     val searchState = viewModel.searchState.value
     val context = LocalContext.current
 
@@ -129,7 +128,8 @@ fun SearchScreen(
             viewModel.insertAFavorite(
                 onlineMealId = onlineMealId,
                 mealImageUrl = imageUrl,
-                mealName = name
+                mealName = name,
+                isOnline = true
             )
         },
         removeFromFavorites = { id ->
@@ -139,6 +139,9 @@ fun SearchScreen(
         },
         onMealClick = { mealId ->
             navigator.openOnlineMealDetails(mealId = mealId)
+        },
+        onClickBack = {
+            navigator.popBackStack()
         }
     )
 }
@@ -153,7 +156,8 @@ private fun SearchScreenContent(
     onSearch: (String) -> Unit,
     currentSearchString: String,
     isSelected: (String) -> Boolean,
-    onSearchOptionClick: (String) -> Unit
+    onSearchOptionClick: (String) -> Unit,
+    onClickBack: () -> Unit
 ) {
     Column(
         Modifier
@@ -162,11 +166,12 @@ private fun SearchScreenContent(
     ) {
         StandardToolbar(
             navigate = {
+                onClickBack()
             },
             title = {
                 Text(text = "Search", fontSize = 18.sp)
             },
-            showBackArrow = false,
+            showBackArrow = true,
             navActions = {
             }
         )
@@ -244,11 +249,7 @@ fun SearchOptionsComponent(
 }
 
 @Composable
-fun SearchOption(
-    option: String,
-    onClick: (String) -> Unit,
-    isSelected: (String) -> Boolean
-) {
+fun SearchOption(option: String, onClick: (String) -> Unit, isSelected: (String) -> Boolean) {
     Card(
         Modifier
             .wrapContentWidth()

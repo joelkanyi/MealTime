@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "0ff894e6c7b5289c83dc953a63a3970d",
+    "identityHash": "bd3d9d72028b9c3afaf6b968e3fa5429",
     "entities": [
       {
         "tableName": "meal_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `cookingTime` INTEGER NOT NULL, `servingPeople` INTEGER NOT NULL, `category` TEXT NOT NULL, `cookingDifficulty` TEXT NOT NULL, `ingredients` TEXT NOT NULL, `cookingInstructions` TEXT NOT NULL DEFAULT '', `isFavorite` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `cookingTime` INTEGER NOT NULL, `servingPeople` INTEGER NOT NULL, `category` TEXT NOT NULL, `cookingDifficulty` TEXT NOT NULL, `ingredients` TEXT NOT NULL, `cookingInstructions` TEXT NOT NULL, `isFavorite` INTEGER NOT NULL, `id` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "name",
@@ -54,8 +54,7 @@
             "fieldPath": "cookingInstructions",
             "columnName": "cookingInstructions",
             "affinity": "TEXT",
-            "notNull": true,
-            "defaultValue": "''"
+            "notNull": true
           },
           {
             "fieldPath": "isFavorite",
@@ -66,22 +65,22 @@
           {
             "fieldPath": "id",
             "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
+          "autoGenerate": false,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [],
         "foreignKeys": []
       },
       {
         "tableName": "favorites_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `onlineMealId` TEXT, `localMealId` INTEGER, `isOnline` INTEGER NOT NULL, `mealName` TEXT NOT NULL, `mealImageUrl` TEXT NOT NULL, `isFavorite` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `onlineMealId` TEXT, `localMealId` TEXT, `isOnline` INTEGER NOT NULL, `mealName` TEXT NOT NULL, `mealImageUrl` TEXT NOT NULL, `isFavorite` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -98,7 +97,7 @@
           {
             "fieldPath": "localMealId",
             "columnName": "localMealId",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": false
           },
           {
@@ -127,17 +126,17 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [],
         "foreignKeys": []
       },
       {
         "tableName": "meal_plan_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mealTypeName` TEXT NOT NULL, `meals` TEXT NOT NULL, `mealDate` TEXT NOT NULL DEFAULT '27/07/2023', `id` INTEGER PRIMARY KEY AUTOINCREMENT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mealTypeName` TEXT NOT NULL, `meals` TEXT NOT NULL, `mealDate` TEXT NOT NULL, `id` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "mealTypeName",
@@ -155,21 +154,20 @@
             "fieldPath": "mealDate",
             "columnName": "mealDate",
             "affinity": "TEXT",
-            "notNull": true,
-            "defaultValue": "'27/07/2023'"
+            "notNull": true
           },
           {
             "fieldPath": "id",
             "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
+          "autoGenerate": false,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [],
         "foreignKeys": []
@@ -178,7 +176,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0ff894e6c7b5289c83dc953a63a3970d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bd3d9d72028b9c3afaf6b968e3fa5429')"
     ]
   }
 }

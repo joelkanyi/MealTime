@@ -18,8 +18,8 @@ package com.kanyideveloper.mealplanner.model
 import com.kanyideveloper.core.model.Meal
 
 data class MealPlan(
-    val mealTypeName: String,
+    val mealTypeName: String = "",
     val meals: List<Meal> = emptyList(),
-    val date: String,
-    val id: Int? = null
+    val date: String = "",
+    val id: String? = null
 )

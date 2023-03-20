@@ -15,6 +15,8 @@
  */
 package com.kanyideveloper.favorites.presentation.favorites.di
 
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
 import com.kanyideveloper.core.domain.FavoritesRepository
 import com.kanyideveloper.core_database.dao.FavoritesDao
 import com.kanyideveloper.favorites.presentation.favorites.data.repository.FavoritesRepositoryImpl
@@ -30,7 +32,15 @@ object FavoritesModule {
 
     @Provides
     @Singleton
-    fun providesFavoritesRepository(favoritesDao: FavoritesDao): FavoritesRepository {
-        return FavoritesRepositoryImpl(favoritesDao = favoritesDao)
+    fun providesFavoritesRepository(
+        favoritesDao: FavoritesDao,
+        databaseReference: DatabaseReference,
+        firebaseAuth: FirebaseAuth
+    ): FavoritesRepository {
+        return FavoritesRepositoryImpl(
+            favoritesDao = favoritesDao,
+            databaseReference = databaseReference,
+            firebaseAuth = firebaseAuth
+        )
     }
 }

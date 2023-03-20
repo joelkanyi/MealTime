@@ -99,10 +99,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
-fun AddMealScreen(
-    navigator: AddMealNavigator,
-    viewModel: AddMealsViewModel = hiltViewModel()
-) {
+fun AddMealScreen(navigator: AddMealNavigator, viewModel: AddMealsViewModel = hiltViewModel()) {
     val mealName = viewModel.mealName.value
     val category = viewModel.category.value
     val complexity = viewModel.cookingComplexity.value

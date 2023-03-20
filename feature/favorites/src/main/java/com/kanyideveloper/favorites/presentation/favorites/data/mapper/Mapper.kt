@@ -23,10 +23,10 @@ internal fun FavoriteEntity.toFavorite(): Favorite {
         id = id,
         onlineMealId = onlineMealId,
         localMealId = localMealId,
-        isOnline = isOnline,
+        online = isOnline,
         mealName = mealName,
         mealImageUrl = mealImageUrl,
-        isFavorite = isFavorite
+        favorite = isFavorite
     )
 }
 
@@ -35,9 +35,9 @@ internal fun Favorite.toEntity(): FavoriteEntity {
         id = id,
         onlineMealId = onlineMealId,
         localMealId = localMealId,
-        isOnline = isOnline,
+        isOnline = online,
         mealName = mealName,
         mealImageUrl = mealImageUrl,
-        isFavorite = isFavorite
+        isFavorite = favorite
     )
 }

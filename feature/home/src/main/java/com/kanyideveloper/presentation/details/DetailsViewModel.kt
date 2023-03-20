@@ -23,9 +23,12 @@ import androidx.lifecycle.viewModelScope
 import com.kanyideveloper.core.domain.FavoritesRepository
 import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core.util.Resource
+import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.domain.repository.OnlineMealsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -33,6 +36,9 @@ class DetailsViewModel @Inject constructor(
     private val onlineMealsRepository: OnlineMealsRepository,
     private val favoritesRepository: FavoritesRepository
 ) : ViewModel() {
+
+    private val _eventsFlow = MutableSharedFlow<UiEvents>()
+    val eventsFlow = _eventsFlow.asSharedFlow()
 
     private val _details = mutableStateOf(DetailsState())
     val details: State<DetailsState> = _details
@@ -90,7 +96,7 @@ class DetailsViewModel @Inject constructor(
         }
     }
 
-    fun inLocalFavorites(id: Int): LiveData<Boolean> {
+    fun inLocalFavorites(id: String): LiveData<Boolean> {
         return favoritesRepository.isLocalFavorite(id = id)
     }
 
@@ -98,22 +104,28 @@ class DetailsViewModel @Inject constructor(
         return favoritesRepository.isOnlineFavorite(id = id)
     }
 
-    fun deleteALocalFavorite(localMealId: Int) {
+    fun deleteALocalFavorite(localMealId: String) {
         viewModelScope.launch {
-            favoritesRepository.deleteALocalFavorite(localMealId = localMealId)
+            favoritesRepository.deleteALocalFavorite(
+                localMealId = localMealId,
+                isSubscribed = true
+            )
         }
     }
 
     fun deleteAnOnlineFavorite(onlineMealId: String) {
         viewModelScope.launch {
-            favoritesRepository.deleteAnOnlineFavorite(onlineMealId = onlineMealId)
+            favoritesRepository.deleteAnOnlineFavorite(
+                onlineMealId = onlineMealId,
+                isSubscribed = true
+            )
         }
     }
 
     fun insertAFavorite(
-        isOnline: Boolean = false,
+        isOnline: Boolean,
         onlineMealId: String? = null,
-        localMealId: Int? = null,
+        localMealId: String? = null,
         mealImageUrl: String,
         mealName: String
     ) {
@@ -123,12 +135,31 @@ class DetailsViewModel @Inject constructor(
                 localMealId = localMealId,
                 mealName = mealName,
                 mealImageUrl = mealImageUrl,
-                isOnline = isOnline,
-                isFavorite = true
+                online = isOnline,
+                favorite = true
             )
-            favoritesRepository.insertFavorite(
-                favorite = favorite
-            )
+            when (
+                val result = favoritesRepository.insertFavorite(
+                    favorite = favorite,
+                    isSubscribed = true
+                )
+            ) {
+                is Resource.Error -> {
+                    _eventsFlow.emit(
+                        UiEvents.SnackbarEvent(
+                            message = result.message ?: "An error occurred"
+                        )
+                    )
+                }
+                is Resource.Success -> {
+                    _eventsFlow.emit(
+                        UiEvents.SnackbarEvent(
+                            message = "Added to favorites"
+                        )
+                    )
+                }
+                else -> {}
+            }
         }
     }
 }

@@ -15,6 +15,7 @@
  */
 package com.kanyideveloper.presentation.home.onlinemeal
 
+import android.annotation.SuppressLint
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -39,12 +40,18 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -61,6 +68,7 @@ import com.kanyideveloper.core.components.EmptyStateComponent
 import com.kanyideveloper.core.components.ErrorStateComponent
 import com.kanyideveloper.core.components.LoadingStateComponent
 import com.kanyideveloper.core.components.SwipeRefreshComponent
+import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.domain.model.Category
 import com.kanyideveloper.domain.model.OnlineMeal
 import com.kanyideveloper.mealtime.core.R
@@ -68,47 +76,76 @@ import com.kanyideveloper.presentation.home.HomeNavigator
 import com.kanyideveloper.presentation.home.onlinemeal.state.CategoriesState
 import com.kanyideveloper.presentation.home.onlinemeal.state.MealState
 import com.ramcosta.composedestinations.annotation.Destination
+import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Destination
 @Composable
 fun OnlineMealScreen(
+    isSubscribed: Boolean,
     navigator: HomeNavigator,
     viewModel: OnlineMealViewModel = hiltViewModel()
 ) {
     val mealsState = viewModel.meals.value
     val categoriesState = viewModel.categories.value
     val selectedCategory = viewModel.selectedCategory.value
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    SwipeRefreshComponent(
-        isRefreshingState = mealsState.isLoading,
-        onRefreshData = {
-            viewModel.getMeals(viewModel.selectedCategory.value)
+    LaunchedEffect(key1 = true, block = {
+        viewModel.eventsFlow.collectLatest { event ->
+            when (event) {
+                is UiEvents.SnackbarEvent -> {
+                    snackbarHostState.showSnackbar(
+                        message = event.message
+                    )
+                }
+                else -> {}
+            }
+        }
+    })
+
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(
+                snackbarHostState
+            )
         }
     ) {
-        OnlineMealScreenContent(
-            categoriesState = categoriesState,
-            selectedCategory = selectedCategory,
-            mealsState = mealsState,
-            onMealClick = { mealId ->
-                navigator.openOnlineMealDetails(mealId = mealId)
-            },
-            onSelectCategory = { categoryName ->
-                viewModel.setSelectedCategory(categoryName)
+        SwipeRefreshComponent(
+            isRefreshingState = mealsState.isLoading,
+            onRefreshData = {
                 viewModel.getMeals(viewModel.selectedCategory.value)
-            },
-            addToFavorites = { onlineMealId, imageUrl, name ->
-                viewModel.insertAFavorite(
-                    onlineMealId = onlineMealId,
-                    mealImageUrl = imageUrl,
-                    mealName = name
-                )
-            },
-            removeFromFavorites = { id ->
-                viewModel.deleteAnOnlineFavorite(
-                    onlineMealId = id
-                )
             }
-        )
+        ) {
+            OnlineMealScreenContent(
+                categoriesState = categoriesState,
+                selectedCategory = selectedCategory,
+                mealsState = mealsState,
+                onMealClick = { mealId ->
+                    navigator.openOnlineMealDetails(mealId = mealId)
+                },
+                onSelectCategory = { categoryName ->
+                    viewModel.setSelectedCategory(categoryName)
+                    viewModel.getMeals(viewModel.selectedCategory.value)
+                },
+                addToFavorites = { onlineMealId, imageUrl, name ->
+                    viewModel.insertAFavorite(
+                        onlineMealId = onlineMealId,
+                        mealImageUrl = imageUrl,
+                        mealName = name,
+                        isOnline = true,
+                        isSubscribed = isSubscribed
+                    )
+                },
+                removeFromFavorites = { id ->
+                    viewModel.deleteAnOnlineFavorite(
+                        onlineMealId = id,
+                        isSubscribed = isSubscribed
+                    )
+                }
+            )
+        }
     }
 }
 
@@ -256,11 +293,7 @@ fun OnlineMealItem(
 }
 
 @Composable
-fun CategorySelection(
-    state: CategoriesState,
-    onClick: (String) -> Unit,
-    selectedCategory: String
-) {
+fun CategorySelection(state: CategoriesState, onClick: (String) -> Unit, selectedCategory: String) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -278,11 +311,7 @@ fun CategorySelection(
 }
 
 @Composable
-fun CategoryItem(
-    category: Category,
-    selectedCategory: String,
-    onClick: () -> Unit
-) {
+fun CategoryItem(category: Category, selectedCategory: String, onClick: () -> Unit) {
     val selected = selectedCategory == category.categoryName
     Card(
         Modifier

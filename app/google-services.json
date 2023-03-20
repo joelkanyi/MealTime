@@ -14,7 +14,23 @@
       },
       "oauth_client": [
         {
-          "client_id": "185726691445-ke95p4s6bk7315ni58ek2m718nkk6bal.apps.googleusercontent.com",
+          "client_id": "185726691445-95bmhg5gvjrpip502ocd9ov14l4hu3d0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kanyideveloper.mealtime",
+            "certificate_hash": "d12909426132ffea1e546e2dfea21423bc543521"
+          }
+        },
+        {
+          "client_id": "185726691445-v0ib60vqq6afbjse5lj1gksealplkrpa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kanyideveloper.mealtime",
+            "certificate_hash": "9eee10d8f389e590dcf4271dae5a0fdae6f77437"
+          }
+        },
+        {
+          "client_id": "185726691445-5k3f8724msarbj3brhbnbhm7l3u2tuag.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,7 +43,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "185726691445-ke95p4s6bk7315ni58ek2m718nkk6bal.apps.googleusercontent.com",
+              "client_id": "185726691445-5k3f8724msarbj3brhbnbhm7l3u2tuag.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

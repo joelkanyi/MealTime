@@ -33,12 +33,7 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ThemeItem(
-    themeName: String,
-    themeValue: Int,
-    icon: Int,
-    onSelectTheme: (Int) -> Unit
-) {
+fun ThemeItem(themeName: String, themeValue: Int, icon: Int, onSelectTheme: (Int) -> Unit) {
     Card(
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(

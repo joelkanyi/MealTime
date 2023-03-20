@@ -15,35 +15,104 @@
  */
 package com.kanyideveloper.favorites.presentation.favorites.presentation
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kanyideveloper.core.domain.FavoritesRepository
 import com.kanyideveloper.core.domain.HomeRepository
+import com.kanyideveloper.core.domain.SubscriptionRepository
 import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.state.SubscriptionStatusUiState
+import com.kanyideveloper.core.util.Resource
+import com.kanyideveloper.core.util.UiEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
     private val favoritesRepository: FavoritesRepository,
-    private val homeRepository: HomeRepository
+    private val homeRepository: HomeRepository,
+    subscriptionRepository: SubscriptionRepository
 ) : ViewModel() {
 
-    val favorites = favoritesRepository.getFavorites()
+    val isSubscribed: StateFlow<SubscriptionStatusUiState> =
+        subscriptionRepository.isSubscribed
+            .map(SubscriptionStatusUiState::Success)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = SubscriptionStatusUiState.Loading
+            )
+
+    private val _eventsFlow = MutableSharedFlow<UiEvents>()
+    val eventsFlow = _eventsFlow.asSharedFlow()
+
+    private val _favoritesUiState = mutableStateOf(FavoritesUiState())
+    val favoritesUiState = _favoritesUiState
+
+    fun getFavorites(isSubscribed: Boolean) {
+        _favoritesUiState.value =
+            _favoritesUiState.value.copy(
+                isLoading = true,
+                favorites = emptyList(),
+                error = null
+            )
+        viewModelScope.launch {
+            when (val result = favoritesRepository.getFavorites(isSubscribed = isSubscribed)) {
+                is Resource.Error -> {
+                    _eventsFlow.emit(
+                        UiEvents.SnackbarEvent(
+                            message = result.message ?: "An unexpected error occurred"
+                        )
+                    )
+
+                    result.data?.collectLatest { favorites ->
+                        _favoritesUiState.value = _favoritesUiState.value.copy(
+                            isLoading = false,
+                            favorites = favorites,
+                            error = result.message
+                        )
+                    }
+                }
+                is Resource.Success -> {
+                    result.data?.collectLatest { favorites ->
+                        _favoritesUiState.value = _favoritesUiState.value.copy(
+                            isLoading = false,
+                            favorites = favorites,
+                            error = null
+                        )
+                    }
+                }
+                else -> {
+                    favoritesUiState
+                }
+            }
+        }
+    }
 
     private val _singleMeal = MutableLiveData<LiveData<Meal?>>()
     val singleMeal: LiveData<LiveData<Meal?>> = _singleMeal
-    fun getASingleMeal(id: Int) {
+    fun getASingleMeal(id: String) {
         _singleMeal.value = homeRepository.getMealById(id = id)
     }
 
-    fun deleteAFavorite(favorite: Favorite) {
+    fun deleteAFavorite(favorite: Favorite, isSubscribed: Boolean) {
         viewModelScope.launch {
-            favoritesRepository.deleteOneFavorite(favorite = favorite)
+            favoritesRepository.deleteOneFavorite(
+                favorite = favorite,
+                isSubscribed = isSubscribed
+            )
         }
     }
 
@@ -53,3 +122,9 @@ class FavoritesViewModel @Inject constructor(
         }
     }
 }
+
+data class FavoritesUiState(
+    val favorites: List<Favorite> = emptyList(),
+    val isLoading: Boolean = false,
+    val error: String? = null
+)

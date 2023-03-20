@@ -9,7 +9,7 @@ plugins {
     id("org.jetbrains.kotlin.android") version ("1.7.10") apply false
     id("org.jetbrains.kotlin.jvm") version Versions.kotlin apply false
     id("com.google.dagger.hilt.android") version ("2.44") apply false
-    id("org.jlleitschuh.gradle.ktlint") version ("11.0.0")
+    id("org.jlleitschuh.gradle.ktlint") version ("11.3.1")
     id("com.diffplug.spotless") version ("5.17.1")
 }
 
@@ -23,10 +23,29 @@ subprojects {
     spotless {
         kotlin {
             target("**/*.kt")
+            ktlint().userData(mapOf("disabled_rules" to "filename"))
             licenseHeaderFile(
                 rootProject.file("${project.rootDir}/spotless/copyright.kt"),
                 "^(package|object|import|interface)"
             )
+            trimTrailingWhitespace()
+            endWithNewline()
+        }
+        format("misc") {
+            target("**/*.md", "**/.gitignore")
+            trimTrailingWhitespace()
+            indentWithTabs()
+            endWithNewline()
+        }
+        java {
+            target("src/*/java/**/*.java")
+            googleJavaFormat("1.7").aosp()
+            indentWithSpaces()
+            licenseHeaderFile(rootProject.file("spotless/copyright.java"))
+            removeUnusedImports()
+        }
+        groovyGradle {
+            target("**/*.gradle")
         }
     }
 

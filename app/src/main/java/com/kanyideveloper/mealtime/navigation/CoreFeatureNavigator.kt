@@ -17,6 +17,10 @@ package com.kanyideveloper.mealtime.navigation
 
 import android.net.Uri
 import androidx.navigation.NavController
+import com.joelkanyi.auth.presentation.destinations.ForgotPasswordScreenDestination
+import com.joelkanyi.auth.presentation.destinations.SignInScreenDestination
+import com.joelkanyi.auth.presentation.destinations.SignUpScreenDestination
+import com.joelkanyi.auth.presentation.landing.AuthNavigator
 import com.kanyideveloper.addmeal.presentation.addmeal.AddMealNavigator
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
@@ -33,6 +37,7 @@ import com.kanyideveloper.presentation.destinations.OnlineMealDetailsScreenDesti
 import com.kanyideveloper.presentation.destinations.RandomOnlineMealDetailsScreenDestination
 import com.kanyideveloper.presentation.home.HomeNavigator
 import com.kanyideveloper.search.presentation.search.SearchNavigator
+import com.kanyideveloper.search.presentation.search.destinations.SearchScreenDestination
 import com.kanyideveloper.settings.presentation.SettingsNavigator
 import com.kanyideveloper.settings.presentation.destinations.SettingsScreenDestination
 import com.ramcosta.composedestinations.dynamic.within
@@ -41,19 +46,31 @@ import com.ramcosta.composedestinations.spec.NavGraphSpec
 
 class CoreFeatureNavigator(
     private val navGraph: NavGraphSpec,
-    private val navController: NavController
+    private val navController: NavController,
+    private val subscribe: () -> Unit
 ) : HomeNavigator,
     SearchNavigator,
     FavoritesNavigator,
     SettingsNavigator,
     AddMealNavigator,
-    MealPlannerNavigator {
+    MealPlannerNavigator,
+    AuthNavigator {
     override fun openAddMeal() {
         navController.navigate(AddMealScreenDestination within navGraph)
     }
 
     override fun openHome() {
         navController.navigate(HomeScreenDestination within navGraph)
+    }
+
+    override fun switchNavGraphRoot() {
+        navController.navigate(
+            NavGraphs.home
+        ) {
+            popUpTo(NavGraphs.auth.route) {
+                inclusive = false
+            }
+        }
     }
 
     override fun openMealDetails(meal: Meal) {
@@ -129,8 +146,38 @@ class CoreFeatureNavigator(
         navController.navigate(RandomOnlineMealDetailsScreenDestination within navGraph)
     }
 
+    override fun onSearchClick() {
+        navController.navigate(SearchScreenDestination within navGraph)
+    }
+
+    override fun subscribe() {
+        subscribe.invoke()
+    }
+
+    override fun logout() {
+        navController.navigate(
+            NavGraphs.auth
+        ) {
+            popUpTo(NavGraphs.root(false).route) {
+                inclusive = false
+            }
+        }
+    }
+
     override fun navigateBackToHome() {
         navController.navigate(HomeScreenDestination within navGraph)
         navController.clearBackStack("home")
+    }
+
+    override fun openForgotPassword() {
+        navController.navigate(ForgotPasswordScreenDestination within navGraph)
+    }
+
+    override fun openSignUp() {
+        navController.navigate(SignUpScreenDestination within navGraph)
+    }
+
+    override fun openSignIn() {
+        navController.navigate(SignInScreenDestination within navGraph)
     }
 }

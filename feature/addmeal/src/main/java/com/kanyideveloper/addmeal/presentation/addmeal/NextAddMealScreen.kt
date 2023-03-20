@@ -48,6 +48,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -64,13 +65,14 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
 import com.kanyideveloper.compose_ui.components.StandardToolbar
+import com.kanyideveloper.core.state.SubscriptionStatusUiState
 import com.kanyideveloper.core.state.TextFieldState
 import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "UnusedMaterial3ScaffoldPaddingParameter")
 @Destination
 @Composable
@@ -92,96 +94,100 @@ fun NextAddMealScreen(
     val direction = viewModel.direction.value
     val ingredient = viewModel.ingredient.value
 
+    val isSubscribed = viewModel.isSubscribed.collectAsState().value
+
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvents.SnackbarEvent -> {
                     scaffoldState.snackbarHostState.showSnackbar(message = event.message)
                 }
-                else -> {}
+                is UiEvents.NavigationEvent -> {
+                    navigator.navigateBackToHome()
+                }
             }
         }
     }
 
-    Column(Modifier.fillMaxSize()) {
-        StandardToolbar(
-            navigate = {
-                navigator.popBackStack()
-            },
-            title = {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(text = "Add meal", fontSize = 18.sp)
-                    SaveTextButtonContent(
-                        isLoading = viewModel.saveMeal.value.isLoading,
-                        onClick = {
-                            keyboardController?.hide()
-                            viewModel.saveMeal(
-                                imageUri = imageUri,
-                                mealName = mealName,
-                                cookingTime = cookingTime,
-                                servingPeople = servingPeople,
-                                complexity = complexity,
-                                category = category
+    when (isSubscribed) {
+        is SubscriptionStatusUiState.Success -> {
+            Column(Modifier.fillMaxSize()) {
+                StandardToolbar(
+                    navigate = {
+                        navigator.popBackStack()
+                    },
+                    title = {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(text = "Add meal", fontSize = 18.sp)
+                            SaveTextButtonContent(
+                                isLoading = viewModel.saveMeal.value.isLoading,
+                                onClick = {
+                                    keyboardController?.hide()
+                                    viewModel.saveMeal(
+                                        imageUri = imageUri,
+                                        mealName = mealName,
+                                        cookingTime = cookingTime,
+                                        servingPeople = servingPeople,
+                                        complexity = complexity,
+                                        category = category,
+                                        isSubscribed = true // isSubscribed.isSubscribed
+                                    )
+                                }
                             )
                         }
-                    )
-                }
-            },
-            showBackArrow = true
-            /*navActions = {
-
-            }*/
-        )
-
-        if (viewModel.saveMeal.value.mealIsSaved) {
-            navigator.navigateBackToHome()
-        }
-
-        LazyColumn(
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            item {
-                IngredientComponent(ingredient, viewModel, keyboardController)
-            }
-
-            items(viewModel.ingredientsList) { ingredient ->
-                IngredientItem(
-                    ingredient = ingredient,
-                    viewModel = viewModel
+                    },
+                    showBackArrow = true
                 )
-            }
 
-            item {
-                Spacer(modifier = Modifier.height(24.dp))
-            }
-
-            item {
-                DirectionComponent(direction, viewModel, keyboardController)
-            }
-
-            items(viewModel.directionsList) { direction ->
-                DirectionItem(
-                    direction = direction,
-                    viewModel = viewModel,
-                    onClick = {
-                        Toast.makeText(context, "Feature in development", Toast.LENGTH_SHORT).show()
+                LazyColumn(
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    item {
+                        IngredientComponent(ingredient, viewModel, keyboardController)
                     }
-                )
+
+                    items(viewModel.ingredientsList) { ingredient ->
+                        IngredientItem(
+                            ingredient = ingredient,
+                            viewModel = viewModel
+                        )
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+
+                    item {
+                        DirectionComponent(direction, viewModel, keyboardController)
+                    }
+
+                    items(viewModel.directionsList) { direction ->
+                        DirectionItem(
+                            direction = direction,
+                            viewModel = viewModel,
+                            onClick = {
+                                Toast.makeText(
+                                    context,
+                                    "Feature in development",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        )
+                    }
+                }
             }
         }
+        else -> {}
     }
 }
 
 @Composable
-private fun SaveTextButtonContent(
-    isLoading: Boolean,
-    onClick: () -> Unit
-) {
+private fun SaveTextButtonContent(isLoading: Boolean, onClick: () -> Unit) {
     if (isLoading) {
         CircularProgressIndicator(
             modifier = Modifier.size(24.dp)
@@ -314,10 +320,7 @@ private fun IngredientComponent(
 }
 
 @Composable
-fun IngredientItem(
-    ingredient: String,
-    viewModel: AddMealsViewModel
-) {
+fun IngredientItem(ingredient: String, viewModel: AddMealsViewModel) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
@@ -350,11 +353,7 @@ fun IngredientItem(
 }
 
 @Composable
-fun DirectionItem(
-    direction: String,
-    viewModel: AddMealsViewModel,
-    onClick: () -> Unit
-) {
+fun DirectionItem(direction: String, viewModel: AddMealsViewModel, onClick: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
