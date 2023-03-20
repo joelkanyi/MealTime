@@ -25,11 +25,11 @@ import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core_database.dao.MealDao
 import com.kanyideveloper.core_database.model.MealEntity
 import com.kanyideveloper.data.mapper.toMeal
-import java.util.UUID
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeoutOrNull
+import java.util.UUID
 
 class HomeRepositoryImpl(
     private val mealDao: MealDao,

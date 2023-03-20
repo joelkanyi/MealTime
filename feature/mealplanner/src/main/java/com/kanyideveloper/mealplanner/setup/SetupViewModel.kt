@@ -26,9 +26,9 @@ import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.mealplanner.destinations.MealPlannerScreenDestination
 import com.kanyideveloper.mealplanner.domain.repository.MealPlannerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class SetupViewModel @Inject constructor(
