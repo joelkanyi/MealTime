@@ -69,7 +69,11 @@ fun Tabs(tabs: List<TabItem>, pagerState: PagerState, onClick: (Int) -> Unit) {
                         .background(
                             Color.Transparent
                         )
-                        .border(1.dp, MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(50))
+                        .border(
+                            1.dp,
+                            MaterialTheme.colorScheme.primary,
+                            shape = RoundedCornerShape(50)
+                        )
                 },
                 selected = pagerState.currentPage == index,
                 onClick = {

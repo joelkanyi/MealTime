@@ -22,8 +22,8 @@ import com.kanyideveloper.addmeal.domain.repository.SaveMealRepository
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core_database.MealTimeDatabase
-import kotlinx.coroutines.tasks.await
 import java.util.UUID
+import kotlinx.coroutines.tasks.await
 
 class SaveMealRepositoryImpl(
     private val mealTimeDatabase: MealTimeDatabase,

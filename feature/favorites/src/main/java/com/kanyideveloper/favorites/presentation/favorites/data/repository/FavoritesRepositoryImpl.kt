@@ -26,12 +26,12 @@ import com.kanyideveloper.core_database.dao.FavoritesDao
 import com.kanyideveloper.core_database.model.FavoriteEntity
 import com.kanyideveloper.favorites.presentation.favorites.data.mapper.toEntity
 import com.kanyideveloper.favorites.presentation.favorites.data.mapper.toFavorite
+import java.util.UUID
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
-import java.util.UUID
 
 class FavoritesRepositoryImpl(
     private val favoritesDao: FavoritesDao,

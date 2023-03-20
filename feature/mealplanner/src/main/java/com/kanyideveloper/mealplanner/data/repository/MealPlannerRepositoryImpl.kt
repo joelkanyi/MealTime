@@ -43,6 +43,8 @@ import com.kanyideveloper.mealplanner.data.mapper.toMealPlan
 import com.kanyideveloper.mealplanner.data.mapper.toOnlineMeal
 import com.kanyideveloper.mealplanner.domain.repository.MealPlannerRepository
 import com.kanyideveloper.mealplanner.model.MealPlan
+import java.util.Calendar
+import java.util.UUID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -53,8 +55,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
-import java.util.Calendar
-import java.util.UUID
 
 class MealPlannerRepositoryImpl(
     private val mealTimePreferences: MealTimePreferences,
