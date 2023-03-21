@@ -110,7 +110,7 @@ class SignUpViewModel @Inject constructor(
                         data = result.data
                     )
                     _eventsFlow.emit(
-                        UiEvents.SnackbarEvent("Account created successfully")
+                        UiEvents.SnackbarEvent("Account created successfully, check your email for verification link")
                     )
                     _eventsFlow.emit(
                         UiEvents.NavigationEvent(SignInScreenDestination.route)

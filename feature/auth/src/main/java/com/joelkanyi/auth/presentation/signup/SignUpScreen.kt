@@ -81,7 +81,7 @@ fun SignUpScreen(navigator: AuthNavigator, viewModel: SignUpViewModel = hiltView
                 is UiEvents.SnackbarEvent -> {
                     snackbarHostState.showSnackbar(
                         message = event.message,
-                        duration = SnackbarDuration.Short
+                        duration = SnackbarDuration.Short,
                     )
                 }
                 is UiEvents.NavigationEvent -> {
