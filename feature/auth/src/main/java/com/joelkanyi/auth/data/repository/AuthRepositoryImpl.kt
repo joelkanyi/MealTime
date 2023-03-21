@@ -38,6 +38,7 @@ class AuthRepositoryImpl(
                 .build()
 
             response.user?.updateProfile(profileUpdates)?.await()
+            firebaseAuth.currentUser?.sendEmailVerification()?.await()
 
             Resource.Success(response)
         } catch (e: Exception) {
@@ -48,7 +49,12 @@ class AuthRepositoryImpl(
     override suspend fun loginUser(email: String, password: String): Resource<AuthResult> {
         return try {
             val response = firebaseAuth.signInWithEmailAndPassword(email, password).await()
-            Resource.Success(response)
+
+            if (response.user?.isEmailVerified == true) {
+                Resource.Success(response)
+            } else {
+                Resource.Error("Please verify your email address")
+            }
         } catch (e: Exception) {
             return Resource.Error(e.localizedMessage ?: "Unknown error occurred")
         }

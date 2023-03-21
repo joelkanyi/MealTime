@@ -47,7 +47,7 @@ object DatabaseMigrations {
             // Migrate MealPlanEntity table
             database.execSQL("ALTER TABLE $MEAL_PLAN_TABLE RENAME TO temp_table")
             database.execSQL(
-                "CREATE TABLE $MEAL_PLAN_TABLE (mealTypeName TEXT NOT NULL, meals BLOB NOT NULL, mealDate TEXT NOT NULL, id TEXT PRIMARY KEY NOT NULL)"
+                "CREATE TABLE $MEAL_PLAN_TABLE (mealTypeName TEXT NOT NULL, meals TEXT NOT NULL, mealDate TEXT NOT NULL, id TEXT PRIMARY KEY NOT NULL)"
             )
             database.execSQL(
                 "INSERT INTO $MEAL_PLAN_TABLE (mealTypeName, meals, mealDate, id) SELECT mealTypeName, meals, mealDate, CAST(id AS TEXT) FROM temp_table"
