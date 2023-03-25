@@ -82,11 +82,6 @@ class MainActivity : ComponentActivity() {
     private lateinit var appUpdateManager: AppUpdateManager
     private val updateAvailable = MutableLiveData<Boolean>().apply { value = false }
     private var updateInfo: AppUpdateInfo? = null
-    private var updateListener = InstallStateUpdatedListener { state: InstallState ->
-        if (state.installStatus() == InstallStatus.DOWNLOADED) {
-            appUpdateManager.completeUpdate()
-        }
-    }
 
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,7 +94,13 @@ class MainActivity : ComponentActivity() {
             )
         }
 
-        setupInAppUpdate()
+        try {
+            appUpdateManager = AppUpdateManagerFactory.create(this)
+            appUpdateManager.registerListener(updateListener)
+            checkForUpdate()
+        } catch (e: Exception) {
+            Timber.e("Try check update info exception: ${e.message}")
+        }
 
         setContent {
             val isLogged = viewModel.user.value != null
@@ -203,6 +204,7 @@ class MainActivity : ComponentActivity() {
             }
         )
     }
+
     private fun DestinationScope<*>.currentNavigator(
         isLoggedIn: Boolean,
         subscribe: () -> Unit
@@ -330,18 +332,15 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    private fun setupInAppUpdate() {
-        try {
-            appUpdateManager = AppUpdateManagerFactory.create(this)
-            appUpdateManager.registerListener(updateListener)
-            checkForUpdate()
-        } catch (e: Exception) {
-            Timber.e(e)
+    private var updateListener = InstallStateUpdatedListener { state: InstallState ->
+        if (state.installStatus() == InstallStatus.DOWNLOADED) {
+            appUpdateManager.completeUpdate()
         }
     }
 
     private fun checkForUpdate() {
         appUpdateManager.appUpdateInfo.addOnSuccessListener {
+            Timber.e("Update info: ${it.availableVersionCode()}")
             if (it.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
                 it.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
             ) {
@@ -353,7 +352,25 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
     private fun startForInAppUpdate(it: AppUpdateInfo?) {
         appUpdateManager.startUpdateFlowForResult(it!!, AppUpdateType.FLEXIBLE, this, 1101)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        appUpdateManager.unregisterListener(updateListener)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        appUpdateManager
+            .appUpdateInfo
+            .addOnSuccessListener { appUpdateInfo ->
+                if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
+                    appUpdateManager.completeUpdate()
+                }
+            }
     }
 }
