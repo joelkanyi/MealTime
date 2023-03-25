@@ -619,14 +619,22 @@ class MealPlannerRepositoryImpl(
             "Name" -> {
                 safeApiCall(Dispatchers.IO) {
                     val response = mealDbApi.searchMealsByName(query = searchString)
-                    val mealsList = response.meals.map { it.toOnlineMeal().toGeneralMeal() }
+                    val mealsList = if (response?.meals != null) {
+                        response.meals.map { it.toOnlineMeal().toGeneralMeal() }
+                    } else {
+                        emptyList()
+                    }
                     flowOf(mealsList)
                 }
             }
             "Ingredient" -> {
                 safeApiCall(Dispatchers.IO) {
                     val response = mealDbApi.searchMealsByIngredient(query = searchString)
-                    val mealsList = response.meals.map { it.toOnlineMeal().toGeneralMeal() }
+                    val mealsList = if (response?.meals != null) {
+                        response.meals.map { it.toOnlineMeal().toGeneralMeal() }
+                    } else {
+                        emptyList()
+                    }
 
                     flowOf(mealsList)
                 }
@@ -634,7 +642,11 @@ class MealPlannerRepositoryImpl(
             "Category" -> {
                 safeApiCall(Dispatchers.IO) {
                     val response = mealDbApi.searchMealsByCategory(query = searchString)
-                    val mealsList = response.meals.map { it.toOnlineMeal().toGeneralMeal() }
+                    val mealsList = if (response?.meals != null) {
+                        response.meals.map { it.toOnlineMeal().toGeneralMeal() }
+                    } else {
+                        emptyList()
+                    }
 
                     flowOf(mealsList)
                 }
