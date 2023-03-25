@@ -45,6 +45,7 @@ import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
+import com.google.android.play.core.review.ReviewManagerFactory
 import com.joelkanyi.kitchen_timer.presentation.destinations.KitchenTimerScreenDestination
 import com.kanyideveloper.compose_ui.theme.MealTimeTheme
 import com.kanyideveloper.compose_ui.theme.Theme
@@ -82,6 +83,17 @@ class MainActivity : ComponentActivity() {
     private lateinit var appUpdateManager: AppUpdateManager
     private val updateAvailable = MutableLiveData<Boolean>().apply { value = false }
     private var updateInfo: AppUpdateInfo? = null
+    private val updateListener = InstallStateUpdatedListener { state: InstallState ->
+        if (state.installStatus() == InstallStatus.DOWNLOADED) {
+            appUpdateManager.completeUpdate()
+        } else if (state.installStatus() == InstallStatus.INSTALLED) {
+            removeInstallStateUpdateListener()
+        } else if (state.installStatus() == InstallStatus.FAILED) {
+            removeInstallStateUpdateListener()
+        } else if (state.installStatus() == InstallStatus.UNKNOWN) {
+            removeInstallStateUpdateListener()
+        }
+    }
 
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -110,6 +122,10 @@ class MainActivity : ComponentActivity() {
                 initial = Theme.FOLLOW_SYSTEM.themeValue,
                 context = Dispatchers.Main.immediate
             )
+
+            if (isLogged) {
+                showReviewDialog()
+            }
 
             when (isSubscribed) {
                 SubscriptionStatusUiState.Loading -> {}
@@ -332,12 +348,6 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    private var updateListener = InstallStateUpdatedListener { state: InstallState ->
-        if (state.installStatus() == InstallStatus.DOWNLOADED) {
-            appUpdateManager.completeUpdate()
-        }
-    }
-
     private fun checkForUpdate() {
         appUpdateManager.appUpdateInfo.addOnSuccessListener {
             Timber.e("Update info: ${it.availableVersionCode()}")
@@ -357,9 +367,13 @@ class MainActivity : ComponentActivity() {
         appUpdateManager.startUpdateFlowForResult(it!!, AppUpdateType.FLEXIBLE, this, 1101)
     }
 
+    private fun removeInstallStateUpdateListener() {
+        appUpdateManager.unregisterListener(updateListener)
+    }
+
     override fun onStop() {
         super.onStop()
-        appUpdateManager.unregisterListener(updateListener)
+        removeInstallStateUpdateListener()
     }
 
     override fun onResume() {
@@ -370,7 +384,22 @@ class MainActivity : ComponentActivity() {
             .addOnSuccessListener { appUpdateInfo ->
                 if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
                     appUpdateManager.completeUpdate()
+                } else if (appUpdateInfo.installStatus() == InstallStatus.INSTALLED) {
+                    removeInstallStateUpdateListener()
+                } else if (appUpdateInfo.installStatus() == InstallStatus.FAILED) {
+                    removeInstallStateUpdateListener()
+                } else if (appUpdateInfo.installStatus() == InstallStatus.UNKNOWN) {
+                    removeInstallStateUpdateListener()
                 }
             }
+    }
+
+    private fun showReviewDialog() {
+        val reviewManager = ReviewManagerFactory.create(applicationContext)
+        reviewManager.requestReviewFlow().addOnCompleteListener {
+            if (it.isSuccessful) {
+                reviewManager.launchReviewFlow(this, it.result)
+            }
+        }
     }
 }
