@@ -244,3 +244,7 @@ fun convertMillisecondsToTimeString(millis: Long): String {
     val hours = (millis / (1000 * 60 * 60) % 24)
     return String.format("%02d:%02d:%02d", hours, minutes, seconds)
 }
+
+fun isNumeric(toCheck: String): Boolean {
+    return toCheck.all { char -> char.isDigit() }
+}
