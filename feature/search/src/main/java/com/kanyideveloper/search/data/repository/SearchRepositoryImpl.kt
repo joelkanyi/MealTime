@@ -22,6 +22,7 @@ import com.kanyideveloper.core_network.MealDbApi
 import com.kanyideveloper.search.data.mapper.toOnlineMeal
 import com.kanyideveloper.search.domain.SearchRepository
 import kotlinx.coroutines.Dispatchers
+import timber.log.Timber
 
 class SearchRepositoryImpl(
     private val mealDbApi: MealDbApi
@@ -32,21 +33,36 @@ class SearchRepositoryImpl(
     ): Resource<List<OnlineMeal>> {
         return when (searchOption) {
             "Meal Name" -> {
-                safeApiCall(Dispatchers.IO) {
+                return safeApiCall(Dispatchers.IO) {
                     val response = mealDbApi.searchMealsByName(query = searchParam)
-                    response.meals.map { it.toOnlineMeal() }
+                    Timber.e("Response for meal name: $response")
+                    if (response?.meals == null) {
+                        emptyList()
+                    } else {
+                        response.meals.map { it.toOnlineMeal() }
+                    }
                 }
             }
             "Ingredient" -> {
-                safeApiCall(Dispatchers.IO) {
+                return safeApiCall(Dispatchers.IO) {
                     val response = mealDbApi.searchMealsByIngredient(query = searchParam)
-                    response.meals.map { it.toOnlineMeal() }
+
+                    if (response?.meals == null) {
+                        emptyList()
+                    } else {
+                        response.meals.map { it.toOnlineMeal() }
+                    }
                 }
             }
             "Meal Category" -> {
-                safeApiCall(Dispatchers.IO) {
+                return safeApiCall(Dispatchers.IO) {
                     val response = mealDbApi.searchMealsByCategory(query = searchParam)
-                    response.meals.map { it.toOnlineMeal() }
+
+                    if (response?.meals == null) {
+                        emptyList()
+                    } else {
+                        response.meals.map { it.toOnlineMeal() }
+                    }
                 }
             }
             else -> {
