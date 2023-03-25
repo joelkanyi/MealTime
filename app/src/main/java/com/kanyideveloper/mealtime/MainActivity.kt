@@ -32,10 +32,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
+import com.google.android.play.core.appupdate.AppUpdateInfo
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.InstallState
+import com.google.android.play.core.install.InstallStateUpdatedListener
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
 import com.joelkanyi.kitchen_timer.presentation.destinations.KitchenTimerScreenDestination
 import com.kanyideveloper.compose_ui.theme.MealTimeTheme
 import com.kanyideveloper.compose_ui.theme.Theme
@@ -65,10 +74,19 @@ import com.ramcosta.composedestinations.navigation.dependency
 import com.ramcosta.composedestinations.scope.DestinationScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
+    private lateinit var appUpdateManager: AppUpdateManager
+    private val updateAvailable = MutableLiveData<Boolean>().apply { value = false }
+    private var updateInfo: AppUpdateInfo? = null
+    private var updateListener = InstallStateUpdatedListener { state: InstallState ->
+        if (state.installStatus() == InstallStatus.DOWNLOADED) {
+            appUpdateManager.completeUpdate()
+        }
+    }
 
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,6 +98,9 @@ class MainActivity : ComponentActivity() {
                 }
             )
         }
+
+        setupInAppUpdate()
+
         setContent {
             val isLogged = viewModel.user.value != null
             val isSubscribed = viewModel.isSubscribed.collectAsState().value
@@ -182,131 +203,157 @@ class MainActivity : ComponentActivity() {
             }
         )
     }
-}
-
-@OptIn(ExperimentalMaterialNavigationApi::class)
-@ExperimentalAnimationApi
-@Composable
-internal fun AppNavigation(
-    subscribe: () -> Unit,
-    navController: NavHostController,
-    modifier: Modifier = Modifier,
-    isLoggedIn: Boolean
-) {
-    val navHostEngine = rememberAnimatedNavHostEngine(
-        navHostContentAlignment = Alignment.TopCenter,
-        rootDefaultAnimations = RootNavGraphDefaultAnimations.ACCOMPANIST_FADING, // default `rootDefaultAnimations` means no animations
-        defaultAnimationsForNestedNavGraph = mapOf(
-            NavGraphs.home to NestedNavGraphDefaultAnimations(
-                enterTransition = {
-                    scaleInEnterTransition()
-                },
-                exitTransition = {
-                    scaleOutExitTransition()
-                },
-                popEnterTransition = {
-                    scaleInPopEnterTransition()
-                },
-                popExitTransition = {
-                    scaleOutPopExitTransition()
-                }
-            ),
-            NavGraphs.search to NestedNavGraphDefaultAnimations(
-                enterTransition = {
-                    scaleInEnterTransition()
-                },
-                exitTransition = {
-                    scaleOutExitTransition()
-                },
-                popEnterTransition = {
-                    scaleInPopEnterTransition()
-                },
-                popExitTransition = {
-                    scaleOutPopExitTransition()
-                }
-            ),
-            NavGraphs.favorites to NestedNavGraphDefaultAnimations(
-                enterTransition = {
-                    scaleInEnterTransition()
-                },
-                exitTransition = {
-                    scaleOutExitTransition()
-                },
-                popEnterTransition = {
-                    scaleInPopEnterTransition()
-                },
-                popExitTransition = {
-                    scaleOutPopExitTransition()
-                }
-            ),
-            NavGraphs.settings to NestedNavGraphDefaultAnimations(
-                enterTransition = {
-                    scaleInEnterTransition()
-                },
-                exitTransition = {
-                    scaleOutExitTransition()
-                },
-                popEnterTransition = {
-                    scaleInPopEnterTransition()
-                },
-                popExitTransition = {
-                    scaleOutPopExitTransition()
-                }
-            ),
-            NavGraphs.mealPlanner to NestedNavGraphDefaultAnimations(
-                enterTransition = {
-                    scaleInEnterTransition()
-                },
-                exitTransition = {
-                    scaleOutExitTransition()
-                },
-                popEnterTransition = {
-                    scaleInPopEnterTransition()
-                },
-                popExitTransition = {
-                    scaleOutPopExitTransition()
-                }
-            ),
-            NavGraphs.auth to NestedNavGraphDefaultAnimations(
-                enterTransition = {
-                    scaleInEnterTransition()
-                },
-                exitTransition = {
-                    scaleOutExitTransition()
-                },
-                popEnterTransition = {
-                    scaleInPopEnterTransition()
-                },
-                popExitTransition = {
-                    scaleOutPopExitTransition()
-                }
-            )
+    private fun DestinationScope<*>.currentNavigator(
+        isLoggedIn: Boolean,
+        subscribe: () -> Unit
+    ): CoreFeatureNavigator {
+        return CoreFeatureNavigator(
+            navGraph = navBackStackEntry.destination.navGraph(isLoggedIn),
+            navController = navController,
+            subscribe = subscribe
         )
-    )
+    }
 
-    DestinationsNavHost(
-        engine = navHostEngine,
-        navController = navController,
-        navGraph = NavGraphs.root(isLoggedIn = isLoggedIn),
-        modifier = modifier,
-        dependenciesContainerBuilder = {
-            dependency(
-                currentNavigator(
-                    subscribe = subscribe,
-                    isLoggedIn = isLoggedIn
+    @OptIn(ExperimentalMaterialNavigationApi::class)
+    @ExperimentalAnimationApi
+    @Composable
+    internal fun AppNavigation(
+        subscribe: () -> Unit,
+        navController: NavHostController,
+        modifier: Modifier = Modifier,
+        isLoggedIn: Boolean
+    ) {
+        val navHostEngine = rememberAnimatedNavHostEngine(
+            navHostContentAlignment = Alignment.TopCenter,
+            rootDefaultAnimations = RootNavGraphDefaultAnimations.ACCOMPANIST_FADING, // default `rootDefaultAnimations` means no animations
+            defaultAnimationsForNestedNavGraph = mapOf(
+                NavGraphs.home to NestedNavGraphDefaultAnimations(
+                    enterTransition = {
+                        scaleInEnterTransition()
+                    },
+                    exitTransition = {
+                        scaleOutExitTransition()
+                    },
+                    popEnterTransition = {
+                        scaleInPopEnterTransition()
+                    },
+                    popExitTransition = {
+                        scaleOutPopExitTransition()
+                    }
+                ),
+                NavGraphs.search to NestedNavGraphDefaultAnimations(
+                    enterTransition = {
+                        scaleInEnterTransition()
+                    },
+                    exitTransition = {
+                        scaleOutExitTransition()
+                    },
+                    popEnterTransition = {
+                        scaleInPopEnterTransition()
+                    },
+                    popExitTransition = {
+                        scaleOutPopExitTransition()
+                    }
+                ),
+                NavGraphs.favorites to NestedNavGraphDefaultAnimations(
+                    enterTransition = {
+                        scaleInEnterTransition()
+                    },
+                    exitTransition = {
+                        scaleOutExitTransition()
+                    },
+                    popEnterTransition = {
+                        scaleInPopEnterTransition()
+                    },
+                    popExitTransition = {
+                        scaleOutPopExitTransition()
+                    }
+                ),
+                NavGraphs.settings to NestedNavGraphDefaultAnimations(
+                    enterTransition = {
+                        scaleInEnterTransition()
+                    },
+                    exitTransition = {
+                        scaleOutExitTransition()
+                    },
+                    popEnterTransition = {
+                        scaleInPopEnterTransition()
+                    },
+                    popExitTransition = {
+                        scaleOutPopExitTransition()
+                    }
+                ),
+                NavGraphs.mealPlanner to NestedNavGraphDefaultAnimations(
+                    enterTransition = {
+                        scaleInEnterTransition()
+                    },
+                    exitTransition = {
+                        scaleOutExitTransition()
+                    },
+                    popEnterTransition = {
+                        scaleInPopEnterTransition()
+                    },
+                    popExitTransition = {
+                        scaleOutPopExitTransition()
+                    }
+                ),
+                NavGraphs.auth to NestedNavGraphDefaultAnimations(
+                    enterTransition = {
+                        scaleInEnterTransition()
+                    },
+                    exitTransition = {
+                        scaleOutExitTransition()
+                    },
+                    popEnterTransition = {
+                        scaleInPopEnterTransition()
+                    },
+                    popExitTransition = {
+                        scaleOutPopExitTransition()
+                    }
                 )
             )
-        }
-    )
-}
+        )
 
-fun DestinationScope<*>.currentNavigator(
-    isLoggedIn: Boolean,
-    subscribe: () -> Unit
-): CoreFeatureNavigator {
-    return CoreFeatureNavigator(
-        navGraph = navBackStackEntry.destination.navGraph(isLoggedIn),
-        navController = navController,
-        subscribe = subscribe
-    )
+        DestinationsNavHost(
+            engine = navHostEngine,
+            navController = navController,
+            navGraph = NavGraphs.root(isLoggedIn = isLoggedIn),
+            modifier = modifier,
+            dependenciesContainerBuilder = {
+                dependency(
+                    currentNavigator(
+                        subscribe = subscribe,
+                        isLoggedIn = isLoggedIn
+                    )
+                )
+            }
+        )
+    }
+
+    private fun setupInAppUpdate() {
+        try {
+            appUpdateManager = AppUpdateManagerFactory.create(this)
+            appUpdateManager.registerListener(updateListener)
+            checkForUpdate()
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
+
+    private fun checkForUpdate() {
+        appUpdateManager.appUpdateInfo.addOnSuccessListener {
+            if (it.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+                it.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
+            ) {
+                updateInfo = it
+                updateAvailable.value = true
+                startForInAppUpdate(updateInfo)
+            } else {
+                updateAvailable.value = false
+            }
+        }
+    }
+    private fun startForInAppUpdate(it: AppUpdateInfo?) {
+        appUpdateManager.startUpdateFlowForResult(it!!, AppUpdateType.FLEXIBLE, this, 1101)
+    }
 }
