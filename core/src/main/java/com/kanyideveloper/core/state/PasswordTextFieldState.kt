@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.joelkanyi.auth.presentation.state
+package com.kanyideveloper.core.state
 
-import com.google.firebase.auth.AuthResult
-
-data class RegisterState(
-    val isLoading: Boolean = false,
-    val data: AuthResult? = null,
+data class PasswordTextFieldState(
+    val text: String = "",
     val error: String? = null,
-    val isPasswordVisible: Boolean = false
+    val isPasswordVisible: Boolean = true
 )
