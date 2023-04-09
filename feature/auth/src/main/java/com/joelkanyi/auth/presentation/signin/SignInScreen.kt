@@ -54,7 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joelkanyi.auth.presentation.landing.AuthNavigator
 import com.joelkanyi.auth.presentation.state.LoginState
-import com.kanyideveloper.compose_ui.theme.robotoCondensed
+import com.kanyideveloper.compose_ui.theme.poppins
 import com.kanyideveloper.core.state.TextFieldState
 import com.kanyideveloper.core.util.UiEvents
 import com.ramcosta.composedestinations.annotation.Destination
@@ -260,7 +260,7 @@ private fun SignInScreenContent(
                             append("Sign Up")
                         }
                     },
-                    fontFamily = robotoCondensed,
+                    fontFamily = poppins,
                     textAlign = TextAlign.Center
                 )
             }
