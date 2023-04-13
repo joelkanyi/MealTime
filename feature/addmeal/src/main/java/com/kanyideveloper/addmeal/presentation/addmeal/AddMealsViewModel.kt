@@ -90,16 +90,22 @@ class AddMealsViewModel @Inject constructor(
         )
     }
 
-    private val _cookingTime = mutableStateOf(0f)
-    val cookingTime: State<Float> = _cookingTime
-    fun setCookingTime(value: Float) {
-        _cookingTime.value = value
+    private val _cookingTime = mutableStateOf(TextFieldState())
+    val cookingTime: State<TextFieldState> = _cookingTime
+    fun setCookingTime(value: String = "", error: String? = null) {
+        _cookingTime.value = cookingTime.value.copy(
+            text = value,
+            error = error
+        )
     }
 
-    private val _peopleServing = mutableStateOf(0f)
-    val peopleServing: State<Float> = _peopleServing
-    fun setPeopleServing(value: Float) {
-        _peopleServing.value = value
+    private val _peopleServing = mutableStateOf(TextFieldState())
+    val peopleServing: State<TextFieldState> = _peopleServing
+    fun setPeopleServing(value: String = "", error: String? = null) {
+        _peopleServing.value = peopleServing.value.copy(
+            text = value,
+            error = error
+        )
     }
 
     private val _saveMeal = mutableStateOf(SaveMealState())

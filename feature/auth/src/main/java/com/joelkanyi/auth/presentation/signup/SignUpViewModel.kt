@@ -22,6 +22,7 @@ import androidx.lifecycle.viewModelScope
 import com.joelkanyi.auth.domain.repository.AuthRepository
 import com.joelkanyi.auth.presentation.destinations.SignInScreenDestination
 import com.joelkanyi.auth.presentation.state.RegisterState
+import com.kanyideveloper.core.state.PasswordTextFieldState
 import com.kanyideveloper.core.state.TextFieldState
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.UiEvents
@@ -52,10 +53,16 @@ class SignUpViewModel @Inject constructor(
         _usernameState.value = usernameState.value.copy(text = value)
     }
 
-    private val _passwordState = mutableStateOf(TextFieldState())
-    val passwordState: State<TextFieldState> = _passwordState
+    private val _passwordState = mutableStateOf(PasswordTextFieldState())
+    val passwordState: State<PasswordTextFieldState> = _passwordState
     fun setPassword(value: String) {
         _passwordState.value = _passwordState.value.copy(text = value)
+    }
+
+    private val _confirmPasswordState = mutableStateOf(PasswordTextFieldState())
+    val confirmPasswordState: State<PasswordTextFieldState> = _confirmPasswordState
+    fun setConfirmPassword(value: String) {
+        _confirmPasswordState.value = _confirmPasswordState.value.copy(text = value)
     }
 
     private val _eventsFlow = MutableSharedFlow<UiEvents>()
@@ -80,6 +87,20 @@ class SignUpViewModel @Inject constructor(
             if (passwordState.value.text.isEmpty()) {
                 _eventsFlow.emit(
                     UiEvents.SnackbarEvent(message = "Please input your password")
+                )
+                return@launch
+            }
+
+            if (confirmPasswordState.value.text.isEmpty()) {
+                _eventsFlow.emit(
+                    UiEvents.SnackbarEvent(message = "Please confirm your password")
+                )
+                return@launch
+            }
+
+            if (passwordState.value.text != confirmPasswordState.value.text) {
+                _eventsFlow.emit(
+                    UiEvents.SnackbarEvent(message = "Passwords do not match")
                 )
                 return@launch
             }
@@ -122,5 +143,17 @@ class SignUpViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun togglePasswordVisibility() {
+        _passwordState.value = passwordState.value.copy(
+            isPasswordVisible = !passwordState.value.isPasswordVisible
+        )
+    }
+
+    fun toggleConfirmPasswordVisibility() {
+        _confirmPasswordState.value = confirmPasswordState.value.copy(
+            isPasswordVisible = !confirmPasswordState.value.isPasswordVisible
+        )
     }
 }

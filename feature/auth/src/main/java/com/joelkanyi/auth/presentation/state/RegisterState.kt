@@ -20,5 +20,6 @@ import com.google.firebase.auth.AuthResult
 data class RegisterState(
     val isLoading: Boolean = false,
     val data: AuthResult? = null,
-    val error: String? = null
+    val error: String? = null,
+    val isPasswordVisible: Boolean = false
 )

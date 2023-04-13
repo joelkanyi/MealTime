@@ -28,9 +28,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -46,18 +51,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joelkanyi.auth.presentation.landing.AuthNavigator
 import com.joelkanyi.auth.presentation.state.RegisterState
-import com.kanyideveloper.compose_ui.theme.robotoCondensed
+import com.kanyideveloper.compose_ui.theme.poppins
+import com.kanyideveloper.core.state.PasswordTextFieldState
 import com.kanyideveloper.core.state.TextFieldState
 import com.kanyideveloper.core.util.UiEvents
 import com.ramcosta.composedestinations.annotation.Destination
@@ -73,6 +83,7 @@ fun SignUpScreen(navigator: AuthNavigator, viewModel: SignUpViewModel = hiltView
     val userName by viewModel.usernameState
     val email by viewModel.emailState
     val password by viewModel.passwordState
+    val confirmPassword by viewModel.confirmPasswordState
     val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(key1 = true) {
@@ -111,6 +122,7 @@ fun SignUpScreen(navigator: AuthNavigator, viewModel: SignUpViewModel = hiltView
             userName = userName,
             email = email,
             password = password,
+            confirmPassword = confirmPassword,
             registerState = registerState,
             onCurrentEmailChange = {
                 viewModel.setEmail(it)
@@ -121,13 +133,22 @@ fun SignUpScreen(navigator: AuthNavigator, viewModel: SignUpViewModel = hiltView
             onCurrentPasswordChange = {
                 viewModel.setPassword(it)
             },
+            onCurrentConfirmPasswordChange = {
+                viewModel.setConfirmPassword(it)
+            },
             onClickHaveAccount = {
                 navigator.openSignIn()
             },
             onClickSignUp = {
                 keyboardController?.hide()
                 viewModel.registerUser()
-            }
+            },
+            onPasswordToggle = {
+                viewModel.togglePasswordVisibility()
+            },
+            onConfirmPasswordToggle = {
+                viewModel.toggleConfirmPasswordVisibility()
+            },
         )
     }
 }
@@ -137,13 +158,17 @@ fun SignUpScreen(navigator: AuthNavigator, viewModel: SignUpViewModel = hiltView
 private fun SignUpScreenContent(
     userName: TextFieldState,
     email: TextFieldState,
-    password: TextFieldState,
+    password: PasswordTextFieldState,
+    confirmPassword: PasswordTextFieldState,
     registerState: RegisterState,
     onCurrentNameChange: (String) -> Unit,
     onCurrentEmailChange: (String) -> Unit,
     onCurrentPasswordChange: (String) -> Unit,
+    onCurrentConfirmPasswordChange: (String) -> Unit,
     onClickSignUp: () -> Unit,
-    onClickHaveAccount: () -> Unit
+    onClickHaveAccount: () -> Unit,
+    onPasswordToggle: (Boolean) -> Unit,
+    onConfirmPasswordToggle: (Boolean) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -203,7 +228,82 @@ private fun SignUpScreenContent(
                 keyboardOptions = KeyboardOptions(
                     autoCorrect = true,
                     keyboardType = KeyboardType.Password
-                )
+                ),
+                visualTransformation = if (password.isPasswordVisible) {
+                    PasswordVisualTransformation()
+                } else {
+                    VisualTransformation.None
+                },
+                trailingIcon = {
+                    IconButton(
+                        onClick = {
+                            onPasswordToggle(!password.isPasswordVisible)
+                        },
+                        modifier = Modifier.semantics {
+                            testTag = "PasswordToggle"
+                        }
+                    ) {
+                        Icon(
+                            imageVector = if (password.isPasswordVisible) {
+                                Icons.Filled.VisibilityOff
+                            } else {
+                                Icons.Filled.Visibility
+                            },
+                            contentDescription = if (password.isPasswordVisible) {
+                                "Hide Password"
+                            } else {
+                                "Show Password"
+                            }
+                        )
+                    }
+                }
+            )
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = confirmPassword.text,
+                onValueChange = {
+                    onCurrentConfirmPasswordChange(it)
+                },
+                label = {
+                    Text(text = "Confirm Password")
+                },
+                keyboardOptions = KeyboardOptions(
+                    autoCorrect = true,
+                    keyboardType = KeyboardType.Password
+                ),
+                visualTransformation = if (confirmPassword.isPasswordVisible) {
+                    PasswordVisualTransformation()
+                } else {
+                    VisualTransformation.None
+                },
+                trailingIcon = {
+                    IconButton(
+                        onClick = {
+                            onConfirmPasswordToggle(!confirmPassword.isPasswordVisible)
+                        },
+                        modifier = Modifier.semantics {
+                            testTag = "PasswordToggle"
+                        }
+                    ) {
+                        Icon(
+                            imageVector = if (confirmPassword.isPasswordVisible) {
+                                Icons.Filled.VisibilityOff
+                            } else {
+                                Icons.Filled.Visibility
+                            },
+                            contentDescription = if (confirmPassword.isPasswordVisible) {
+                                "Hide Password"
+                            } else {
+                                "Show Password"
+                            }
+                        )
+                    }
+                }
             )
         }
 
@@ -244,7 +344,7 @@ private fun SignUpScreenContent(
                             append("Sign In")
                         }
                     },
-                    fontFamily = robotoCondensed,
+                    fontFamily = poppins,
                     textAlign = TextAlign.Center
                 )
             }

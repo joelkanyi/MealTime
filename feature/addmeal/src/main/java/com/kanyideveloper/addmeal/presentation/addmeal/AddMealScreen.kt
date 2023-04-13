@@ -30,7 +30,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -51,8 +50,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -70,8 +68,6 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -86,6 +82,7 @@ import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.core.util.compressImage
 import com.kanyideveloper.core.util.createImageFile
 import com.kanyideveloper.core.util.imageUriToImageBitmap
+import com.kanyideveloper.core.util.isNumeric
 import com.kanyideveloper.core.util.saveImage
 import com.mr0xf00.easycrop.CropError
 import com.mr0xf00.easycrop.CropResult
@@ -99,7 +96,10 @@ import java.io.File
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
-fun AddMealScreen(navigator: AddMealNavigator, viewModel: AddMealsViewModel = hiltViewModel()) {
+fun AddMealScreen(
+    navigator: AddMealNavigator,
+    viewModel: AddMealsViewModel = hiltViewModel()
+) {
     val mealName = viewModel.mealName.value
     val category = viewModel.category.value
     val complexity = viewModel.cookingComplexity.value
@@ -215,32 +215,27 @@ fun AddMealScreen(navigator: AddMealNavigator, viewModel: AddMealsViewModel = hi
         cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
     })
 
-    val sliderInteractionSource = MutableInteractionSource()
-    val sliderColors =
-        SliderDefaults.colors(
-            thumbColor = MaterialTheme.colorScheme.primary,
-            activeTrackColor = MaterialTheme.colorScheme.primary,
-            inactiveTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = .5f)
-        )
-
     val cropState = imageCropper.cropState
     if (cropState != null) ImageCropperDialog(state = cropState)
 
-    Column(Modifier.fillMaxSize()) {
-        StandardToolbar(
-            navigate = {
-                navigator.popBackStack()
-            },
-            title = {
-                Text(text = "Add meal", fontSize = 18.sp)
-            },
-            showBackArrow = true,
-            navActions = {
-            }
-        )
-
+    Scaffold(
+        topBar = {
+            StandardToolbar(
+                navigate = {
+                    navigator.popBackStack()
+                },
+                title = {
+                    Text(text = "Add meal", fontSize = 18.sp)
+                },
+                showBackArrow = true,
+                navActions = {
+                }
+            )
+        }
+    ) { paddingValues ->
         LazyColumn(
-            contentPadding = PaddingValues(16.dp),
+            modifier = Modifier.padding(horizontal = 16.dp),
+            contentPadding = paddingValues,
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item {
@@ -250,7 +245,7 @@ fun AddMealScreen(navigator: AddMealNavigator, viewModel: AddMealsViewModel = hi
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
                         .background(MaterialTheme.colorScheme.surfaceVariant)
-                        .height(210.dp)
+                        .height(200.dp)
                         .clickable {
                             val photoFile = createImageFile(context)
 
@@ -451,93 +446,93 @@ fun AddMealScreen(navigator: AddMealNavigator, viewModel: AddMealsViewModel = hi
             }
 
             item {
-                Column {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(32.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(.5f),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
-                            text = "Cooking Time - ${cookingTime.toInt()} Minutes",
+                            text = "Cooking Time - ${cookingTime.text} Minutes",
                             style = MaterialTheme.typography.labelMedium
                         )
-                    }
-                    Slider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .semantics {
-                                contentDescription = "Cooking Time Slider"
+
+                        OutlinedTextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            value = cookingTime.text,
+                            onValueChange = {
+                                viewModel.setCookingTime(value = it)
                             },
-                        value = cookingTime,
-                        onValueChange = {
-                            viewModel.setCookingTime(it)
-                        },
-                        valueRange = 0f..300f,
-                        onValueChangeFinished = {
-                            viewModel.setCookingTime(cookingTime)
-                        },
-                        interactionSource = sliderInteractionSource,
-                        thumb = {
-                            SliderDefaults.Thumb(
-                                interactionSource = sliderInteractionSource,
-                                colors = sliderColors
-                            )
-                        },
-                        track = { sliderPositions ->
-                            SliderDefaults.Track(
-                                colors = sliderColors,
-                                sliderPositions = sliderPositions
+                            colors = TextFieldDefaults.outlinedTextFieldColors(),
+                            placeholder = {
+                                Text(
+                                    text = "Cooking Time",
+                                    style = MaterialTheme.typography.labelMedium
+                                )
+                            },
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Number,
+                            ),
+                            isError = cookingTime.error != null
+                        )
+
+                        if (cookingTime.error != null) {
+                            Text(
+                                text = cookingTime.error ?: "",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.error,
+                                textAlign = TextAlign.End,
+                                modifier = Modifier.fillMaxWidth()
                             )
                         }
-                    )
+                    }
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = "Serving - ${peopleServing.text} People",
+                            style = MaterialTheme.typography.labelMedium
+                        )
+
+                        OutlinedTextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            value = peopleServing.text,
+                            onValueChange = {
+                                viewModel.setPeopleServing(value = it)
+                            },
+                            colors = TextFieldDefaults.outlinedTextFieldColors(),
+                            placeholder = {
+                                Text(
+                                    text = "People Serving",
+                                    style = MaterialTheme.typography.labelMedium
+                                )
+                            },
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Number,
+                            ),
+                            isError = peopleServing.error != null
+                        )
+
+                        if (peopleServing.error != null) {
+                            Text(
+                                text = peopleServing.error ?: "",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.error,
+                                textAlign = TextAlign.End,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
                 }
             }
 
             item {
-                Column {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(32.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Serving - ${peopleServing.toInt()} People",
-                            style = MaterialTheme.typography.labelMedium
-                        )
-                    }
-                    Slider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .semantics {
-                                contentDescription = "Localized Description"
-                            },
-                        value = peopleServing,
-                        onValueChange = {
-                            viewModel.setPeopleServing(it)
-                        },
-                        valueRange = 0f..300f,
-                        onValueChangeFinished = {
-                            viewModel.setPeopleServing(peopleServing)
-                        },
-                        interactionSource = sliderInteractionSource,
-                        thumb = {
-                            SliderDefaults.Thumb(
-                                interactionSource = sliderInteractionSource,
-                                colors = sliderColors
-                            )
-                        },
-                        track = { sliderPositions ->
-                            SliderDefaults.Track(
-                                colors = sliderColors,
-                                sliderPositions = sliderPositions
-                            )
-                        }
-                    )
-                }
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
             }
 
             item {
@@ -554,6 +549,12 @@ fun AddMealScreen(navigator: AddMealNavigator, viewModel: AddMealsViewModel = hi
                         } else if (mealName.text.isEmpty()) {
                             viewModel.setMealNameState(error = "Meal name cannot be empty")
                             return@Button
+                        } else if (cookingTime.text.isEmpty()) {
+                            viewModel.setCookingTime(error = "Cooking time cannot be empty")
+                            return@Button
+                        } else if (peopleServing.text.isEmpty()) {
+                            viewModel.setPeopleServing(error = "People serving cannot be empty")
+                            return@Button
                         } else if (category.text.isEmpty()) {
                             viewModel.setCategory(error = "Meal category cannot be empty")
                             return@Button
@@ -564,19 +565,37 @@ fun AddMealScreen(navigator: AddMealNavigator, viewModel: AddMealsViewModel = hi
                             return@Button
                         }
 
-                        if (cookingTime.toInt() <= 0) {
+                        if (!isNumeric(cookingTime.text)) {
                             Toast.makeText(
                                 context,
-                                "Please use the slider to select cooking time",
+                                "Cooking time contains non Integer Values",
                                 Toast.LENGTH_SHORT
                             ).show()
                             return@Button
                         }
 
-                        if (peopleServing.toInt() <= 0) {
+                        if (!isNumeric(peopleServing.text)) {
                             Toast.makeText(
                                 context,
-                                "Please use the slider to select people serving",
+                                "People serving contains non Integer Values",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            return@Button
+                        }
+
+                        if (cookingTime.text.toInt() <= 0) {
+                            Toast.makeText(
+                                context,
+                                "Cooking time cannot be equal to 0",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            return@Button
+                        }
+
+                        if (peopleServing.text.toInt() <= 0) {
+                            Toast.makeText(
+                                context,
+                                "People serving cannot be equal to 0",
                                 Toast.LENGTH_SHORT
                             ).show()
                             return@Button
@@ -585,8 +604,8 @@ fun AddMealScreen(navigator: AddMealNavigator, viewModel: AddMealsViewModel = hi
                         navigator.openNextAddMealScreen(
                             imageUri = viewModel.mealImageUri.value!!,
                             mealName = viewModel.mealName.value.text,
-                            cookingTime = viewModel.cookingTime.value.toInt(),
-                            servingPeople = viewModel.peopleServing.value.toInt(),
+                            cookingTime = viewModel.cookingTime.value.text.toInt(),
+                            servingPeople = viewModel.peopleServing.value.text.toInt(),
                             complexity = complexity.text,
                             category = category.text
                         )

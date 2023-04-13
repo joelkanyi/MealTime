@@ -112,7 +112,9 @@ fun KitchenTimerScreen(viewModel: KitchenTimerViewModel = hiltViewModel()) {
     )
 
     LaunchedEffect(key1 = true, block = {
-        notificationsPermissionLauncher.launch(Manifest.permission.CAMERA)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            notificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
     })
 
     if (viewModel.showHowLongDialog.value) {
