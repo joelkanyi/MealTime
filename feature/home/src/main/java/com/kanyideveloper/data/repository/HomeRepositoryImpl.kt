@@ -16,7 +16,7 @@
 package com.kanyideveloper.data.repository
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.kanyideveloper.core.domain.HomeRepository
@@ -121,7 +121,7 @@ class HomeRepositoryImpl(
     }
 
     override fun getMealById(id: String): LiveData<Meal?> {
-        return Transformations.map(mealDao.getSingleMeal(id = id)) { mealEntity ->
+        return mealDao.getSingleMeal(id = id).map { mealEntity ->
             mealEntity?.toMeal()
         }
     }
