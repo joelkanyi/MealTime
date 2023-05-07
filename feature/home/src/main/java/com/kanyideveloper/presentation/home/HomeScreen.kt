@@ -257,6 +257,7 @@ fun HomeScreen(navigator: HomeNavigator, viewModel: HomeViewModel = hiltViewMode
                     )
                 }
             }
+
             else -> {}
         }
     }
@@ -271,8 +272,8 @@ fun MainContent(
     isSubscribed: Boolean
 ) {
     val listOfTabs = listOf(
+        TabItem.Incoming(navigator = navigator),
         TabItem.Outgoing(navigator = navigator),
-        TabItem.Incoming(navigator = navigator)
     )
     val pagerState = rememberPagerState()
 
