@@ -16,7 +16,7 @@
 package com.kanyideveloper.favorites.presentation.favorites.data.repository
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.kanyideveloper.core.domain.FavoritesRepository
@@ -133,7 +133,7 @@ class FavoritesRepositoryImpl(
     }
 
     override fun getASingleFavorite(id: Int): LiveData<Favorite?> {
-        return Transformations.map(favoritesDao.getAFavoriteById(id = id)) {
+        return favoritesDao.getAFavoriteById(id = id).map {
             it?.toFavorite()
         }
     }
