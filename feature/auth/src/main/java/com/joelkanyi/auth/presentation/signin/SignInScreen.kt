@@ -80,6 +80,7 @@ fun SignInScreen(navigator: AuthNavigator, viewModel: SignInViewModel = hiltView
     val keyboardController = LocalSoftwareKeyboardController.current
     val loginState = viewModel.loginState.value
     val snackbarHostState = remember { SnackbarHostState() }
+    val analyticsUtils = viewModel.analyticsUtil()
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -131,13 +132,16 @@ fun SignInScreen(navigator: AuthNavigator, viewModel: SignInViewModel = hiltView
                 viewModel.setPassword(it)
             },
             onClickSignIn = {
+                analyticsUtils.trackUserEvent("sign_in_clicked")
                 keyboardController?.hide()
                 viewModel.loginUser()
             },
             onClickForgotPassword = {
+                analyticsUtils.trackUserEvent("forgot_password_clicked")
                 navigator.openForgotPassword()
             },
             onClickDontHaveAccount = {
+                analyticsUtils.trackUserEvent("dont_have_account_clicked")
                 navigator.openSignUp()
             },
             onConfirmPasswordToggle = {

@@ -13,27 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.joelkanyi.auth.di
+package com.kanyideveloper.core.di
 
-import com.google.firebase.auth.FirebaseAuth
-import com.joelkanyi.auth.data.repository.AuthRepositoryImpl
-import com.joelkanyi.auth.domain.repository.AuthRepository
+import android.content.Context
 import com.kanyideveloper.core.analytics.AnalyticsUtil
+import com.kanyideveloper.core.util.Constants
+import com.mixpanel.android.mpmetrics.MixpanelAPI
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AuthModule {
-    @Provides
+object AnalyticsModule {
+
     @Singleton
-    fun provideAuthRepository(analyticsUtil: AnalyticsUtil): AuthRepository {
-        return AuthRepositoryImpl(
-            firebaseAuth = FirebaseAuth.getInstance(),
-            analyticsUtil = analyticsUtil
-        )
+    @Provides
+    fun providesMixPaneApi(@ApplicationContext context: Context): MixpanelAPI {
+        return MixpanelAPI.getInstance(context, Constants.MIXPANEL_TOKEN, false)
+    }
+
+    @Singleton
+    @Provides
+    fun providesAnalyticsUtil(mixpanelAPI: MixpanelAPI): AnalyticsUtil {
+        return AnalyticsUtil(mixpanelAPI)
     }
 }

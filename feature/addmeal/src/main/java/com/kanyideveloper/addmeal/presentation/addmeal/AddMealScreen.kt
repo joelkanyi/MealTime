@@ -107,6 +107,7 @@ fun AddMealScreen(
     val cookingTime = viewModel.cookingTime.value
 
     val context = LocalContext.current
+    val analyticsUtil = viewModel.analyticsUtil()
 
     val imageCropper = rememberImageCropper()
     val scope = rememberCoroutineScope()
@@ -222,6 +223,7 @@ fun AddMealScreen(
         topBar = {
             StandardToolbar(
                 navigate = {
+                    analyticsUtil.trackUserEvent("Go back from add meal screen")
                     navigator.popBackStack()
                 },
                 title = {
@@ -247,6 +249,7 @@ fun AddMealScreen(
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                         .height(200.dp)
                         .clickable {
+                            analyticsUtil.trackUserEvent("Add meal image clicked by camera")
                             val photoFile = createImageFile(context)
 
                             if (photoFile != null) {
@@ -310,6 +313,7 @@ fun AddMealScreen(
                         modifier = Modifier
                             .padding(8.dp)
                             .clickable(MutableInteractionSource(), null) {
+                                analyticsUtil.trackUserEvent("Add meal image clicked by gallery")
                                 galleryLauncher.launch("image/*")
                             },
                         horizontalArrangement = Arrangement.End,
@@ -609,6 +613,7 @@ fun AddMealScreen(
                             complexity = complexity.text,
                             category = category.text
                         )
+                        analyticsUtil.trackUserEvent("add_meal_next_button_clicked")
                     },
                     shape = RoundedCornerShape(4.dp)
                 ) {

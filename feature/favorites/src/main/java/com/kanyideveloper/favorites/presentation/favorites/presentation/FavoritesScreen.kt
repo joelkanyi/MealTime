@@ -94,6 +94,7 @@ fun FavoritesScreen(
     val favoritesUiState = viewModel.favoritesUiState.value
     val meal = viewModel.singleMeal.observeAsState().value?.observeAsState()?.value
     var mDisplayMenu by remember { mutableStateOf(false) }
+    val analyticsUtil = viewModel.analyticsUtil()
 
     when (val isSubscribed = viewModel.isSubscribed.collectAsState().value) {
         is SubscriptionStatusUiState.Success -> {
@@ -139,6 +140,7 @@ fun FavoritesScreen(
                             ) {
                                 DropdownMenuItem(
                                     onClick = {
+                                        analyticsUtil.trackUserEvent("Delete All Favorites clicked")
                                         viewModel.deleteAllFavorites()
                                         mDisplayMenu = false
                                     },
@@ -166,6 +168,7 @@ fun FavoritesScreen(
                 SwipeRefreshComponent(
                     isRefreshingState = favoritesUiState.isLoading,
                     onRefreshData = {
+                        analyticsUtil.trackUserEvent("Refresh Favorites clicked")
                         viewModel.getFavorites(
                             isSubscribed = isSubscribed.isSubscribed
                         )
@@ -177,6 +180,7 @@ fun FavoritesScreen(
                             .padding(paddingValues),
                         favoritesUiState = favoritesUiState,
                         onClick = { _, onlineMealId, localMealId, isOnline ->
+                            analyticsUtil.trackUserEvent("Open favorite meal details clicked")
                             if (isOnline) {
                                 onlineMealId?.let { navigator.openOnlineMealDetails(mealId = it) }
                             } else {
@@ -190,6 +194,7 @@ fun FavoritesScreen(
                             }
                         },
                         onFavoriteClick = { favorite ->
+                            analyticsUtil.trackUserEvent("Delete one favorite clicked - ${favorite.mealName}")
                             viewModel.deleteAFavorite(
                                 favorite = favorite,
                                 isSubscribed = isSubscribed.isSubscribed

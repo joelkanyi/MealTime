@@ -85,6 +85,7 @@ fun SignUpScreen(navigator: AuthNavigator, viewModel: SignUpViewModel = hiltView
     val password by viewModel.passwordState
     val confirmPassword by viewModel.confirmPasswordState
     val keyboardController = LocalSoftwareKeyboardController.current
+    val analyticsUtils = viewModel.analyticsUtil()
 
     LaunchedEffect(key1 = true) {
         viewModel.eventsFlow.collectLatest { event ->
@@ -137,9 +138,11 @@ fun SignUpScreen(navigator: AuthNavigator, viewModel: SignUpViewModel = hiltView
                 viewModel.setConfirmPassword(it)
             },
             onClickHaveAccount = {
+                analyticsUtils.trackUserEvent("on click have account")
                 navigator.openSignIn()
             },
             onClickSignUp = {
+                analyticsUtils.trackUserEvent("on click sign up")
                 keyboardController?.hide()
                 viewModel.registerUser()
             },

@@ -89,6 +89,7 @@ interface HomeNavigator {
 @Composable
 fun HomeScreen(navigator: HomeNavigator, viewModel: HomeViewModel = hiltViewModel()) {
     val context = LocalContext.current
+    val analyticsUtil = viewModel.analyticsUtil()
     var hasCamPermission by remember {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             mutableStateOf(
@@ -158,6 +159,9 @@ fun HomeScreen(navigator: HomeNavigator, viewModel: HomeViewModel = hiltViewMode
                                         if (!isSubscribed.isSubscribed) {
                                             TextButton(
                                                 onClick = {
+                                                    analyticsUtil.trackUserEvent(
+                                                        "upgrade_to_premium_clicked"
+                                                    )
                                                     viewModel.setShowSubscriptionDialogState(true)
                                                 }
                                             ) {
@@ -177,6 +181,7 @@ fun HomeScreen(navigator: HomeNavigator, viewModel: HomeViewModel = hiltViewMode
                                                 containerColor = MaterialTheme.colorScheme.surfaceVariant
                                             ),
                                             onClick = {
+                                                analyticsUtil.trackUserEvent("search feature clicked")
                                                 navigator.onSearchClick()
                                             },
                                             elevation = CardDefaults.cardElevation(
@@ -235,6 +240,7 @@ fun HomeScreen(navigator: HomeNavigator, viewModel: HomeViewModel = hiltViewMode
                                     }
                                 },
                                 onClick = {
+                                    analyticsUtil.trackUserEvent("add my meal clicked")
                                     navigator.openAddMeal()
                                 }
                             )
@@ -249,9 +255,9 @@ fun HomeScreen(navigator: HomeNavigator, viewModel: HomeViewModel = hiltViewMode
                             .padding(paddingValues = paddingValues),
                         onClick = { page ->
                             if (page == 0) {
-                                viewModel.setIsMyMeal(true)
-                            } else {
                                 viewModel.setIsMyMeal(false)
+                            } else {
+                                viewModel.setIsMyMeal(true)
                             }
                         }
                     )
@@ -300,7 +306,7 @@ fun TabContent(tabs: List<TabItem>, pagerState: PagerState, isSubscribed: Boolea
         count = tabs.size,
         state = pagerState,
         modifier = Modifier,
-        userScrollEnabled = false
+        userScrollEnabled = true
     ) { page ->
         tabs[page].screen(
             isSubscribed
