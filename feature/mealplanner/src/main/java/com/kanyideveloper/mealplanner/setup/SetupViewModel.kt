@@ -21,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
+import com.kanyideveloper.core.analytics.AnalyticsUtil
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.mealplanner.destinations.MealPlannerScreenDestination
@@ -32,8 +33,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SetupViewModel @Inject constructor(
-    private val mealPlannerRepository: MealPlannerRepository
+    private val mealPlannerRepository: MealPlannerRepository,
+    private val analyticsUtil: AnalyticsUtil
 ) : ViewModel() {
+    fun analyticsUtil() = analyticsUtil
 
     val numberOfPeople = listOf("1", "2", "3", "10", "10+")
     val dishTypes = listOf("Breakfast", "Lunch", "Dinner", "Dessert")

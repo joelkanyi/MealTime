@@ -39,7 +39,8 @@ class SubscriptionRepositoryImpl(
 ) : SubscriptionRepository {
     override val isSubscribed: Flow<Boolean>
         get() = dataStore.data.map { preferences ->
-            preferences[Constants.SUBSCRIPTION] == true
+            // preferences[Constants.SUBSCRIPTION] == true
+            true
         }
 
     private var _subscriptionStatusUiState by mutableStateOf(false)

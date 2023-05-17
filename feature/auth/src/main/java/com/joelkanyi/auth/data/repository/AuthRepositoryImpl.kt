@@ -19,11 +19,14 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.joelkanyi.auth.domain.repository.AuthRepository
+import com.kanyideveloper.core.analytics.AnalyticsUtil
 import com.kanyideveloper.core.util.Resource
 import kotlinx.coroutines.tasks.await
+import org.json.JSONObject
 
 class AuthRepositoryImpl(
-    private val firebaseAuth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth,
+    private val analyticsUtil: AnalyticsUtil
 ) : AuthRepository {
 
     override suspend fun registerUser(
@@ -51,6 +54,13 @@ class AuthRepositoryImpl(
             val response = firebaseAuth.signInWithEmailAndPassword(email, password).await()
 
             if (response.user?.isEmailVerified == true) {
+                analyticsUtil.setUserProfile(
+                    userID = response.user?.uid ?: "",
+                    userProperties = JSONObject()
+                        .put("name", "${response?.user?.displayName}")
+                        .put("email", "${response?.user?.email}")
+
+                )
                 Resource.Success(response)
             } else {
                 Resource.Error("Please verify your email address")

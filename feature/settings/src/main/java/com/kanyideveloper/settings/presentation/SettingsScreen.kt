@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.compose_ui.components.StandardToolbar
+import com.kanyideveloper.core.analytics.AnalyticsUtil
 import com.kanyideveloper.core.components.PremiumCard
 import com.kanyideveloper.core.state.SubscriptionStatusUiState
 import com.kanyideveloper.core.util.UiEvents
@@ -82,6 +83,7 @@ fun SettingsScreen(navigator: SettingsNavigator, viewModel: SettingsViewModel = 
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val analyticsUtils = viewModel.analyticsUtil()
 
     when (val isSubscribed = viewModel.isSubscribed.collectAsState().value) {
         is SubscriptionStatusUiState.Success -> {
@@ -91,9 +93,11 @@ fun SettingsScreen(navigator: SettingsNavigator, viewModel: SettingsViewModel = 
                         is UiEvents.SnackbarEvent -> {
                             snackbarHostState.showSnackbar(message = event.message)
                         }
+
                         is UiEvents.NavigationEvent -> {
                             navigator.logout()
                         }
+
                         else -> {}
                     }
                 }
@@ -119,15 +123,20 @@ fun SettingsScreen(navigator: SettingsNavigator, viewModel: SettingsViewModel = 
                 if (shouldShowThemesDialog) {
                     ThemesDialog(
                         onDismiss = {
+                            analyticsUtils.trackUserEvent("Themes Dialog Closed")
                             viewModel.setShowThemesDialogState(
                                 !viewModel.shouldShowThemesDialog.value
                             )
                         },
-                        onSelectTheme = viewModel::updateTheme
+                        onSelectTheme = {
+                            analyticsUtils.trackUserEvent("Theme Selected: $it")
+                            viewModel.updateTheme(it)
+                        }
                     )
                 }
 
                 if (shouldShowFeedbackDialog) {
+                    analyticsUtils.trackUserEvent("Feedback Dialog Opened")
                     FeedbackDialog(
                         currentFeedbackString = viewModel.feedback.value.text,
                         isError = viewModel.feedback.value.error != null,
@@ -154,6 +163,7 @@ fun SettingsScreen(navigator: SettingsNavigator, viewModel: SettingsViewModel = 
                                     putExtra(Intent.EXTRA_EMAIL, arrayOf("joelkanyi98@gmail.com"))
                                     putExtra(Intent.EXTRA_SUBJECT, "MEALTIME APP FEEDBACK")
                                     putExtra(Intent.EXTRA_TEXT, feedback)
+                                    analyticsUtils.trackUserEvent("Feedback Sent: $feedback")
                                 }
                                 context.startActivity(intent)
 
@@ -172,11 +182,14 @@ fun SettingsScreen(navigator: SettingsNavigator, viewModel: SettingsViewModel = 
                 }
 
                 if (viewModel.shouldShowSubscriptionDialog.value) {
+                    analyticsUtils.trackUserEvent("Subscription Dialog Opened")
                     PremiumCard(
                         onDismiss = {
+                            analyticsUtils.trackUserEvent("Subscription Dialog Dismissed")
                             viewModel.setShowSubscriptionDialogState(false)
                         },
                         onClickSubscribe = {
+                            analyticsUtils.trackUserEvent(" Subscribe Clicked")
                             navigator.subscribe()
                             viewModel.setShowSubscriptionDialogState(false)
                         }
@@ -186,15 +199,18 @@ fun SettingsScreen(navigator: SettingsNavigator, viewModel: SettingsViewModel = 
                 SettingsScreenContent(
                     isSubscribed = isSubscribed.isSubscribed,
                     paddingValues = paddingValues,
+                    analyticsUtil = analyticsUtils,
                     navigator = navigator,
                     context = context,
                     logoutState = viewModel.logoutState.value,
                     onChangeTheme = {
+                        analyticsUtils.trackUserEvent("Theme Dialog Opened")
                         viewModel.setShowThemesDialogState(
                             !viewModel.shouldShowThemesDialog.value
                         )
                     },
                     onReportOrSuggest = {
+                        analyticsUtils.trackUserEvent("Feedback Dialog Opened")
                         viewModel.setShowFeedbackDialogState(
                             !viewModel.shouldShowFeedbackDialog.value
                         )
@@ -203,11 +219,13 @@ fun SettingsScreen(navigator: SettingsNavigator, viewModel: SettingsViewModel = 
                         viewModel.setShowSubscriptionDialogState(true)
                     },
                     logout = {
+                        analyticsUtils.trackUserEvent("Logout Clicked")
                         viewModel.logoutUser()
                     }
                 )
             }
         }
+
         else -> {}
     }
 }
@@ -222,7 +240,8 @@ private fun SettingsScreenContent(
     isSubscribed: Boolean,
     onSubscribe: () -> Unit,
     logout: () -> Unit,
-    logoutState: LogoutState
+    logoutState: LogoutState,
+    analyticsUtil: AnalyticsUtil,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -243,20 +262,26 @@ private fun SettingsScreenContent(
                             "Change Your Theme" -> {
                                 onChangeTheme()
                             }
+
                             "Edit Meal Plan Preferences" -> {
                                 navigator.openAllergiesScreen(editMealPlanPreference = true)
                             }
+
                             "Suggest or Report Anything" -> {
                                 onReportOrSuggest()
                             }
+
                             "Rate Us on Play Store" -> {
+                                analyticsUtil.trackUserEvent("Rate Us Clicked")
                                 val rateIntent = Intent(
                                     Intent.ACTION_VIEW,
                                     Uri.parse("market://details?id=" + context.packageName)
                                 )
                                 startActivity(context, rateIntent, null)
                             }
+
                             "Share the App with Friends" -> {
+                                analyticsUtil.trackUserEvent("Share App Clicked")
                                 val appPackageName = context.packageName
                                 val sendIntent = Intent()
                                 sendIntent.action = Intent.ACTION_SEND

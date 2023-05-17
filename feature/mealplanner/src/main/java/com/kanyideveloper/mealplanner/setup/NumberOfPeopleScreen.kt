@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.compose_ui.theme.PrimaryColor
+import com.kanyideveloper.core.analytics.AnalyticsUtil
 import com.kanyideveloper.mealplanner.MealPlannerNavigator
 import com.ramcosta.composedestinations.annotation.Destination
 
@@ -54,13 +55,16 @@ fun NumberOfPeopleScreen(
     navigator: MealPlannerNavigator,
     viewModel: SetupViewModel = hiltViewModel()
 ) {
+    val analyticsUtil = viewModel.analyticsUtil()
     NumberOfPeopleScreenContent(
         navigator = navigator,
         allergies = allergies,
+        analyticsUtil = analyticsUtil,
         numberOfPeople = viewModel.selectedNumberOfPeople.value,
         numberOfPeopleChoices = viewModel.numberOfPeople,
         editMealPlanPreference = editMealPlanPreference,
         onNumberClick = { number ->
+            analyticsUtil.trackUserEvent("Number of people selected - $number")
             viewModel.setSelectedNumberOfPeople(number)
         },
         isSelected = { number ->
@@ -77,11 +81,13 @@ private fun NumberOfPeopleScreenContent(
     numberOfPeopleChoices: List<String>,
     onNumberClick: (String) -> Unit,
     isSelected: (String) -> Boolean,
-    editMealPlanPreference: Boolean
+    editMealPlanPreference: Boolean,
+    analyticsUtil: AnalyticsUtil,
 ) {
     Column(Modifier.fillMaxSize()) {
         StandardToolbar(
             navigate = {
+                analyticsUtil.trackUserEvent("Back button clicked from number of people screen")
                 navigator.popBackStack()
             },
             title = {},
@@ -91,6 +97,7 @@ private fun NumberOfPeopleScreenContent(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .clickable {
+                            analyticsUtil.trackUserEvent("Next button clicked from number of people screen")
                             navigator.openMealTypesScreen(
                                 allergies = allergies,
                                 noOfPeople = numberOfPeople,

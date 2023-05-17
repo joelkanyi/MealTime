@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kanyideveloper.core.analytics.AnalyticsUtil
 import com.kanyideveloper.core.domain.FavoritesRepository
 import com.kanyideveloper.core.domain.HomeRepository
 import com.kanyideveloper.core.domain.SubscriptionRepository
@@ -43,8 +44,10 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
     private val favoritesRepository: FavoritesRepository,
-    subscriptionRepository: SubscriptionRepository
+    subscriptionRepository: SubscriptionRepository,
+    private val analyticsUtil: AnalyticsUtil
 ) : ViewModel() {
+    fun analyticsUtil() = analyticsUtil
 
     private val _eventsFlow = MutableSharedFlow<UiEvents>()
     val eventsFlow = _eventsFlow.asSharedFlow()
@@ -89,6 +92,7 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                 }
+
                 is Resource.Success -> {
                     result.data?.collectLatest { meals ->
                         _myMealsState.value = myMealsState.value.copy(
@@ -101,6 +105,7 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                 }
+
                 else -> {
                     myMealsState
                 }
@@ -154,6 +159,7 @@ class HomeViewModel @Inject constructor(
                         )
                     )
                 }
+
                 is Resource.Success -> {
                     _eventsFlow.emit(
                         UiEvents.SnackbarEvent(
@@ -161,6 +167,7 @@ class HomeViewModel @Inject constructor(
                         )
                     )
                 }
+
                 else -> {}
             }
         }

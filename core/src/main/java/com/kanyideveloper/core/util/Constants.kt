@@ -21,6 +21,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 
 object Constants {
+    const val MIXPANEL_TOKEN = "befbaa0a69fb8d4b9824e1a2391a8540"
     const val MEAL_TABLE = "meal_table"
     const val CATEGORIES_TABLE = "categories_table"
     const val MEALTIME_DATABASE = "meal_time_database"

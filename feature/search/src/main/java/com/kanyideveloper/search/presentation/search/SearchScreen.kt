@@ -94,6 +94,7 @@ interface SearchNavigator {
 fun SearchScreen(navigator: SearchNavigator, viewModel: SearchViewModel = hiltViewModel()) {
     val searchState = viewModel.searchState.value
     val context = LocalContext.current
+    val analyticsUtil = viewModel.analyticsUtil()
 
     LaunchedEffect(key1 = true) {
         viewModel.eventsFlow.collectLatest { event ->
@@ -113,9 +114,11 @@ fun SearchScreen(navigator: SearchNavigator, viewModel: SearchViewModel = hiltVi
             viewModel.setSearchString(newValue)
         },
         onSearch = { searchParam ->
+            analyticsUtil.trackUserEvent("search online meals - $searchParam")
             viewModel.search(searchParam)
         },
         onSearchOptionClick = { option ->
+            analyticsUtil.trackUserEvent("select search online meals option - $option")
             viewModel.setSelectedSearchOption(option)
             if (viewModel.searchString.value.isNotEmpty()) {
                 viewModel.search(viewModel.searchString.value)
@@ -125,6 +128,7 @@ fun SearchScreen(navigator: SearchNavigator, viewModel: SearchViewModel = hiltVi
             viewModel.selectedSearchOption.value == option
         },
         addToFavorites = { onlineMealId, imageUrl, name ->
+            analyticsUtil.trackUserEvent("add online meal to favorites - $name")
             viewModel.insertAFavorite(
                 onlineMealId = onlineMealId,
                 mealImageUrl = imageUrl,
@@ -133,14 +137,17 @@ fun SearchScreen(navigator: SearchNavigator, viewModel: SearchViewModel = hiltVi
             )
         },
         removeFromFavorites = { id ->
+            analyticsUtil.trackUserEvent("remove online meal from favorites - $id")
             viewModel.deleteAnOnlineFavorite(
                 onlineMealId = id
             )
         },
         onMealClick = { mealId ->
+            analyticsUtil.trackUserEvent("open online meal details - $mealId")
             navigator.openOnlineMealDetails(mealId = mealId)
         },
         onClickBack = {
+            analyticsUtil.trackUserEvent("back to home screen")
             navigator.popBackStack()
         }
     )
@@ -269,7 +276,7 @@ fun SearchOption(option: String, onClick: (String) -> Unit, isSelected: (String)
     ) {
         Box(
             modifier = Modifier
-                .padding(16.dp),
+                .padding(8.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(

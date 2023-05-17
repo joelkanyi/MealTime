@@ -49,6 +49,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -61,6 +62,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import org.json.JSONObject
 
 interface AuthNavigator {
     fun openForgotPassword()
@@ -73,9 +75,13 @@ interface AuthNavigator {
 
 @Destination
 @Composable
-fun LandingPageScreen(navigatar: AuthNavigator) {
+fun LandingPageScreen(
+    navigator: AuthNavigator,
+    viewModel: LandingPageViewModel = hiltViewModel(),
+) {
     val auth = Firebase.auth
     val context = LocalContext.current
+    val analyticsUtil = viewModel.analyticsUtil()
 
     val oneTapSignInState = rememberOneTapSignInState()
     OneTapSignInWithGoogle(
@@ -86,7 +92,14 @@ fun LandingPageScreen(navigatar: AuthNavigator) {
             CoroutineScope(Dispatchers.Main).launch {
                 val result = auth.signInWithCredential(firebaseCredential).await()
                 if (result.user != null) {
-                    navigatar.switchNavGraphRoot()
+                    analyticsUtil.setUserProfile(
+                        userID = result.user?.uid ?: "",
+                        userProperties = JSONObject()
+                            .put("name", "${result?.user?.displayName}")
+                            .put("email", "${result?.user?.email}")
+
+                    )
+                    navigator.switchNavGraphRoot()
                 }
             }
         },
@@ -116,6 +129,7 @@ fun LandingPageScreen(navigatar: AuthNavigator) {
                 modifier = Modifier
                     .fillMaxWidth(),
                 onClick = {
+                    analyticsUtil.trackUserEvent("Google Sign In Clicked")
                     oneTapSignInState.open()
                 },
                 enabled = !oneTapSignInState.opened,
@@ -145,7 +159,10 @@ fun LandingPageScreen(navigatar: AuthNavigator) {
             Button(
                 modifier = Modifier
                     .fillMaxWidth(),
-                onClick = { navigatar.openSignUp() },
+                onClick = {
+                    analyticsUtil.trackUserEvent("Email Sign In Clicked")
+                    navigator.openSignUp()
+                },
                 shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary
@@ -177,7 +194,8 @@ fun LandingPageScreen(navigatar: AuthNavigator) {
                 modifier = Modifier
                     .fillMaxWidth(),
                 onClick = {
-                    navigatar.openSignIn()
+                    analyticsUtil.trackUserEvent("Already have an account? Sign In Clicked")
+                    navigator.openSignIn()
                 }
             ) {
                 Text(

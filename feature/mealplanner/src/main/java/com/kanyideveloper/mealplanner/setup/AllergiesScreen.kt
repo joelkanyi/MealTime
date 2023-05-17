@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.compose_ui.theme.PrimaryColor
+import com.kanyideveloper.core.analytics.AnalyticsUtil
 import com.kanyideveloper.core.components.EmptyStateComponent
 import com.kanyideveloper.core.components.ErrorStateComponent
 import com.kanyideveloper.core.components.LoadingStateComponent
@@ -60,6 +61,7 @@ fun AllergiesScreen(
     viewModel: SetupViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    val analyticsUtil = viewModel.analyticsUtil()
 
     LaunchedEffect(key1 = true) {
         viewModel.eventsFlow.collectLatest { event ->
@@ -74,10 +76,12 @@ fun AllergiesScreen(
 
     AllergiesScreenContent(
         navigator = navigator,
+        analyticsUtil = analyticsUtil,
         ingredientsState = viewModel.ingredients.value,
         allergies = viewModel.gson.toJson(viewModel.allergicTo),
         editMealPlanPreference = editMealPlanPreference,
         onCheck = { allergy ->
+            analyticsUtil.trackUserEvent("User allergic to $allergy")
             viewModel.insertAllergicTo(allergy)
         },
         isChecked = { allergy ->
@@ -93,7 +97,8 @@ private fun AllergiesScreenContent(
     ingredientsState: IngredientsState,
     isChecked: (String) -> Boolean,
     onCheck: (String) -> Unit,
-    editMealPlanPreference: Boolean
+    editMealPlanPreference: Boolean,
+    analyticsUtil: AnalyticsUtil,
 ) {
     Column(Modifier.fillMaxSize()) {
         StandardToolbar(
@@ -107,6 +112,7 @@ private fun AllergiesScreenContent(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .clickable {
+                            analyticsUtil.trackUserEvent("Allergies screen next button clicked")
                             navigator.openNoOfPeopleScreen(
                                 allergies = allergies,
                                 editMealPlanPreference = editMealPlanPreference
