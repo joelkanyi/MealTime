@@ -95,6 +95,7 @@ fun NextAddMealScreen(
     val ingredient = viewModel.ingredient.value
 
     val isSubscribed = viewModel.isSubscribed.collectAsState().value
+    val analyticsUtil = viewModel.analyticsUtil()
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -114,6 +115,7 @@ fun NextAddMealScreen(
             Column(Modifier.fillMaxSize()) {
                 StandardToolbar(
                     navigate = {
+                        analyticsUtil.trackUserEvent("Next Add Meal Screen -Back Button clicked")
                         navigator.popBackStack()
                     },
                     title = {
@@ -126,6 +128,7 @@ fun NextAddMealScreen(
                             SaveTextButtonContent(
                                 isLoading = viewModel.saveMeal.value.isLoading,
                                 onClick = {
+                                    analyticsUtil.trackUserEvent("save my meal button clicked - $mealName")
                                     keyboardController?.hide()
                                     viewModel.saveMeal(
                                         imageUri = imageUri,

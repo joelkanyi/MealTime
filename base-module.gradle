@@ -127,4 +127,7 @@ dependencies {
 
     // Material Extended Icons
     implementation "androidx.compose.material:material-icons-extended:1.3.0"
+
+    // Mixpanel
+    api ("com.mixpanel.android:mixpanel-android:7.2.2")
 }

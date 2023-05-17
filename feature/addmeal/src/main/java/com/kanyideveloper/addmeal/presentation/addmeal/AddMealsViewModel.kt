@@ -24,6 +24,7 @@ import androidx.lifecycle.viewModelScope
 import com.kanyideveloper.addmeal.domain.repository.SaveMealRepository
 import com.kanyideveloper.addmeal.domain.repository.UploadImageRepository
 import com.kanyideveloper.addmeal.presentation.addmeal.state.SaveMealState
+import com.kanyideveloper.core.analytics.AnalyticsUtil
 import com.kanyideveloper.core.domain.SubscriptionRepository
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.state.SubscriptionStatusUiState
@@ -45,8 +46,10 @@ import javax.inject.Inject
 class AddMealsViewModel @Inject constructor(
     private val uploadImageRepository: UploadImageRepository,
     private val saveMealRepository: SaveMealRepository,
-    subscriptionRepository: SubscriptionRepository
+    subscriptionRepository: SubscriptionRepository,
+    private val analyticsUtil: AnalyticsUtil
 ) : ViewModel() {
+    fun analyticsUtil() = analyticsUtil
 
     val isSubscribed: StateFlow<SubscriptionStatusUiState> =
         subscriptionRepository.isSubscribed

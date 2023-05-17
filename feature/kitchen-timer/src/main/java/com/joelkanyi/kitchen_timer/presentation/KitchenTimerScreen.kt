@@ -90,6 +90,7 @@ fun KitchenTimerScreen(viewModel: KitchenTimerViewModel = hiltViewModel()) {
     val timerValue = viewModel.remainingTimerValue.observeAsState(initial = KitchenTimer()).value
     val isTimerRunning = viewModel.isTimerRunning.observeAsState(initial = false).value
     val context = LocalContext.current
+    val analyticsUtil = viewModel.analyticsUtil()
 
     var hasCamPermission by remember {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -121,12 +122,15 @@ fun KitchenTimerScreen(viewModel: KitchenTimerViewModel = hiltViewModel()) {
         HowLongDialog(
             currentTimerValue = viewModel.currentTimerValue.value,
             setCurrentTimerValue = {
+                analyticsUtil.trackUserEvent("set timer value: $it")
                 viewModel.setCurrentTimerValue(it)
             },
             onDismiss = {
+                analyticsUtil.trackUserEvent("dismissed timer dialog")
                 viewModel.setShowHowLongDialog(false)
             },
             onTimerSet = {
+                analyticsUtil.trackUserEvent("timer set")
                 viewModel.setShowHowLongDialog(false)
                 viewModel.startTimer()
             }
@@ -138,11 +142,16 @@ fun KitchenTimerScreen(viewModel: KitchenTimerViewModel = hiltViewModel()) {
         isTimerRunning = isTimerRunning,
         originalTime = minutesToMilliseconds(viewModel.currentTimerValue.value),
         percentage = viewModel.percentage.value ?: 0f,
-        onStop = { viewModel.stopTimer() },
+        onStop = {
+            analyticsUtil.trackUserEvent("stop timer")
+            viewModel.stopTimer()
+        },
         onStart = {
             if (viewModel.isTimerRunning.value == true) {
+                analyticsUtil.trackUserEvent("pause timer")
                 viewModel.pauseTimer()
             } else {
+                analyticsUtil.trackUserEvent("start timer")
                 viewModel.startTimer()
             }
         },

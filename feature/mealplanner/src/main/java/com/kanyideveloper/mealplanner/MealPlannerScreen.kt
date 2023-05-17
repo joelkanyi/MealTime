@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joelkanyi.horizontalcalendar.HorizontalCalendarView
 import com.kanyideveloper.compose_ui.components.StandardToolbar
+import com.kanyideveloper.core.analytics.AnalyticsUtil
 import com.kanyideveloper.core.components.EmptyStateComponent
 import com.kanyideveloper.core.components.SwipeRefreshComponent
 import com.kanyideveloper.core.model.Meal
@@ -90,6 +91,7 @@ fun MealPlannerScreen(
     val meal = viewModel.singleMeal.observeAsState().value?.observeAsState()?.value
 
     val context = LocalContext.current
+    val analyticsUtil = viewModel.analyticsUtil()
 
     when (val isSubscribed = viewModel.isSubscribed.collectAsState().value) {
         is SubscriptionStatusUiState.Success -> {
@@ -110,6 +112,7 @@ fun MealPlannerScreen(
             })
 
             if (shouldShowMealsDialog) {
+                analyticsUtil.trackUserEvent("Show select meal dialog")
                 SelectMealDialog(
                     mealType = viewModel.mealType.value,
                     meals = viewModel.searchMeals.value.meals,
@@ -120,11 +123,13 @@ fun MealPlannerScreen(
                     isLoading = viewModel.searchMeals.value.isLoading,
                     error = viewModel.searchMeals.value.error,
                     onDismiss = {
+                        analyticsUtil.trackUserEvent("Dismiss select meal dialog")
                         viewModel.setShouldShowMealsDialogState(
                             !viewModel.shouldShowMealsDialog.value
                         )
                     },
                     onClickAdd = { meall, type ->
+                        analyticsUtil.trackUserEvent("Add meal to plan - ${meall.name}")
 
                         val allergies = viewModel.allergies.value
 
@@ -150,14 +155,17 @@ fun MealPlannerScreen(
                         viewModel.setSearchStringState(it)
                     },
                     onSearchClicked = {
+                        analyticsUtil.trackUserEvent("Meal Planner Search meal")
                         viewModel.searchMeal(
                             isSubscribed = isSubscribed.isSubscribed
                         )
                     },
                     onSearchByChange = { searchBy ->
+                        analyticsUtil.trackUserEvent("Meal Planner Search by $searchBy")
                         viewModel.setSearchByState(searchBy)
                     },
                     onSourceChange = { source ->
+                        analyticsUtil.trackUserEvent("Meal Planner meals Source $source")
                         viewModel.setSourceState(source)
                         if (source == "My Meals" || source == "My Favorites") {
                             viewModel.searchMeal(
@@ -174,6 +182,7 @@ fun MealPlannerScreen(
                 topBar = {
                     StandardToolbar(
                         navigate = {
+                            analyticsUtil.trackUserEvent("Navigate back from Meal Planner")
                             navigator.popBackStack()
                         },
                         title = {
@@ -188,6 +197,7 @@ fun MealPlannerScreen(
                 SwipeRefreshComponent(
                     isRefreshingState = planMealsUiState.isLoading,
                     onRefreshData = {
+                        analyticsUtil.trackUserEvent("Refresh Meal Planner")
                         viewModel.getPlanMeals(
                             isSubscribed = isSubscribed.isSubscribed
                         )
@@ -197,15 +207,18 @@ fun MealPlannerScreen(
                         modifier = Modifier.padding(paddingValues),
                         hasMealPlan = hasMealPlan,
                         navigator = navigator,
+                        analyticsUtil = analyticsUtil,
                         mealTypes = viewModel.types.value,
                         mealsAndTheirTypes = planMealsUiState.meals,
                         onClickAdd = { mealType ->
+                            analyticsUtil.trackUserEvent("Show select meal dialog")
                             viewModel.setMealTypeState(mealType)
                             viewModel.setShouldShowMealsDialogState(
                                 !viewModel.shouldShowMealsDialog.value
                             )
                         },
                         onClickDay = { fullDate ->
+                            analyticsUtil.trackUserEvent("Meal Planner select date $fullDate")
                             viewModel.setSelectedDateState(fullDate)
                             viewModel.getPlanMeals(
                                 filterDay = fullDate,
@@ -213,6 +226,7 @@ fun MealPlannerScreen(
                             )
                         },
                         onRemoveClick = { id ->
+                            analyticsUtil.trackUserEvent("Remove meal from plan")
                             id?.let {
                                 viewModel.removeMealFromPlan(
                                     id = it,
@@ -221,6 +235,7 @@ fun MealPlannerScreen(
                             }
                         },
                         onMealClick = { localMealId, onlineMealId, isOnline ->
+                            analyticsUtil.trackUserEvent("Meal Planner meal click")
                             if (isOnline) {
                                 onlineMealId?.let { navigator.openOnlineMealDetails(mealId = it) }
                             } else {
@@ -253,7 +268,8 @@ private fun MealPlannerScreenContent(
     mealTypes: List<String>,
     onClickDay: (String) -> Unit,
     onRemoveClick: (String?) -> Unit,
-    onMealClick: (String?, String?, Boolean) -> Unit
+    onMealClick: (String?, String?, Boolean) -> Unit,
+    analyticsUtil: AnalyticsUtil,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         if (!hasMealPlan) {
@@ -263,6 +279,7 @@ private fun MealPlannerScreenContent(
                 content = {
                     Spacer(modifier = Modifier.height(32.dp))
                     Button(onClick = {
+                        analyticsUtil.trackUserEvent("No meal plan -Navigate to allergies screen")
                         navigator.openAllergiesScreen()
                     }) {
                         Text(text = "Get Started")

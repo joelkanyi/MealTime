@@ -16,13 +16,11 @@
 package com.kanyideveloper.presentation.home.mymeal
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,8 +33,6 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -51,8 +47,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -64,7 +58,6 @@ import com.kanyideveloper.core.components.SwipeRefreshComponent
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.util.LottieAnim
 import com.kanyideveloper.core.util.UiEvents
-import com.kanyideveloper.core.util.showDayCookMessage
 import com.kanyideveloper.domain.model.MealCategory
 import com.kanyideveloper.mealtime.core.R
 import com.kanyideveloper.presentation.home.HomeNavigator
@@ -73,7 +66,6 @@ import com.kanyideveloper.presentation.home.MyMealState
 import com.kanyideveloper.presentation.home.composables.MealItem
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
-import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -86,6 +78,7 @@ fun MyMealScreen(
 ) {
     val myMealsState = viewModel.myMealsState.value
     val snackbarHostState = remember { SnackbarHostState() }
+    val analyticsUtils = viewModel.analyticsUtil()
 
     LaunchedEffect(key1 = true, block = {
         viewModel.getMyMeals()
@@ -112,6 +105,7 @@ fun MyMealScreen(
         SwipeRefreshComponent(
             isRefreshingState = myMealsState.isLoading,
             onRefreshData = {
+                analyticsUtils.trackUserEvent("Refreshed My Meals")
                 viewModel.getMyMeals()
             }
         ) {
@@ -120,10 +114,11 @@ fun MyMealScreen(
                 viewModel = viewModel,
                 navigator = navigator,
                 openMealDetails = { meal ->
+                    analyticsUtils.trackUserEvent("Opened My Meal Details")
                     navigator.openMealDetails(meal = meal)
                 },
                 addToFavorites = { localMealId, imageUrl, name ->
-                    Timber.e("Adding to favorites: $localMealId, $imageUrl, $name")
+                    analyticsUtils.trackUserEvent("Added My Meal To Favorites - $name")
                     viewModel.insertAFavorite(
                         localMealId = localMealId,
                         mealImageUrl = imageUrl,
@@ -133,6 +128,7 @@ fun MyMealScreen(
                     )
                 },
                 removeFromFavorites = { id ->
+                    analyticsUtils.trackUserEvent("Removed My Meal From Favorites")
                     viewModel.deleteALocalFavorite(
                         localMealId = id,
                         isSubscribed = isSubscribed
@@ -142,6 +138,7 @@ fun MyMealScreen(
                     viewModel.selectedCategory.value == category
                 },
                 onCategoryClick = { category ->
+                    analyticsUtils.trackUserEvent("Selected My Meal Category - $category")
                     viewModel.setSelectedCategory(category)
                     viewModel.getMyMeals(viewModel.selectedCategory.value)
                 }
@@ -196,64 +193,7 @@ private fun MyMealScreenContent(
                 item(span = { GridItemSpan(2) }) {
                     Spacer(modifier = Modifier.height(8.dp))
                 }
-                item(span = { GridItemSpan(2) }) {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                            .height(180.dp),
-                        shape = Shapes.large,
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surface
-                        )
-                    ) {
-                        Box(Modifier.fillMaxSize()) {
-                            Image(
-                                modifier = Modifier.fillMaxSize(),
-                                painter = painterResource(id = R.drawable.randomize_mealss),
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop
-                            )
-                            Column(
-                                modifier = Modifier
-                                    .align(Alignment.BottomEnd)
-                                    .padding(16.dp)
-                            ) {
-                                Text(
-                                    text = showDayCookMessage(),
-                                    style = MaterialTheme.typography.titleSmall,
-                                    color = Color.White
-                                )
-                                Button(
-                                    onClick = {
-                                        navigator.openRandomMeals()
-                                    },
-                                    elevation = ButtonDefaults.buttonElevation(
-                                        defaultElevation = 30.dp
-                                    )
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                    ) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.ic_refresh),
-                                            contentDescription = "Random meal shuffle icon",
-                                        )
-                                        Text(
-                                            text = "Get a Random Meal",
-                                            style = MaterialTheme.typography.labelMedium
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
 
-                item(span = { GridItemSpan(2) }) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
                 if (myMealState.meals.isNotEmpty()) {
                     item(span = { GridItemSpan(2) }) {
                         Text(

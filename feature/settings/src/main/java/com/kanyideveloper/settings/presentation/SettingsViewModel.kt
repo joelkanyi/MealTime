@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.kanyideveloper.core.analytics.AnalyticsUtil
 import com.kanyideveloper.core.domain.SubscriptionRepository
 import com.kanyideveloper.core.domain.UserDataRepository
 import com.kanyideveloper.core.state.SubscriptionStatusUiState
@@ -38,8 +39,10 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
-    subscriptionRepository: SubscriptionRepository
+    subscriptionRepository: SubscriptionRepository,
+    private val analyticsUtil: AnalyticsUtil,
 ) : ViewModel() {
+    fun analyticsUtil() = analyticsUtil
 
     val isSubscribed: StateFlow<SubscriptionStatusUiState> =
         subscriptionRepository.isSubscribed

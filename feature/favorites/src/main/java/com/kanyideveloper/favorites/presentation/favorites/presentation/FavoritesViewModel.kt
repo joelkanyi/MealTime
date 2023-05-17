@@ -20,6 +20,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kanyideveloper.core.analytics.AnalyticsUtil
 import com.kanyideveloper.core.domain.FavoritesRepository
 import com.kanyideveloper.core.domain.HomeRepository
 import com.kanyideveloper.core.domain.SubscriptionRepository
@@ -43,8 +44,10 @@ import javax.inject.Inject
 class FavoritesViewModel @Inject constructor(
     private val favoritesRepository: FavoritesRepository,
     private val homeRepository: HomeRepository,
-    subscriptionRepository: SubscriptionRepository
+    subscriptionRepository: SubscriptionRepository,
+    private val analyticsUtil: AnalyticsUtil,
 ) : ViewModel() {
+    fun analyticsUtil() = analyticsUtil
 
     val isSubscribed: StateFlow<SubscriptionStatusUiState> =
         subscriptionRepository.isSubscribed

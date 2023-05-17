@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kanyideveloper.core.analytics.AnalyticsUtil
 import com.kanyideveloper.core.domain.FavoritesRepository
 import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core.util.Resource
@@ -34,9 +35,10 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchRepository: SearchRepository,
-    private val favoritesRepository: FavoritesRepository
+    private val favoritesRepository: FavoritesRepository,
+    private val analyticsUtil: AnalyticsUtil,
 ) : ViewModel() {
-
+    fun analyticsUtil() = analyticsUtil
     private val _eventsFlow = MutableSharedFlow<UiEvents>()
     val eventsFlow = _eventsFlow
 

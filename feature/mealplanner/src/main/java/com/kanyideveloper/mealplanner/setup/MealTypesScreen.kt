@@ -58,6 +58,7 @@ fun MealTypesScreen(
     navigator: MealPlannerNavigator,
     viewModel: SetupViewModel = hiltViewModel()
 ) {
+    val analyticsUtils = viewModel.analyticsUtil()
     LaunchedEffect(key1 = true) {
         viewModel.eventsFlow.collectLatest { event ->
             when (event) {
@@ -77,6 +78,7 @@ fun MealTypesScreen(
         navigator = navigator,
         mealTypes = viewModel.dishTypes,
         onClickComplete = {
+            analyticsUtils.trackUserEvent("meal_plan_preferences_saved")
             viewModel.saveMealPlanPreferences(
                 allergies = viewModel.gson.fromJson(allergies, Array<String>::class.java).toList(),
                 numberOfPeople = numberOfPeople,
@@ -85,6 +87,7 @@ fun MealTypesScreen(
             )
         },
         onClickAMealType = { type ->
+            analyticsUtils.trackUserEvent("meal_type_selected - $type")
             viewModel.insertSelectedDishType(type)
         },
         isSelected = { type ->
