@@ -45,6 +45,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -91,6 +95,10 @@ fun KitchenTimerScreen(viewModel: KitchenTimerViewModel = hiltViewModel()) {
     val isTimerRunning = viewModel.isTimerRunning.observeAsState(initial = false).value
     val context = LocalContext.current
     val analyticsUtil = viewModel.analyticsUtil()
+    val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember {
+        SnackbarHostState()
+    }
 
     var hasCamPermission by remember {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -142,11 +150,21 @@ fun KitchenTimerScreen(viewModel: KitchenTimerViewModel = hiltViewModel()) {
         isTimerRunning = isTimerRunning,
         originalTime = minutesToMilliseconds(viewModel.currentTimerValue.value),
         percentage = viewModel.percentage.value ?: 0f,
+        snackbarHostState = snackbarHostState,
         onStop = {
             analyticsUtil.trackUserEvent("stop timer")
             viewModel.stopTimer()
         },
         onStart = {
+            if (viewModel.currentTimerValue.value == 0) {
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = "Please set a timer value",
+                        duration = SnackbarDuration.Short
+                    )
+                }
+                return@KitchenTimerScreenContent
+            }
             if (viewModel.isTimerRunning.value == true) {
                 analyticsUtil.trackUserEvent("pause timer")
                 viewModel.pauseTimer()
@@ -168,36 +186,128 @@ private fun KitchenTimerScreenContent(
     percentage: Float,
     onStop: () -> Unit,
     onStart: () -> Unit,
-    showSetTimerDialog: () -> Unit
+    showSetTimerDialog: () -> Unit,
+    snackbarHostState: SnackbarHostState,
 ) {
-    Column(
-        Modifier.fillMaxSize()
-    ) {
-        StandardToolbar(
-            navigate = {},
-            title = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
+            StandardToolbar(
+                navigate = {},
+                title = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        Text(
+                            text = "Kitchen Timer",
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+
+                        Card(
+                            modifier = Modifier
+                                .size(36.dp),
+                            shape = Shapes.large,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant
+                            ),
+                            onClick = {
+                                showSetTimerDialog()
+                            },
+                            elevation = CardDefaults.cardElevation(
+                                defaultElevation = 4.dp
+                            )
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(8.dp),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = "Add Timer",
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+                },
+                showBackArrow = false,
+                navActions = {}
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                TimerProgressIndicator(
                     modifier = Modifier
+                        .padding(top = 32.dp, start = 16.dp, end = 16.dp)
+                        .align(Alignment.TopCenter),
+                    timerValue = timerValue,
+                    mainColor = PrimaryColor,
+                    radius = 40.dp,
+                    strokeWidth = 10.dp,
+                    percentage = percentage,
+                    originalTime = originalTime
+                )
+
+                Row(
+                    Modifier
+                        .align(Alignment.BottomCenter)
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .padding(start = 16.dp, end = 16.dp, bottom = 56.dp),
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "Kitchen Timer",
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.titleLarge
-                    )
+                    Card(
+                        modifier = Modifier
+                            .size(70.dp),
+                        shape = CircleShape,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        ),
+                        onClick = onStop,
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 4.dp
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(8.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(42.dp),
+                                painter = painterResource(id = R.drawable.ic_stop),
+                                contentDescription = "Stop Timer",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
 
                     Card(
                         modifier = Modifier
-                            .size(36.dp),
-                        shape = Shapes.large,
+                            .size(70.dp),
+                        shape = CircleShape,
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.surfaceVariant
                         ),
                         onClick = {
-                            showSetTimerDialog()
+                            onStart()
                         },
                         elevation = CardDefaults.cardElevation(
                             defaultElevation = 4.dp
@@ -211,97 +321,14 @@ private fun KitchenTimerScreenContent(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Add,
+                                modifier = Modifier.size(42.dp),
+                                painter = painterResource(
+                                    id = if (isTimerRunning) R.drawable.ic_pause else R.drawable.ic_play
+                                ),
                                 contentDescription = "Add Timer",
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-                    }
-                }
-            },
-            showBackArrow = false,
-            navActions = {}
-        )
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            TimerProgressIndicator(
-                modifier = Modifier
-                    .padding(top = 32.dp, start = 16.dp, end = 16.dp)
-                    .align(Alignment.TopCenter),
-                timerValue = timerValue,
-                mainColor = PrimaryColor,
-                radius = 40.dp,
-                strokeWidth = 10.dp,
-                percentage = percentage,
-                originalTime = originalTime
-            )
-
-            Row(
-                Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, bottom = 56.dp),
-                horizontalArrangement = Arrangement.SpaceAround,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Card(
-                    modifier = Modifier
-                        .size(70.dp),
-                    shape = CircleShape,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant
-                    ),
-                    onClick = onStop,
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 4.dp
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(8.dp),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(42.dp),
-                            painter = painterResource(id = R.drawable.ic_stop),
-                            contentDescription = "Stop Timer",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-
-                Card(
-                    modifier = Modifier
-                        .size(70.dp),
-                    shape = CircleShape,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant
-                    ),
-                    onClick = {
-                        onStart()
-                    },
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 4.dp
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(8.dp),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(42.dp),
-                            painter = painterResource(
-                                id = if (isTimerRunning) R.drawable.ic_pause else R.drawable.ic_play
-                            ),
-                            contentDescription = "Add Timer",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
                     }
                 }
             }
