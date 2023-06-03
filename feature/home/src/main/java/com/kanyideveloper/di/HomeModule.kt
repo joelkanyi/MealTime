@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.kanyideveloper.core.domain.HomeRepository
 import com.kanyideveloper.core_database.dao.MealDao
+import com.kanyideveloper.core_database.dao.OnlineMealsDao
 import com.kanyideveloper.core_network.MealDbApi
 import com.kanyideveloper.data.repository.HomeRepositoryImpl
 import com.kanyideveloper.data.repository.OnlineMealsRepositoryImpl
@@ -49,7 +50,7 @@ object HomeModule {
 
     @Provides
     @Singleton
-    fun provideOnlineMealsRepository(mealDbApi: MealDbApi): OnlineMealsRepository {
-        return OnlineMealsRepositoryImpl(mealDbApi = mealDbApi)
+    fun provideOnlineMealsRepository(mealDbApi: MealDbApi, onlineMealsDao: OnlineMealsDao): OnlineMealsRepository {
+        return OnlineMealsRepositoryImpl(mealDbApi = mealDbApi, onlineMealsDao = onlineMealsDao)
     }
 }

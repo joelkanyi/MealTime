@@ -70,15 +70,23 @@ class OnlineMealViewModel @Inject constructor(
                 is Resource.Error -> {
                     _categories.value = categories.value.copy(
                         isLoading = false,
-                        error = result.message
+                        error = result.message,
+                        categories = result.data ?: emptyList()
+                    )
+                    _eventsFlow.emit(
+                        UiEvents.SnackbarEvent(
+                            result.message ?: "An unknown error occurred"
+                        )
                     )
                 }
+
                 is Resource.Success -> {
                     _categories.value = categories.value.copy(
                         isLoading = false,
                         categories = result.data ?: emptyList()
                     )
                 }
+
                 else -> {
                     categories
                 }
@@ -97,15 +105,23 @@ class OnlineMealViewModel @Inject constructor(
                 is Resource.Error -> {
                     _meals.value = meals.value.copy(
                         isLoading = false,
-                        error = result.message
+                        error = result.message,
+                        meals = result.data ?: emptyList()
+                    )
+                    _eventsFlow.emit(
+                        UiEvents.SnackbarEvent(
+                            result.message ?: "An unknown error occurred"
+                        )
                     )
                 }
+
                 is Resource.Success -> {
                     _meals.value = meals.value.copy(
                         isLoading = false,
                         meals = result.data ?: emptyList()
                     )
                 }
+
                 else -> {
                     categories
                 }
@@ -147,6 +163,7 @@ class OnlineMealViewModel @Inject constructor(
                         )
                     )
                 }
+
                 is Resource.Success -> {
                     _eventsFlow.emit(
                         UiEvents.SnackbarEvent(
@@ -154,6 +171,7 @@ class OnlineMealViewModel @Inject constructor(
                         )
                     )
                 }
+
                 else -> {}
             }
         }
