@@ -82,7 +82,6 @@ import com.kanyideveloper.presentation.home.onlinemeal.state.MealState
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
 
-@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Destination
 @Composable
@@ -111,58 +110,48 @@ fun OnlineMealScreen(
         }
     })
 
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(
-                snackbarHostState
+    OnlineMealScreenContent(
+        categoriesState = categoriesState,
+        selectedCategory = selectedCategory,
+        mealsState = mealsState,
+        snackbarHostState = snackbarHostState,
+        onMealClick = { mealId ->
+            analyticsUtil.trackUserEvent("select online meal - $mealId")
+            navigator.openOnlineMealDetails(mealId = mealId)
+        },
+        onSelectCategory = { categoryName ->
+            analyticsUtil.trackUserEvent("select online meal category - $categoryName")
+            viewModel.setSelectedCategory(categoryName)
+            viewModel.getMeals(viewModel.selectedCategory.value)
+        },
+        addToFavorites = { onlineMealId, imageUrl, name ->
+            analyticsUtil.trackUserEvent("add online meal to favorites - $name")
+            viewModel.insertAFavorite(
+                onlineMealId = onlineMealId,
+                mealImageUrl = imageUrl,
+                mealName = name,
+                isOnline = true,
+                isSubscribed = isSubscribed
             )
-        }
-    ) {
-        SwipeRefreshComponent(
-            isRefreshingState = mealsState.isLoading,
-            onRefreshData = {
-                viewModel.getMeals(viewModel.selectedCategory.value)
-            }
-        ) {
-            OnlineMealScreenContent(
-                categoriesState = categoriesState,
-                selectedCategory = selectedCategory,
-                mealsState = mealsState,
-                onMealClick = { mealId ->
-                    analyticsUtil.trackUserEvent("select online meal - $mealId")
-                    navigator.openOnlineMealDetails(mealId = mealId)
-                },
-                onSelectCategory = { categoryName ->
-                    analyticsUtil.trackUserEvent("select online meal category - $categoryName")
-                    viewModel.setSelectedCategory(categoryName)
-                    viewModel.getMeals(viewModel.selectedCategory.value)
-                },
-                addToFavorites = { onlineMealId, imageUrl, name ->
-                    analyticsUtil.trackUserEvent("add online meal to favorites - $name")
-                    viewModel.insertAFavorite(
-                        onlineMealId = onlineMealId,
-                        mealImageUrl = imageUrl,
-                        mealName = name,
-                        isOnline = true,
-                        isSubscribed = isSubscribed
-                    )
-                },
-                removeFromFavorites = { id ->
-                    analyticsUtil.trackUserEvent("remove online meal from favorites - $id")
-                    viewModel.deleteAnOnlineFavorite(
-                        onlineMealId = id,
-                        isSubscribed = isSubscribed
-                    )
-                },
-                openRandomMeal = {
-                    analyticsUtil.trackUserEvent("open random online meal")
-                    navigator.openRandomMeals()
-                }
+        },
+        removeFromFavorites = { id ->
+            analyticsUtil.trackUserEvent("remove online meal from favorites - $id")
+            viewModel.deleteAnOnlineFavorite(
+                onlineMealId = id,
+                isSubscribed = isSubscribed
             )
+        },
+        openRandomMeal = {
+            analyticsUtil.trackUserEvent("open random online meal")
+            navigator.openRandomMeals()
+        },
+        onRefreshData = {
+            viewModel.getMeals(viewModel.selectedCategory.value)
         }
-    }
+    )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @VisibleForTesting
 @Composable
 fun OnlineMealScreenContent(
@@ -173,110 +162,129 @@ fun OnlineMealScreenContent(
     onMealClick: (String) -> Unit,
     addToFavorites: (String, String, String) -> Unit,
     removeFromFavorites: (String) -> Unit,
-    openRandomMeal: () -> Unit
+    openRandomMeal: () -> Unit,
+    onRefreshData: () -> Unit,
+    snackbarHostState: SnackbarHostState,
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        // Data Loaded Successfully
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            contentPadding = PaddingValues(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(
+                snackbarHostState
+            )
+        }
+    ) { paddingValues ->
+        SwipeRefreshComponent(
+            isRefreshingState = mealsState.isLoading,
+            onRefreshData = onRefreshData
         ) {
-            item(span = { GridItemSpan(2) }) {
-                CategorySelection(
-                    state = categoriesState,
-                    selectedCategory = selectedCategory,
-                    onClick = { categoryName ->
-                        onSelectCategory(categoryName)
-                    }
-                )
-            }
-            item(span = { GridItemSpan(2) }) {
-                Spacer(modifier = Modifier.height(12.dp))
-            }
-
-            item(span = { GridItemSpan(2) }) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                        .height(180.dp),
-                    shape = Shapes.large,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
-                    )
+            Box(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+            ) {
+                // Data Loaded Successfully
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Box(Modifier.fillMaxSize()) {
-                        Image(
-                            modifier = Modifier.fillMaxSize(),
-                            painter = painterResource(id = R.drawable.randomize_mealss),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop
+                    item(span = { GridItemSpan(2) }) {
+                        CategorySelection(
+                            state = categoriesState,
+                            selectedCategory = selectedCategory,
+                            onClick = { categoryName ->
+                                onSelectCategory(categoryName)
+                            }
                         )
-                        Column(
+                    }
+                    item(span = { GridItemSpan(2) }) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
+
+                    item(span = { GridItemSpan(2) }) {
+                        Card(
                             modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .padding(16.dp)
-                        ) {
-                            Text(
-                                text = showDayCookMessage(),
-                                style = MaterialTheme.typography.titleSmall,
-                                color = Color.White
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp)
+                                .height(180.dp),
+                            shape = Shapes.large,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surface
                             )
-                            Button(
-                                onClick = openRandomMeal,
-                                elevation = ButtonDefaults.buttonElevation(
-                                    defaultElevation = 30.dp
+                        ) {
+                            Box(Modifier.fillMaxSize()) {
+                                Image(
+                                    modifier = Modifier.fillMaxSize(),
+                                    painter = painterResource(id = R.drawable.randomize_mealss),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop
                                 )
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                Column(
+                                    modifier = Modifier
+                                        .align(Alignment.BottomEnd)
+                                        .padding(16.dp)
                                 ) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_refresh),
-                                        contentDescription = "Random meal shuffle icon",
-                                    )
                                     Text(
-                                        text = "Get a Random Meal",
-                                        style = MaterialTheme.typography.labelMedium
+                                        text = showDayCookMessage(),
+                                        style = MaterialTheme.typography.titleSmall,
+                                        color = Color.White
                                     )
+                                    Button(
+                                        onClick = openRandomMeal,
+                                        elevation = ButtonDefaults.buttonElevation(
+                                            defaultElevation = 30.dp
+                                        )
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(id = R.drawable.ic_refresh),
+                                                contentDescription = "Random meal shuffle icon",
+                                            )
+                                            Text(
+                                                text = "Get a Random Meal",
+                                                style = MaterialTheme.typography.labelMedium
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
+
+                    item(span = { GridItemSpan(2) }) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+
+                    items(mealsState.meals) { meal ->
+                        OnlineMealItem(
+                            meal = meal,
+                            onClick = { mealId ->
+                                onMealClick(mealId)
+                            },
+                            addToFavorites = addToFavorites,
+                            removeFromFavorites = removeFromFavorites
+                        )
+                    }
+                }
+
+                // Loading data
+                if (mealsState.isLoading) {
+                    LoadingStateComponent()
+                }
+
+                // An Error has occurred
+                if (!mealsState.isLoading && mealsState.error != null && mealsState.meals.isEmpty()) {
+                    ErrorStateComponent(errorMessage = mealsState.error)
+                }
+
+                // Loaded Data but the list is empty
+                if (!mealsState.isLoading && mealsState.error == null && mealsState.meals.isEmpty()) {
+                    EmptyStateComponent()
                 }
             }
-
-            item(span = { GridItemSpan(2) }) {
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-
-            items(mealsState.meals) { meal ->
-                OnlineMealItem(
-                    meal = meal,
-                    onClick = { mealId ->
-                        onMealClick(mealId)
-                    },
-                    addToFavorites = addToFavorites,
-                    removeFromFavorites = removeFromFavorites
-                )
-            }
-        }
-
-        // Loading data
-        if (mealsState.isLoading) {
-            LoadingStateComponent()
-        }
-
-        // An Error has occurred
-        if (!mealsState.isLoading && mealsState.error != null) {
-            ErrorStateComponent(errorMessage = mealsState.error)
-        }
-
-        // Loaded Data but the list is empty
-        if (!mealsState.isLoading && mealsState.error == null && mealsState.meals.isEmpty()) {
-            EmptyStateComponent()
         }
     }
 }

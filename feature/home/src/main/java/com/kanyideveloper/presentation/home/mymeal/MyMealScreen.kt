@@ -53,6 +53,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.compose_ui.theme.Shapes
+import com.kanyideveloper.core.analytics.AnalyticsUtil
 import com.kanyideveloper.core.components.LoadingStateComponent
 import com.kanyideveloper.core.components.SwipeRefreshComponent
 import com.kanyideveloper.core.model.Meal
@@ -67,7 +68,6 @@ import com.kanyideveloper.presentation.home.composables.MealItem
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
 
-@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Destination
 @Composable
@@ -90,160 +90,167 @@ fun MyMealScreen(
                         message = event.message
                     )
                 }
+
                 else -> {}
             }
         }
     })
+    MyMealScreenContent(
+        myMealState = myMealsState,
+        viewModel = viewModel,
+        snackbarHostState = snackbarHostState,
+        analyticsUtils = analyticsUtils,
+        openMealDetails = { meal ->
+            analyticsUtils.trackUserEvent("Opened My Meal Details")
+            navigator.openMealDetails(meal = meal)
+        },
+        addToFavorites = { localMealId, imageUrl, name ->
+            analyticsUtils.trackUserEvent("Added My Meal To Favorites - $name")
+            viewModel.insertAFavorite(
+                localMealId = localMealId,
+                mealImageUrl = imageUrl,
+                mealName = name,
+                isOnline = false,
+                isSubscribed = isSubscribed
+            )
+        },
+        removeFromFavorites = { id ->
+            analyticsUtils.trackUserEvent("Removed My Meal From Favorites")
+            viewModel.deleteALocalFavorite(
+                localMealId = id,
+                isSubscribed = isSubscribed
+            )
+        },
+        isSelected = { category ->
+            viewModel.selectedCategory.value == category
+        },
+        onCategoryClick = { category ->
+            analyticsUtils.trackUserEvent("Selected My Meal Category - $category")
+            viewModel.setSelectedCategory(category)
+            viewModel.getMyMeals(viewModel.selectedCategory.value)
+        }
+    )
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun MyMealScreenContent(
+    myMealState: MyMealState,
+    viewModel: HomeViewModel,
+    snackbarHostState: SnackbarHostState,
+    openMealDetails: (Meal) -> Unit = {},
+    addToFavorites: (String, String, String) -> Unit,
+    removeFromFavorites: (String) -> Unit,
+    isSelected: (String) -> Boolean,
+    onCategoryClick: (String) -> Unit,
+    analyticsUtils: AnalyticsUtil,
+) {
     Scaffold(
         snackbarHost = {
             SnackbarHost(
                 snackbarHostState
             )
         }
-    ) {
+    ) { paddingValues ->
         SwipeRefreshComponent(
-            isRefreshingState = myMealsState.isLoading,
+            isRefreshingState = myMealState.isLoading,
             onRefreshData = {
                 analyticsUtils.trackUserEvent("Refreshed My Meals")
                 viewModel.getMyMeals()
             }
         ) {
-            MyMealScreenContent(
-                myMealState = myMealsState,
-                viewModel = viewModel,
-                navigator = navigator,
-                openMealDetails = { meal ->
-                    analyticsUtils.trackUserEvent("Opened My Meal Details")
-                    navigator.openMealDetails(meal = meal)
-                },
-                addToFavorites = { localMealId, imageUrl, name ->
-                    analyticsUtils.trackUserEvent("Added My Meal To Favorites - $name")
-                    viewModel.insertAFavorite(
-                        localMealId = localMealId,
-                        mealImageUrl = imageUrl,
-                        mealName = name,
-                        isOnline = false,
-                        isSubscribed = isSubscribed
-                    )
-                },
-                removeFromFavorites = { id ->
-                    analyticsUtils.trackUserEvent("Removed My Meal From Favorites")
-                    viewModel.deleteALocalFavorite(
-                        localMealId = id,
-                        isSubscribed = isSubscribed
-                    )
-                },
-                isSelected = { category ->
-                    viewModel.selectedCategory.value == category
-                },
-                onCategoryClick = { category ->
-                    analyticsUtils.trackUserEvent("Selected My Meal Category - $category")
-                    viewModel.setSelectedCategory(category)
-                    viewModel.getMyMeals(viewModel.selectedCategory.value)
-                }
-            )
-        }
-    }
-}
-
-@Composable
-private fun MyMealScreenContent(
-    myMealState: MyMealState,
-    viewModel: HomeViewModel,
-    navigator: HomeNavigator,
-    openMealDetails: (Meal) -> Unit = {},
-    addToFavorites: (String, String, String) -> Unit,
-    removeFromFavorites: (String) -> Unit,
-    isSelected: (String) -> Boolean,
-    onCategoryClick: (String) -> Unit
-) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        // Loaded Data and the list is not empty
-        if (!myMealState.isLoading) {
-            LazyVerticalGrid(
-                modifier = Modifier.fillMaxSize(),
-                columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            Box(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
             ) {
-                item(span = { GridItemSpan(2) }) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-                item(span = { GridItemSpan(2) }) {
-                    Text(
-                        modifier = Modifier.padding(vertical = 5.dp),
-                        text = "Categories",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
-                item(span = { GridItemSpan(2) }) {
-                    LazyRow(
+                // Loaded Data and the list is not empty
+                if (!myMealState.isLoading) {
+                    LazyVerticalGrid(
+                        modifier = Modifier.fillMaxSize(),
+                        columns = GridCells.Fixed(2),
+                        contentPadding = PaddingValues(horizontal = 16.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(mealCategories) { category ->
-                            MyMealsCategoryItem(
-                                category = category,
-                                isSelected = isSelected,
-                                onCategoryClick = onCategoryClick
-                            )
+                        item(span = { GridItemSpan(2) }) {
+                            Spacer(modifier = Modifier.height(8.dp))
                         }
-                    }
-                }
-                item(span = { GridItemSpan(2) }) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-
-                if (myMealState.meals.isNotEmpty()) {
-                    item(span = { GridItemSpan(2) }) {
-                        Text(
-                            modifier = Modifier.padding(vertical = 3.dp),
-                            text = "Meals",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                    }
-                }
-                items(myMealState.meals) { meal ->
-                    MealItem(
-                        modifier = Modifier.clickable {
-                            openMealDetails(meal)
-                        },
-                        meal = meal,
-                        addToFavorites = addToFavorites,
-                        removeFromFavorites = removeFromFavorites,
-                        viewModel = viewModel
-                    )
-                }
-
-                if (myMealState.meals.isEmpty()) {
-                    item(span = { GridItemSpan(2) }) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                                .testTag("Empty State Component"),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            LottieAnim(
-                                resId = R.raw.astronaut,
-                                height = 120.dp
-                            )
+                        item(span = { GridItemSpan(2) }) {
                             Text(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                text = "You don't have local meals, you can add some.",
-                                style = MaterialTheme.typography.titleSmall,
-                                textAlign = TextAlign.Center
+                                modifier = Modifier.padding(vertical = 5.dp),
+                                text = "Categories",
+                                style = MaterialTheme.typography.titleMedium
                             )
                         }
+                        item(span = { GridItemSpan(2) }) {
+                            LazyRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                items(mealCategories) { category ->
+                                    MyMealsCategoryItem(
+                                        category = category,
+                                        isSelected = isSelected,
+                                        onCategoryClick = onCategoryClick
+                                    )
+                                }
+                            }
+                        }
+                        item(span = { GridItemSpan(2) }) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+
+                        if (myMealState.meals.isNotEmpty()) {
+                            item(span = { GridItemSpan(2) }) {
+                                Text(
+                                    modifier = Modifier.padding(vertical = 3.dp),
+                                    text = "Meals",
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                            }
+                        }
+                        items(myMealState.meals) { meal ->
+                            MealItem(
+                                modifier = Modifier.clickable {
+                                    openMealDetails(meal)
+                                },
+                                meal = meal,
+                                addToFavorites = addToFavorites,
+                                removeFromFavorites = removeFromFavorites,
+                                viewModel = viewModel
+                            )
+                        }
+
+                        if (myMealState.meals.isEmpty()) {
+                            item(span = { GridItemSpan(2) }) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp)
+                                        .testTag("Empty State Component"),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    LottieAnim(
+                                        resId = R.raw.astronaut,
+                                        height = 120.dp
+                                    )
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        text = "You don't have local meals, you can add some.",
+                                        style = MaterialTheme.typography.titleSmall,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            }
+                        }
                     }
+                }
+
+                // Loading data
+                if (myMealState.isLoading) {
+                    LoadingStateComponent()
                 }
             }
-        }
-
-        // Loading data
-        if (myMealState.isLoading) {
-            LoadingStateComponent()
         }
     }
 }

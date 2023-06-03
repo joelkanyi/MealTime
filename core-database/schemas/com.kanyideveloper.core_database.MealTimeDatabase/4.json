@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 3,
-    "identityHash": "2c157668096497b42f2482e04971b4d0",
+    "version": 4,
+    "identityHash": "d1a17525f89fd892ad1bc7c4e9c84010",
     "entities": [
       {
         "tableName": "meal_table",
@@ -212,7 +212,7 @@
       },
       {
         "tableName": "online_meals",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idMeal` TEXT NOT NULL, `strMeal` TEXT NOT NULL, `strMealThumb` TEXT NOT NULL, PRIMARY KEY(`idMeal`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idMeal` TEXT NOT NULL, `strMeal` TEXT NOT NULL, `strMealThumb` TEXT NOT NULL, `strCategory` TEXT NOT NULL, PRIMARY KEY(`idMeal`))",
         "fields": [
           {
             "fieldPath": "idMeal",
@@ -231,6 +231,12 @@
             "columnName": "strMealThumb",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "strCategory",
+            "columnName": "strCategory",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -246,7 +252,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2c157668096497b42f2482e04971b4d0')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd1a17525f89fd892ad1bc7c4e9c84010')"
     ]
   }
 }

@@ -83,7 +83,6 @@ interface FavoritesNavigator {
     fun openMealDetails(meal: Meal)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
 fun FavoritesScreen(
@@ -110,138 +109,153 @@ fun FavoritesScreen(
                                 message = event.message
                             )
                         }
+
                         else -> {}
                     }
                 }
             })
 
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                snackbarHost = {
-                    SnackbarHost(
-                        snackbarHostState
+            FavoritesScreenContent(
+                favoritesUiState = favoritesUiState,
+                snackbarHostState = snackbarHostState,
+                displayMenu = mDisplayMenu,
+                onToggleMenu = {
+                    mDisplayMenu = it
+                },
+                onClick = { _, onlineMealId, localMealId, isOnline ->
+                    analyticsUtil.trackUserEvent("Open favorite meal details clicked")
+                    if (isOnline) {
+                        onlineMealId?.let { navigator.openOnlineMealDetails(mealId = it) }
+                    } else {
+                        if (localMealId != null) {
+                            viewModel.getASingleMeal(id = localMealId)
+
+                            if (meal != null) {
+                                navigator.openMealDetails(meal = meal)
+                            }
+                        }
+                    }
+                },
+                onFavoriteClick = { favorite ->
+                    analyticsUtil.trackUserEvent("Delete one favorite clicked - ${favorite.mealName}")
+                    viewModel.deleteAFavorite(
+                        favorite = favorite,
+                        isSubscribed = isSubscribed.isSubscribed
                     )
                 },
-                topBar = {
-                    StandardToolbar(
-                        navigate = {},
-                        title = {
-                            Text(text = "Favorite meals", fontSize = 18.sp)
-                        },
-                        showBackArrow = false,
-                        navActions = {
-                            IconButton(onClick = { mDisplayMenu = !mDisplayMenu }) {
-                                Icon(Icons.Default.MoreVert, "")
-                            }
-
-                            DropdownMenu(
-                                expanded = mDisplayMenu,
-                                onDismissRequest = { mDisplayMenu = false }
-                            ) {
-                                DropdownMenuItem(
-                                    onClick = {
-                                        analyticsUtil.trackUserEvent("Delete All Favorites clicked")
-                                        viewModel.deleteAllFavorites()
-                                        mDisplayMenu = false
-                                    },
-                                    text = {
-                                        Text(text = "Delete All Favorites")
-                                    },
-                                    leadingIcon = {
-                                        Icon(
-                                            imageVector = Icons.Outlined.Delete,
-                                            contentDescription = null
-                                        )
-                                    },
-                                    trailingIcon = {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.chevron_right),
-                                            contentDescription = null
-                                        )
-                                    }
-                                )
-                            }
-                        }
+                onRefreshData = {
+                    analyticsUtil.trackUserEvent("Refresh Favorites clicked")
+                    viewModel.getFavorites(
+                        isSubscribed = isSubscribed.isSubscribed
                     )
+                },
+                onDeleteAllFavs = {
+                    analyticsUtil.trackUserEvent("Delete All Favorites clicked")
+                    viewModel.deleteAllFavorites()
+                    mDisplayMenu = false
                 }
-            ) { paddingValues ->
-                SwipeRefreshComponent(
-                    isRefreshingState = favoritesUiState.isLoading,
-                    onRefreshData = {
-                        analyticsUtil.trackUserEvent("Refresh Favorites clicked")
-                        viewModel.getFavorites(
-                            isSubscribed = isSubscribed.isSubscribed
-                        )
-                    }
-                ) {
-                    FavoritesScreenContent(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues),
-                        favoritesUiState = favoritesUiState,
-                        onClick = { _, onlineMealId, localMealId, isOnline ->
-                            analyticsUtil.trackUserEvent("Open favorite meal details clicked")
-                            if (isOnline) {
-                                onlineMealId?.let { navigator.openOnlineMealDetails(mealId = it) }
-                            } else {
-                                if (localMealId != null) {
-                                    viewModel.getASingleMeal(id = localMealId)
-
-                                    if (meal != null) {
-                                        navigator.openMealDetails(meal = meal)
-                                    }
-                                }
-                            }
-                        },
-                        onFavoriteClick = { favorite ->
-                            analyticsUtil.trackUserEvent("Delete one favorite clicked - ${favorite.mealName}")
-                            viewModel.deleteAFavorite(
-                                favorite = favorite,
-                                isSubscribed = isSubscribed.isSubscribed
-                            )
-                        }
-                    )
-                }
-            }
+            )
         }
+
         else -> {}
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun FavoritesScreenContent(
     modifier: Modifier = Modifier,
     favoritesUiState: FavoritesUiState,
+    snackbarHostState: SnackbarHostState,
     onClick: (Int?, String?, String?, Boolean) -> Unit,
-    onFavoriteClick: (Favorite) -> Unit
+    onFavoriteClick: (Favorite) -> Unit,
+    onRefreshData: () -> Unit,
+    onDeleteAllFavs: () -> Unit,
+    displayMenu: Boolean,
+    onToggleMenu: (Boolean) -> Unit
 ) {
-    Box(modifier = modifier) {
-        // Favorites list
-        if (!favoritesUiState.isLoading) {
-            LazyColumn {
-                items(
-                    favoritesUiState.favorites,
-                    key = { favorite -> favorite.id!! }
-                ) { favorite ->
-                    FoodItem(
-                        modifier = Modifier.animateItemPlacement(),
-                        favorite = favorite,
-                        onClick = onClick,
-                        onFavoriteClick = onFavoriteClick
-                    )
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        snackbarHost = {
+            SnackbarHost(
+                snackbarHostState
+            )
+        },
+        topBar = {
+            StandardToolbar(
+                navigate = {},
+                title = {
+                    Text(text = "Favorite meals", fontSize = 18.sp)
+                },
+                showBackArrow = false,
+                navActions = {
+                    IconButton(onClick = { onToggleMenu(!displayMenu) }) {
+                        Icon(Icons.Default.MoreVert, "")
+                    }
+
+                    DropdownMenu(
+                        expanded = displayMenu,
+                        onDismissRequest = { onToggleMenu(false) }
+                    ) {
+                        DropdownMenuItem(
+                            onClick = onDeleteAllFavs,
+                            text = {
+                                Text(text = "Delete All Favorites")
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Outlined.Delete,
+                                    contentDescription = null
+                                )
+                            },
+                            trailingIcon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.chevron_right),
+                                    contentDescription = null
+                                )
+                            }
+                        )
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        SwipeRefreshComponent(
+            isRefreshingState = favoritesUiState.isLoading,
+            onRefreshData = onRefreshData
+        ) {
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                // Favorites list
+                if (!favoritesUiState.isLoading) {
+                    LazyColumn {
+                        items(
+                            favoritesUiState.favorites,
+                            key = { favorite -> favorite.id!! }
+                        ) { favorite ->
+                            FoodItem(
+                                modifier = Modifier.animateItemPlacement(),
+                                favorite = favorite,
+                                onClick = onClick,
+                                onFavoriteClick = onFavoriteClick
+                            )
+                        }
+                    }
+                }
+
+                // Empty state
+                if (favoritesUiState.favorites.isEmpty() && !favoritesUiState.isLoading) {
+                    EmptyStateComponent()
+                }
+
+                // Loading state
+                if (favoritesUiState.isLoading) {
+                    LoadingStateComponent()
                 }
             }
-        }
-
-        // Empty state
-        if (favoritesUiState.favorites.isEmpty() && !favoritesUiState.isLoading) {
-            EmptyStateComponent()
-        }
-
-        // Loading state
-        if (favoritesUiState.isLoading) {
-            LoadingStateComponent()
         }
     }
 }

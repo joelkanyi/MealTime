@@ -76,7 +76,6 @@ interface MealPlannerNavigator {
     fun navigateToSettings()
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
 fun MealPlannerScreen(
@@ -106,6 +105,7 @@ fun MealPlannerScreen(
                         is UiEvents.SnackbarEvent -> {
                             snackbarHostState.showSnackbar(message = event.message)
                         }
+
                         else -> {}
                     }
                 }
@@ -177,86 +177,66 @@ fun MealPlannerScreen(
                 )
             }
 
-            Scaffold(
-                snackbarHost = { SnackbarHost(snackbarHostState) },
-                topBar = {
-                    StandardToolbar(
-                        navigate = {
-                            analyticsUtil.trackUserEvent("Navigate back from Meal Planner")
-                            navigator.popBackStack()
-                        },
-                        title = {
-                            Text(text = "Meal Planner", fontSize = 18.sp)
-                        },
-                        showBackArrow = false,
-                        navActions = {
-                        }
+            MealPlannerScreenContent(
+                hasMealPlan = hasMealPlan,
+                navigator = navigator,
+                analyticsUtil = analyticsUtil,
+                mealTypes = viewModel.types.value,
+                mealsAndTheirTypes = planMealsUiState.meals,
+                planMealsUiState = planMealsUiState,
+                snackbarHostState = snackbarHostState,
+                onClickAdd = { mealType ->
+                    analyticsUtil.trackUserEvent("Show select meal dialog")
+                    viewModel.setMealTypeState(mealType)
+                    viewModel.setShouldShowMealsDialogState(
+                        !viewModel.shouldShowMealsDialog.value
                     )
-                }
-            ) { paddingValues ->
-                SwipeRefreshComponent(
-                    isRefreshingState = planMealsUiState.isLoading,
-                    onRefreshData = {
-                        analyticsUtil.trackUserEvent("Refresh Meal Planner")
-                        viewModel.getPlanMeals(
+                },
+                onClickDay = { fullDate ->
+                    analyticsUtil.trackUserEvent("Meal Planner select date $fullDate")
+                    viewModel.setSelectedDateState(fullDate)
+                    viewModel.getPlanMeals(
+                        filterDay = fullDate,
+                        isSubscribed = isSubscribed.isSubscribed
+                    )
+                },
+                onRemoveClick = { id ->
+                    analyticsUtil.trackUserEvent("Remove meal from plan")
+                    id?.let {
+                        viewModel.removeMealFromPlan(
+                            id = it,
                             isSubscribed = isSubscribed.isSubscribed
                         )
                     }
-                ) {
-                    MealPlannerScreenContent(
-                        modifier = Modifier.padding(paddingValues),
-                        hasMealPlan = hasMealPlan,
-                        navigator = navigator,
-                        analyticsUtil = analyticsUtil,
-                        mealTypes = viewModel.types.value,
-                        mealsAndTheirTypes = planMealsUiState.meals,
-                        onClickAdd = { mealType ->
-                            analyticsUtil.trackUserEvent("Show select meal dialog")
-                            viewModel.setMealTypeState(mealType)
-                            viewModel.setShouldShowMealsDialogState(
-                                !viewModel.shouldShowMealsDialog.value
-                            )
-                        },
-                        onClickDay = { fullDate ->
-                            analyticsUtil.trackUserEvent("Meal Planner select date $fullDate")
-                            viewModel.setSelectedDateState(fullDate)
-                            viewModel.getPlanMeals(
-                                filterDay = fullDate,
-                                isSubscribed = isSubscribed.isSubscribed
-                            )
-                        },
-                        onRemoveClick = { id ->
-                            analyticsUtil.trackUserEvent("Remove meal from plan")
-                            id?.let {
-                                viewModel.removeMealFromPlan(
-                                    id = it,
-                                    isSubscribed = isSubscribed.isSubscribed
-                                )
-                            }
-                        },
-                        onMealClick = { localMealId, onlineMealId, isOnline ->
-                            analyticsUtil.trackUserEvent("Meal Planner meal click")
-                            if (isOnline) {
-                                onlineMealId?.let { navigator.openOnlineMealDetails(mealId = it) }
-                            } else {
-                                if (localMealId != null) {
-                                    viewModel.getASingleMeal(id = localMealId)
+                },
+                onMealClick = { localMealId, onlineMealId, isOnline ->
+                    analyticsUtil.trackUserEvent("Meal Planner meal click")
+                    if (isOnline) {
+                        onlineMealId?.let { navigator.openOnlineMealDetails(mealId = it) }
+                    } else {
+                        if (localMealId != null) {
+                            viewModel.getASingleMeal(id = localMealId)
 
-                                    if (meal != null) {
-                                        navigator.openMealDetails(meal = meal)
-                                    }
-                                }
+                            if (meal != null) {
+                                navigator.openMealDetails(meal = meal)
                             }
                         }
+                    }
+                },
+                onRefreshData = {
+                    analyticsUtil.trackUserEvent("Refresh Meal Planner")
+                    viewModel.getPlanMeals(
+                        isSubscribed = isSubscribed.isSubscribed
                     )
                 }
-            }
+            )
         }
+
         else -> {}
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @SuppressLint("FrequentlyChangedStateReadInComposition")
 @Composable
 private fun MealPlannerScreenContent(
@@ -264,60 +244,90 @@ private fun MealPlannerScreenContent(
     hasMealPlan: Boolean,
     navigator: MealPlannerNavigator,
     onClickAdd: (String) -> Unit,
+    planMealsUiState: MealsInPlanState,
     mealsAndTheirTypes: List<MealPlan>,
     mealTypes: List<String>,
     onClickDay: (String) -> Unit,
     onRemoveClick: (String?) -> Unit,
     onMealClick: (String?, String?, Boolean) -> Unit,
     analyticsUtil: AnalyticsUtil,
+    snackbarHostState: SnackbarHostState,
+    onRefreshData: () -> Unit,
 ) {
-    Box(modifier = modifier.fillMaxSize()) {
-        if (!hasMealPlan) {
-            EmptyStateComponent(
-                anim = R.raw.women_thinking,
-                message = "Looks like you haven't created a meal plan yet",
-                content = {
-                    Spacer(modifier = Modifier.height(32.dp))
-                    Button(onClick = {
-                        analyticsUtil.trackUserEvent("No meal plan -Navigate to allergies screen")
-                        navigator.openAllergiesScreen()
-                    }) {
-                        Text(text = "Get Started")
-                    }
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
+            StandardToolbar(
+                navigate = {
+                    analyticsUtil.trackUserEvent("Navigate back from Meal Planner")
+                    navigator.popBackStack()
+                },
+                title = {
+                    Text(text = "Meal Planner", fontSize = 18.sp)
+                },
+                showBackArrow = false,
+                navActions = {
                 }
             )
         }
-
-        if (hasMealPlan) {
-            LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp)) {
-                item {
-                    HorizontalCalendarView(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .animateItemPlacement(),
-                        onDayClick = { day ->
-                            onClickDay(day.fullDate)
-                        },
-                        selectedCardColor = MaterialTheme.colorScheme.primary,
-                        unSelectedCardColor = MaterialTheme.colorScheme.surfaceVariant,
-                        selectedTextColor = MaterialTheme.colorScheme.onPrimary,
-                        unSelectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+    ) { paddingValues ->
+        SwipeRefreshComponent(
+            isRefreshingState = planMealsUiState.isLoading,
+            onRefreshData = onRefreshData,
+        ) {
+            Box(
+                modifier = modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+            ) {
+                if (!hasMealPlan) {
+                    EmptyStateComponent(
+                        anim = R.raw.women_thinking,
+                        message = "Looks like you haven't created a meal plan yet",
+                        content = {
+                            Spacer(modifier = Modifier.height(32.dp))
+                            Button(onClick = {
+                                analyticsUtil.trackUserEvent("No meal plan -Navigate to allergies screen")
+                                navigator.openAllergiesScreen()
+                            }) {
+                                Text(text = "Get Started")
+                            }
+                        }
                     )
                 }
 
-                item {
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
+                if (hasMealPlan) {
+                    LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp)) {
+                        item {
+                            HorizontalCalendarView(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .animateItemPlacement(),
+                                onDayClick = { day ->
+                                    onClickDay(day.fullDate)
+                                },
+                                selectedCardColor = MaterialTheme.colorScheme.primary,
+                                unSelectedCardColor = MaterialTheme.colorScheme.surfaceVariant,
+                                selectedTextColor = MaterialTheme.colorScheme.onPrimary,
+                                unSelectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
 
-                items(mealTypes) { type ->
-                    MealPlanItem(
-                        onClickAdd = onClickAdd,
-                        type = type,
-                        onRemoveClick = onRemoveClick,
-                        onMealClick = onMealClick,
-                        meals = mealsAndTheirTypes.filter { it.mealTypeName == type }
-                            .map { it.mapMealPlanToMeals() }.flatten()
-                    )
+                        item {
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+
+                        items(mealTypes) { type ->
+                            MealPlanItem(
+                                onClickAdd = onClickAdd,
+                                type = type,
+                                onRemoveClick = onRemoveClick,
+                                onMealClick = onMealClick,
+                                meals = mealsAndTheirTypes.filter { it.mealTypeName == type }
+                                    .map { it.mapMealPlanToMeals() }.flatten()
+                            )
+                        }
+                    }
                 }
             }
         }
