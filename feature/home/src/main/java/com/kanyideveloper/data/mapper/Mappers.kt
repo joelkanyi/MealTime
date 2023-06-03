@@ -18,6 +18,8 @@ package com.kanyideveloper.data.mapper
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.util.stringToList
 import com.kanyideveloper.core_database.model.MealEntity
+import com.kanyideveloper.core_database.model.OnlineMealCategoryEntity
+import com.kanyideveloper.core_database.model.OnlineMealEntity
 import com.kanyideveloper.core_network.model.CategoriesResponse
 import com.kanyideveloper.core_network.model.MealDetailsResponse
 import com.kanyideveloper.core_network.model.MealsResponse
@@ -55,6 +57,33 @@ internal fun MealsResponse.Meal.toMeal(): OnlineMeal {
         mealId = idMeal
     )
 }
+
+internal fun CategoriesResponse.Category.toEntity() = OnlineMealCategoryEntity(
+    idCategory = idCategory,
+    strCategory = strCategory,
+    strCategoryDescription = strCategoryDescription,
+    strCategoryThumb = strCategoryThumb
+)
+
+internal fun OnlineMealCategoryEntity.toCategory() = Category(
+    categoryId = idCategory,
+    categoryName = strCategory,
+    categoryDescription = strCategoryDescription,
+    categoryImageUrl = strCategoryThumb
+)
+
+internal fun MealsResponse.Meal.toEntity(category: String) = OnlineMealEntity(
+    idMeal = idMeal,
+    strMeal = strMeal,
+    strMealThumb = strMealThumb,
+    strCategory = category
+)
+
+internal fun OnlineMealEntity.toMeal() = OnlineMeal(
+    name = strMeal,
+    imageUrl = strMealThumb,
+    mealId = idMeal
+)
 
 internal fun MealDetailsResponse.Meal.toMeal(): Meal {
     return Meal(

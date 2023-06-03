@@ -18,29 +18,59 @@ package com.kanyideveloper.data.repository
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.safeApiCall
+import com.kanyideveloper.core_database.dao.OnlineMealsDao
 import com.kanyideveloper.core_network.MealDbApi
 import com.kanyideveloper.data.mapper.toCategory
+import com.kanyideveloper.data.mapper.toEntity
 import com.kanyideveloper.data.mapper.toMeal
 import com.kanyideveloper.domain.model.Category
 import com.kanyideveloper.domain.model.OnlineMeal
 import com.kanyideveloper.domain.repository.OnlineMealsRepository
 import kotlinx.coroutines.Dispatchers
+import retrofit2.HttpException
+import java.io.IOException
 
 class OnlineMealsRepositoryImpl(
-    private val mealDbApi: MealDbApi
+    private val mealDbApi: MealDbApi,
+    private val onlineMealsDao: OnlineMealsDao,
 ) : OnlineMealsRepository {
-
     override suspend fun getMealCategories(): Resource<List<Category>> {
-        return safeApiCall(Dispatchers.IO) {
+        val cachedCategories = onlineMealsDao.getOnlineMealCategories().map { it.toCategory() }
+        return try {
             val response = mealDbApi.getCategories()
-            response.categories.map { it.toCategory() }
+            onlineMealsDao.deleteOnlineMealCategories()
+            onlineMealsDao.insertOnlineMealCategories(response.categories.map { it.toEntity() })
+            Resource.Success(
+                data = onlineMealsDao.getOnlineMealCategories().map { it.toCategory() }
+            )
+        } catch (e: IOException) {
+            return Resource.Error(
+                "Couldn't reach the server. Check your internet connection",
+                data = cachedCategories
+            )
+        } catch (e: HttpException) {
+            return Resource.Error("Server error occurred", data = cachedCategories)
+        } catch (e: Exception) {
+            return Resource.Error("An unknown error occurred", data = cachedCategories)
         }
     }
 
     override suspend fun getMeals(category: String): Resource<List<OnlineMeal>> {
-        return safeApiCall(Dispatchers.IO) {
+        val cachedMeals = onlineMealsDao.getOnlineMeals(category).map { it.toMeal() }
+        return try {
             val response = mealDbApi.getMeals(category = category)
-            response.meals.map { it.toMeal() }
+            onlineMealsDao.deleteOnlineMeals(category = category)
+            onlineMealsDao.insertOnlineMeals(response.meals.map { it.toEntity(category = category) })
+            Resource.Success(data = onlineMealsDao.getOnlineMeals(category).map { it.toMeal() })
+        } catch (e: IOException) {
+            return Resource.Error(
+                "Couldn't reach the server. Check your internet connection",
+                data = cachedMeals
+            )
+        } catch (e: HttpException) {
+            return Resource.Error("Server error occurred", data = cachedMeals)
+        } catch (e: Exception) {
+            return Resource.Error("An unknown error occurred", data = cachedMeals)
         }
     }
 
