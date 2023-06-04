@@ -13,7 +13,6 @@ We use GitHub for bug tracking. Please search the existing issues for your bug a
 https://github.com/JoelKanyi/MealTime/issues
 
 
-## Under Constant Development 🛠️ 🛠️ 🛠️
 
 ## Modules
 <img src="screenshots/mealtime_modules.jpeg" width="1000"/>
