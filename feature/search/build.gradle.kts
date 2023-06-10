@@ -11,6 +11,8 @@ apply {
 }
 
 android {
+    namespace = "com.kanyideveloper.mealtime.search"
+
     compileSdk = AndroidConfig.compileSDK
 
     defaultConfig {

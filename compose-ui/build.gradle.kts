@@ -11,6 +11,8 @@ apply {
 }
 
 android {
+    namespace = "com.kanyideveloper.mealtime.composeui"
+
     compileSdk = AndroidConfig.compileSDK
 
     defaultConfig {

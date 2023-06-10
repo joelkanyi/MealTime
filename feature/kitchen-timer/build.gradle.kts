@@ -11,6 +11,8 @@ apply {
 }
 
 android {
+    namespace = "com.kanyideveloper.mealtime.kitchen_timer"
+
     compileSdk = AndroidConfig.compileSDK
 
     defaultConfig {

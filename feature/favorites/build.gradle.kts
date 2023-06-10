@@ -11,6 +11,8 @@ apply {
 }
 
 android {
+    namespace = "com.kanyideveloper.mealtime.favorites"
+
     compileSdk = AndroidConfig.compileSDK
 
     defaultConfig {

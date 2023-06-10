@@ -11,6 +11,8 @@ apply {
 }
 
 android {
+    namespace = "com.kanyideveloper.mealtime.auth"
+
     compileSdk = AndroidConfig.compileSDK
 
     defaultConfig {

@@ -11,6 +11,8 @@ apply {
 }
 
 android {
+    namespace = "com.kanyideveloper.mealtime.mealplanner"
+
     compileSdk = AndroidConfig.compileSDK
 
     defaultConfig {
