@@ -16,5 +16,5 @@
 package com.kanyideveloper.core_network
 
 object Constants {
-    const val BASE_URL = "https://www.themealdb.com/api/json/v1/1/"
+    const val BASE_URL = "https://mealtime-api-production.up.railway.app/api/"
 }

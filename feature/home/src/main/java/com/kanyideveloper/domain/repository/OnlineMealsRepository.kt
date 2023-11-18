@@ -23,6 +23,6 @@ import com.kanyideveloper.domain.model.OnlineMeal
 interface OnlineMealsRepository {
     suspend fun getMealCategories(): Resource<List<Category>>
     suspend fun getMeals(category: String): Resource<List<OnlineMeal>>
-    suspend fun getMealDetails(mealId: String): Resource<List<Meal>>
-    suspend fun getRandomMeal(): Resource<List<Meal>>
+    suspend fun getMealDetails(mealId: String): Resource<Meal>
+    suspend fun getRandomMeal(): Resource<Meal>
 }

@@ -284,13 +284,6 @@ fun MainContent(
     val pagerState = rememberPagerState()
 
     Column(modifier = modifier) {
-        Tabs(
-            tabs = listOfTabs,
-            pagerState = pagerState,
-            onClick = {
-                onClick(it)
-            }
-        )
         TabContent(
             tabs = listOfTabs,
             pagerState = pagerState,

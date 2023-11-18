@@ -39,6 +39,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -74,11 +75,11 @@ fun DetailsCollapsingToolbar(
     val textSize = (18 + (30 - 18) * state.toolbarState.progress).sp
 
     val isFavorite = if (isOnlineMeal) {
-        meal.onlineMealId?.let {
-            viewModel.inOnlineFavorites(id = it).observeAsState().value
+        meal.mealId?.let {
+            viewModel.inFavorites(id = it).observeAsState().value
         } != null
     } else {
-        meal.localMealId?.let { viewModel.inLocalFavorites(id = it).observeAsState().value } != null
+        meal.mealId?.let { viewModel.inFavorites(id = it).observeAsState().value } != null
     }
 
     Timber.e("Meal Details is isFavorite: $isFavorite")
@@ -163,13 +164,13 @@ fun DetailsCollapsingToolbar(
                                 .clickable {
                                     if (isFavorite) {
                                         if (isOnlineMeal) {
-                                            onRemoveFavorite("", meal.onlineMealId!!)
+                                            onRemoveFavorite("", meal.mealId!!)
                                         } else {
-                                            onRemoveFavorite(meal.localMealId!!, "")
+                                            onRemoveFavorite(meal.mealId!!, "")
                                         }
                                     } else {
                                         if (isOnlineMeal) {
-                                            meal.onlineMealId?.let {
+                                            meal.mealId?.let {
                                                 addToFavorites(
                                                     it,
                                                     meal.imageUrl,
@@ -177,7 +178,7 @@ fun DetailsCollapsingToolbar(
                                                 )
                                             }
                                         } else {
-                                            meal.localMealId?.let {
+                                            meal.mealId?.let {
                                                 addToFavorites(
                                                     it,
                                                     meal.imageUrl,
@@ -241,7 +242,7 @@ fun DetailsCollapsingToolbar(
                     )
                     Text(
                         modifier = Modifier.padding(3.dp),
-                        text = ingredient,
+                        text = ingredient.name,
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }

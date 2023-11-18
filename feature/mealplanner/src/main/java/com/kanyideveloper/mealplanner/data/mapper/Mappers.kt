@@ -20,7 +20,7 @@ import com.kanyideveloper.core.model.OnlineMeal
 import com.kanyideveloper.core_database.model.FavoriteEntity
 import com.kanyideveloper.core_database.model.MealEntity
 import com.kanyideveloper.core_database.model.MealPlanEntity
-import com.kanyideveloper.core_network.model.MealsResponse
+import com.kanyideveloper.core_network.model.MealsResponseDto
 import com.kanyideveloper.mealplanner.model.MealPlan
 import java.util.UUID
 
@@ -42,11 +42,11 @@ internal fun MealPlanEntity.toMealPlan(): MealPlan {
     )
 }
 
-internal fun MealsResponse.Meal.toOnlineMeal(): OnlineMeal {
+internal fun MealsResponseDto.toOnlineMeal(): OnlineMeal {
     return OnlineMeal(
-        name = strMeal,
-        imageUrl = strMealThumb,
-        mealId = idMeal
+        name = name,
+        imageUrl = image,
+        mealId = id
     )
 }
 
@@ -54,15 +54,14 @@ internal fun OnlineMeal.toGeneralMeal(): Meal {
     return Meal(
         name = name,
         imageUrl = imageUrl,
-        onlineMealId = mealId,
         cookingTime = 0,
+        servingPeople = 0,
         category = "",
         cookingDifficulty = "",
         ingredients = emptyList(),
         cookingDirections = emptyList(),
         favorite = false,
-        servingPeople = 0,
-        localMealId = null
+        mealId = mealId
     )
 }
 
@@ -71,29 +70,24 @@ internal fun MealEntity.toMeal(): Meal {
         name = name,
         imageUrl = imageUrl,
         cookingTime = cookingTime,
+        servingPeople = servingPeople,
         category = category,
         cookingDifficulty = cookingDifficulty,
         ingredients = ingredients,
         cookingDirections = cookingInstructions,
-        favorite = isFavorite,
-        servingPeople = servingPeople,
-        localMealId = id
+        favorite = isFavorite
     )
 }
 
 internal fun FavoriteEntity.toMeal(): Meal {
     return Meal(
         name = mealName,
-        imageUrl = mealImageUrl,
-        localMealId = localMealId,
-        onlineMealId = onlineMealId,
-        favorite = isFavorite,
         cookingTime = 0,
+        servingPeople = 0,
         category = "",
         cookingDifficulty = "",
         ingredients = emptyList(),
-        cookingDirections = emptyList(),
-        servingPeople = 0
+        cookingDirections = emptyList()
     )
 }
 

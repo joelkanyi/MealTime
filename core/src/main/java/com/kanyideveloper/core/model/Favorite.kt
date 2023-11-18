@@ -16,11 +16,8 @@
 package com.kanyideveloper.core.model
 
 data class Favorite(
-    val id: Int? = null,
-    val onlineMealId: String? = null,
-    val localMealId: String? = null,
-    val online: Boolean = false,
-    val mealName: String = "",
-    val mealImageUrl: String = "",
-    val favorite: Boolean = false
+    val id: Int,
+    val mealId: String,
+    val mealName: String,
+    val mealImageUrl: String,
 )

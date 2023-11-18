@@ -107,19 +107,12 @@ fun MyMealScreen(
         addToFavorites = { localMealId, imageUrl, name ->
             analyticsUtils.trackUserEvent("Added My Meal To Favorites - $name")
             viewModel.insertAFavorite(
-                localMealId = localMealId,
-                mealImageUrl = imageUrl,
-                mealName = name,
-                isOnline = false,
-                isSubscribed = isSubscribed
+                mealId = localMealId,
             )
         },
         removeFromFavorites = { id ->
             analyticsUtils.trackUserEvent("Removed My Meal From Favorites")
-            viewModel.deleteALocalFavorite(
-                localMealId = id,
-                isSubscribed = isSubscribed
-            )
+            viewModel.deleteALocalFavorite(mealId = id)
         },
         isSelected = { category ->
             viewModel.selectedCategory.value == category

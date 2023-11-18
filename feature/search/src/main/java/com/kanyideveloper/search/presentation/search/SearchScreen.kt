@@ -53,6 +53,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -127,23 +128,20 @@ fun SearchScreen(navigator: SearchNavigator, viewModel: SearchViewModel = hiltVi
         isSelected = { option ->
             viewModel.selectedSearchOption.value == option
         },
-        addToFavorites = { onlineMealId, imageUrl, name ->
-            analyticsUtil.trackUserEvent("add online meal to favorites - $name")
+        addToFavorites = { mealId, imageUrl, name ->
+            analyticsUtil.trackUserEvent("add online meal to favorites")
             viewModel.insertAFavorite(
-                onlineMealId = onlineMealId,
-                mealImageUrl = imageUrl,
-                mealName = name,
-                isOnline = true
+                mealId = mealId,
             )
         },
-        removeFromFavorites = { id ->
-            analyticsUtil.trackUserEvent("remove online meal from favorites - $id")
+        removeFromFavorites = { mealId ->
+            analyticsUtil.trackUserEvent("remove online meal from favorites")
             viewModel.deleteAnOnlineFavorite(
-                onlineMealId = id
+                mealId = mealId
             )
         },
         onMealClick = { mealId ->
-            analyticsUtil.trackUserEvent("open online meal details - $mealId")
+            analyticsUtil.trackUserEvent("open online meal details")
             navigator.openOnlineMealDetails(mealId = mealId)
         },
         onClickBack = {
@@ -158,7 +156,7 @@ private fun SearchScreenContent(
     searchState: SearchState,
     onMealClick: (String) -> Unit,
     addToFavorites: (String, String, String) -> Unit,
-    removeFromFavorites: (String) -> Unit,
+    removeFromFavorites: (mealId: String) -> Unit,
     onSearchStringChange: (String) -> Unit,
     onSearch: (String) -> Unit,
     currentSearchString: String,
@@ -357,10 +355,10 @@ fun OnlineMealItem(
     meal: OnlineMeal,
     onClick: (String) -> Unit,
     addToFavorites: (String, String, String) -> Unit,
-    removeFromFavorites: (String) -> Unit,
+    removeFromFavorites: (mealId: String) -> Unit,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
-    val isFavorite = viewModel.inOnlineFavorites(id = meal.mealId).observeAsState().value != null
+    val isFavorite = viewModel.inOnlineFavorites(id = meal.mealId).observeAsState().value == true
 
     Card(
         modifier = Modifier
@@ -411,7 +409,9 @@ fun OnlineMealItem(
                 androidx.compose.material3.IconButton(
                     onClick = {
                         if (isFavorite) {
-                            removeFromFavorites(meal.mealId)
+                            removeFromFavorites(
+                                meal.mealId,
+                            )
                         } else {
                             addToFavorites(meal.mealId, meal.imageUrl, meal.name)
                         }

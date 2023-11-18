@@ -21,11 +21,8 @@ import com.kanyideveloper.core.util.Constants.FAVORITES_TABLE
 
 @Entity(tableName = FAVORITES_TABLE)
 data class FavoriteEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int? = null,
-    val onlineMealId: String? = null,
-    val localMealId: String? = null,
-    val isOnline: Boolean = false,
+    @PrimaryKey val id: Int,
+    val mealId: String,
     val mealName: String,
     val mealImageUrl: String,
-    val isFavorite: Boolean = false
 )

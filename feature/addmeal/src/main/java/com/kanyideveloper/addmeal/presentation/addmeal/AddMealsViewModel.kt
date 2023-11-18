@@ -26,6 +26,7 @@ import com.kanyideveloper.addmeal.domain.repository.UploadImageRepository
 import com.kanyideveloper.addmeal.presentation.addmeal.state.SaveMealState
 import com.kanyideveloper.core.analytics.AnalyticsUtil
 import com.kanyideveloper.core.domain.SubscriptionRepository
+import com.kanyideveloper.core.model.Ingredient
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.state.SubscriptionStatusUiState
 import com.kanyideveloper.core.state.TextFieldState
@@ -184,11 +185,11 @@ class AddMealsViewModel @Inject constructor(
                         name = mealName,
                         imageUrl = imageUrl,
                         cookingTime = cookingTime,
-                        cookingDirections = directionsList,
-                        cookingDifficulty = complexity,
+                        servingPeople = servingPeople,
                         category = category,
+                        cookingDifficulty = complexity,
                         ingredients = ingredientsList,
-                        servingPeople = servingPeople
+                        cookingDirections = directionsList
                     )
 
                     saveMyMeal(
@@ -241,11 +242,11 @@ class AddMealsViewModel @Inject constructor(
         }
     }
 
-    private val _ingredientsList = mutableStateListOf<String>()
-    val ingredientsList: List<String> = _ingredientsList
+    private val _ingredientsList = mutableStateListOf<Ingredient>()
+    val ingredientsList: List<Ingredient> = _ingredientsList
 
-    fun insertIngredients(value: String) {
-        if (value.isEmpty()) {
+    fun insertIngredients(value: Ingredient) {
+        if (value.name.isEmpty()) {
             _ingredient.value = ingredient.value.copy(
                 error = "Ingredient cannot be empty"
             )
@@ -255,7 +256,7 @@ class AddMealsViewModel @Inject constructor(
         setIngredientState("")
     }
 
-    fun removeIngredient(value: String) {
+    fun removeIngredient(value: Ingredient) {
         _ingredientsList.remove(value)
     }
 

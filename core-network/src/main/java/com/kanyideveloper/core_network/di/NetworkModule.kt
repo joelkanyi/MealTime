@@ -18,8 +18,10 @@ package com.kanyideveloper.core_network.di
 import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
+import com.kanyideveloper.core.data.MealTimePreferences
 import com.kanyideveloper.core_network.Constants.BASE_URL
 import com.kanyideveloper.core_network.MealDbApi
+import com.kanyideveloper.core_network.auth.AuthInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,6 +31,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -54,11 +57,23 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideAuthInterceptor(
+        mealTimePreferences: MealTimePreferences,
+    ): AuthInterceptor {
+        return AuthInterceptor(
+            mealTimePreferences,
+        )
+    }
+
+    @Provides
+    @Singleton
     fun provideOkHttpClient(
         httpLoggingInterceptor: HttpLoggingInterceptor,
-        chuckerInterceptor: ChuckerInterceptor
+        chuckerInterceptor: ChuckerInterceptor,
+        authInterceptor: AuthInterceptor,
     ): OkHttpClient {
         val okHttpClient = OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
             .addInterceptor(chuckerInterceptor)
             .addInterceptor(httpLoggingInterceptor)
             .callTimeout(15, TimeUnit.SECONDS)
@@ -71,12 +86,17 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideMealDbApi(okHttpClient: OkHttpClient): MealDbApi {
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
-            .create(MealDbApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMealDbApi(retrofit: Retrofit): MealDbApi {
+        return retrofit.create()
     }
 }

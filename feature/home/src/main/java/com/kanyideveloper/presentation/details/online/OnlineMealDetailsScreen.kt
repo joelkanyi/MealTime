@@ -51,14 +51,11 @@ fun OnlineMealDetailsScreen(
             navigator.popBackStack()
         },
         onRemoveFavorite = { _, onlineMealId ->
-            viewModel.deleteAnOnlineFavorite(onlineMealId = onlineMealId)
+            viewModel.deleteAnOnlineFavorite(mealId = onlineMealId)
         },
         addToFavorites = { onlineMealId, imageUrl, name ->
             viewModel.insertAFavorite(
-                onlineMealId = onlineMealId,
-                mealImageUrl = imageUrl,
-                mealName = name,
-                isOnline = true
+                mealId = onlineMealId,
             )
         }
     )
@@ -73,8 +70,8 @@ private fun OnlineMealScreenContent(
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         // Data has been loaded successfully
-        if (!mealState.isLoading && mealState.mealDetails.isNotEmpty()) {
-            val meal = mealState.mealDetails.first()
+        if (!mealState.isLoading && mealState.mealDetails != null) {
+            val meal = mealState.mealDetails
             DetailsCollapsingToolbar(
                 meal = meal,
                 navigateBack = {
@@ -97,7 +94,7 @@ private fun OnlineMealScreenContent(
         }
 
         // Loaded Data but the list is empty
-        if (!mealState.isLoading && mealState.error == null && mealState.mealDetails.isEmpty()) {
+        if (!mealState.isLoading && mealState.error == null && mealState.mealDetails == null) {
             EmptyStateComponent()
         }
     }

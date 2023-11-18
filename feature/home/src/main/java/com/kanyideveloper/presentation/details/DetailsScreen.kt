@@ -68,15 +68,10 @@ fun DetailsScreen(
                 navigator.popBackStack()
             },
             onRemoveFavorite = { localMealId, _ ->
-                viewModel.deleteALocalFavorite(localMealId = localMealId)
+                meal.mealId?.let { it1 -> viewModel.deleteALocalFavorite(mealId = it1) }
             },
             addToFavorites = { mealId, imageUrl, name ->
-                viewModel.insertAFavorite(
-                    localMealId = mealId,
-                    mealImageUrl = imageUrl,
-                    mealName = name,
-                    isOnline = false
-                )
+                viewModel.insertAFavorite(mealId = mealId)
             }
         )
     }

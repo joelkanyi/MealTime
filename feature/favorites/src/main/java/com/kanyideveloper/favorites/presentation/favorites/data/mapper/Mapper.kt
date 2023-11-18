@@ -17,27 +17,32 @@ package com.kanyideveloper.favorites.presentation.favorites.data.mapper
 
 import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core_database.model.FavoriteEntity
+import com.kanyideveloper.core_network.model.FavoritesResponseDto
+
+
+internal fun FavoritesResponseDto.toFavorite(): Favorite {
+    return Favorite(
+        id = id,
+        mealName = mealName,
+        mealImageUrl = mealImageUrl,
+        mealId = mealId,
+    )
+}
 
 internal fun FavoriteEntity.toFavorite(): Favorite {
     return Favorite(
         id = id,
-        onlineMealId = onlineMealId,
-        localMealId = localMealId,
-        online = isOnline,
         mealName = mealName,
         mealImageUrl = mealImageUrl,
-        favorite = isFavorite
+        mealId = mealId,
     )
 }
 
 internal fun Favorite.toEntity(): FavoriteEntity {
     return FavoriteEntity(
         id = id,
-        onlineMealId = onlineMealId,
-        localMealId = localMealId,
-        isOnline = online,
         mealName = mealName,
         mealImageUrl = mealImageUrl,
-        isFavorite = favorite
+        mealId = mealId,
     )
 }

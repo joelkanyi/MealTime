@@ -346,8 +346,7 @@ fun MealPlan.mapMealPlanToMeals(): List<Meal> {
             ingredients = meal.ingredients,
             cookingDirections = meal.cookingDirections,
             favorite = meal.favorite,
-            onlineMealId = meal.onlineMealId,
-            localMealId = meal.localMealId,
+            mealId = meal.mealId,
             mealPlanId = this.id
         )
     }

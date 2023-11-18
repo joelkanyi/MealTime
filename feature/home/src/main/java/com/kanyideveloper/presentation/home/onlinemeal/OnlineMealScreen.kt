@@ -52,6 +52,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -126,20 +127,11 @@ fun OnlineMealScreen(
         },
         addToFavorites = { onlineMealId, imageUrl, name ->
             analyticsUtil.trackUserEvent("add online meal to favorites - $name")
-            viewModel.insertAFavorite(
-                onlineMealId = onlineMealId,
-                mealImageUrl = imageUrl,
-                mealName = name,
-                isOnline = true,
-                isSubscribed = isSubscribed
-            )
+            viewModel.insertAFavorite(mealId = onlineMealId)
         },
         removeFromFavorites = { id ->
             analyticsUtil.trackUserEvent("remove online meal from favorites - $id")
-            viewModel.deleteAnOnlineFavorite(
-                onlineMealId = id,
-                isSubscribed = isSubscribed
-            )
+            viewModel.deleteAnOnlineFavorite(mealId = id)
         },
         openRandomMeal = {
             analyticsUtil.trackUserEvent("open random online meal")
@@ -297,7 +289,7 @@ fun OnlineMealItem(
     removeFromFavorites: (String) -> Unit,
     viewModel: OnlineMealViewModel = hiltViewModel()
 ) {
-    val isFavorite = viewModel.inOnlineFavorites(id = meal.mealId).observeAsState().value != null
+    val isFavorite = viewModel.inOnlineFavorites(id = meal.mealId).observeAsState().value == true
 
     Card(
         modifier = Modifier
@@ -415,21 +407,6 @@ fun CategoryItem(category: Category, selectedCategory: String, onClick: () -> Un
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                modifier = Modifier
-                    .width(100.dp)
-                    .height(50.dp),
-                contentDescription = null,
-                painter = rememberAsyncImagePainter(
-                    ImageRequest.Builder(LocalContext.current)
-                        .data(data = category.categoryImageUrl)
-                        .apply(block = fun ImageRequest.Builder.() {
-                            placeholder(R.drawable.food_loading)
-                        }).build()
-                ),
-                contentScale = ContentScale.Inside
-            )
-
             Text(
                 text = category.categoryName,
                 textAlign = TextAlign.Center,

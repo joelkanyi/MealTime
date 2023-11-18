@@ -19,6 +19,7 @@ import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.kanyideveloper.core.model.Ingredient
 import com.kanyideveloper.core.model.Meal
 
 @ProvidedTypeConverter
@@ -53,6 +54,22 @@ class Converters(private val gson: Gson) {
         return gson.toJson(
             meals,
             object : TypeToken<ArrayList<Meal>>() {}.type
+        ) ?: "[]"
+    }
+
+    @TypeConverter
+    fun fromIngredientsJson(json: String): List<Ingredient> {
+        return gson.fromJson<ArrayList<Ingredient>>(
+            json,
+            object : TypeToken<ArrayList<Ingredient>>() {}.type
+        ) ?: emptyList()
+    }
+
+    @TypeConverter
+    fun toIngredientsJson(ingredients: List<Ingredient>): String {
+        return gson.toJson(
+            ingredients,
+            object : TypeToken<ArrayList<Ingredient>>() {}.type
         ) ?: "[]"
     }
 }

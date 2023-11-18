@@ -65,6 +65,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
 import com.kanyideveloper.compose_ui.components.StandardToolbar
+import com.kanyideveloper.core.model.Ingredient
 import com.kanyideveloper.core.state.SubscriptionStatusUiState
 import com.kanyideveloper.core.state.TextFieldState
 import com.kanyideveloper.core.util.UiEvents
@@ -103,6 +104,7 @@ fun NextAddMealScreen(
                 is UiEvents.SnackbarEvent -> {
                     scaffoldState.snackbarHostState.showSnackbar(message = event.message)
                 }
+
                 is UiEvents.NavigationEvent -> {
                     navigator.navigateBackToHome()
                 }
@@ -156,7 +158,7 @@ fun NextAddMealScreen(
 
                     items(viewModel.ingredientsList) { ingredient ->
                         IngredientItem(
-                            ingredient = ingredient,
+                            ingredient = ingredient.name,
                             viewModel = viewModel
                         )
                     }
@@ -185,6 +187,7 @@ fun NextAddMealScreen(
                 }
             }
         }
+
         else -> {}
     }
 }
@@ -295,7 +298,13 @@ private fun IngredientComponent(
             trailingIcon = {
                 IconButton(onClick = {
                     keyboardController?.hide()
-                    viewModel.insertIngredients(ingredient.text)
+                    viewModel.insertIngredients(
+                        Ingredient(
+                            name = ingredient.text,
+                            quantity = null,
+                            id = 0
+                        )
+                    )
                 }) {
                     Icon(
                         imageVector = Icons.Outlined.Add,
@@ -344,7 +353,13 @@ fun IngredientItem(ingredient: String, viewModel: AddMealsViewModel) {
             )
 
             IconButton(onClick = {
-                viewModel.removeIngredient(ingredient)
+                viewModel.removeIngredient(
+                    Ingredient(
+                        name = ingredient,
+                        quantity = null,
+                        id = 0
+                    )
+                )
             }) {
                 Icon(
                     imageVector = Icons.Outlined.Close,

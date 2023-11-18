@@ -72,33 +72,33 @@ class FavoritesViewModel @Inject constructor(
                 error = null
             )
         viewModelScope.launch {
-            when (val result = favoritesRepository.getFavorites(isSubscribed = isSubscribed)) {
-                is Resource.Error -> {
-                    _eventsFlow.emit(
-                        UiEvents.SnackbarEvent(
-                            message = result.message ?: "An unexpected error occurred"
+            favoritesRepository.getFavorites().collectLatest { result ->
+                when (result) {
+                    is Resource.Error -> {
+                        _eventsFlow.emit(
+                            UiEvents.SnackbarEvent(
+                                message = result.message ?: "An unexpected error occurred"
+                            )
                         )
-                    )
 
-                    result.data?.collectLatest { favorites ->
                         _favoritesUiState.value = _favoritesUiState.value.copy(
                             isLoading = false,
-                            favorites = favorites,
-                            error = result.message
+                            favorites = emptyList(),
+                            error = result.message ?: "An unexpected error occurred"
                         )
                     }
-                }
-                is Resource.Success -> {
-                    result.data?.collectLatest { favorites ->
+
+                    is Resource.Success -> {
                         _favoritesUiState.value = _favoritesUiState.value.copy(
                             isLoading = false,
-                            favorites = favorites,
+                            favorites = result.data ?: emptyList(),
                             error = null
                         )
                     }
-                }
-                else -> {
-                    favoritesUiState
+
+                    else -> {
+                        favoritesUiState
+                    }
                 }
             }
         }
@@ -106,16 +106,14 @@ class FavoritesViewModel @Inject constructor(
 
     private val _singleMeal = MutableLiveData<LiveData<Meal?>>()
     val singleMeal: LiveData<LiveData<Meal?>> = _singleMeal
+
     fun getASingleMeal(id: String) {
         _singleMeal.value = homeRepository.getMealById(id = id)
     }
 
     fun deleteAFavorite(favorite: Favorite, isSubscribed: Boolean) {
         viewModelScope.launch {
-            favoritesRepository.deleteOneFavorite(
-                favorite = favorite,
-                isSubscribed = isSubscribed
-            )
+            favoritesRepository.deleteOneFavorite(mealId = favorite.mealId)
         }
     }
 

@@ -21,14 +21,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kanyideveloper.core.analytics.AnalyticsUtil
+import com.kanyideveloper.core.data.MealTimePreferences
 import com.kanyideveloper.core.domain.FavoritesRepository
-import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.domain.repository.OnlineMealsRepository
 import com.kanyideveloper.presentation.home.onlinemeal.state.CategoriesState
 import com.kanyideveloper.presentation.home.onlinemeal.state.MealState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -38,6 +39,7 @@ class OnlineMealViewModel @Inject constructor(
     private val onlineMealsRepository: OnlineMealsRepository,
     private val favoritesRepository: FavoritesRepository,
     private val analyticsUtil: AnalyticsUtil,
+    private val mealTimePreferences: MealTimePreferences
 ) : ViewModel() {
     fun analyticsUtil() = analyticsUtil
 
@@ -59,6 +61,12 @@ class OnlineMealViewModel @Inject constructor(
     init {
         getCategories()
         getMeals(category = selectedCategory.value)
+    }
+
+    fun saveToken() {
+        viewModelScope.launch {
+            mealTimePreferences.saveAccessToken("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqb2Vsa2FueWk5OEBnbWFpbC5jb20iLCJpYXQiOjE2OTk5ODI0NTMsImV4cCI6MTcwMDA2ODg1M30.YHOFebYj86PfcnSjWs8RcWe67RHl8LqJHUsFqz_yhVA")
+        }
     }
 
     private fun getCategories() {
@@ -130,31 +138,15 @@ class OnlineMealViewModel @Inject constructor(
     }
 
     fun inOnlineFavorites(id: String): LiveData<Boolean> {
-        return favoritesRepository.isOnlineFavorite(id = id)
+        return favoritesRepository.isFavorite(id = id)
     }
 
     fun insertAFavorite(
-        isOnline: Boolean,
-        onlineMealId: String? = null,
-        localMealId: String? = null,
-        mealImageUrl: String,
-        mealName: String,
-        isSubscribed: Boolean
+        mealId: String
     ) {
         viewModelScope.launch {
-            val favorite = Favorite(
-                onlineMealId = onlineMealId,
-                localMealId = localMealId,
-                mealName = mealName,
-                mealImageUrl = mealImageUrl,
-                online = isOnline,
-                favorite = true
-            )
             when (
-                val result = favoritesRepository.insertFavorite(
-                    favorite = favorite,
-                    isSubscribed = isSubscribed
-                )
+                val result = favoritesRepository.insertFavorite(mealId)
             ) {
                 is Resource.Error -> {
                     _eventsFlow.emit(
@@ -177,12 +169,9 @@ class OnlineMealViewModel @Inject constructor(
         }
     }
 
-    fun deleteAnOnlineFavorite(onlineMealId: String, isSubscribed: Boolean) {
+    fun deleteAnOnlineFavorite(mealId: String) {
         viewModelScope.launch {
-            favoritesRepository.deleteAnOnlineFavorite(
-                onlineMealId = onlineMealId,
-                isSubscribed = isSubscribed
-            )
+            favoritesRepository.deleteAFavorite(mealId = mealId)
         }
     }
 }

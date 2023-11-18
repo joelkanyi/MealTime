@@ -86,7 +86,7 @@ fun PlanMealItem(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant
             ),
             onClick = {
-                onMealClick(meal.localMealId, meal.onlineMealId, meal.onlineMealId != null)
+                onMealClick(meal.mealId, meal.mealId, meal.mealId != null)
             }
         ) {
             Column(modifier = Modifier.fillMaxSize()) {

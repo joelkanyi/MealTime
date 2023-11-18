@@ -39,7 +39,7 @@ class OnlineMealsRepositoryImpl(
         return try {
             val response = mealDbApi.getCategories()
             onlineMealsDao.deleteOnlineMealCategories()
-            onlineMealsDao.insertOnlineMealCategories(response.categories.map { it.toEntity() })
+            onlineMealsDao.insertOnlineMealCategories(response.map { it.toEntity() })
             Resource.Success(
                 data = onlineMealsDao.getOnlineMealCategories().map { it.toCategory() }
             )
@@ -58,9 +58,9 @@ class OnlineMealsRepositoryImpl(
     override suspend fun getMeals(category: String): Resource<List<OnlineMeal>> {
         val cachedMeals = onlineMealsDao.getOnlineMeals(category).map { it.toMeal() }
         return try {
-            val response = mealDbApi.getMeals(category = category)
+            val response = mealDbApi.getMeals()
             onlineMealsDao.deleteOnlineMeals(category = category)
-            onlineMealsDao.insertOnlineMeals(response.meals.map { it.toEntity(category = category) })
+            onlineMealsDao.insertOnlineMeals(response.map { it.toEntity(category = category) })
             Resource.Success(data = onlineMealsDao.getOnlineMeals(category).map { it.toMeal() })
         } catch (e: IOException) {
             return Resource.Error(
@@ -74,17 +74,17 @@ class OnlineMealsRepositoryImpl(
         }
     }
 
-    override suspend fun getMealDetails(mealId: String): Resource<List<Meal>> {
+    override suspend fun getMealDetails(mealId: String): Resource<Meal> {
         return safeApiCall(Dispatchers.IO) {
             val response = mealDbApi.getMealDetails(mealId = mealId)
-            response.meals.map { it.toMeal() }
+            response.toMeal()
         }
     }
 
-    override suspend fun getRandomMeal(): Resource<List<Meal>> {
+    override suspend fun getRandomMeal(): Resource<Meal> {
         return safeApiCall(Dispatchers.IO) {
             val response = mealDbApi.getRandomMeal()
-            response.meals.map { it.toMeal() }
+            response.toMeal()
         }
     }
 }

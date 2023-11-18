@@ -21,11 +21,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kanyideveloper.core.domain.FavoritesRepository
-import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.domain.repository.OnlineMealsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -58,7 +58,7 @@ class DetailsViewModel @Inject constructor(
                 is Resource.Success -> {
                     _details.value = details.value.copy(
                         isLoading = false,
-                        mealDetails = result.data ?: emptyList()
+                        mealDetails = result.data
                     )
                 }
                 else -> {
@@ -86,7 +86,7 @@ class DetailsViewModel @Inject constructor(
                 is Resource.Success -> {
                     _randomMeal.value = randomMeal.value.copy(
                         isLoading = false,
-                        mealDetails = result.data ?: emptyList()
+                        mealDetails = result.data
                     )
                 }
                 else -> {
@@ -96,53 +96,28 @@ class DetailsViewModel @Inject constructor(
         }
     }
 
-    fun inLocalFavorites(id: String): LiveData<Boolean> {
-        return favoritesRepository.isLocalFavorite(id = id)
+    fun inFavorites(id: String): LiveData<Boolean> {
+        return favoritesRepository.isFavorite(id = id)
     }
 
-    fun inOnlineFavorites(id: String): LiveData<Boolean> {
-        return favoritesRepository.isOnlineFavorite(id = id)
-    }
-
-    fun deleteALocalFavorite(localMealId: String) {
+    fun deleteALocalFavorite(mealId: String) {
         viewModelScope.launch {
-            favoritesRepository.deleteALocalFavorite(
-                localMealId = localMealId,
-                isSubscribed = true
-            )
+            favoritesRepository.deleteAFavorite(mealId = mealId)
         }
     }
 
-    fun deleteAnOnlineFavorite(onlineMealId: String) {
+    fun deleteAnOnlineFavorite(mealId: String) {
         viewModelScope.launch {
-            favoritesRepository.deleteAnOnlineFavorite(
-                onlineMealId = onlineMealId,
-                isSubscribed = true
-            )
+            favoritesRepository.deleteAFavorite(mealId = mealId)
         }
     }
 
     fun insertAFavorite(
-        isOnline: Boolean,
-        onlineMealId: String? = null,
-        localMealId: String? = null,
-        mealImageUrl: String,
-        mealName: String
+        mealId: String
     ) {
         viewModelScope.launch {
-            val favorite = Favorite(
-                onlineMealId = onlineMealId,
-                localMealId = localMealId,
-                mealName = mealName,
-                mealImageUrl = mealImageUrl,
-                online = isOnline,
-                favorite = true
-            )
             when (
-                val result = favoritesRepository.insertFavorite(
-                    favorite = favorite,
-                    isSubscribed = true
-                )
+                val result = favoritesRepository.insertFavorite(mealId)
             ) {
                 is Resource.Error -> {
                     _eventsFlow.emit(

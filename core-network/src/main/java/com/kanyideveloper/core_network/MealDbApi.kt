@@ -15,35 +15,65 @@
  */
 package com.kanyideveloper.core_network
 
-import com.kanyideveloper.core_network.model.CategoriesResponse
-import com.kanyideveloper.core_network.model.IngredientsResponse
-import com.kanyideveloper.core_network.model.MealDetailsResponse
-import com.kanyideveloper.core_network.model.MealsResponse
+import com.kanyideveloper.core_network.model.CategoriesResponseDto
+import com.kanyideveloper.core_network.model.CreateFavoriteRequestDto
+import com.kanyideveloper.core_network.model.FavoritesResponseDto
+import com.kanyideveloper.core_network.model.IngredientsResponseDto
+import com.kanyideveloper.core_network.model.LoginResponse
+import com.kanyideveloper.core_network.model.MealDetailsResponseDto
+import com.kanyideveloper.core_network.model.MealsResponseDto
+import com.kanyideveloper.core_network.model.RefreshTokenRequestDto
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface MealDbApi {
-    @GET("categories.php")
-    suspend fun getCategories(): CategoriesResponse
+    @GET("categories")
+    suspend fun getCategories(): List<CategoriesResponseDto>
 
-    @GET("filter.php")
-    suspend fun getMeals(@Query("c") category: String = "Beef"): MealsResponse
+    @GET("meals")
+    suspend fun getMeals(): List<MealsResponseDto>
 
-    @GET("lookup.php")
-    suspend fun getMealDetails(@Query("i") mealId: String): MealDetailsResponse
+    @GET("meals/{mealId}")
+    suspend fun getMealDetails(
+        @Path("mealId") mealId: String
+    ): MealDetailsResponseDto
 
-    @GET("search.php")
-    suspend fun searchMealsByName(@Query("s") query: String): MealsResponse?
+    @GET("meals/search")
+    suspend fun searchMeals(
+        @Query("category") category: String? = null,
+        @Query("name") name: String? = null,
+        @Query("ingredient") ingredient: String? = null
+    ): List<MealsResponseDto>
 
-    @GET("filter.php")
-    suspend fun searchMealsByIngredient(@Query("i") query: String): MealsResponse?
+    @GET("meals/random")
+    suspend fun getRandomMeal(): MealDetailsResponseDto
 
-    @GET("filter.php")
-    suspend fun searchMealsByCategory(@Query("c") query: String): MealsResponse?
+    @GET("meals/ingredients")
+    suspend fun getAllIngredients(): List<IngredientsResponseDto>
 
-    @GET("random.php")
-    suspend fun getRandomMeal(): MealDetailsResponse
+    @POST("auth/refresh")
+    suspend fun refreshToken(
+        @Body refreshTokenRequestDto: RefreshTokenRequestDto
+    ): Response<LoginResponse>
 
-    @GET("list.php")
-    suspend fun getAllIngredients(@Query("i") query: String = "list"): IngredientsResponse
+    @GET("favorite/{userId}")
+    suspend fun getFavorites(
+        @Path("userId") userId: String
+    ): List<FavoritesResponseDto>
+
+    @POST("favorite")
+    suspend fun saveFavorite(
+        @Body favorite: CreateFavoriteRequestDto
+    )
+
+    @DELETE("favorite/{mealId}/{userId}")
+    suspend fun deleteFavorite(
+        @Path("mealId") mealId: String,
+        @Path("userId") userId: String
+    )
 }

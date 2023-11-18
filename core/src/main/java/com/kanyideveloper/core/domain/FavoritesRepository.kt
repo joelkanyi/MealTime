@@ -21,21 +21,16 @@ import com.kanyideveloper.core.util.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface FavoritesRepository {
-    suspend fun insertFavorite(isSubscribed: Boolean, favorite: Favorite): Resource<Boolean>
 
-    suspend fun getFavorites(isSubscribed: Boolean): Resource<Flow<List<Favorite>>>
+    suspend fun getFavorites(): Flow<Resource<List<Favorite>>>
 
-    fun getASingleFavorite(id: Int): LiveData<Favorite?>
+    fun getASingleFavorite(id: Int): Flow<Favorite?>
 
-    fun isLocalFavorite(id: String): LiveData<Boolean>
-
-    fun isOnlineFavorite(id: String): LiveData<Boolean>
-
-    suspend fun deleteOneFavorite(favorite: Favorite, isSubscribed: Boolean)
+    fun isFavorite(id: String): LiveData<Boolean>
 
     suspend fun deleteAllFavorites()
 
-    suspend fun deleteALocalFavorite(localMealId: String, isSubscribed: Boolean)
-
-    suspend fun deleteAnOnlineFavorite(onlineMealId: String, isSubscribed: Boolean)
+    suspend fun insertFavorite(mealId: String): Resource<Boolean>
+    suspend fun deleteAFavorite(mealId: String)
+    suspend fun deleteOneFavorite(mealId: String)
 }

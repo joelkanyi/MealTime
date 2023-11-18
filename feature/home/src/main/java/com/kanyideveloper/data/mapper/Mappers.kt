@@ -16,13 +16,12 @@
 package com.kanyideveloper.data.mapper
 
 import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core.util.stringToList
 import com.kanyideveloper.core_database.model.MealEntity
 import com.kanyideveloper.core_database.model.OnlineMealCategoryEntity
 import com.kanyideveloper.core_database.model.OnlineMealEntity
-import com.kanyideveloper.core_network.model.CategoriesResponse
-import com.kanyideveloper.core_network.model.MealDetailsResponse
-import com.kanyideveloper.core_network.model.MealsResponse
+import com.kanyideveloper.core_network.model.CategoriesResponseDto
+import com.kanyideveloper.core_network.model.MealDetailsResponseDto
+import com.kanyideveloper.core_network.model.MealsResponseDto
 import com.kanyideveloper.domain.model.Category
 import com.kanyideveloper.domain.model.OnlineMeal
 
@@ -31,51 +30,44 @@ internal fun MealEntity.toMeal(): Meal {
         name = name,
         imageUrl = imageUrl,
         cookingTime = cookingTime,
+        servingPeople = servingPeople,
         category = category,
         cookingDifficulty = cookingDifficulty,
         ingredients = ingredients,
         cookingDirections = cookingInstructions,
-        favorite = isFavorite,
-        servingPeople = servingPeople,
-        localMealId = id
+        favorite = isFavorite
     )
 }
 
-internal fun CategoriesResponse.Category.toCategory(): Category {
+internal fun CategoriesResponseDto.toCategory(): Category {
     return Category(
-        categoryId = idCategory,
-        categoryName = strCategory,
-        categoryDescription = strCategoryDescription,
-        categoryImageUrl = strCategoryThumb
+        categoryId = id,
+        categoryName = name,
     )
 }
 
-internal fun MealsResponse.Meal.toMeal(): OnlineMeal {
+internal fun MealsResponseDto.toMeal(): OnlineMeal {
     return OnlineMeal(
-        name = strMeal,
-        imageUrl = strMealThumb,
-        mealId = idMeal
+        name = name,
+        imageUrl = image,
+        mealId = id
     )
 }
 
-internal fun CategoriesResponse.Category.toEntity() = OnlineMealCategoryEntity(
-    idCategory = idCategory,
-    strCategory = strCategory,
-    strCategoryDescription = strCategoryDescription,
-    strCategoryThumb = strCategoryThumb
+internal fun CategoriesResponseDto.toEntity() = OnlineMealCategoryEntity(
+    id = id,
+    name = name,
 )
 
 internal fun OnlineMealCategoryEntity.toCategory() = Category(
-    categoryId = idCategory,
-    categoryName = strCategory,
-    categoryDescription = strCategoryDescription,
-    categoryImageUrl = strCategoryThumb
+    categoryId = id,
+    categoryName = name,
 )
 
-internal fun MealsResponse.Meal.toEntity(category: String) = OnlineMealEntity(
-    idMeal = idMeal,
-    strMeal = strMeal,
-    strMealThumb = strMealThumb,
+internal fun MealsResponseDto.toEntity(category: String) = OnlineMealEntity(
+    idMeal = id,
+    strMeal = name,
+    strMealThumb = image,
     strCategory = category
 )
 
@@ -85,38 +77,23 @@ internal fun OnlineMealEntity.toMeal() = OnlineMeal(
     mealId = idMeal
 )
 
-internal fun MealDetailsResponse.Meal.toMeal(): Meal {
+internal fun MealDetailsResponseDto.toMeal(): Meal {
     return Meal(
-        name = strMeal,
-        imageUrl = strMealThumb,
+        name = name,
+        imageUrl = imageUrl,
         cookingTime = 0,
-        category = strCategory,
-        cookingDifficulty = "",
-        ingredients = listOf(
-            strIngredient1,
-            strIngredient2,
-            strIngredient3,
-            strIngredient4,
-            strIngredient5,
-            strIngredient6,
-            strIngredient7,
-            strIngredient8,
-            strIngredient9,
-            strIngredient10,
-            strIngredient11,
-            strIngredient12,
-            strIngredient13,
-            strIngredient14,
-            strIngredient15,
-            strIngredient16,
-            strIngredient17,
-            strIngredient18,
-            strIngredient19,
-            strIngredient20
-        ).filter { it.isNotEmpty() },
-        cookingDirections = strInstructions.stringToList(),
-        favorite = false,
         servingPeople = 0,
-        onlineMealId = idMeal
+        category = category,
+        cookingDifficulty = "",
+        ingredients = ingredients.map { it.toIngredient() },
+        cookingDirections = cookingInstructions.map { it.instruction },
+        favorite = false,
+        mealId = id
     )
 }
+
+internal fun MealDetailsResponseDto.IngredientDto.toIngredient() = com.kanyideveloper.core.model.Ingredient(
+    name = name,
+    quantity = quantity,
+    id = id
+)

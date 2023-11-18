@@ -47,6 +47,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -150,7 +151,7 @@ class MealPlannerRepositoryImpl(
         return safeApiCall(Dispatchers.IO) {
             val response = mealDbApi.getAllIngredients()
             Timber.d("Ingredients response: $response")
-            response.meals.map { it.strIngredient }
+            response.map { it.name }
         }
     }
 
@@ -449,9 +450,11 @@ class MealPlannerRepositoryImpl(
             getFavoritesFromRemoteDataSource()
         } else {
             Resource.Success(
-                data = favoritesDao.getFavorites().map { favs ->
-                    favs.map { it.toMeal() }
-                }
+                data = flowOf(
+                    favoritesDao.getFavorites().map { favs ->
+                        favs.toMeal()
+                    }
+                )
             )
         }
     }
@@ -463,7 +466,7 @@ class MealPlannerRepositoryImpl(
         // first read from the local database
         val favorites = favoritesDao.getFavorites()
 
-        return try {
+        /*return try {
             val newFavorites = withTimeoutOrNull(10000L) {
                 // fetch from the remote database
                 val favoritesRemote: MutableList<Favorite> = mutableListOf()
@@ -484,12 +487,9 @@ class MealPlannerRepositoryImpl(
                     favoritesDao.insertAFavorite(
                         FavoriteEntity(
                             id = onlineFavorite.id,
-                            onlineMealId = onlineFavorite.onlineMealId,
-                            localMealId = onlineFavorite.localMealId,
-                            isOnline = onlineFavorite.online,
+                            mealId = onlineFavorite.mealId,
                             mealName = onlineFavorite.mealName,
                             mealImageUrl = onlineFavorite.mealImageUrl,
-                            isFavorite = onlineFavorite.favorite
                         )
                     )
                 }
@@ -523,7 +523,14 @@ class MealPlannerRepositoryImpl(
                     }
                 }
             )
-        }
+        }*/
+        return Resource.Success(
+            data = flowOf(
+                favorites.map {
+                    it.toMeal()
+                }
+            )
+        )
     }
 
     private suspend fun getMyMeals(isSubscribed: Boolean): Resource<Flow<List<Meal>>> {
@@ -548,36 +555,15 @@ class MealPlannerRepositoryImpl(
         return try {
             val newMyMeals = withTimeoutOrNull(10000L) {
                 // fetch from the remote database
-                val myMealsRemote: MutableList<Meal> = mutableListOf()
-                val auctions = databaseReference
-                    .child("mymeals")
-                    .child(firebaseAuth.currentUser?.uid.toString())
-                val auctionsListFromDb = auctions.get().await()
-                for (i in auctionsListFromDb.children) {
-                    val result = i.getValue(Meal::class.java)
-                    myMealsRemote.add(result!!)
-                }
+                val myMealsRemote = mealDbApi.getFavorites(
+                    // userId = mealTimePreferences.getUserId().first()
+                    userId = "a2fb5562-871b-4346-9cab-2cd4f4922738"
+                )
 
                 // clear the local database
                 mealDao.deleteAllMeals()
 
                 // save the remote data to the local database
-                myMealsRemote.forEach { onlineMeal ->
-                    mealDao.insertMeal(
-                        mealEntity = MealEntity(
-                            id = onlineMeal.id ?: UUID.randomUUID().toString(),
-                            name = onlineMeal.name,
-                            imageUrl = onlineMeal.imageUrl,
-                            cookingTime = onlineMeal.cookingTime,
-                            category = onlineMeal.category,
-                            cookingDifficulty = onlineMeal.cookingDifficulty,
-                            ingredients = onlineMeal.ingredients,
-                            cookingInstructions = onlineMeal.cookingDirections,
-                            isFavorite = onlineMeal.favorite,
-                            servingPeople = onlineMeal.servingPeople
-                        )
-                    )
-                }
 
                 // read from the local database
                 mealDao.getAllMeals().map { mealEntityList ->
@@ -618,35 +604,23 @@ class MealPlannerRepositoryImpl(
         return when (searchBy) {
             "Name" -> {
                 safeApiCall(Dispatchers.IO) {
-                    val response = mealDbApi.searchMealsByName(query = searchString)
-                    val mealsList = if (response?.meals != null) {
-                        response.meals.map { it.toOnlineMeal().toGeneralMeal() }
-                    } else {
-                        emptyList()
-                    }
+                    val response = mealDbApi.searchMeals(name = searchString)
+                    val mealsList = response.map { it.toOnlineMeal().toGeneralMeal() }
                     flowOf(mealsList)
                 }
             }
             "Ingredient" -> {
                 safeApiCall(Dispatchers.IO) {
-                    val response = mealDbApi.searchMealsByIngredient(query = searchString)
-                    val mealsList = if (response?.meals != null) {
-                        response.meals.map { it.toOnlineMeal().toGeneralMeal() }
-                    } else {
-                        emptyList()
-                    }
+                    val response = mealDbApi.searchMeals(ingredient = searchString)
+                    val mealsList = response.map { it.toOnlineMeal().toGeneralMeal() } ?: emptyList()
 
                     flowOf(mealsList)
                 }
             }
             "Category" -> {
                 safeApiCall(Dispatchers.IO) {
-                    val response = mealDbApi.searchMealsByCategory(query = searchString)
-                    val mealsList = if (response?.meals != null) {
-                        response.meals.map { it.toOnlineMeal().toGeneralMeal() }
-                    } else {
-                        emptyList()
-                    }
+                    val response = mealDbApi.searchMeals(category = searchString)
+                    val mealsList = response.map { it.toOnlineMeal().toGeneralMeal() } ?: emptyList()
 
                     flowOf(mealsList)
                 }

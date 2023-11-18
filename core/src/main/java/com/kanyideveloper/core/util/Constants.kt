@@ -15,12 +15,15 @@
  */
 package com.kanyideveloper.core.util
 
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 
 object Constants {
+    val USER_ID = stringPreferencesKey("user_id")
+    val ACCESS_TOKEN = stringPreferencesKey("access_token")
     const val MIXPANEL_TOKEN = "befbaa0a69fb8d4b9824e1a2391a8540"
     const val MEAL_TABLE = "meal_table"
     const val CATEGORIES_TABLE = "categories_table"

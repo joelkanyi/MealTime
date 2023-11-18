@@ -34,35 +34,23 @@ class SearchRepositoryImpl(
         return when (searchOption) {
             "Meal Name" -> {
                 return safeApiCall(Dispatchers.IO) {
-                    val response = mealDbApi.searchMealsByName(query = searchParam)
+                    val response = mealDbApi.searchMeals(name = searchParam)
                     Timber.e("Response for meal name: $response")
-                    if (response?.meals == null) {
-                        emptyList()
-                    } else {
-                        response.meals.map { it.toOnlineMeal() }
-                    }
+                    response.map { it.toOnlineMeal() } ?: emptyList()
                 }
             }
             "Ingredient" -> {
                 return safeApiCall(Dispatchers.IO) {
-                    val response = mealDbApi.searchMealsByIngredient(query = searchParam)
+                    val response = mealDbApi.searchMeals(ingredient = searchParam)
 
-                    if (response?.meals == null) {
-                        emptyList()
-                    } else {
-                        response.meals.map { it.toOnlineMeal() }
-                    }
+                    response.map { it.toOnlineMeal() } ?: emptyList()
                 }
             }
             "Meal Category" -> {
                 return safeApiCall(Dispatchers.IO) {
-                    val response = mealDbApi.searchMealsByCategory(query = searchParam)
+                    val response = mealDbApi.searchMeals(category = searchParam)
 
-                    if (response?.meals == null) {
-                        emptyList()
-                    } else {
-                        response.meals.map { it.toOnlineMeal() }
-                    }
+                    response.map { it.toOnlineMeal() } ?: emptyList()
                 }
             }
             else -> {

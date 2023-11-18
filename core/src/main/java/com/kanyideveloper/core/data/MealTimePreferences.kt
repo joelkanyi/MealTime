@@ -22,6 +22,7 @@ import androidx.datastore.preferences.core.edit
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.kanyideveloper.core.model.MealPlanPreference
+import com.kanyideveloper.core.util.Constants
 import com.kanyideveloper.core.util.Constants.ALLERGIES
 import com.kanyideveloper.core.util.Constants.DISH_TYPES
 import com.kanyideveloper.core.util.Constants.NUMBER_OF_PEOPLE
@@ -104,6 +105,30 @@ class MealTimePreferences(
             }
         } catch (e: Exception) {
             prefsFromLocal
+        }
+    }
+
+    fun getAccessToken(): Flow<String?> {
+        return dataStore.data.map { preferences ->
+            preferences[Constants.ACCESS_TOKEN]
+        }
+    }
+
+    suspend fun saveAccessToken(accessToken: String) {
+        dataStore.edit { preferences ->
+            preferences[Constants.ACCESS_TOKEN] = accessToken
+        }
+    }
+
+    suspend fun deleteToken() {
+        dataStore.edit { preferences ->
+            preferences.remove(Constants.ACCESS_TOKEN)
+        }
+    }
+
+    fun getUserId(): Flow<String> {
+        return dataStore.data.map { preferences ->
+            preferences[Constants.USER_ID] ?: ""
         }
     }
 }

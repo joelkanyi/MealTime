@@ -22,11 +22,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kanyideveloper.core.analytics.AnalyticsUtil
 import com.kanyideveloper.core.domain.FavoritesRepository
-import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.search.domain.SearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -108,29 +108,16 @@ class SearchViewModel @Inject constructor(
     }
 
     fun inOnlineFavorites(id: String): LiveData<Boolean> {
-        return favoritesRepository.isOnlineFavorite(id = id)
+        return favoritesRepository.isFavorite(id = id)
     }
 
     fun insertAFavorite(
-        isOnline: Boolean,
-        onlineMealId: String? = null,
-        localMealId: String? = null,
-        mealImageUrl: String,
-        mealName: String
+        mealId: String,
     ) {
         viewModelScope.launch {
-            val favorite = Favorite(
-                onlineMealId = onlineMealId,
-                localMealId = localMealId,
-                mealName = mealName,
-                mealImageUrl = mealImageUrl,
-                online = isOnline,
-                favorite = true
-            )
             when (
                 val result = favoritesRepository.insertFavorite(
-                    favorite = favorite,
-                    isSubscribed = true
+                    mealId = mealId
                 )
             ) {
                 is Resource.Error -> {
@@ -152,11 +139,12 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    fun deleteAnOnlineFavorite(onlineMealId: String) {
+    fun deleteAnOnlineFavorite(
+        mealId: String,
+    ) {
         viewModelScope.launch {
-            favoritesRepository.deleteAnOnlineFavorite(
-                onlineMealId = onlineMealId,
-                isSubscribed = true
+            favoritesRepository.deleteAFavorite(
+                mealId = mealId
             )
         }
     }

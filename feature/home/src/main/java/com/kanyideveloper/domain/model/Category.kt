@@ -16,8 +16,6 @@
 package com.kanyideveloper.domain.model
 
 data class Category(
-    val categoryId: String,
+    val categoryId: Int,
     val categoryName: String,
-    val categoryDescription: String,
-    val categoryImageUrl: String
 )

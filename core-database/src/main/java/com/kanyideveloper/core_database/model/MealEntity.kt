@@ -18,6 +18,7 @@ package com.kanyideveloper.core_database.model
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.kanyideveloper.core.model.Ingredient
 import com.kanyideveloper.core.util.Constants.MEAL_TABLE
 import kotlinx.parcelize.Parcelize
 
@@ -30,7 +31,7 @@ data class MealEntity(
     val servingPeople: Int,
     val category: String,
     val cookingDifficulty: String,
-    val ingredients: List<String>,
+    val ingredients: List<Ingredient>,
     val cookingInstructions: List<String>,
     val isFavorite: Boolean = false,
     @PrimaryKey val id: String

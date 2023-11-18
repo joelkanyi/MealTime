@@ -24,12 +24,12 @@ import com.kanyideveloper.core.analytics.AnalyticsUtil
 import com.kanyideveloper.core.domain.FavoritesRepository
 import com.kanyideveloper.core.domain.HomeRepository
 import com.kanyideveloper.core.domain.SubscriptionRepository
-import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.state.SubscriptionStatusUiState
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.UiEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -126,30 +126,16 @@ class HomeViewModel @Inject constructor(
     }
 
     fun inFavorites(id: String): LiveData<Boolean> {
-        return favoritesRepository.isLocalFavorite(id = id)
+        return favoritesRepository.isFavorite(id = id)
     }
 
     fun insertAFavorite(
-        isOnline: Boolean,
-        onlineMealId: String? = null,
-        localMealId: String,
-        mealImageUrl: String,
-        mealName: String,
-        isSubscribed: Boolean
+        mealId: String,
     ) {
         viewModelScope.launch {
-            val favorite = Favorite(
-                onlineMealId = onlineMealId,
-                localMealId = localMealId,
-                mealName = mealName,
-                mealImageUrl = mealImageUrl,
-                online = isOnline,
-                favorite = true
-            )
             when (
                 val result = favoritesRepository.insertFavorite(
-                    favorite = favorite,
-                    isSubscribed = isSubscribed
+                    mealId = mealId,
                 )
             ) {
                 is Resource.Error -> {
@@ -173,12 +159,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun deleteALocalFavorite(localMealId: String, isSubscribed: Boolean) {
+    fun deleteALocalFavorite(mealId: String) {
         viewModelScope.launch {
-            favoritesRepository.deleteALocalFavorite(
-                localMealId = localMealId,
-                isSubscribed = isSubscribed
-            )
+            favoritesRepository.deleteAFavorite(mealId)
         }
     }
 }

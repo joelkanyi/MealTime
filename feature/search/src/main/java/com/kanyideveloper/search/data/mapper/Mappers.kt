@@ -16,12 +16,12 @@
 package com.kanyideveloper.search.data.mapper
 
 import com.kanyideveloper.core.model.OnlineMeal
-import com.kanyideveloper.core_network.model.MealsResponse
+import com.kanyideveloper.core_network.model.MealsResponseDto
 
-internal fun MealsResponse.Meal.toOnlineMeal(): OnlineMeal {
+internal fun MealsResponseDto.toOnlineMeal(): OnlineMeal {
     return OnlineMeal(
-        name = strMeal,
-        imageUrl = strMealThumb,
-        mealId = idMeal
+        name = name,
+        imageUrl = image,
+        mealId = id
     )
 }

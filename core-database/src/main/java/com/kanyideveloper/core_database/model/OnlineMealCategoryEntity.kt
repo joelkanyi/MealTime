@@ -21,8 +21,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "online_meal_categories")
 data class OnlineMealCategoryEntity(
     @PrimaryKey
-    val idCategory: String,
-    val strCategory: String,
-    val strCategoryDescription: String,
-    val strCategoryThumb: String
+    val id: Int,
+    val name: String,
 )

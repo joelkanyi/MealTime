@@ -34,6 +34,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,7 +63,7 @@ fun MealItem(
 ) {
     Timber.e("MealItem: $meal")
     val isFavorite =
-        meal.localMealId?.let { viewModel.inFavorites(id = it).observeAsState().value } != null
+        meal.mealId?.let { viewModel.inFavorites(id = it).observeAsState().value } != null
 
     Timber.e("isFavorite: $isFavorite")
 
@@ -146,9 +147,9 @@ fun MealItem(
                 IconButton(
                     onClick = {
                         if (isFavorite) {
-                            meal.localMealId?.let { removeFromFavorites(it) }
+                            meal.mealId?.let { removeFromFavorites(it) }
                         } else {
-                            meal.localMealId?.let { addToFavorites(it, meal.imageUrl, meal.name) }
+                            meal.mealId?.let { addToFavorites(it, meal.imageUrl, meal.name) }
                         }
                     }
                 ) {

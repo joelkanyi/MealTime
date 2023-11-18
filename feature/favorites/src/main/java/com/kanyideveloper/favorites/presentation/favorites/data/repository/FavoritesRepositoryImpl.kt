@@ -19,14 +19,21 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
+import com.kanyideveloper.core.data.MealTimePreferences
 import com.kanyideveloper.core.domain.FavoritesRepository
 import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core.util.Resource
+import com.kanyideveloper.core.util.safeApiCall
 import com.kanyideveloper.core_database.dao.FavoritesDao
 import com.kanyideveloper.core_database.model.FavoriteEntity
+import com.kanyideveloper.core_network.MealDbApi
+import com.kanyideveloper.core_network.model.CreateFavoriteRequestDto
 import com.kanyideveloper.favorites.presentation.favorites.data.mapper.toEntity
 import com.kanyideveloper.favorites.presentation.favorites.data.mapper.toFavorite
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeoutOrNull
@@ -35,52 +42,59 @@ import java.util.UUID
 
 class FavoritesRepositoryImpl(
     private val favoritesDao: FavoritesDao,
-    private val databaseReference: DatabaseReference,
-    private val firebaseAuth: FirebaseAuth
+    private val mealDbApi: MealDbApi,
+    private val mealTimePreferences: MealTimePreferences,
 ) : FavoritesRepository {
     override suspend fun insertFavorite(
-        isSubscribed: Boolean,
-        favorite: Favorite
+        mealId: String,
     ): Resource<Boolean> {
-        return if (isSubscribed) {
-            saveFavoriteToRemoteDatasource(favorite)
-        } else {
-            favoritesDao.insertAFavorite(favorite.toEntity())
-            Resource.Success(data = true)
-        }
+        return saveFavoriteToRemoteDatasource(
+            mealId = mealId,
+        )
     }
 
-    override suspend fun getFavorites(isSubscribed: Boolean): Resource<Flow<List<Favorite>>> {
-        return if (isSubscribed) {
-            getFavoritesFromRemoteDataSource()
-        } else {
-            Resource.Success(
-                data = favoritesDao.getFavorites().map { favoritesEntity ->
-                    favoritesEntity.map { it.toFavorite() }
+    override suspend fun getFavorites(): Flow<Resource<List<Favorite>>> = flow {
+        emit(
+            safeApiCall(Dispatchers.IO) {
+                val response = mealDbApi.getFavorites(
+                    // userId = mealTimePreferences.getUserId().first()
+                    userId = "a2fb5562-871b-4346-9cab-2cd4f4922738"
+                )
+
+                favoritesDao.deleteAllFavorites()
+
+                response.forEach { favorite ->
+                    favoritesDao.insertAFavorite(
+                        FavoriteEntity(
+                            id = favorite.id,
+                            mealId = favorite.mealId,
+                            mealName = favorite.mealName,
+                            mealImageUrl = favorite.mealImageUrl,
+                        )
+                    )
                 }
-            )
-        }
+
+                favoritesDao.getFavorites().map {
+                    it.toFavorite()
+                }
+            }
+        )
     }
 
-    private suspend fun getFavoritesFromRemoteDataSource(): Resource<Flow<List<Favorite>>> {
-        /**
+/*    private suspend fun getFavoritesFromRemoteDataSource(): Resource<Flow<List<Favorite>>> {
+        *//**
          * Do offline caching
-         */
+         *//*
         // first read from the local database
         val favorites = favoritesDao.getFavorites()
 
         return try {
             val newFavorites = withTimeoutOrNull(10000L) {
                 // fetch from the remote database
-                val favoritesRemote: MutableList<Favorite> = mutableListOf()
-                val favs = databaseReference
-                    .child("favorites")
-                    .child(firebaseAuth.currentUser?.uid.toString())
-                val auctionsListFromDb = favs.get().await()
-                for (i in auctionsListFromDb.children) {
-                    val result = i.getValue(Favorite::class.java)
-                    favoritesRemote.add(result!!)
-                }
+                val favoritesRemote = mealDbApi.getFavorites(
+                    // userId = mealTimePreferences.getUserId().first()
+                    userId = "a2fb5562-871b-4346-9cab-2cd4f4922738"
+                )
 
                 // clear the local database
                 favoritesDao.deleteAllFavorites()
@@ -90,12 +104,9 @@ class FavoritesRepositoryImpl(
                     favoritesDao.insertAFavorite(
                         FavoriteEntity(
                             id = onlineFavorite.id,
-                            onlineMealId = onlineFavorite.onlineMealId,
-                            localMealId = onlineFavorite.localMealId,
-                            isOnline = onlineFavorite.online,
+                            mealId = onlineFavorite.mealId,
                             mealName = onlineFavorite.mealName,
                             mealImageUrl = onlineFavorite.mealImageUrl,
-                            isFavorite = onlineFavorite.favorite
                         )
                     )
                 }
@@ -130,105 +141,65 @@ class FavoritesRepositoryImpl(
                 }
             )
         }
-    }
+    }*/
 
-    override fun getASingleFavorite(id: Int): LiveData<Favorite?> {
+    override fun getASingleFavorite(id: Int): Flow<Favorite?> {
         return favoritesDao.getAFavoriteById(id = id).map {
             it?.toFavorite()
         }
     }
 
-    override fun isLocalFavorite(id: String): LiveData<Boolean> {
-        return favoritesDao.localInFavorites(id = id)
-    }
-
-    override fun isOnlineFavorite(id: String): LiveData<Boolean> {
-        return favoritesDao.onlineInFavorites(id = id)
-    }
-
-    override suspend fun deleteOneFavorite(favorite: Favorite, isSubscribed: Boolean) {
-        if (isSubscribed) {
-            deleteAFavoriteFromRemoteDatasource(
-                mealId = if (favorite.online) {
-                    favorite.onlineMealId ?: UUID.randomUUID().toString()
-                } else {
-                    favorite.localMealId.toString()
-                },
-                isOnlineMeal = favorite.online
-            )
-        } else {
-            favoritesDao.deleteAFavorite(favorite.toEntity())
+    override fun isFavorite(id: String): LiveData<Boolean> {
+        return favoritesDao.inFavorites(id = id).map {
+            it != null
         }
+    }
+    override suspend fun deleteOneFavorite(
+        mealId: String,
+    ) {
+        deleteAFavoriteFromRemoteDatasource(
+            mealId = mealId,
+        )
     }
 
     override suspend fun deleteAllFavorites() {
         favoritesDao.deleteAllFavorites()
     }
 
-    override suspend fun deleteALocalFavorite(localMealId: String, isSubscribed: Boolean) {
-        if (isSubscribed) {
-            deleteAFavoriteFromRemoteDatasource(
-                mealId = localMealId,
-                isOnlineMeal = false
-            )
-        } else {
-            favoritesDao.deleteALocalFavorite(localMealId = localMealId)
-        }
+    override suspend fun deleteAFavorite(
+        mealId: String
+    ) {
+        deleteAFavoriteFromRemoteDatasource(
+            mealId = mealId,
+        )
     }
 
-    override suspend fun deleteAnOnlineFavorite(onlineMealId: String, isSubscribed: Boolean) {
-        if (isSubscribed) {
-            deleteAFavoriteFromRemoteDatasource(
-                mealId = onlineMealId,
-                isOnlineMeal = true
-            )
-        } else {
-            favoritesDao.deleteAnOnlineFavorite(mealId = onlineMealId)
-        }
-    }
-
-    private suspend fun saveFavoriteToRemoteDatasource(favorite: Favorite): Resource<Boolean> {
-        return try {
-            databaseReference
-                .child("favorites")
-                .child(firebaseAuth.currentUser?.uid.toString())
-                .child(
-                    if (favorite.online) {
-                        favorite.onlineMealId ?: UUID.randomUUID().toString()
-                    } else {
-                        favorite.localMealId.toString()
-                    }
+    private suspend fun saveFavoriteToRemoteDatasource(
+        mealId: String,
+    ): Resource<Boolean> {
+        return safeApiCall(Dispatchers.IO) {
+            mealDbApi.saveFavorite(
+                CreateFavoriteRequestDto(
+                    mealId = mealId,
+                    // userId = mealTimePreferences.getUserId().first(),
+                    userId = "a2fb5562-871b-4346-9cab-2cd4f4922738",
                 )
-                .setValue(favorite).await()
-            favoritesDao.insertAFavorite(favorite.toEntity())
-            Resource.Success(data = true)
-        } catch (e: Exception) {
-            return Resource.Error(e.localizedMessage ?: "Unknown error occurred")
+            )
+            true
         }
     }
 
     private suspend fun deleteAFavoriteFromRemoteDatasource(
-        mealId: String,
-        isOnlineMeal: Boolean
+        mealId: String
     ): Resource<Boolean> {
-        return try {
-            databaseReference
-                .child("favorites")
-                .child(firebaseAuth.currentUser?.uid.toString())
-                .child(mealId)
-                .removeValue()
-                .await()
-
-            if (isOnlineMeal) {
-                favoritesDao.deleteAnOnlineFavorite(mealId = mealId)
-            } else {
-                favoritesDao.deleteALocalFavorite(localMealId = mealId)
-            }
-
-            Resource.Success(data = true)
-        } catch (e: Exception) {
-            Timber.e("Error deleting isFavorite: $e")
-            return Resource.Error(e.localizedMessage ?: "Unknown error occurred")
+        return safeApiCall(Dispatchers.IO) {
+            mealDbApi.deleteFavorite(
+                mealId = mealId,
+                // userId = mealTimePreferences.getUserId().first(),
+                userId = "a2fb5562-871b-4346-9cab-2cd4f4922738",
+            )
+            favoritesDao.deleteAFavorite(mealId = mealId)
+            true
         }
     }
 }

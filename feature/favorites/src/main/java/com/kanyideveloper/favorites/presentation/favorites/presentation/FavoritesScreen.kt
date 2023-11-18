@@ -122,19 +122,9 @@ fun FavoritesScreen(
                 onToggleMenu = {
                     mDisplayMenu = it
                 },
-                onClick = { _, onlineMealId, localMealId, isOnline ->
+                onClick = { mealId ->
                     analyticsUtil.trackUserEvent("Open favorite meal details clicked")
-                    if (isOnline) {
-                        onlineMealId?.let { navigator.openOnlineMealDetails(mealId = it) }
-                    } else {
-                        if (localMealId != null) {
-                            viewModel.getASingleMeal(id = localMealId)
-
-                            if (meal != null) {
-                                navigator.openMealDetails(meal = meal)
-                            }
-                        }
-                    }
+                    mealId?.let { navigator.openOnlineMealDetails(mealId = it) }
                 },
                 onFavoriteClick = { favorite ->
                     analyticsUtil.trackUserEvent("Delete one favorite clicked - ${favorite.mealName}")
@@ -167,7 +157,7 @@ private fun FavoritesScreenContent(
     modifier: Modifier = Modifier,
     favoritesUiState: FavoritesUiState,
     snackbarHostState: SnackbarHostState,
-    onClick: (Int?, String?, String?, Boolean) -> Unit,
+    onClick: (String?) -> Unit,
     onFavoriteClick: (Favorite) -> Unit,
     onRefreshData: () -> Unit,
     onDeleteAllFavs: () -> Unit,
@@ -265,7 +255,7 @@ private fun FavoritesScreenContent(
 fun FoodItem(
     favorite: Favorite,
     modifier: Modifier = Modifier,
-    onClick: (Int?, String?, String?, Boolean) -> Unit,
+    onClick: (String?) -> Unit,
     onFavoriteClick: (Favorite) -> Unit
 ) {
     Card(
@@ -277,10 +267,7 @@ fun FoodItem(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         onClick = {
             onClick(
-                favorite.id,
-                favorite.onlineMealId,
-                favorite.localMealId,
-                favorite.onlineMealId != null
+                favorite.mealId,
             )
         }
     ) {
