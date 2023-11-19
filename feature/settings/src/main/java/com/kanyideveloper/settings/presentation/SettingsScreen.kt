@@ -56,8 +56,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.kanyideveloper.analytics.domain.repository.AnalyticsUtil
 import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.core.analytics.AnalyticsUtil
 import com.kanyideveloper.core.components.PremiumCard
 import com.kanyideveloper.core.state.SubscriptionStatusUiState
 import com.kanyideveloper.core.util.UiEvents

@@ -18,7 +18,7 @@ package com.joelkanyi.auth.di
 import com.google.firebase.auth.FirebaseAuth
 import com.joelkanyi.auth.data.repository.AuthRepositoryImpl
 import com.joelkanyi.auth.domain.repository.AuthRepository
-import com.kanyideveloper.core.analytics.AnalyticsUtil
+import com.kanyideveloper.analytics.domain.repository.AnalyticsUtil
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

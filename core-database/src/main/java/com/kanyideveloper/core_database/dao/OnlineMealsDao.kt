@@ -26,8 +26,8 @@ interface OnlineMealsDao {
     @Query("DELETE FROM online_meal_categories")
     suspend fun deleteOnlineMealCategories()
 
-    @Query("DELETE FROM online_meals WHERE strCategory = :category")
-    suspend fun deleteOnlineMeals(category: String)
+    @Query("DELETE FROM online_meals")
+    suspend fun deleteOnlineMeals()
 
     @Insert
     suspend fun insertOnlineMealCategories(categories: List<OnlineMealCategoryEntity>)
@@ -38,6 +38,6 @@ interface OnlineMealsDao {
     @Query("SELECT * FROM online_meal_categories")
     suspend fun getOnlineMealCategories(): List<OnlineMealCategoryEntity>
 
-    @Query("SELECT * FROM online_meals WHERE strCategory = :category")
-    suspend fun getOnlineMeals(category: String): List<OnlineMealEntity>
+    @Query("SELECT * FROM online_meals")
+    suspend fun getOnlineMeals(): List<OnlineMealEntity>
 }

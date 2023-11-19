@@ -17,8 +17,7 @@ package com.kanyideveloper.data.repository
 
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.util.Resource
-import com.kanyideveloper.domain.model.Category
-import com.kanyideveloper.domain.model.OnlineMeal
+import com.kanyideveloper.core.model.Category
 import com.kanyideveloper.domain.repository.OnlineMealsRepository
 
 class FakeOnlineMealsRepository : OnlineMealsRepository {

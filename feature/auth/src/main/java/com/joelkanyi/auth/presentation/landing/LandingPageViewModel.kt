@@ -16,7 +16,7 @@
 package com.joelkanyi.auth.presentation.landing
 
 import androidx.lifecycle.ViewModel
-import com.kanyideveloper.core.analytics.AnalyticsUtil
+import com.kanyideveloper.analytics.domain.repository.AnalyticsUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

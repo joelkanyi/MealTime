@@ -5,17 +5,17 @@ import com.google.gson.annotations.SerializedName
 
 data class MealDetailsResponseDto(
     @SerializedName("calories")
-    val calories: Double,
+    val calories: Double?,
     @SerializedName("category")
     val category: String,
     @SerializedName("cookingDifficulty")
-    val cookingDifficulty: String,
+    val cookingDifficulty: String?,
     @SerializedName("cookingInstructions")
     val cookingInstructions: List<CookingInstructionDto>,
     @SerializedName("cookingTime")
-    val cookingTime: Int,
+    val cookingTime: Int?,
     @SerializedName("description")
-    val description: String,
+    val description: String?,
     @SerializedName("id")
     val id: String,
     @SerializedName("imageUrl")
@@ -25,13 +25,13 @@ data class MealDetailsResponseDto(
     @SerializedName("name")
     val name: String,
     @SerializedName("recipePrice")
-    val recipePrice: Double,
+    val recipePrice: Double?,
     @SerializedName("reviewDtos")
     val reviewDtos: List<ReviewDto>,
     @SerializedName("serving")
-    val serving: Int,
+    val serving: Int?,
     @SerializedName("youtubeUrl")
-    val youtubeUrl: String
+    val youtubeUrl: String?
 ) {
     data class CookingInstructionDto(
         @SerializedName("id")

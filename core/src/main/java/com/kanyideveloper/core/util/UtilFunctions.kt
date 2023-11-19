@@ -66,7 +66,7 @@ fun Context.imageUriToImageBitmap(uri: Uri): Bitmap {
 
 suspend fun <T> safeApiCall(
     dispatcher: CoroutineDispatcher,
-    apiCall: suspend () -> T
+    apiCall: suspend () -> T,
 ): Resource<T> {
     return withContext(dispatcher) {
         try {

@@ -16,6 +16,7 @@
 package com.kanyideveloper.mealplanner.model
 
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.model.MealDetails
 
 data class MealPlan(
     val mealTypeName: String = "",

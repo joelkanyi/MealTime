@@ -24,10 +24,10 @@ import androidx.lifecycle.viewModelScope
 import com.kanyideveloper.addmeal.domain.repository.SaveMealRepository
 import com.kanyideveloper.addmeal.domain.repository.UploadImageRepository
 import com.kanyideveloper.addmeal.presentation.addmeal.state.SaveMealState
-import com.kanyideveloper.core.analytics.AnalyticsUtil
+import com.kanyideveloper.analytics.domain.repository.AnalyticsUtil
 import com.kanyideveloper.core.domain.SubscriptionRepository
 import com.kanyideveloper.core.model.Ingredient
-import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.model.MealDetails
 import com.kanyideveloper.core.state.SubscriptionStatusUiState
 import com.kanyideveloper.core.state.TextFieldState
 import com.kanyideveloper.core.util.Resource
@@ -40,7 +40,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -180,8 +179,7 @@ class AddMealsViewModel @Inject constructor(
                 is Resource.Success -> {
                     val imageUrl = uploadResult.data.toString()
 
-                    val meal = Meal(
-                        id = UUID.randomUUID().toString(),
+                    /*val meal = MealDetails(
                         name = mealName,
                         imageUrl = imageUrl,
                         cookingTime = cookingTime,
@@ -195,7 +193,7 @@ class AddMealsViewModel @Inject constructor(
                     saveMyMeal(
                         meal = meal,
                         isSubscribed = isSubscribed
-                    )
+                    )*/
                 }
                 else -> {
                     saveMeal
@@ -204,7 +202,7 @@ class AddMealsViewModel @Inject constructor(
         }
     }
 
-    private fun saveMyMeal(meal: Meal, isSubscribed: Boolean) {
+    private fun saveMyMeal(meal: MealDetails, isSubscribed: Boolean) {
         viewModelScope.launch {
             when (
                 val result = saveMealRepository.saveMeal(

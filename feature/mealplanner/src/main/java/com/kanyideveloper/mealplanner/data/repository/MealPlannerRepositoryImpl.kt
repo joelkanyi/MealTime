@@ -23,7 +23,6 @@ import androidx.activity.ComponentActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.kanyideveloper.core.data.MealTimePreferences
-import com.kanyideveloper.core.model.Favorite
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.model.MealPlanPreference
 import com.kanyideveloper.core.notifications.NotificationReceiver
@@ -32,8 +31,6 @@ import com.kanyideveloper.core.util.safeApiCall
 import com.kanyideveloper.core_database.dao.FavoritesDao
 import com.kanyideveloper.core_database.dao.MealDao
 import com.kanyideveloper.core_database.dao.MealPlanDao
-import com.kanyideveloper.core_database.model.FavoriteEntity
-import com.kanyideveloper.core_database.model.MealEntity
 import com.kanyideveloper.core_database.model.MealPlanEntity
 import com.kanyideveloper.core_network.MealDbApi
 import com.kanyideveloper.mealplanner.data.mapper.toEntity
@@ -47,7 +44,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -111,9 +107,6 @@ class MealPlannerRepositoryImpl(
             }
             "My Meals" -> {
                 getMyMeals(isSubscribed = isSubscribed)
-            }
-            "My Favorites" -> {
-                getFavorites(isSubscribed = isSubscribed)
             }
             else -> {
                 Resource.Error("Invalid source: $source", null)
@@ -444,95 +437,6 @@ class MealPlannerRepositoryImpl(
             pendingIntent
         )
     }
-
-    private suspend fun getFavorites(isSubscribed: Boolean): Resource<Flow<List<Meal>>> {
-        return if (isSubscribed) {
-            getFavoritesFromRemoteDataSource()
-        } else {
-            Resource.Success(
-                data = flowOf(
-                    favoritesDao.getFavorites().map { favs ->
-                        favs.toMeal()
-                    }
-                )
-            )
-        }
-    }
-
-    private suspend fun getFavoritesFromRemoteDataSource(): Resource<Flow<List<Meal>>> {
-        /**
-         * Do offline caching
-         */
-        // first read from the local database
-        val favorites = favoritesDao.getFavorites()
-
-        /*return try {
-            val newFavorites = withTimeoutOrNull(10000L) {
-                // fetch from the remote database
-                val favoritesRemote: MutableList<Favorite> = mutableListOf()
-                val favs = databaseReference
-                    .child("favorites")
-                    .child(firebaseAuth.currentUser?.uid.toString())
-                val auctionsListFromDb = favs.get().await()
-                for (i in auctionsListFromDb.children) {
-                    val result = i.getValue(Favorite::class.java)
-                    favoritesRemote.add(result!!)
-                }
-
-                // clear the local database
-                favoritesDao.deleteAllFavorites()
-
-                // save the remote data to the local database
-                favoritesRemote.forEach { onlineFavorite ->
-                    favoritesDao.insertAFavorite(
-                        FavoriteEntity(
-                            id = onlineFavorite.id,
-                            mealId = onlineFavorite.mealId,
-                            mealName = onlineFavorite.mealName,
-                            mealImageUrl = onlineFavorite.mealImageUrl,
-                        )
-                    )
-                }
-
-                // read from the local database
-                favoritesDao.getFavorites().map { favoriteEntities ->
-                    favoriteEntities.map { favoriteEntity ->
-                        favoriteEntity.toMeal()
-                    }
-                }
-            }
-
-            if (newFavorites == null) {
-                Resource.Error(
-                    "Viewing offline data",
-                    data = favorites.map {
-                        it.map { favoriteEntity ->
-                            favoriteEntity.toMeal()
-                        }
-                    }
-                )
-            } else {
-                Resource.Success(data = newFavorites)
-            }
-        } catch (e: Exception) {
-            Resource.Error(
-                e.localizedMessage ?: "Unknown error occurred",
-                data = favorites.map {
-                    it.map { favoriteEntity ->
-                        favoriteEntity.toMeal()
-                    }
-                }
-            )
-        }*/
-        return Resource.Success(
-            data = flowOf(
-                favorites.map {
-                    it.toMeal()
-                }
-            )
-        )
-    }
-
     private suspend fun getMyMeals(isSubscribed: Boolean): Resource<Flow<List<Meal>>> {
         return if (isSubscribed) {
             getMyMealsFromRemoteDataSource()

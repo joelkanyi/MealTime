@@ -16,6 +16,7 @@
 package com.kanyideveloper.mealplanner.domain.repository
 
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.model.MealDetails
 import com.kanyideveloper.core.model.MealPlanPreference
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.mealplanner.model.MealPlan

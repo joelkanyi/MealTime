@@ -43,10 +43,4 @@ sealed class BottomNavItem(var title: String, var icon: Int, var screen: NavGrap
         icon = R.drawable.ic_favorites,
         screen = NavGraphs.favorites
     )
-
-    object Settings : BottomNavItem(
-        title = "Settings",
-        icon = R.drawable.ic_settings,
-        screen = NavGraphs.settings
-    )
 }

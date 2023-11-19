@@ -42,9 +42,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.kanyideveloper.analytics.domain.repository.AnalyticsUtil
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.compose_ui.theme.PrimaryColor
-import com.kanyideveloper.core.analytics.AnalyticsUtil
 import com.kanyideveloper.core.components.EmptyStateComponent
 import com.kanyideveloper.core.components.ErrorStateComponent
 import com.kanyideveloper.core.components.LoadingStateComponent

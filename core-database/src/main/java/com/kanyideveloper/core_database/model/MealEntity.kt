@@ -27,12 +27,12 @@ import kotlinx.parcelize.Parcelize
 data class MealEntity(
     val name: String,
     val imageUrl: String,
-    val cookingTime: Int,
-    val servingPeople: Int,
+    val cookingTime: Int?,
+    val servingPeople: Int?,
     val category: String,
-    val cookingDifficulty: String,
-    val ingredients: List<Ingredient>,
-    val cookingInstructions: List<String>,
-    val isFavorite: Boolean = false,
-    @PrimaryKey val id: String
+    val cookingDifficulty: String?,
+    val ingredients: List<Ingredient> = emptyList(),
+    val cookingInstructions: List<String> = emptyList(),
+    @PrimaryKey val mealId: String,
+    val mealPlanId: String? = null
 ) : Parcelable

@@ -29,16 +29,16 @@ interface MealDao {
     @Insert
     suspend fun insertMeal(mealEntity: MealEntity)
 
-    @Query("SELECT * FROM meal_table ORDER BY id DESC")
+    @Query("SELECT * FROM meal_table ORDER BY mealId DESC")
     fun getAllMeals(): Flow<List<MealEntity>>
 
-    @Query("SELECT * FROM meal_table WHERE id = :id")
+    @Query("SELECT * FROM meal_table WHERE mealId = :id")
     fun getSingleMeal(id: String): LiveData<MealEntity?>
 
     @Delete
     suspend fun deleteMeal(mealEntity: MealEntity)
 
-    @Query("DELETE FROM meal_table WHERE id = :id")
+    @Query("DELETE FROM meal_table WHERE mealId = :id")
     suspend fun deleteMealById(id: Int)
 
     @Query("DELETE FROM meal_table")

@@ -29,7 +29,7 @@ interface FavoritesDao {
     suspend fun insertAFavorite(favoriteEntity: FavoriteEntity)
 
     @Query("SELECT * FROM favorites_table ORDER BY id DESC")
-    fun getFavorites(): List<FavoriteEntity>
+    fun getFavorites(): Flow<List<FavoriteEntity>>
 
     @Query("SELECT * FROM favorites_table WHERE id  == :id LIMIT 1")
     fun getAFavoriteById(id: Int): Flow<FavoriteEntity?>

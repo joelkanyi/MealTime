@@ -47,11 +47,12 @@ import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.joelkanyi.kitchen_timer.presentation.destinations.KitchenTimerScreenDestination
+import com.joelkanyi.presentation.destinations.FavoritesScreenDestination
+import com.joelkanyi.presentation.destinations.HomeScreenDestination
 import com.kanyideveloper.compose_ui.theme.MealTimeTheme
 import com.kanyideveloper.compose_ui.theme.Theme
 import com.kanyideveloper.core.state.SubscriptionStatusUiState
 import com.kanyideveloper.core.util.Constants.PURCHASE_ID
-import com.kanyideveloper.favorites.presentation.favorites.presentation.destinations.FavoritesScreenDestination
 import com.kanyideveloper.mealplanner.destinations.MealPlannerScreenDestination
 import com.kanyideveloper.mealtime.component.StandardScaffold
 import com.kanyideveloper.mealtime.component.navGraph
@@ -61,7 +62,6 @@ import com.kanyideveloper.mealtime.navigation.scaleInEnterTransition
 import com.kanyideveloper.mealtime.navigation.scaleInPopEnterTransition
 import com.kanyideveloper.mealtime.navigation.scaleOutExitTransition
 import com.kanyideveloper.mealtime.navigation.scaleOutPopExitTransition
-import com.kanyideveloper.presentation.destinations.HomeScreenDestination
 import com.kanyideveloper.settings.presentation.destinations.SettingsScreenDestination
 import com.qonversion.android.sdk.Qonversion
 import com.qonversion.android.sdk.dto.QEntitlement
@@ -141,22 +141,13 @@ class MainActivity : ComponentActivity() {
                             val newBackStackEntry by navController.currentBackStackEntryAsState()
                             val route = newBackStackEntry?.destination?.route
 
-                            val bottomBarItems = if (isSubscribed.isSubscribed) {
-                                listOf(
+                            val bottomBarItems = listOf(
                                     BottomNavItem.Home,
                                     BottomNavItem.KitchenTimer,
                                     BottomNavItem.MealPlanner,
                                     BottomNavItem.Favorites,
-                                    BottomNavItem.Settings
                                 )
-                            } else {
-                                listOf(
-                                    BottomNavItem.Home,
-                                    BottomNavItem.MealPlanner,
-                                    BottomNavItem.Favorites,
-                                    BottomNavItem.Settings
-                                )
-                            }
+
 
                             StandardScaffold(
                                 navController = navController,

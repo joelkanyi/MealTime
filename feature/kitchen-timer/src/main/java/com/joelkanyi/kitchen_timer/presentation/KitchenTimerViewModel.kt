@@ -19,7 +19,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.joelkanyi.kitchen_timer.domain.repository.KitchenTimerRepository
-import com.kanyideveloper.core.analytics.AnalyticsUtil
+import com.kanyideveloper.analytics.domain.repository.AnalyticsUtil
 import com.kanyideveloper.core.util.minutesToMilliseconds
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

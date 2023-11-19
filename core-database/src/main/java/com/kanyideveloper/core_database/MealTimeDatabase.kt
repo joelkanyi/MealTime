@@ -37,7 +37,7 @@ import com.kanyideveloper.core_database.model.OnlineMealEntity
         OnlineMealCategoryEntity::class,
         OnlineMealEntity::class
     ],
-    version = 7,
+    version = 9,
     exportSchema = true
 )
 @TypeConverters(Converters::class)

@@ -42,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.model.MealDetails
 import com.kanyideveloper.mealtime.core.R
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -104,7 +105,7 @@ fun MealPlanItem(
             ) {
                 items(
                     items = meals,
-                    key = { meal -> meal.mealPlanId!! }
+                    key = { meal -> meal.mealId!! }
                 ) { meal ->
                     PlanMealItem(
                         meal = meal,

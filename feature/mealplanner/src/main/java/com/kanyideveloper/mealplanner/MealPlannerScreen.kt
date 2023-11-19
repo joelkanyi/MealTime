@@ -45,8 +45,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joelkanyi.horizontalcalendar.HorizontalCalendarView
+import com.kanyideveloper.analytics.domain.repository.AnalyticsUtil
 import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.core.analytics.AnalyticsUtil
 import com.kanyideveloper.core.components.EmptyStateComponent
 import com.kanyideveloper.core.components.SwipeRefreshComponent
 import com.kanyideveloper.core.model.Meal
@@ -70,9 +70,7 @@ interface MealPlannerNavigator {
     )
 
     fun openMealPlanner()
-    fun openMealDetails(meal: Meal)
-    fun openOnlineMealDetails(mealId: String)
-
+    fun openMealDetails(mealId: String?)
     fun navigateToSettings()
 }
 
@@ -212,13 +210,13 @@ fun MealPlannerScreen(
                 onMealClick = { localMealId, onlineMealId, isOnline ->
                     analyticsUtil.trackUserEvent("Meal Planner meal click")
                     if (isOnline) {
-                        onlineMealId?.let { navigator.openOnlineMealDetails(mealId = it) }
+                        onlineMealId?.let { navigator.openMealDetails(mealId = it) }
                     } else {
                         if (localMealId != null) {
                             viewModel.getASingleMeal(id = localMealId)
 
                             if (meal != null) {
-                                navigator.openMealDetails(meal = meal)
+                                navigator.openMealDetails(mealId = meal.mealId)
                             }
                         }
                     }
@@ -339,15 +337,8 @@ fun MealPlan.mapMealPlanToMeals(): List<Meal> {
         Meal(
             name = meal.name,
             imageUrl = meal.imageUrl,
-            cookingTime = meal.cookingTime,
-            servingPeople = meal.servingPeople,
-            category = meal.category,
-            cookingDifficulty = meal.cookingDifficulty,
-            ingredients = meal.ingredients,
-            cookingDirections = meal.cookingDirections,
-            favorite = meal.favorite,
             mealId = meal.mealId,
-            mealPlanId = this.id
+            category = meal.category
         )
     }
 }

@@ -21,10 +21,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kanyideveloper.core.analytics.AnalyticsUtil
-import com.kanyideveloper.core.domain.HomeRepository
+import com.kanyideveloper.analytics.domain.repository.AnalyticsUtil
 import com.kanyideveloper.core.domain.SubscriptionRepository
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.model.MealDetails
 import com.kanyideveloper.core.state.SubscriptionStatusUiState
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.UiEvents
@@ -47,7 +47,6 @@ import javax.inject.Inject
 @HiltViewModel
 class MealPlannerViewModel @Inject constructor(
     private val mealPlannerRepository: MealPlannerRepository,
-    private val homeRepository: HomeRepository,
     subscriptionRepository: SubscriptionRepository,
     private val analyticsUtil: AnalyticsUtil
 ) : ViewModel() {
@@ -229,10 +228,10 @@ class MealPlannerViewModel @Inject constructor(
         }
     }
 
-    private val _singleMeal = MutableLiveData<LiveData<Meal?>>()
-    val singleMeal: LiveData<LiveData<Meal?>> = _singleMeal
+    private val _singleMeal = MutableLiveData<LiveData<MealDetails?>>()
+    val singleMeal: LiveData<LiveData<MealDetails?>> = _singleMeal
     fun getASingleMeal(id: String) {
-        _singleMeal.value = homeRepository.getMealById(id = id)
+       //  _singleMeal.value = mealsRepository.getMealDetails(id = id)
     }
 
     private val _hasMealPlanPrefs = mutableStateOf(false)

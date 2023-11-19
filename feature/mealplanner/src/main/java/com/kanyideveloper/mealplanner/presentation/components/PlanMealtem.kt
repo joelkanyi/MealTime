@@ -51,6 +51,7 @@ import coil.request.ImageRequest
 import com.kanyideveloper.compose_ui.theme.PrimaryColor
 import com.kanyideveloper.compose_ui.theme.Shapes
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.model.MealDetails
 import com.kanyideveloper.mealtime.core.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -137,7 +138,7 @@ fun PlanMealItem(
                 if (isAddingToPlan) {
                     onClickAdd(meal, type)
                 } else {
-                    onRemoveClick(meal.mealPlanId)
+                    onRemoveClick(meal.mealId)
                 }
             }) {
                 Icon(

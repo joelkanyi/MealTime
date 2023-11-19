@@ -15,8 +15,8 @@
  */
 package com.kanyideveloper.mealplanner.data.mapper
 
+import com.kanyideveloper.core.model.MealDetails
 import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core.model.OnlineMeal
 import com.kanyideveloper.core_database.model.FavoriteEntity
 import com.kanyideveloper.core_database.model.MealEntity
 import com.kanyideveloper.core_database.model.MealPlanEntity
@@ -42,26 +42,21 @@ internal fun MealPlanEntity.toMealPlan(): MealPlan {
     )
 }
 
-internal fun MealsResponseDto.toOnlineMeal(): OnlineMeal {
-    return OnlineMeal(
+internal fun MealsResponseDto.toOnlineMeal(): Meal {
+    return Meal(
         name = name,
         imageUrl = image,
-        mealId = id
+        mealId = id,
+        category = category
     )
 }
 
-internal fun OnlineMeal.toGeneralMeal(): Meal {
+internal fun Meal.toGeneralMeal(): Meal {
     return Meal(
         name = name,
         imageUrl = imageUrl,
-        cookingTime = 0,
-        servingPeople = 0,
-        category = "",
-        cookingDifficulty = "",
-        ingredients = emptyList(),
-        cookingDirections = emptyList(),
-        favorite = false,
-        mealId = mealId
+        mealId = mealId,
+        category = category
     )
 }
 
@@ -69,25 +64,8 @@ internal fun MealEntity.toMeal(): Meal {
     return Meal(
         name = name,
         imageUrl = imageUrl,
-        cookingTime = cookingTime,
-        servingPeople = servingPeople,
         category = category,
-        cookingDifficulty = cookingDifficulty,
-        ingredients = ingredients,
-        cookingDirections = cookingInstructions,
-        favorite = isFavorite
-    )
-}
-
-internal fun FavoriteEntity.toMeal(): Meal {
-    return Meal(
-        name = mealName,
-        cookingTime = 0,
-        servingPeople = 0,
-        category = "",
-        cookingDifficulty = "",
-        ingredients = emptyList(),
-        cookingDirections = emptyList()
+        mealId = mealId,
     )
 }
 

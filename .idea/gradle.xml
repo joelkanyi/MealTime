@@ -30,10 +30,22 @@
             <option value="$PROJECT_DIR$/feature/addmeal" />
             <option value="$PROJECT_DIR$/feature/auth" />
             <option value="$PROJECT_DIR$/feature/favorites" />
+            <option value="$PROJECT_DIR$/feature/favorites/data" />
+            <option value="$PROJECT_DIR$/feature/favorites/di" />
+            <option value="$PROJECT_DIR$/feature/favorites/domain" />
+            <option value="$PROJECT_DIR$/feature/favorites/presentation" />
             <option value="$PROJECT_DIR$/feature/home" />
+            <option value="$PROJECT_DIR$/feature/home/data" />
+            <option value="$PROJECT_DIR$/feature/home/di" />
+            <option value="$PROJECT_DIR$/feature/home/domain" />
+            <option value="$PROJECT_DIR$/feature/home/presentation" />
             <option value="$PROJECT_DIR$/feature/kitchen-timer" />
             <option value="$PROJECT_DIR$/feature/mealplanner" />
             <option value="$PROJECT_DIR$/feature/search" />
+            <option value="$PROJECT_DIR$/feature/search/data" />
+            <option value="$PROJECT_DIR$/feature/search/di" />
+            <option value="$PROJECT_DIR$/feature/search/domain" />
+            <option value="$PROJECT_DIR$/feature/search/presentation" />
             <option value="$PROJECT_DIR$/feature/settings" />
           </set>
         </option>

@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import com.kanyidev.searchable_dropdown.SearchableExpandedDropDownMenu
 import com.kanyideveloper.core.components.LoadingStateComponent
 import com.kanyideveloper.core.model.Meal
+import com.kanyideveloper.core.model.MealDetails
 import com.kanyideveloper.core.util.LottieAnim
 import com.kanyideveloper.mealtime.core.R
 

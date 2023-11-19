@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Joel Kanyi.
+ * Copyright 2023 Joel Kanyi.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +15,9 @@
  */
 package com.kanyideveloper.core.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-
-@Parcelize
 data class Meal(
-    val id: String? = null,
-    val name: String = "",
-    val imageUrl: String = "",
-    val cookingTime: Int = -1,
-    val servingPeople: Int = -1,
-    val category: String = "",
-    val cookingDifficulty: String = "",
-    val ingredients: List<Ingredient> = emptyList(),
-    val cookingDirections: List<String> = emptyList(),
-    val favorite: Boolean = false,
-    val mealId: String? = null,
-    val mealPlanId: String? = null
-) : Parcelable
+    val name: String,
+    val imageUrl: String,
+    val mealId: String,
+    val category: String,
+)
