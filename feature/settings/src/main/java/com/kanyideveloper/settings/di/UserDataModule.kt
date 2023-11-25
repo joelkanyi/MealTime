@@ -19,8 +19,9 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
-import com.kanyideveloper.core.data.MealTimePreferences
 import com.kanyideveloper.core.domain.UserDataRepository
+import com.kanyideveloper.preferences.data.MealtimeSettingsImpl
+import com.kanyideveloper.preferences.domain.MealtimeSettings
 import com.kanyideveloper.settings.data.UserDataRepositoryImpl
 import dagger.Module
 import dagger.Provides
@@ -34,19 +35,15 @@ object UserDataModule {
 
     @Provides
     @Singleton
-    fun provideMealTimePreferences(
+    fun provideMealTimeSettings(
         dataStore: DataStore<Preferences>,
-        databaseReference: DatabaseReference,
-        firebaseAuth: FirebaseAuth
-    ) = MealTimePreferences(
+    ) = MealtimeSettingsImpl(
         dataStore = dataStore,
-        databaseReference = databaseReference,
-        firebaseAuth = firebaseAuth
     )
 
     @Provides
     @Singleton
-    fun provideUserDataRepository(mealTimePreferences: MealTimePreferences): UserDataRepository {
-        return UserDataRepositoryImpl(mealTimePreferences = mealTimePreferences)
+    fun provideUserDataRepository(mealtimeSettings: MealtimeSettings): UserDataRepository {
+        return UserDataRepositoryImpl(mealtimeSettings)
     }
 }

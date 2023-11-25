@@ -40,6 +40,6 @@ android {
 }
 
 dependencies {
-    implementation(project(Modules.searchData))
-    implementation(project(Modules.searchDomain))
+    implementation(projects.feature.search.data)
+    implementation(projects.feature.search.domain)
 }

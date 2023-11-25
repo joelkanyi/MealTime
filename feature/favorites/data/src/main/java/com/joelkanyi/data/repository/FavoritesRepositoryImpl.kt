@@ -17,16 +17,13 @@ package com.joelkanyi.data.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
-import com.kanyideveloper.core.data.MealTimePreferences
-import com.joelkanyi.domain.repository.FavoritesRepository
-import com.joelkanyi.domain.entity.Favorite
-import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.util.Resource
 import com.kanyideveloper.core.util.safeApiCall
 import com.kanyideveloper.core_database.dao.FavoritesDao
 import com.kanyideveloper.core_database.model.FavoriteEntity
 import com.kanyideveloper.core_network.MealDbApi
 import com.joelkanyi.data.mapper.toFavorite
+import com.kanyideveloper.preferences.domain.MealtimeSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -35,7 +32,7 @@ import javax.inject.Inject
 class FavoritesRepositoryImpl @Inject constructor(
     private val favoritesDao: FavoritesDao,
     private val mealDbApi: MealDbApi,
-    private val mealTimePreferences: MealTimePreferences,
+    private val mealtimeSettings: MealtimeSettings
 ) : com.joelkanyi.domain.repository.FavoritesRepository {
 
     override fun getFavorites(): Flow<List<com.joelkanyi.domain.entity.Favorite>>{

@@ -18,10 +18,10 @@ package com.kanyideveloper.core_network.di
 import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
-import com.kanyideveloper.core.data.MealTimePreferences
 import com.kanyideveloper.core_network.Constants.BASE_URL
 import com.kanyideveloper.core_network.MealDbApi
 import com.kanyideveloper.core_network.auth.AuthInterceptor
+import com.kanyideveloper.preferences.domain.MealtimeSettings
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -58,10 +58,10 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideAuthInterceptor(
-        mealTimePreferences: MealTimePreferences,
+        mealtimeSettings: MealtimeSettings
     ): AuthInterceptor {
         return AuthInterceptor(
-            mealTimePreferences,
+            mealtimeSettings,
         )
     }
 

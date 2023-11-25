@@ -39,8 +39,8 @@ android {
 }
 
 dependencies {
-    implementation(project(Modules.core))
-    implementation(project(Modules.coreDatabase))
-    implementation(project(Modules.coreNetwork))
-    implementation(project(Modules.homeDomain))
+    implementation(projects.core)
+    implementation(projects.coreDatabase)
+    implementation(projects.coreNetwork)
+    implementation(projects.feature.home.domain)
 }

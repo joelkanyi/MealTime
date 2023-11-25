@@ -26,5 +26,5 @@ data class MealPlanEntity(
     val mealTypeName: String,
     val meals: List<Meal> = emptyList(),
     val mealDate: String,
-    @PrimaryKey val id: String
+    @PrimaryKey(autoGenerate = true) val id: Int? = null
 )

@@ -49,11 +49,11 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import com.joelkanyi.kitchen_timer.presentation.destinations.KitchenTimerScreenDestination
 import com.joelkanyi.presentation.destinations.FavoritesScreenDestination
 import com.joelkanyi.presentation.destinations.HomeScreenDestination
+import com.joelkanyi.presentation.mealplanner.destinations.MealPlannerScreenDestination
 import com.kanyideveloper.compose_ui.theme.MealTimeTheme
 import com.kanyideveloper.compose_ui.theme.Theme
 import com.kanyideveloper.core.state.SubscriptionStatusUiState
 import com.kanyideveloper.core.util.Constants.PURCHASE_ID
-import com.kanyideveloper.mealplanner.destinations.MealPlannerScreenDestination
 import com.kanyideveloper.mealtime.component.StandardScaffold
 import com.kanyideveloper.mealtime.component.navGraph
 import com.kanyideveloper.mealtime.navigation.CoreFeatureNavigator

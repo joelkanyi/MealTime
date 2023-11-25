@@ -15,17 +15,17 @@
  */
 package com.kanyideveloper.settings.data
 
-import com.kanyideveloper.core.data.MealTimePreferences
 import com.kanyideveloper.core.domain.UserDataRepository
+import com.kanyideveloper.preferences.domain.MealtimeSettings
 import kotlinx.coroutines.flow.Flow
 
 class UserDataRepositoryImpl(
-    private val mealTimePreferences: MealTimePreferences
+    private val mealtimeSettings: MealtimeSettings
 ) : UserDataRepository {
     override val themeStream: Flow<Int>
-        get() = mealTimePreferences.getTheme
+        get() = mealtimeSettings.getTheme()
 
     override suspend fun setTheme(themeValue: Int) {
-        mealTimePreferences.saveTheme(themeValue = themeValue)
+        mealtimeSettings.saveTheme(themeValue = themeValue)
     }
 }

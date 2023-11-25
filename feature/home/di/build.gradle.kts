@@ -40,6 +40,6 @@ android {
 }
 
 dependencies {
-    implementation(project(Modules.homeData))
-    implementation(project(Modules.homeDomain))
+    implementation(projects.feature.home.data)
+    implementation(projects.feature.home.domain)
 }

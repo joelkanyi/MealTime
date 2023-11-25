@@ -1,9 +1,9 @@
 package com.kanyideveloper.core_network.auth
 
-import com.kanyideveloper.core.data.MealTimePreferences
 import com.kanyideveloper.core_network.Constants
 import com.kanyideveloper.core_network.MealDbApi
 import com.kanyideveloper.core_network.model.RefreshTokenRequestDto
+import com.kanyideveloper.preferences.domain.MealtimeSettings
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
@@ -13,7 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 
 class AuthInterceptor(
-    private val mealTimePreferences: MealTimePreferences,
+    private val mealtimeSettings: MealtimeSettings,
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -21,7 +21,7 @@ class AuthInterceptor(
         val requestBuilder = originalRequest.newBuilder()
 
         val token = runBlocking {
-            mealTimePreferences.getAccessToken().first()
+            mealtimeSettings.getAccessToken().first()
         }
 
         if (token != null) {
@@ -56,7 +56,7 @@ class AuthInterceptor(
                 Timber.d("AuthInterceptor: intercept: newToken: $newToken")
                 if (newToken != null) {
                     runBlocking {
-                        mealTimePreferences.saveAccessToken(newToken)
+                        mealtimeSettings.saveAccessToken(newToken)
                     }
                 }
             }

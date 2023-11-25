@@ -24,12 +24,12 @@ import com.joelkanyi.presentation.destinations.DetailsScreenDestination
 import com.joelkanyi.presentation.destinations.FavoritesScreenDestination
 import com.joelkanyi.presentation.destinations.HomeScreenDestination
 import com.joelkanyi.presentation.destinations.SearchScreenDestination
+import com.joelkanyi.presentation.mealplanner.destinations.AllergiesScreenDestination
+import com.joelkanyi.presentation.mealplanner.destinations.MealPlannerScreenDestination
+import com.joelkanyi.presentation.mealplanner.destinations.MealTypesScreenDestination
+import com.joelkanyi.presentation.mealplanner.destinations.NumberOfPeopleScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
-import com.kanyideveloper.mealplanner.destinations.AllergiesScreenDestination
-import com.kanyideveloper.mealplanner.destinations.MealPlannerScreenDestination
-import com.kanyideveloper.mealplanner.destinations.MealTypesScreenDestination
-import com.kanyideveloper.mealplanner.destinations.NumberOfPeopleScreenDestination
 import com.kanyideveloper.settings.presentation.destinations.SettingsScreenDestination
 import com.ramcosta.composedestinations.dynamic.routedIn
 import com.ramcosta.composedestinations.spec.DestinationSpec

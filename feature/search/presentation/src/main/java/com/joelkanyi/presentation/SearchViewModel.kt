@@ -22,7 +22,7 @@ import androidx.lifecycle.viewModelScope
 import com.joelkanyi.domain.usecase.DeleteAFavoriteUseCase
 import com.joelkanyi.domain.usecase.GetFavoritesUseCase
 import com.joelkanyi.domain.usecase.InsertAFavoriteUseCase
-import com.joelkanyi.domain.usecase.SearchUseCase
+import com.joelkanyi.domain.usecase.SearchMealsUseCase
 import com.kanyideveloper.analytics.domain.usecase.TrackUserEventUseCase
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.util.Resource
@@ -42,7 +42,7 @@ class SearchViewModel @Inject constructor(
     getFavoritesUseCase: GetFavoritesUseCase,
     private val deleteAFavoriteUseCase: DeleteAFavoriteUseCase,
     private val insertAFavoriteUseCase: InsertAFavoriteUseCase,
-    private val searchUseCase: SearchUseCase,
+    private val searchMealsUseCase: SearchMealsUseCase,
 ) : ViewModel() {
     fun trackUserEvent(name: String) = trackUserEventUseCase(name)
 
@@ -99,7 +99,7 @@ class SearchViewModel @Inject constructor(
             )
 
             when (
-                val result = searchUseCase(
+                val result = searchMealsUseCase(
                     searchOption = selectedSearchOption.value,
                     searchParam = searchParam.trim()
                 )

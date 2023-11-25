@@ -23,14 +23,11 @@ import androidx.lifecycle.viewModelScope
 import com.joelkanyi.domain.entity.Favorite
 import com.joelkanyi.domain.usecase.DeleteAllFavoritesUseCase
 import com.kanyideveloper.analytics.domain.usecase.TrackUserEventUseCase
-import com.kanyideveloper.core.domain.SubscriptionRepository
 import com.kanyideveloper.core.model.MealDetails
-import com.kanyideveloper.core.state.SubscriptionStatusUiState
 import com.kanyideveloper.core.util.UiEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn

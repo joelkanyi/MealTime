@@ -41,6 +41,10 @@
             <option value="$PROJECT_DIR$/feature/home/presentation" />
             <option value="$PROJECT_DIR$/feature/kitchen-timer" />
             <option value="$PROJECT_DIR$/feature/mealplanner" />
+            <option value="$PROJECT_DIR$/feature/mealplanner/data" />
+            <option value="$PROJECT_DIR$/feature/mealplanner/di" />
+            <option value="$PROJECT_DIR$/feature/mealplanner/domain" />
+            <option value="$PROJECT_DIR$/feature/mealplanner/presentation" />
             <option value="$PROJECT_DIR$/feature/search" />
             <option value="$PROJECT_DIR$/feature/search/data" />
             <option value="$PROJECT_DIR$/feature/search/di" />

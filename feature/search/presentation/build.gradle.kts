@@ -1,3 +1,4 @@
+@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.android.kotlin)
@@ -46,10 +47,10 @@ android {
 }
 
 dependencies {
-    implementation(project(Modules.composeUi))
-    implementation(project(Modules.searchDomain))
-    implementation(project(Modules.favoritesDomain))
-    implementation(project(Modules.core))
+    implementation(projects.composeUi)
+    implementation(projects.feature.search.domain)
+    implementation(projects.feature.favorites.domain)
+    implementation(projects.core)
 
     implementation(libs.compose.destinations.animations)
     ksp(libs.compose.destinations.ksp)
@@ -68,5 +69,5 @@ kotlin {
 
 ksp {
     arg("compose-destinations.mode", "destinations")
-    arg("compose-destinations.moduleName", "search")
+    arg("compose-destinations.moduleName", "search:presentation")
 }

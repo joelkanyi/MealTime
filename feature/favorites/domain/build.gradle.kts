@@ -40,5 +40,5 @@ android {
 }
 
 dependencies {
-    implementation(project(Modules.core))
+    implementation(projects.core)
 }

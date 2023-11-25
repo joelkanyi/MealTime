@@ -64,15 +64,6 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideDatastorePreferences(@ApplicationContext context: Context): DataStore<Preferences> =
-        PreferenceDataStoreFactory.create(
-            produceFile = {
-                context.preferencesDataStoreFile(MEALTIME_PREFERENCES)
-            }
-        )
-
-    @Provides
-    @Singleton
     fun provideSubscriptionRepository(dataStore: DataStore<Preferences>): SubscriptionRepository {
         return SubscriptionRepositoryImpl(
             dataStore = dataStore

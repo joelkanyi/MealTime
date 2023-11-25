@@ -40,6 +40,6 @@ android {
 }
 
 dependencies {
-    implementation(project(Modules.favoritesData))
-    implementation(project(Modules.favoritesDomain))
+    implementation(projects.feature.favorites.data)
+    implementation(projects.feature.favorites.domain)
 }

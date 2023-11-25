@@ -69,20 +69,20 @@ android {
 
 dependencies {
     // Modules
-    implementation(project(Modules.core))
-    implementation(project(Modules.composeUi))
-
-    implementation(project(Modules.homePresentation))
-    implementation(project(Modules.homeDi))
-    implementation(project(Modules.searchPresentation))
-    implementation(project(Modules.searchDi))
-    implementation(project(Modules.favoritesPresentation))
-    implementation(project(Modules.favoritesDi))
-    implementation(project(Modules.settings))
-    implementation(project(Modules.addMeal))
-    implementation(project(Modules.mealPlanner))
-    implementation(project(Modules.kitchenTimer))
-    implementation(project(Modules.auth))
+    implementation(projects.core)
+    implementation(projects.composeUi)
+    implementation(projects.feature.home.presentation)
+    implementation(projects.feature.home.di)
+    implementation(projects.feature.search.presentation)
+    implementation(projects.feature.search.di)
+    implementation(projects.feature.favorites.presentation)
+    implementation(projects.feature.favorites.di)
+    implementation(projects.feature.settings)
+    implementation(projects.feature.addmeal)
+    implementation(projects.feature.mealplanner.presentation)
+    implementation(projects.feature.mealplanner.di)
+    implementation(projects.feature.kitchenTimer)
+    implementation(projects.feature.auth)
 
     // RamCosta Navigation
     implementation(libs.compose.destinations.animations)

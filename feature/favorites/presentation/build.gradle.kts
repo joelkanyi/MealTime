@@ -47,9 +47,9 @@ android {
 }
 
 dependencies {
-    implementation(project(Modules.composeUi))
-    implementation(project(Modules.core))
-    implementation(project(Modules.favoritesDomain))
+    implementation(projects.composeUi)
+    implementation(projects.core)
+    implementation(projects.feature.favorites.domain)
 
     implementation(libs.compose.destinations.animations)
     ksp(libs.compose.destinations.ksp)
@@ -68,5 +68,5 @@ kotlin {
 
 ksp {
     arg("compose-destinations.mode", "destinations")
-    arg("compose-destinations.moduleName", "favorites")
+    arg("compose-destinations.moduleName", "favorites:presentation")
 }
