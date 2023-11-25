@@ -36,10 +36,14 @@ import com.kanyideveloper.core.util.UiEvents
 import com.kanyideveloper.core.util.getTodaysDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -53,8 +57,22 @@ class MealPlannerViewModel @Inject constructor(
 ) : ViewModel() {
     fun trackUserEvent(name: String) = trackUserEventUseCase(name)
 
-    private val _types = mutableStateOf<List<String>>(emptyList())
-    val types: State<List<String>> = _types
+    private val _selectedDay = MutableStateFlow(
+        Clock.System.now().toLocalDateTime(
+            TimeZone.currentSystemDefault(),
+        ).date,
+    )
+    val selectedDay = _selectedDay.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = Clock.System.now().toLocalDateTime(
+            TimeZone.currentSystemDefault(),
+        ).date,
+    )
+
+    fun setSelectedDay(date: kotlinx.datetime.LocalDate) {
+        _selectedDay.value = date
+    }
 
     private val _allergies = mutableStateOf<List<String>>(emptyList())
     val allergies: State<List<String>> = _allergies

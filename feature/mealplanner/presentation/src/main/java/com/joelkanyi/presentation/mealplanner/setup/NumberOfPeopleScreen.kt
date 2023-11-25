@@ -91,6 +91,11 @@ fun NumberOfPeopleScreen(
         onClickNext = {
             viewModel.trackUserEvent("Next button clicked from number of people screen")
             viewModel.saveNumberOfPeople(numberOfPeople = viewModel.selectedNumberOfPeople.value)
+            navigator.openMealTypesScreen(
+                allergies = allergies,
+                noOfPeople = viewModel.selectedNumberOfPeople.value,
+                editMealPlanPreference = editMealPlanPreference
+            )
         }
     )
 }

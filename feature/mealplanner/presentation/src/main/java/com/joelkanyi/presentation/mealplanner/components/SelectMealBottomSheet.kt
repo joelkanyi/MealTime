@@ -1,18 +1,3 @@
-/*
- * Copyright 2023 Joel Kanyi.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.joelkanyi.presentation.mealplanner.components
 
 import androidx.compose.foundation.clickable
@@ -22,8 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -33,9 +16,16 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Done
+import androidx.compose.material.icons.outlined.EditCalendar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -45,14 +35,17 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.kanyidev.searchable_dropdown.SearchableExpandedDropDownMenu
+import com.kanyideveloper.compose_ui.components.BloomDropDown
 import com.kanyideveloper.core.components.LoadingStateComponent
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.util.LottieAnim
 import com.kanyideveloper.mealtime.core.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectMealDialog(
-    onDismiss: () -> Unit,
+fun SelectMealBottomSheet(
+    bottomSheetState: SheetState,
+    onDismissRequest: () -> Unit,
     mealType: String,
     onClickAdd: (Meal, String) -> Unit,
     meals: List<Meal>,
@@ -68,13 +61,14 @@ fun SelectMealDialog(
     isLoading: Boolean = false,
     error: String? = null
 ) {
-    AlertDialog(
-        containerColor = MaterialTheme.colorScheme.background,
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(.9f),
-        onDismissRequest = { onDismiss() },
-        title = {
+    ModalBottomSheet(
+        onDismissRequest = onDismissRequest,
+        sheetState = bottomSheetState,
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -90,16 +84,14 @@ fun SelectMealDialog(
                         .padding(8.dp)
                         .testTag("close_dialog")
                         .clickable(MutableInteractionSource(), null) {
-                            onDismiss()
+                            onDismissRequest()
                         },
                     imageVector = Icons.Default.Close,
                     contentDescription = "Close dialog",
                     tint = Color.Red
                 )
             }
-        },
-        text = {
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -116,16 +108,13 @@ fun SelectMealDialog(
                                 style = MaterialTheme.typography.labelMedium
                             )
 
-                            SearchableExpandedDropDownMenu(
-                                listOfItems = sources,
+                            BloomDropDown(
                                 modifier = Modifier.fillMaxWidth(),
-                                onDropDownItemSelected = { item ->
+                                options = sources,
+                                onOptionSelected = { item ->
                                     onSourceChange(item)
                                 },
-                                dropdownItem = { category ->
-                                    Text(text = category, color = Color.Black)
-                                },
-                                parentTextFieldCornerRadius = 4.dp
+                                selectedOption = currentSource,
                             )
                         }
                     }
@@ -141,16 +130,13 @@ fun SelectMealDialog(
                                     style = MaterialTheme.typography.labelMedium
                                 )
 
-                                SearchableExpandedDropDownMenu(
-                                    listOfItems = searchOptions,
+                                BloomDropDown(
+                                    options = searchOptions,
                                     modifier = Modifier.fillMaxWidth(),
-                                    onDropDownItemSelected = { item ->
+                                    onOptionSelected = { item ->
                                         onSearchByChange(item)
                                     },
-                                    dropdownItem = { category ->
-                                        Text(text = category, color = Color.Black)
-                                    },
-                                    parentTextFieldCornerRadius = 4.dp
+                                    selectedOption = "Name",
                                 )
                             }
                         }
@@ -169,9 +155,7 @@ fun SelectMealDialog(
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .align(
-                                        Alignment.Center
-                                    )
+                                    .align(Alignment.Center)
                                     .padding(16.dp)
                                     .testTag("Empty State Component"),
                                 horizontalAlignment = Alignment.CenterHorizontally
@@ -213,8 +197,8 @@ fun SelectMealDialog(
                 if (isLoading) {
                     LoadingStateComponent()
                 }
+                Spacer(modifier = Modifier.height(32.dp))
             }
-        },
-        confirmButton = {}
-    )
+        }
+    }
 }

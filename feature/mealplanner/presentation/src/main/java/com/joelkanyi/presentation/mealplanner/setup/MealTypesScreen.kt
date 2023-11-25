@@ -68,6 +68,7 @@ fun MealTypesScreen(
                         navigator.openMealPlanner()
                     }
                 }
+
                 else -> {}
             }
         }
@@ -113,21 +114,21 @@ private fun MealTypesScreenContent(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             columns = GridCells.Fixed(2)
         ) {
-            item(span = { GridItemSpan(currentLineSpan = 3) }) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
                 Text(
                     text = "Select Dish Types",
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleLarge
                 )
             }
-            item(span = { GridItemSpan(currentLineSpan = 3) }) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
                 Text(
                     text = "Choose the different meal types to prepare in a day",
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleSmall
                 )
             }
-            item(span = { GridItemSpan(currentLineSpan = 3) }) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
@@ -141,11 +142,11 @@ private fun MealTypesScreenContent(
                 )
             }
 
-            item(span = { GridItemSpan(currentLineSpan = 3) }) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
                 Spacer(modifier = Modifier.height(24.dp))
             }
 
-            item(span = { GridItemSpan(currentLineSpan = 3) }) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
                 Button(onClick = {
                     onClickComplete()
                 }) {
@@ -163,7 +164,11 @@ private fun MealTypesScreenContent(
 }
 
 @Composable
-fun MealTypeItemCard(mealType: String, onClick: () -> Unit, isSelected: (String) -> Boolean) {
+fun MealTypeItemCard(
+    mealType: String,
+    onClick: () -> Unit,
+    isSelected: (String) -> Boolean
+) {
     Card(
         Modifier
             .wrapContentWidth()

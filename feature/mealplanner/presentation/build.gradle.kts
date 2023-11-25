@@ -76,5 +76,5 @@ kotlin {
 
 ksp {
     arg("compose-destinations.mode", "destinations")
-    arg("compose-destinations.moduleName", "mealplanner:presentation")
+    arg("compose-destinations.moduleName", "mealplanner")
 }

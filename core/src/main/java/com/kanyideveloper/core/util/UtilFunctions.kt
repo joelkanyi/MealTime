@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
@@ -39,6 +40,12 @@ import com.google.gson.Gson
 import com.kanyideveloper.core.model.ErrorResponse
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
 import retrofit2.HttpException
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
@@ -247,4 +254,25 @@ fun convertMillisecondsToTimeString(millis: Long): String {
 
 fun isNumeric(toCheck: String): Boolean {
     return toCheck.all { char -> char.isDigit() }
+}
+
+fun calendarLocalDates(): List<LocalDate> {
+    val thisYear = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year
+    val lastYear = thisYear - 1
+    val nextYear = thisYear + 1
+    val dates = mutableListOf<LocalDate>()
+    for (i in 0..365) {
+        dates += LocalDate(thisYear, 1, 1).plus(i, DateTimeUnit.DAY)
+    }
+    for (i in 0..365) {
+        dates += LocalDate(lastYear, 1, 1).plus(i, DateTimeUnit.DAY)
+    }
+    for (i in 0..365) {
+        dates += LocalDate(nextYear, 1, 1).plus(i, DateTimeUnit.DAY)
+    }
+    return dates
+}
+
+fun LocalDate.prettyPrintedMonthAndYear(): String {
+    return "${this.month.name.lowercase().capitalize(androidx.compose.ui.text.intl.Locale.current).substring(0, 3)} ${this.year}"
 }

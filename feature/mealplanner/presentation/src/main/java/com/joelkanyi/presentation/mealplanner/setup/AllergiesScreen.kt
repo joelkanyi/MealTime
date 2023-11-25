@@ -91,6 +91,10 @@ fun AllergiesScreen(
         onClickNext = {
             viewModel.trackUserEvent("Allergies screen next button clicked")
             viewModel.saveAllergies(viewModel.allergicTo)
+            navigator.openNoOfPeopleScreen(
+                allergies = viewModel.gson.toJson(viewModel.allergicTo),
+                editMealPlanPreference = editMealPlanPreference
+            )
         },
         onClickNavigateBack = {
             navigator.popBackStack()

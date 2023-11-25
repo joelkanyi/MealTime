@@ -18,15 +18,24 @@ package com.joelkanyi.presentation.mealplanner
 import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,30 +44,40 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joelkanyi.domain.entity.MealPlan
 import com.joelkanyi.horizontalcalendar.HorizontalCalendarView
 import com.joelkanyi.presentation.mealplanner.components.MealPlanItem
-import com.joelkanyi.presentation.mealplanner.components.SelectMealDialog
+import com.joelkanyi.presentation.mealplanner.components.SelectMealBottomSheet
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.core.components.EmptyStateComponent
 import com.kanyideveloper.core.components.SwipeRefreshComponent
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.core.util.UiEvents
+import com.kanyideveloper.core.util.calendarLocalDates
+import com.kanyideveloper.core.util.prettyPrintedMonthAndYear
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
 fun MealPlannerScreen(
@@ -71,8 +90,17 @@ fun MealPlannerScreen(
     val mealPlanPrefs = viewModel.mealPlanPrefs.collectAsState().value
     val meal = viewModel.singleMeal.observeAsState().value?.observeAsState()?.value
     val context = LocalContext.current
+    val bottomSheetState = rememberModalBottomSheetState()
+    val coroutineScope = rememberCoroutineScope()
+    val calendarPagerState = rememberLazyListState()
+    val selectedDay = viewModel.selectedDay.collectAsState().value
+
 
     LaunchedEffect(key1 = true, block = {
+        calendarPagerState.animateScrollToItem(
+            index = calendarLocalDates().indexOf(selectedDay),
+            scrollOffset = 0,
+        )
         viewModel.getPlanMeals()
 
         viewModel.eventsFlow.collectLatest { event ->
@@ -87,7 +115,8 @@ fun MealPlannerScreen(
     })
 
     if (shouldShowMealsDialog) {
-        SelectMealDialog(
+        SelectMealBottomSheet(
+            bottomSheetState = bottomSheetState,
             mealType = viewModel.mealType.value,
             meals = viewModel.searchMeals.value.meals,
             currentSearchString = viewModel.searchString.value,
@@ -96,11 +125,14 @@ fun MealPlannerScreen(
             currentSource = viewModel.source.value,
             isLoading = viewModel.searchMeals.value.isLoading,
             error = viewModel.searchMeals.value.error,
-            onDismiss = {
-                viewModel.trackUserEvent("Dismiss select meal dialog")
-                viewModel.setShouldShowMealsDialogState(
-                    !viewModel.shouldShowMealsDialog.value
-                )
+            onDismissRequest = {
+                coroutineScope.launch {
+                    viewModel.trackUserEvent("Dismiss select meal dialog")
+                    viewModel.setShouldShowMealsDialogState(
+                        !viewModel.shouldShowMealsDialog.value
+                    )
+                    bottomSheetState.hide()
+                }
             },
             onClickAdd = { meall, type ->
                 viewModel.trackUserEvent("Add meal to plan - ${meall.name}")
@@ -115,7 +147,7 @@ fun MealPlannerScreen(
                         "You indicated that you are allergic to $allergy, if not you can go to settings and make changes",
                         Toast.LENGTH_SHORT
                     ).show()
-                    return@SelectMealDialog
+                    return@SelectMealBottomSheet
                 }
 
                 viewModel.insertMealToPlan(
@@ -148,8 +180,9 @@ fun MealPlannerScreen(
 
     MealPlannerScreenContent(
         mealPlanPrefs = mealPlanPrefs,
-        mealTypes = viewModel.types.value,
+        calendarPagerState = calendarPagerState,
         mealsAndTheirTypes = planMealsUiState.meals,
+        selectedDay = selectedDay,
         planMealsUiState = planMealsUiState,
         snackbarHostState = snackbarHostState,
         onClickAdd = { mealType ->
@@ -161,8 +194,8 @@ fun MealPlannerScreen(
         },
         onClickDay = { fullDate ->
             viewModel.trackUserEvent("Meal Planner select date $fullDate")
-            viewModel.setSelectedDateState(fullDate)
-            viewModel.getPlanMeals(filterDay = fullDate)
+            viewModel.setSelectedDay(fullDate)
+            viewModel.getPlanMeals(filterDay = fullDate.toString())
         },
         onRemoveClick = { id ->
             viewModel.trackUserEvent("Remove meal from plan")
@@ -204,18 +237,19 @@ fun MealPlannerScreen(
 @SuppressLint("FrequentlyChangedStateReadInComposition")
 @Composable
 private fun MealPlannerScreenContent(
+    calendarPagerState: LazyListState,
     mealPlanPrefs: MealPlanPrefsState,
     onClickAdd: (String) -> Unit,
     planMealsUiState: MealsInPlanState,
     mealsAndTheirTypes: List<MealPlan>,
-    mealTypes: List<String>,
-    onClickDay: (String) -> Unit,
+    onClickDay: (LocalDate) -> Unit,
     onRemoveClick: (String?) -> Unit,
     onMealClick: (String?, String?, Boolean) -> Unit,
     snackbarHostState: SnackbarHostState,
     onRefreshData: () -> Unit,
     onClickNavigateBack: () -> Unit,
-    onClickGetStarted: () -> Unit
+    onClickGetStarted: () -> Unit,
+    selectedDay: LocalDate,
 ) {
     Box(
         modifier = Modifier
@@ -257,25 +291,64 @@ private fun MealPlannerScreenContent(
                             if (hasMealPlan) {
                                 LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp)) {
                                     item {
-                                        HorizontalCalendarView(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .animateItemPlacement(),
-                                            onDayClick = { day ->
-                                                onClickDay(day.fullDate)
-                                            },
-                                            selectedCardColor = MaterialTheme.colorScheme.primary,
-                                            unSelectedCardColor = MaterialTheme.colorScheme.surfaceVariant,
-                                            selectedTextColor = MaterialTheme.colorScheme.onPrimary,
-                                            unSelectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                        Text(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            text = selectedDay.prettyPrintedMonthAndYear(),
+                                            style = MaterialTheme.typography.labelLarge.copy(
+                                                fontSize = 16.sp,
+                                                fontWeight = FontWeight.SemiBold,
+                                                textAlign = TextAlign.End,
+                                            ),
                                         )
+                                    }
+                                    item {
+                                        LazyRow(
+                                            state = calendarPagerState,
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        ) {
+                                            items(calendarLocalDates()) { date ->
+                                                Box(
+                                                    modifier = Modifier
+                                                        .size(64.dp)
+                                                        .clipToBounds()
+                                                        .background(
+                                                            color = if (date == selectedDay) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                                                            shape = RoundedCornerShape(4.dp),
+                                                        )
+                                                        .clickable {
+                                                            onClickDay(date)
+                                                        },
+                                                    contentAlignment = Alignment.Center,
+                                                ) {
+                                                    Column {
+                                                        Text(
+                                                            text = date.dayOfWeek.name.substring(
+                                                                0,
+                                                                3
+                                                            ),
+                                                            style = MaterialTheme.typography.labelMedium.copy(
+                                                                color = if (date == selectedDay) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                                                            ),
+                                                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                                                        )
+                                                        Text(
+                                                            text = date.dayOfMonth.toString(),
+                                                            style = MaterialTheme.typography.labelMedium.copy(
+                                                                color = if (date == selectedDay) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                                                            ),
+                                                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
 
                                     item {
                                         Spacer(modifier = Modifier.height(8.dp))
                                     }
 
-                                    items(mealTypes) { type ->
+                                    items(mealPlanPrefs.data?.dishTypes ?: emptyList()) { type ->
                                         MealPlanItem(
                                             onClickAdd = onClickAdd,
                                             type = type,

@@ -69,5 +69,5 @@ kotlin {
 
 ksp {
     arg("compose-destinations.mode", "destinations")
-    arg("compose-destinations.moduleName", "search:presentation")
+    arg("compose-destinations.moduleName", "search")
 }

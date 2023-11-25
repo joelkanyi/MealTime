@@ -69,5 +69,5 @@ kotlin {
 
 ksp {
     arg("compose-destinations.mode", "destinations")
-    arg("compose-destinations.moduleName", "home:presentation")
+    arg("compose-destinations.moduleName", "home")
 }

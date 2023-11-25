@@ -65,6 +65,10 @@ object NavGraphs {
             SearchScreenDestination,
             LandingPageScreenDestination,
             SettingsScreenDestination,
+            AllergiesScreenDestination,
+            NumberOfPeopleScreenDestination,
+            MealTypesScreenDestination,
+            MealPlannerScreenDestination,
         ).routedIn(this)
             .associateBy { it.route }
     }
