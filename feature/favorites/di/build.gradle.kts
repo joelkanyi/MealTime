@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.kotlin)
     alias(libs.plugins.kapt)
     alias(libs.plugins.parcelize)
+    alias(libs.plugins.ksp)
 }
 
 apply {

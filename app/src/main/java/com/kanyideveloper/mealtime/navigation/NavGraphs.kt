@@ -15,22 +15,22 @@
  */
 package com.kanyideveloper.mealtime.navigation
 
-import com.joelkanyi.auth.presentation.destinations.ForgotPasswordScreenDestination
-import com.joelkanyi.auth.presentation.destinations.LandingPageScreenDestination
-import com.joelkanyi.auth.presentation.destinations.SignInScreenDestination
-import com.joelkanyi.auth.presentation.destinations.SignUpScreenDestination
-import com.joelkanyi.kitchen_timer.presentation.destinations.KitchenTimerScreenDestination
-import com.joelkanyi.presentation.destinations.DetailsScreenDestination
-import com.joelkanyi.presentation.destinations.FavoritesScreenDestination
-import com.joelkanyi.presentation.destinations.HomeScreenDestination
-import com.joelkanyi.presentation.destinations.SearchScreenDestination
+import com.joelkanyi.auth.presentation.auth.destinations.ForgotPasswordScreenDestination
+import com.joelkanyi.auth.presentation.auth.destinations.LandingPageScreenDestination
+import com.joelkanyi.auth.presentation.auth.destinations.SignInScreenDestination
+import com.joelkanyi.auth.presentation.auth.destinations.SignUpScreenDestination
+import com.joelkanyi.kitchen_timer.presentation.timer.destinations.KitchenTimerScreenDestination
+import com.joelkanyi.presentation.favorites.destinations.FavoritesScreenDestination
+import com.joelkanyi.presentation.home.destinations.DetailsScreenDestination
+import com.joelkanyi.presentation.home.destinations.HomeScreenDestination
 import com.joelkanyi.presentation.mealplanner.destinations.AllergiesScreenDestination
 import com.joelkanyi.presentation.mealplanner.destinations.MealPlannerScreenDestination
 import com.joelkanyi.presentation.mealplanner.destinations.MealTypesScreenDestination
 import com.joelkanyi.presentation.mealplanner.destinations.NumberOfPeopleScreenDestination
+import com.joelkanyi.presentation.search.destinations.SearchScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
-import com.kanyideveloper.settings.presentation.destinations.SettingsScreenDestination
+import com.kanyideveloper.settings.presentation.settings.destinations.SettingsScreenDestination
 import com.ramcosta.composedestinations.dynamic.routedIn
 import com.ramcosta.composedestinations.spec.DestinationSpec
 import com.ramcosta.composedestinations.spec.NavGraphSpec

@@ -86,7 +86,6 @@ import com.kanyideveloper.core.components.SwipeRefreshComponent
 import com.kanyideveloper.core.model.Category
 import com.kanyideveloper.core.model.Meal
 import com.kanyideveloper.mealtime.core.R
-import com.joelkanyi.presentation.HomeNavigator
 import com.ramcosta.composedestinations.annotation.Destination
 
 @Destination

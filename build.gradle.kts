@@ -1,3 +1,4 @@
+@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 buildscript {
     dependencies {
     }
@@ -13,6 +14,7 @@ plugins {
     alias(libs.plugins.spotless)
     alias(libs.plugins.kapt) apply false
     alias(libs.plugins.parcelize) apply false
+    alias(libs.plugins.ksp) apply false
 }
 
 subprojects {

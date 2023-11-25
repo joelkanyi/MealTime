@@ -48,6 +48,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joelkanyi.domain.entity.MealPlan
 import com.joelkanyi.horizontalcalendar.HorizontalCalendarView
+import com.joelkanyi.presentation.mealplanner.components.MealPlanItem
+import com.joelkanyi.presentation.mealplanner.components.SelectMealDialog
 import com.kanyideveloper.compose_ui.components.StandardToolbar
 import com.kanyideveloper.core.components.EmptyStateComponent
 import com.kanyideveloper.core.components.SwipeRefreshComponent
@@ -85,7 +87,7 @@ fun MealPlannerScreen(
     })
 
     if (shouldShowMealsDialog) {
-        com.joelkanyi.presentation.components.SelectMealDialog(
+        SelectMealDialog(
             mealType = viewModel.mealType.value,
             meals = viewModel.searchMeals.value.meals,
             currentSearchString = viewModel.searchString.value,
@@ -274,7 +276,7 @@ private fun MealPlannerScreenContent(
                                     }
 
                                     items(mealTypes) { type ->
-                                        com.joelkanyi.presentation.components.MealPlanItem(
+                                        MealPlanItem(
                                             onClickAdd = onClickAdd,
                                             type = type,
                                             onRemoveClick = onRemoveClick,

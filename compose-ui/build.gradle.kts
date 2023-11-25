@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kapt)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.parcelize)
+    alias(libs.plugins.ksp)
 }
 
 apply {

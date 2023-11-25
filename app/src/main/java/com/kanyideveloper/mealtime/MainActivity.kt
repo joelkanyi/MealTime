@@ -35,7 +35,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateManager
@@ -46,9 +46,9 @@ import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.android.play.core.review.ReviewManagerFactory
-import com.joelkanyi.kitchen_timer.presentation.destinations.KitchenTimerScreenDestination
-import com.joelkanyi.presentation.destinations.FavoritesScreenDestination
-import com.joelkanyi.presentation.destinations.HomeScreenDestination
+import com.joelkanyi.kitchen_timer.presentation.timer.destinations.KitchenTimerScreenDestination
+import com.joelkanyi.presentation.favorites.destinations.FavoritesScreenDestination
+import com.joelkanyi.presentation.home.destinations.HomeScreenDestination
 import com.joelkanyi.presentation.mealplanner.destinations.MealPlannerScreenDestination
 import com.kanyideveloper.compose_ui.theme.MealTimeTheme
 import com.kanyideveloper.compose_ui.theme.Theme
@@ -62,7 +62,7 @@ import com.kanyideveloper.mealtime.navigation.scaleInEnterTransition
 import com.kanyideveloper.mealtime.navigation.scaleInPopEnterTransition
 import com.kanyideveloper.mealtime.navigation.scaleOutExitTransition
 import com.kanyideveloper.mealtime.navigation.scaleOutPopExitTransition
-import com.kanyideveloper.settings.presentation.destinations.SettingsScreenDestination
+import com.kanyideveloper.settings.presentation.settings.destinations.SettingsScreenDestination
 import com.qonversion.android.sdk.Qonversion
 import com.qonversion.android.sdk.dto.QEntitlement
 import com.qonversion.android.sdk.dto.QonversionError
@@ -71,6 +71,7 @@ import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.NestedNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
+import com.ramcosta.composedestinations.navigation.DependenciesContainerBuilder
 import com.ramcosta.composedestinations.navigation.dependency
 import com.ramcosta.composedestinations.scope.DestinationScope
 import dagger.hilt.android.AndroidEntryPoint
@@ -137,16 +138,16 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.fillMaxSize(),
                             color = MaterialTheme.colorScheme.background
                         ) {
-                            val navController = rememberAnimatedNavController()
+                            val navController = rememberNavController()
                             val newBackStackEntry by navController.currentBackStackEntryAsState()
                             val route = newBackStackEntry?.destination?.route
 
                             val bottomBarItems = listOf(
-                                    BottomNavItem.Home,
-                                    BottomNavItem.KitchenTimer,
-                                    BottomNavItem.MealPlanner,
-                                    BottomNavItem.Favorites,
-                                )
+                                BottomNavItem.Home,
+                                BottomNavItem.KitchenTimer,
+                                BottomNavItem.MealPlanner,
+                                BottomNavItem.Favorites,
+                            )
 
 
                             StandardScaffold(
@@ -209,17 +210,6 @@ class MainActivity : ComponentActivity() {
                         .show()
                 }
             }
-        )
-    }
-
-    private fun DestinationScope<*>.currentNavigator(
-        isLoggedIn: Boolean,
-        subscribe: () -> Unit
-    ): CoreFeatureNavigator {
-        return CoreFeatureNavigator(
-            navGraph = navBackStackEntry.destination.navGraph(isLoggedIn),
-            navController = navController,
-            subscribe = subscribe
         )
     }
 
@@ -336,6 +326,17 @@ class MainActivity : ComponentActivity() {
                     )
                 )
             }
+        )
+    }
+
+    private fun DependenciesContainerBuilder<*>.currentNavigator(
+        isLoggedIn: Boolean,
+        subscribe: () -> Unit
+    ): CoreFeatureNavigator {
+        return CoreFeatureNavigator(
+            navGraph = navBackStackEntry.destination.navGraph(isLoggedIn),
+            navController = navController,
+            subscribe = subscribe
         )
     }
 
