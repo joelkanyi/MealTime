@@ -18,7 +18,6 @@ package com.kanyideveloper.core_database.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core.model.MealDetails
 import com.kanyideveloper.core.util.Constants.MEAL_PLAN_TABLE
 
 @Entity(tableName = MEAL_PLAN_TABLE)

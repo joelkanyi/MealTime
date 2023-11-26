@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 Joel Kanyi.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.kanyideveloper.core_network.auth
 
 import com.kanyideveloper.core_network.Constants
@@ -10,58 +25,77 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import timber.log.Timber
 
 class AuthInterceptor(
     private val mealtimeSettings: MealtimeSettings,
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        val originalRequest = chain.request()
-        val requestBuilder = originalRequest.newBuilder()
-
-        val token = runBlocking {
+        val savedToken = runBlocking {
             mealtimeSettings.getAccessToken().first()
         }
 
-        if (token != null) {
-            requestBuilder.addHeader("Authorization", "Bearer $token")
-        }
-
-        val request = requestBuilder.build()
-
-        val response = chain.proceed(request)
-
-        if (response.code == 500) {
-            Timber.e("AuthInterceptor: intercept: Unauthorized")
-            val retrofit = Retrofit.Builder()
-                .baseUrl(Constants.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-
-            val mealDbApi = retrofit.create(MealDbApi::class.java)
-
-            val refreshTokenRequestDto = RefreshTokenRequestDto(
-                token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqb2Vsa2FueWk5OEBnbWFpbC5jb20iLCJpYXQiOjE3MDAyOTE0MjUsImV4cCI6MTcwMDM3NzgyNX0.1fdDm8QMVxxvH54GmPSwYIf4dqMg31TqKom_Jbl2WEQ"
+        if (savedToken?.isNotEmpty() == true) {
+            val response = makeRequest(
+                chain = chain,
+                token = savedToken
             )
 
-            val refreshTokenResponse = runBlocking {
-                mealDbApi.refreshToken(refreshTokenRequestDto)
-            }
+            return if (response.code == 401) {
+                runBlocking {
+                    // Close the response body
+                    response.close()
 
-            Timber.e("AuthInterceptor: intercept: refreshTokenResponse: $refreshTokenResponse")
+                    // Refresh token
+                    val generatedToken = refreshExpiredToken(savedToken)
 
-            if (refreshTokenResponse.isSuccessful) {
-                val newToken = refreshTokenResponse.body()?.token
-                Timber.d("AuthInterceptor: intercept: newToken: $newToken")
-                if (newToken != null) {
-                    runBlocking {
-                        mealtimeSettings.saveAccessToken(newToken)
-                    }
+                    // Save the new token
+                    saveNewToken(generatedToken)
+
+                    // Make the request again with the new token
+                    val newToken = mealtimeSettings.getAccessToken().first()
+                    makeRequest(
+                        chain = chain,
+                        token = newToken
+                    )
                 }
+            } else {
+                response
             }
+        } else {
+            return makeRequest(
+                chain = chain,
+                token = null
+            )
         }
+    }
 
-        return response
+    private fun makeRequest(
+        chain: Interceptor.Chain,
+        token: String?
+    ): Response {
+        val newChain = chain.request().newBuilder()
+            .addHeader("Authorization", "Bearer $token")
+            .build()
+        return chain.proceed(newChain)
+    }
+
+    private suspend fun saveNewToken(generatedToken: String?) {
+        if (generatedToken != null) {
+            mealtimeSettings.saveAccessToken(generatedToken)
+        }
+    }
+
+    private suspend fun refreshExpiredToken(savedToken: String): String? {
+        val retrofit = Retrofit.Builder()
+            .baseUrl(Constants.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val mealDbApi = retrofit.create(MealDbApi::class.java)
+
+        return mealDbApi.refreshToken(
+            RefreshTokenRequestDto(savedToken)
+        )?.token
     }
 }

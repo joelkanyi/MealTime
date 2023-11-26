@@ -82,7 +82,8 @@ dependencies {
     implementation(projects.feature.mealplanner.presentation)
     implementation(projects.feature.mealplanner.di)
     implementation(projects.feature.kitchenTimer)
-    implementation(projects.feature.auth)
+    implementation(projects.feature.auth.presentation)
+    implementation(projects.feature.auth.di)
 
     // RamCosta Navigation
     implementation(libs.compose.destinations.animations)

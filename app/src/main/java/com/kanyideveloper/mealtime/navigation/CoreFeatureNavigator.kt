@@ -17,15 +17,11 @@ package com.kanyideveloper.mealtime.navigation
 
 import android.net.Uri
 import androidx.navigation.NavController
-import com.joelkanyi.auth.presentation.auth.destinations.ForgotPasswordScreenDestination
-import com.joelkanyi.auth.presentation.auth.destinations.SignInScreenDestination
-import com.joelkanyi.auth.presentation.auth.destinations.SignUpScreenDestination
-import com.joelkanyi.auth.presentation.auth.landing.AuthNavigator
+import com.joelkanyi.auth.presentation.AuthNavigator
+import com.joelkanyi.auth.presentation.destinations.ForgotPasswordScreenDestination
+import com.joelkanyi.auth.presentation.destinations.SignInScreenDestination
+import com.joelkanyi.auth.presentation.destinations.SignUpScreenDestination
 import com.joelkanyi.presentation.favorites.FavoritesNavigator
-import com.joelkanyi.presentation.search.SearchNavigator
-import com.kanyideveloper.addmeal.presentation.addmeal.AddMealNavigator
-import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
-import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
 import com.joelkanyi.presentation.home.HomeNavigator
 import com.joelkanyi.presentation.home.destinations.DetailsScreenDestination
 import com.joelkanyi.presentation.home.destinations.HomeScreenDestination
@@ -34,7 +30,11 @@ import com.joelkanyi.presentation.mealplanner.destinations.AllergiesScreenDestin
 import com.joelkanyi.presentation.mealplanner.destinations.MealPlannerScreenDestination
 import com.joelkanyi.presentation.mealplanner.destinations.MealTypesScreenDestination
 import com.joelkanyi.presentation.mealplanner.destinations.NumberOfPeopleScreenDestination
+import com.joelkanyi.presentation.search.SearchNavigator
 import com.joelkanyi.presentation.search.destinations.SearchScreenDestination
+import com.kanyideveloper.addmeal.presentation.addmeal.AddMealNavigator
+import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
+import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
 import com.kanyideveloper.settings.presentation.settings.SettingsNavigator
 import com.kanyideveloper.settings.presentation.settings.destinations.SettingsScreenDestination
 import com.ramcosta.composedestinations.dynamic.within

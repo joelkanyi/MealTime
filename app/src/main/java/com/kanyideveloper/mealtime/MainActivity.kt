@@ -73,7 +73,6 @@ import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultA
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 import com.ramcosta.composedestinations.navigation.DependenciesContainerBuilder
 import com.ramcosta.composedestinations.navigation.dependency
-import com.ramcosta.composedestinations.scope.DestinationScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import timber.log.Timber
@@ -148,7 +147,6 @@ class MainActivity : ComponentActivity() {
                                 BottomNavItem.MealPlanner,
                                 BottomNavItem.Favorites,
                             )
-
 
                             StandardScaffold(
                                 navController = navController,

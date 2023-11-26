@@ -15,15 +15,16 @@
  */
 package com.kanyideveloper.core_network
 
+import com.kanyideveloper.core_network.model.AuthResponseDto
 import com.kanyideveloper.core_network.model.CategoriesResponseDto
 import com.kanyideveloper.core_network.model.CreateFavoriteRequestDto
 import com.kanyideveloper.core_network.model.FavoritesResponseDto
 import com.kanyideveloper.core_network.model.IngredientsResponseDto
-import com.kanyideveloper.core_network.model.LoginResponse
+import com.kanyideveloper.core_network.model.LoginRequestDto
 import com.kanyideveloper.core_network.model.MealDetailsResponseDto
 import com.kanyideveloper.core_network.model.MealsResponseDto
 import com.kanyideveloper.core_network.model.RefreshTokenRequestDto
-import retrofit2.Response
+import com.kanyideveloper.core_network.model.RegisterRequestDto
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -56,11 +57,6 @@ interface MealDbApi {
     @GET("meals/ingredients")
     suspend fun getAllIngredients(): List<IngredientsResponseDto>
 
-    @POST("auth/refresh")
-    suspend fun refreshToken(
-        @Body refreshTokenRequestDto: RefreshTokenRequestDto
-    ): Response<LoginResponse>
-
     @GET("favorite/{userId}")
     suspend fun getFavorites(
         @Path("userId") userId: String
@@ -76,4 +72,25 @@ interface MealDbApi {
         @Path("mealId") mealId: String,
         @Path("userId") userId: String
     )
+
+    @POST("auth/google")
+    fun signInWithGoogle(idToken: String): AuthResponseDto
+
+    @POST("auth/refresh")
+    suspend fun refreshToken(
+        @Body refreshTokenRequestDto: RefreshTokenRequestDto
+    ): AuthResponseDto?
+
+    @POST("auth/login")
+    suspend fun loginUser(
+        @Body loginRequestDto: LoginRequestDto
+    ): AuthResponseDto
+
+    @POST("auth/register")
+    suspend fun registerUser(
+        @Body registerRequestDto: RegisterRequestDto
+    ): AuthResponseDto
+
+    @POST("auth/forgot-password")
+    suspend fun forgotPassword(email: String)
 }
