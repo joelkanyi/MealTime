@@ -21,13 +21,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
+import com.joelkanyi.common.util.Resource
+import com.joelkanyi.common.util.UiEvents
 import com.joelkanyi.domain.usecase.GetAllIngredientsUseCase
 import com.joelkanyi.domain.usecase.SaveAllergiesUseCase
 import com.joelkanyi.domain.usecase.SaveDishTypesUseCase
 import com.joelkanyi.domain.usecase.SaveNumberOfPeopleUseCase
-import com.kanyideveloper.analytics.domain.usecase.TrackUserEventUseCase
-import com.kanyideveloper.core.util.Resource
-import com.kanyideveloper.core.util.UiEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -35,7 +34,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SetupViewModel @Inject constructor(
-    private val trackUserEventUseCase: TrackUserEventUseCase,
+    private val trackUserEventUseCase: com.joelkanyi.analytics.domain.usecase.TrackUserEventUseCase,
     private val getAllIngredientsUseCase: GetAllIngredientsUseCase,
     private val saveAllergiesUseCase: SaveAllergiesUseCase,
     private val saveNumberOfPeopleUseCase: SaveNumberOfPeopleUseCase,

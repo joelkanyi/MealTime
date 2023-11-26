@@ -47,10 +47,11 @@ android {
 }
 
 dependencies {
-    implementation(projects.composeUi)
+    implementation(projects.core.designsystem)
     implementation(projects.feature.search.domain)
     implementation(projects.feature.favorites.domain)
-    implementation(projects.core)
+    implementation(projects.core.common)
+    implementation(projects.core.analytics)
 
     implementation(libs.compose.destinations.animations)
     ksp(libs.compose.destinations.ksp)

@@ -77,13 +77,9 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.joelkanyi.common.util.convertMillisecondsToTimeString
+import com.joelkanyi.common.util.minutesToMilliseconds
 import com.joelkanyi.kitchen_timer.domain.model.KitchenTimer
-import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.compose_ui.theme.PrimaryColor
-import com.kanyideveloper.compose_ui.theme.Shapes
-import com.kanyideveloper.core.util.convertMillisecondsToTimeString
-import com.kanyideveloper.core.util.minutesToMilliseconds
-import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
 
@@ -94,7 +90,6 @@ fun KitchenTimerScreen(viewModel: KitchenTimerViewModel = hiltViewModel()) {
     val timerValue = viewModel.remainingTimerValue.observeAsState(initial = KitchenTimer()).value
     val isTimerRunning = viewModel.isTimerRunning.observeAsState(initial = false).value
     val context = LocalContext.current
-    val analyticsUtil = viewModel.analyticsUtil()
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember {
         SnackbarHostState()
@@ -130,15 +125,15 @@ fun KitchenTimerScreen(viewModel: KitchenTimerViewModel = hiltViewModel()) {
         HowLongDialog(
             currentTimerValue = viewModel.currentTimerValue.value,
             setCurrentTimerValue = {
-                analyticsUtil.trackUserEvent("set timer value: $it")
+                viewModel.trackUserEvent("set timer value: $it")
                 viewModel.setCurrentTimerValue(it)
             },
             onDismiss = {
-                analyticsUtil.trackUserEvent("dismissed timer dialog")
+                viewModel.trackUserEvent("dismissed timer dialog")
                 viewModel.setShowHowLongDialog(false)
             },
             onTimerSet = {
-                analyticsUtil.trackUserEvent("timer set")
+                viewModel.trackUserEvent("timer set")
                 viewModel.setShowHowLongDialog(false)
                 viewModel.startTimer()
             }
@@ -152,7 +147,7 @@ fun KitchenTimerScreen(viewModel: KitchenTimerViewModel = hiltViewModel()) {
         percentage = viewModel.percentage.value ?: 0f,
         snackbarHostState = snackbarHostState,
         onStop = {
-            analyticsUtil.trackUserEvent("stop timer")
+            viewModel.trackUserEvent("stop timer")
             viewModel.stopTimer()
         },
         onStart = {
@@ -166,10 +161,10 @@ fun KitchenTimerScreen(viewModel: KitchenTimerViewModel = hiltViewModel()) {
                 return@KitchenTimerScreenContent
             }
             if (viewModel.isTimerRunning.value == true) {
-                analyticsUtil.trackUserEvent("pause timer")
+                viewModel.trackUserEvent("pause timer")
                 viewModel.pauseTimer()
             } else {
-                analyticsUtil.trackUserEvent("start timer")
+                viewModel.trackUserEvent("start timer")
                 viewModel.startTimer()
             }
         },
@@ -192,7 +187,7 @@ private fun KitchenTimerScreenContent(
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            StandardToolbar(
+            com.joelkanyi.designsystem.components.StandardToolbar(
                 navigate = {},
                 title = {
                     Row(
@@ -211,7 +206,7 @@ private fun KitchenTimerScreenContent(
                         Card(
                             modifier = Modifier
                                 .size(36.dp),
-                            shape = Shapes.large,
+                            shape = com.joelkanyi.designsystem.theme.Shapes.large,
                             colors = CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.surfaceVariant
                             ),
@@ -256,7 +251,7 @@ private fun KitchenTimerScreenContent(
                         .padding(top = 32.dp, start = 16.dp, end = 16.dp)
                         .align(Alignment.TopCenter),
                     timerValue = timerValue,
-                    mainColor = PrimaryColor,
+                    mainColor = com.joelkanyi.designsystem.theme.PrimaryColor,
                     radius = 40.dp,
                     strokeWidth = 10.dp,
                     percentage = percentage,
@@ -292,7 +287,7 @@ private fun KitchenTimerScreenContent(
                         ) {
                             Icon(
                                 modifier = Modifier.size(42.dp),
-                                painter = painterResource(id = R.drawable.ic_stop),
+                                painter = painterResource(id = com.joelkanyi.common.R.drawable.ic_stop),
                                 contentDescription = "Stop Timer",
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -323,7 +318,7 @@ private fun KitchenTimerScreenContent(
                             Icon(
                                 modifier = Modifier.size(42.dp),
                                 painter = painterResource(
-                                    id = if (isTimerRunning) R.drawable.ic_pause else R.drawable.ic_play
+                                    id = if (isTimerRunning) com.joelkanyi.common.R.drawable.ic_pause else com.joelkanyi.common.R.drawable.ic_play
                                 ),
                                 contentDescription = "Add Timer",
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant

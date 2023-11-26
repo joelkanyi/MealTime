@@ -74,15 +74,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.compose_ui.theme.MealTimeTheme
-import com.kanyideveloper.compose_ui.theme.Theme
-import com.kanyideveloper.core.components.EmptyStateComponent
-import com.kanyideveloper.core.components.ErrorStateComponent
-import com.kanyideveloper.core.components.LoadingStateComponent
-import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core.util.UiEvents
-import com.kanyideveloper.mealtime.core.R
+import com.joelkanyi.common.model.Meal
+import com.joelkanyi.common.util.UiEvents
+import com.joelkanyi.designsystem.components.EmptyStateComponent
+import com.joelkanyi.designsystem.components.ErrorStateComponent
+import com.joelkanyi.designsystem.components.LoadingStateComponent
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
 
@@ -171,7 +167,7 @@ private fun SearchScreenContent(
             .fillMaxSize()
             .padding(12.dp)
     ) {
-        StandardToolbar(
+        com.joelkanyi.designsystem.components.StandardToolbar(
             navigate = {
                 onClickBack()
             },
@@ -385,7 +381,7 @@ fun OnlineMealItem(
                     ImageRequest.Builder(LocalContext.current)
                         .data(data = meal.imageUrl)
                         .apply(block = fun ImageRequest.Builder.() {
-                            placeholder(R.drawable.placeholder)
+                            placeholder(com.joelkanyi.common.R.drawable.placeholder)
                         }).build()
                 ),
                 contentScale = ContentScale.Crop
@@ -423,9 +419,9 @@ fun OnlineMealItem(
                         modifier = Modifier
                             .size(30.dp),
                         painter = if (favorite) {
-                            painterResource(id = R.drawable.filled_favorite)
+                            painterResource(id = com.joelkanyi.common.R.drawable.filled_favorite)
                         } else {
-                            painterResource(id = R.drawable.heart_plus)
+                            painterResource(id = com.joelkanyi.common.R.drawable.heart_plus)
                         },
                         contentDescription = null,
                         tint = if (favorite) {
@@ -444,32 +440,32 @@ fun OnlineMealItem(
 @Preview
 @Composable
 fun SearchScreenContentPreview() {
-   MealTimeTheme(
-       theme = Theme.LIGHT_THEME.themeValue
-   ) {
-       SearchScreenContent(
-           searchState = SearchState(
-               isLoading = false,
-               error = null,
-               searchData = listOf(
-                   Meal(
-                       mealId = "1",
-                       name = "Chicken",
-                       imageUrl = "https://www.themealdb.com/images/media/meals/1529446352.jpg",
-                       category = "Chicken",
-                   ),
-               )
-           ),
-           onMealClick = {},
-           addToFavorites = {},
-           removeFromFavorites = {},
-           onSearchStringChange = {},
-           onSearch = {},
-           currentSearchString = "",
-           isSelected = { false },
-           onSearchOptionClick = {},
-           onClickBack = {},
-           isFavorite = { false }
-       )
-   }
+    com.joelkanyi.designsystem.theme.MealTimeTheme(
+        theme = com.joelkanyi.designsystem.theme.Theme.LIGHT_THEME.themeValue
+    ) {
+        SearchScreenContent(
+            searchState = SearchState(
+                isLoading = false,
+                error = null,
+                searchData = listOf(
+                    Meal(
+                        mealId = "1",
+                        name = "Chicken",
+                        imageUrl = "https://www.themealdb.com/images/media/meals/1529446352.jpg",
+                        category = "Chicken",
+                    ),
+                )
+            ),
+            onMealClick = {},
+            addToFavorites = {},
+            removeFromFavorites = {},
+            onSearchStringChange = {},
+            onSearch = {},
+            currentSearchString = "",
+            isSelected = { false },
+            onSearchOptionClick = {},
+            onClickBack = {},
+            isFavorite = { false }
+        )
+    }
 }

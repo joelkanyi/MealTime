@@ -36,7 +36,6 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -44,7 +43,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -56,25 +54,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.kanyideveloper.analytics.domain.repository.AnalyticsUtil
-import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.core.components.PremiumCard
-import com.kanyideveloper.core.state.SubscriptionStatusUiState
-import com.kanyideveloper.core.util.UiEvents
-import com.kanyideveloper.core.util.getAppVersionName
-import com.kanyideveloper.mealtime.core.R
+import com.joelkanyi.common.util.UiEvents
+import com.joelkanyi.common.util.getAppVersionName
 import com.kanyideveloper.settings.presentation.settings.components.FeedbackDialog
 import com.kanyideveloper.settings.presentation.settings.components.SettingCard
 import com.kanyideveloper.settings.presentation.settings.components.ThemesDialog
 import com.ramcosta.composedestinations.annotation.Destination
 
-interface SettingsNavigator {
-    fun openAllergiesScreen(editMealPlanPreference: Boolean)
-    fun subscribe()
-    fun logout()
-}
-
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Destination
 @Composable
 fun SettingsScreen(navigator: SettingsNavigator, viewModel: SettingsViewModel = hiltViewModel()) {
@@ -83,150 +70,127 @@ fun SettingsScreen(navigator: SettingsNavigator, viewModel: SettingsViewModel = 
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val snackbarHostState = remember { SnackbarHostState() }
-    val analyticsUtils = viewModel.analyticsUtil()
 
-    when (val isSubscribed = viewModel.isSubscribed.collectAsState().value) {
-        is SubscriptionStatusUiState.Success -> {
-            LaunchedEffect(key1 = true) {
-                viewModel.eventsFlow.collect { event ->
-                    when (event) {
-                        is UiEvents.SnackbarEvent -> {
-                            snackbarHostState.showSnackbar(message = event.message)
-                        }
-
-                        is UiEvents.NavigationEvent -> {
-                            navigator.logout()
-                        }
-
-                        else -> {}
-                    }
-                }
-            }
-
-            Scaffold(
-                snackbarHost = { SnackbarHost(snackbarHostState) },
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    StandardToolbar(
-                        navigate = {
-                        },
-                        title = {
-                            Text(text = "Settings", fontSize = 16.sp)
-                        },
-                        showBackArrow = false,
-                        navActions = {
-                        }
-                    )
-                }
-            ) { paddingValues ->
-
-                if (shouldShowThemesDialog) {
-                    ThemesDialog(
-                        onDismiss = {
-                            analyticsUtils.trackUserEvent("Themes Dialog Closed")
-                            viewModel.setShowThemesDialogState(
-                                !viewModel.shouldShowThemesDialog.value
-                            )
-                        },
-                        onSelectTheme = {
-                            analyticsUtils.trackUserEvent("Theme Selected: $it")
-                            viewModel.updateTheme(it)
-                        }
-                    )
+    LaunchedEffect(key1 = true) {
+        viewModel.eventsFlow.collect { event ->
+            when (event) {
+                is UiEvents.SnackbarEvent -> {
+                    snackbarHostState.showSnackbar(message = event.message)
                 }
 
-                if (shouldShowFeedbackDialog) {
-                    analyticsUtils.trackUserEvent("Feedback Dialog Opened")
-                    FeedbackDialog(
-                        currentFeedbackString = viewModel.feedback.value.text,
-                        isError = viewModel.feedback.value.error != null,
-                        error = viewModel.feedback.value.error,
-                        onDismiss = {
-                            viewModel.setShowFeedbackDialogState(
-                                !viewModel.shouldShowFeedbackDialog.value
-                            )
-                        },
-                        onFeedbackChange = { newValue ->
-                            viewModel.setFeedbackState(newValue)
-                        },
-                        onClickSend = { feedback ->
-                            keyboardController?.hide()
-                            viewModel.validateFeedbackTextfield(message = feedback)
-
-                            if (feedback.isEmpty()) {
-                                return@FeedbackDialog
-                            }
-
-                            try {
-                                val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                    data = Uri.parse("mailto:")
-                                    putExtra(Intent.EXTRA_EMAIL, arrayOf("joelkanyi98@gmail.com"))
-                                    putExtra(Intent.EXTRA_SUBJECT, "MEALTIME APP FEEDBACK")
-                                    putExtra(Intent.EXTRA_TEXT, feedback)
-                                    analyticsUtils.trackUserEvent("Feedback Sent: $feedback")
-                                }
-                                context.startActivity(intent)
-
-                                viewModel.setShowFeedbackDialogState(false)
-                                viewModel.setFeedbackState("")
-                            } catch (e: Exception) {
-                                Toast.makeText(
-                                    context,
-                                    "No Email Application Found",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                            }
-                        }
-                    )
+                is UiEvents.NavigationEvent -> {
+                    navigator.logout()
                 }
 
-                if (viewModel.shouldShowSubscriptionDialog.value) {
-                    analyticsUtils.trackUserEvent("Subscription Dialog Opened")
-                    PremiumCard(
-                        onDismiss = {
-                            analyticsUtils.trackUserEvent("Subscription Dialog Dismissed")
-                            viewModel.setShowSubscriptionDialogState(false)
-                        },
-                        onClickSubscribe = {
-                            analyticsUtils.trackUserEvent(" Subscribe Clicked")
-                            navigator.subscribe()
-                            viewModel.setShowSubscriptionDialogState(false)
-                        }
-                    )
-                }
-
-                SettingsScreenContent(
-                    isSubscribed = isSubscribed.isSubscribed,
-                    paddingValues = paddingValues,
-                    analyticsUtil = analyticsUtils,
-                    navigator = navigator,
-                    context = context,
-                    logoutState = viewModel.logoutState.value,
-                    onChangeTheme = {
-                        analyticsUtils.trackUserEvent("Theme Dialog Opened")
-                        viewModel.setShowThemesDialogState(
-                            !viewModel.shouldShowThemesDialog.value
-                        )
-                    },
-                    onReportOrSuggest = {
-                        analyticsUtils.trackUserEvent("Feedback Dialog Opened")
-                        viewModel.setShowFeedbackDialogState(
-                            !viewModel.shouldShowFeedbackDialog.value
-                        )
-                    },
-                    onSubscribe = {
-                        viewModel.setShowSubscriptionDialogState(true)
-                    },
-                    logout = {
-                        analyticsUtils.trackUserEvent("Logout Clicked")
-                        viewModel.logoutUser()
-                    }
-                )
+                else -> {}
             }
         }
+    }
 
-        else -> {}
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            com.joelkanyi.designsystem.components.StandardToolbar(
+                navigate = {
+                },
+                title = {
+                    Text(text = "Settings", fontSize = 16.sp)
+                },
+                showBackArrow = false,
+                navActions = {
+                }
+            )
+        }
+    ) { paddingValues ->
+
+        if (shouldShowThemesDialog) {
+            ThemesDialog(
+                onDismiss = {
+                    viewModel.trackUserEvent("Themes Dialog Closed")
+                    viewModel.setShowThemesDialogState(
+                        !viewModel.shouldShowThemesDialog.value
+                    )
+                },
+                onSelectTheme = {
+                    viewModel.trackUserEvent("Theme Selected: $it")
+                    viewModel.updateTheme(it)
+                }
+            )
+        }
+
+        if (shouldShowFeedbackDialog) {
+            viewModel.trackUserEvent("Feedback Dialog Opened")
+            FeedbackDialog(
+                currentFeedbackString = viewModel.feedback.value.text,
+                isError = viewModel.feedback.value.error != null,
+                error = viewModel.feedback.value.error,
+                onDismiss = {
+                    viewModel.setShowFeedbackDialogState(
+                        !viewModel.shouldShowFeedbackDialog.value
+                    )
+                },
+                onFeedbackChange = { newValue ->
+                    viewModel.setFeedbackState(newValue)
+                },
+                onClickSend = { feedback ->
+                    keyboardController?.hide()
+                    viewModel.validateFeedbackTextfield(message = feedback)
+
+                    if (feedback.isEmpty()) {
+                        return@FeedbackDialog
+                    }
+
+                    try {
+                        val intent = Intent(Intent.ACTION_SENDTO).apply {
+                            data = Uri.parse("mailto:")
+                            putExtra(Intent.EXTRA_EMAIL, arrayOf("joelkanyi98@gmail.com"))
+                            putExtra(Intent.EXTRA_SUBJECT, "MEALTIME APP FEEDBACK")
+                            putExtra(Intent.EXTRA_TEXT, feedback)
+                            viewModel.trackUserEvent("Feedback Sent: $feedback")
+                        }
+                        context.startActivity(intent)
+
+                        viewModel.setShowFeedbackDialogState(false)
+                        viewModel.setFeedbackState("")
+                    } catch (e: Exception) {
+                        Toast.makeText(
+                            context,
+                            "No Email Application Found",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                    }
+                }
+            )
+        }
+
+
+        SettingsScreenContent(
+            paddingValues = paddingValues,
+            navigator = navigator,
+            context = context,
+            logoutState = viewModel.logoutState.value,
+            onChangeTheme = {
+                viewModel.trackUserEvent("Theme Dialog Opened")
+                viewModel.setShowThemesDialogState(
+                    !viewModel.shouldShowThemesDialog.value
+                )
+            },
+            onReportOrSuggest = {
+                viewModel.trackUserEvent("Feedback Dialog Opened")
+                viewModel.setShowFeedbackDialogState(
+                    !viewModel.shouldShowFeedbackDialog.value
+                )
+            },
+            logout = {
+                viewModel.trackUserEvent("Logout Clicked")
+                viewModel.logoutUser()
+            },
+            trackUserEvent = { event ->
+                viewModel.trackUserEvent(event)
+            }
+        )
     }
 }
 
@@ -237,23 +201,16 @@ private fun SettingsScreenContent(
     context: Context,
     onChangeTheme: () -> Unit,
     onReportOrSuggest: () -> Unit,
-    isSubscribed: Boolean,
-    onSubscribe: () -> Unit,
     logout: () -> Unit,
     logoutState: LogoutState,
-    analyticsUtil: AnalyticsUtil,
+    trackUserEvent: (String) -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             contentPadding = paddingValues,
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            val filteredSettingsOptions = if (isSubscribed) {
-                settingsOptions.filter { it.title != "Upgrade to Premium" }
-            } else {
-                settingsOptions
-            }
-            items(filteredSettingsOptions) { setting ->
+            items(settingsOptions) { setting ->
                 SettingCard(
                     title = setting.title,
                     icon = setting.icon,
@@ -272,7 +229,7 @@ private fun SettingsScreenContent(
                             }
 
                             "Rate Us on Play Store" -> {
-                                analyticsUtil.trackUserEvent("Rate Us Clicked")
+                                trackUserEvent("Rate Us Clicked")
                                 val rateIntent = Intent(
                                     Intent.ACTION_VIEW,
                                     Uri.parse("market://details?id=" + context.packageName)
@@ -281,7 +238,7 @@ private fun SettingsScreenContent(
                             }
 
                             "Share the App with Friends" -> {
-                                analyticsUtil.trackUserEvent("Share App Clicked")
+                                trackUserEvent("Share App Clicked")
                                 val appPackageName = context.packageName
                                 val sendIntent = Intent()
                                 sendIntent.action = Intent.ACTION_SEND
@@ -291,10 +248,6 @@ private fun SettingsScreenContent(
                                 )
                                 sendIntent.type = "text/plain"
                                 context.startActivity(sendIntent)
-                            }
-
-                            "Upgrade to Premium" -> {
-                                onSubscribe()
                             }
                         }
                     }
@@ -327,7 +280,7 @@ private fun SettingsScreenContent(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_logout),
+                            painter = painterResource(id = com.joelkanyi.common.R.drawable.ic_logout),
                             contentDescription = "Logout",
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
@@ -373,26 +326,26 @@ data class Setting(
 private val settingsOptions = listOf(
     Setting(
         title = "Change Your Theme",
-        icon = R.drawable.dark_mode
+        icon = com.joelkanyi.common.R.drawable.dark_mode
     ),
     Setting(
         title = "Edit Meal Plan Preferences",
-        icon = R.drawable.ic_plan_edit
+        icon = com.joelkanyi.common.R.drawable.ic_plan_edit
     ),
     Setting(
         title = "Suggest or Report Anything",
-        icon = R.drawable.ic_feedback
+        icon = com.joelkanyi.common.R.drawable.ic_feedback
     ),
     Setting(
         title = "Upgrade to Premium",
-        icon = R.drawable.ic_premium
+        icon = com.joelkanyi.common.R.drawable.ic_premium
     ),
     Setting(
         title = "Rate Us on Play Store",
-        icon = R.drawable.ic_star
+        icon = com.joelkanyi.common.R.drawable.ic_star
     ),
     Setting(
         title = "Share the App with Friends",
-        icon = R.drawable.ic_share
+        icon = com.joelkanyi.common.R.drawable.ic_share
     )
 )

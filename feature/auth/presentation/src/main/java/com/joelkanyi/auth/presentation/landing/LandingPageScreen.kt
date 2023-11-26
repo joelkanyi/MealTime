@@ -54,8 +54,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.joelkanyi.auth.presentation.AuthNavigator
-import com.kanyideveloper.core.util.Constants.CLIENT_ID
-import com.kanyideveloper.mealtime.core.R
+import com.joelkanyi.common.util.Constants.CLIENT_ID
 import com.ramcosta.composedestinations.annotation.Destination
 import com.stevdzasan.onetap.OneTapSignInWithGoogle
 import com.stevdzasan.onetap.rememberOneTapSignInState
@@ -104,7 +103,7 @@ fun LandingPageScreen(
         Image(
             modifier = Modifier
                 .fillMaxSize(),
-            painter = painterResource(id = R.drawable.banner),
+            painter = painterResource(id = com.joelkanyi.common.R.drawable.banner),
             contentDescription = "Landing Page Food Image",
             contentScale = ContentScale.Crop
         )
@@ -133,7 +132,7 @@ fun LandingPageScreen(
             ) {
                 Image(
                     modifier = Modifier.padding(6.dp),
-                    painter = painterResource(id = R.drawable.ic_google),
+                    painter = painterResource(id = com.joelkanyi.common.R.drawable.ic_google),
                     contentDescription = "Google Icon"
                 )
 

@@ -63,13 +63,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.joelkanyi.common.model.Ingredient
+import com.joelkanyi.common.state.TextFieldState
+import com.joelkanyi.common.util.UiEvents
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
-import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.core.model.Ingredient
-import com.kanyideveloper.core.state.SubscriptionStatusUiState
-import com.kanyideveloper.core.state.TextFieldState
-import com.kanyideveloper.core.util.UiEvents
-import com.kanyideveloper.mealtime.core.R
+import com.joelkanyi.common.R
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
 
@@ -95,8 +93,6 @@ fun NextAddMealScreen(
     val direction = viewModel.direction.value
     val ingredient = viewModel.ingredient.value
 
-    val isSubscribed = viewModel.isSubscribed.collectAsState().value
-    val analyticsUtil = viewModel.analyticsUtil()
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -112,83 +108,77 @@ fun NextAddMealScreen(
         }
     }
 
-    when (isSubscribed) {
-        is SubscriptionStatusUiState.Success -> {
-            Column(Modifier.fillMaxSize()) {
-                StandardToolbar(
-                    navigate = {
-                        analyticsUtil.trackUserEvent("Next Add Meal Screen -Back Button clicked")
-                        navigator.popBackStack()
-                    },
-                    title = {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(text = "Add meal", fontSize = 18.sp)
-                            SaveTextButtonContent(
-                                isLoading = viewModel.saveMeal.value.isLoading,
-                                onClick = {
-                                    analyticsUtil.trackUserEvent("save my meal button clicked - $mealName")
-                                    keyboardController?.hide()
-                                    viewModel.saveMeal(
-                                        imageUri = imageUri,
-                                        mealName = mealName,
-                                        cookingTime = cookingTime,
-                                        servingPeople = servingPeople,
-                                        complexity = complexity,
-                                        category = category,
-                                        isSubscribed = true // isSubscribed.isSubscribed
-                                    )
-                                }
+    Column(Modifier.fillMaxSize()) {
+        com.joelkanyi.designsystem.components.StandardToolbar(
+            navigate = {
+                viewModel.trackUserEvent("Next Add Meal Screen -Back Button clicked")
+                navigator.popBackStack()
+            },
+            title = {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = "Add meal", fontSize = 18.sp)
+                    SaveTextButtonContent(
+                        isLoading = viewModel.saveMeal.value.isLoading,
+                        onClick = {
+                            viewModel.trackUserEvent("save my meal button clicked - $mealName")
+                            keyboardController?.hide()
+                            viewModel.saveMeal(
+                                imageUri = imageUri,
+                                mealName = mealName,
+                                cookingTime = cookingTime,
+                                servingPeople = servingPeople,
+                                complexity = complexity,
+                                category = category,
+                                isSubscribed = true // isSubscribed.isSubscribed
                             )
                         }
-                    },
-                    showBackArrow = true
-                )
-
-                LazyColumn(
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    item {
-                        IngredientComponent(ingredient, viewModel, keyboardController)
-                    }
-
-                    items(viewModel.ingredientsList) { ingredient ->
-                        IngredientItem(
-                            ingredient = ingredient.name,
-                            viewModel = viewModel
-                        )
-                    }
-
-                    item {
-                        Spacer(modifier = Modifier.height(24.dp))
-                    }
-
-                    item {
-                        DirectionComponent(direction, viewModel, keyboardController)
-                    }
-
-                    items(viewModel.directionsList) { direction ->
-                        DirectionItem(
-                            direction = direction,
-                            viewModel = viewModel,
-                            onClick = {
-                                Toast.makeText(
-                                    context,
-                                    "Feature in development",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        )
-                    }
+                    )
                 }
+            },
+            showBackArrow = true
+        )
+
+        LazyColumn(
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            item {
+                IngredientComponent(ingredient, viewModel, keyboardController)
+            }
+
+            items(viewModel.ingredientsList) { ingredient ->
+                IngredientItem(
+                    ingredient = ingredient.name,
+                    viewModel = viewModel
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+
+            item {
+                DirectionComponent(direction, viewModel, keyboardController)
+            }
+
+            items(viewModel.directionsList) { direction ->
+                DirectionItem(
+                    direction = direction,
+                    viewModel = viewModel,
+                    onClick = {
+                        Toast.makeText(
+                            context,
+                            "Feature in development",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                )
             }
         }
-
-        else -> {}
     }
 }
 

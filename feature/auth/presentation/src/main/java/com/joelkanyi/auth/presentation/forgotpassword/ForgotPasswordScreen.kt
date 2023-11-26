@@ -51,7 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joelkanyi.auth.presentation.AuthNavigator
 import com.joelkanyi.auth.presentation.state.LoginState
-import com.kanyideveloper.core.util.UiEvents
+import com.joelkanyi.common.util.UiEvents
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
 

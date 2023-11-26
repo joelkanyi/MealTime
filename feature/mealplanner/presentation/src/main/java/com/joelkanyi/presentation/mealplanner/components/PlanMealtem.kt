@@ -48,10 +48,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.kanyideveloper.compose_ui.theme.PrimaryColor
-import com.kanyideveloper.compose_ui.theme.Shapes
-import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.mealtime.core.R
+import com.joelkanyi.common.model.Meal
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,7 +78,7 @@ fun PlanMealItem(
             modifier = modifier
                 .width(cardWidth)
                 .wrapContentHeight(),
-            shape = Shapes.large,
+            shape = com.joelkanyi.designsystem.theme.Shapes.large,
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant
             ),
@@ -99,7 +96,7 @@ fun PlanMealItem(
                         ImageRequest.Builder(LocalContext.current)
                             .data(data = meal.imageUrl)
                             .apply(block = fun ImageRequest.Builder.() {
-                                placeholder(R.drawable.placeholder)
+                                placeholder(com.joelkanyi.common.R.drawable.placeholder)
                             }).build()
                     ),
                     contentScale = ContentScale.Crop
@@ -123,7 +120,7 @@ fun PlanMealItem(
                 .size(30.dp)
                 .align(Alignment.TopEnd)
                 .background(
-                    color = PrimaryColor,
+                    color = com.joelkanyi.designsystem.theme.PrimaryColor,
                     shape = RoundedCornerShape(
                         topStart = 0.dp,
                         bottomStart = 12.dp,

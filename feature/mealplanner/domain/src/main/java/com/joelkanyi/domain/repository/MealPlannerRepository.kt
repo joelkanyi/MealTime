@@ -15,10 +15,9 @@
  */
 package com.joelkanyi.domain.repository
 
+import com.joelkanyi.common.util.Resource
 import com.joelkanyi.domain.entity.MealPlan
-import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core.model.MealPlanPreference
-import com.kanyideveloper.core.util.Resource
+import com.joelkanyi.settings.domain.model.MealPlanPreference
 import kotlinx.coroutines.flow.Flow
 
 interface MealPlannerRepository {

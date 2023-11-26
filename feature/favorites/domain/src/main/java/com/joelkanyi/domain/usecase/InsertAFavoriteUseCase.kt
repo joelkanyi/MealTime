@@ -1,7 +1,7 @@
 package com.joelkanyi.domain.usecase
 
+import com.joelkanyi.common.model.Meal
 import com.joelkanyi.domain.repository.FavoritesRepository
-import com.kanyideveloper.core.model.Meal
 import javax.inject.Inject
 
 class InsertAFavoriteUseCase @Inject constructor(

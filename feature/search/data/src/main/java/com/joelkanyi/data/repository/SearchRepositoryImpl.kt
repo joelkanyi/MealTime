@@ -15,10 +15,9 @@
  */
 package com.joelkanyi.data.repository
 
-import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core.util.Resource
-import com.kanyideveloper.core.util.safeApiCall
-import com.kanyideveloper.core_network.MealDbApi
+import com.joelkanyi.common.model.Meal
+import com.joelkanyi.common.util.Resource
+import com.joelkanyi.common.util.safeApiCall
 import com.joelkanyi.data.mapper.toOnlineMeal
 import com.joelkanyi.domain.repository.SearchRepository
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +25,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class SearchRepositoryImpl @Inject constructor(
-    private val mealDbApi: MealDbApi
+    private val mealDbApi: com.joelkanyi.network.MealDbApi
 ) : SearchRepository {
     override suspend fun search(
         searchOption: String,

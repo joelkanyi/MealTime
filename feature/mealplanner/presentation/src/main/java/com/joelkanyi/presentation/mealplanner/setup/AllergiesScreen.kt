@@ -43,12 +43,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.compose_ui.theme.PrimaryColor
-import com.kanyideveloper.core.components.EmptyStateComponent
-import com.kanyideveloper.core.components.ErrorStateComponent
-import com.kanyideveloper.core.components.LoadingStateComponent
-import com.kanyideveloper.core.util.UiEvents
+import com.joelkanyi.common.util.UiEvents
+import com.joelkanyi.designsystem.components.EmptyStateComponent
+import com.joelkanyi.designsystem.components.ErrorStateComponent
+import com.joelkanyi.designsystem.components.LoadingStateComponent
 import com.joelkanyi.presentation.mealplanner.MealPlannerNavigator
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
@@ -111,7 +109,7 @@ private fun AllergiesScreenContent(
     onClickNavigateBack: () -> Unit = {},
 ) {
     Column(Modifier.fillMaxSize()) {
-        StandardToolbar(
+        com.joelkanyi.designsystem.components.StandardToolbar(
             navigate = onClickNavigateBack,
             title = {},
             showBackArrow = true,
@@ -124,7 +122,7 @@ private fun AllergiesScreenContent(
                         },
                     text = "Next",
                     style = MaterialTheme.typography.titleMedium,
-                    color = PrimaryColor
+                    color = com.joelkanyi.designsystem.theme.PrimaryColor
                 )
             }
         )

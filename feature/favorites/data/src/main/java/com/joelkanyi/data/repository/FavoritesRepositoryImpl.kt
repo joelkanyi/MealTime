@@ -17,21 +17,18 @@ package com.joelkanyi.data.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
-import com.kanyideveloper.core.util.Resource
-import com.kanyideveloper.core.util.safeApiCall
-import com.kanyideveloper.core_database.dao.FavoritesDao
-import com.kanyideveloper.core_database.model.FavoriteEntity
-import com.kanyideveloper.core_network.MealDbApi
+import com.joelkanyi.common.util.Resource
+import com.joelkanyi.common.util.safeApiCall
 import com.joelkanyi.data.mapper.toFavorite
-import com.kanyideveloper.preferences.domain.MealtimeSettings
+import com.joelkanyi.settings.domain.MealtimeSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class FavoritesRepositoryImpl @Inject constructor(
-    private val favoritesDao: FavoritesDao,
-    private val mealDbApi: MealDbApi,
+    private val favoritesDao: com.joelkanyi.database.dao.FavoritesDao,
+    private val mealDbApi: com.joelkanyi.network.MealDbApi,
     private val mealtimeSettings: MealtimeSettings
 ) : com.joelkanyi.domain.repository.FavoritesRepository {
 
@@ -149,7 +146,7 @@ class FavoritesRepositoryImpl @Inject constructor(
         category: String
     ): Resource<Boolean> {
         favoritesDao.insertAFavorite(
-            FavoriteEntity(
+            com.joelkanyi.database.model.FavoriteEntity(
                 mealId = mealId,
                 mealName = name,
                 mealImageUrl = imageUrl,
@@ -178,7 +175,7 @@ class FavoritesRepositoryImpl @Inject constructor(
             true
         }*/
         favoritesDao.insertAFavorite(
-            FavoriteEntity(
+            com.joelkanyi.database.model.FavoriteEntity(
                 mealId = mealId,
                 mealName = "Meal Name",
                 mealImageUrl = "https://www.themealdb.com/images/media/meals/llcbn01574260722.jpg",

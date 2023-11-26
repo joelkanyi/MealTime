@@ -25,8 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.kanyideveloper.compose_ui.theme.Theme
-import com.kanyideveloper.mealtime.core.R
 
 @Composable
 fun ThemesDialog(onDismiss: () -> Unit, onSelectTheme: (Int) -> Unit) {
@@ -43,26 +41,26 @@ fun ThemesDialog(onDismiss: () -> Unit, onSelectTheme: (Int) -> Unit) {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 ThemeItem(
                     themeName = "Use System Settings",
-                    themeValue = Theme.FOLLOW_SYSTEM.themeValue,
-                    icon = R.drawable.settings_suggest,
+                    themeValue = com.joelkanyi.designsystem.theme.Theme.FOLLOW_SYSTEM.themeValue,
+                    icon = com.joelkanyi.common.R.drawable.settings_suggest,
                     onSelectTheme = onSelectTheme
                 )
                 ThemeItem(
                     themeName = "Light Mode",
-                    themeValue = Theme.LIGHT_THEME.themeValue,
-                    icon = R.drawable.light_mode,
+                    themeValue = com.joelkanyi.designsystem.theme.Theme.LIGHT_THEME.themeValue,
+                    icon = com.joelkanyi.common.R.drawable.light_mode,
                     onSelectTheme = onSelectTheme
                 )
                 ThemeItem(
                     themeName = "Dark Mode",
-                    themeValue = Theme.DARK_THEME.themeValue,
-                    icon = R.drawable.dark_mode,
+                    themeValue = com.joelkanyi.designsystem.theme.Theme.DARK_THEME.themeValue,
+                    icon = com.joelkanyi.common.R.drawable.dark_mode,
                     onSelectTheme = onSelectTheme
                 )
                 ThemeItem(
                     themeName = "Material You",
-                    themeValue = Theme.MATERIAL_YOU.themeValue,
-                    icon = R.drawable.wallpaper,
+                    themeValue = com.joelkanyi.designsystem.theme.Theme.MATERIAL_YOU.themeValue,
+                    icon = com.joelkanyi.common.R.drawable.wallpaper,
                     onSelectTheme = onSelectTheme
                 )
             }

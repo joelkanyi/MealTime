@@ -18,18 +18,20 @@ package com.joelkanyi.kitchen_timer.presentation.timer
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.joelkanyi.analytics.domain.usecase.TrackUserEventUseCase
+import com.joelkanyi.common.util.minutesToMilliseconds
 import com.joelkanyi.kitchen_timer.domain.repository.KitchenTimerRepository
-import com.kanyideveloper.analytics.domain.repository.AnalyticsUtil
-import com.kanyideveloper.core.util.minutesToMilliseconds
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class KitchenTimerViewModel @Inject constructor(
     private val repository: KitchenTimerRepository,
-    private val analyticsUtil: AnalyticsUtil,
+    private val trackUserEventUseCase: TrackUserEventUseCase,
 ) : ViewModel() {
-    fun analyticsUtil() = analyticsUtil
+    fun trackUserEvent(event: String) {
+        trackUserEventUseCase(event)
+    }
     val percentage = repository.percentage
 
     private val _currentTimerValue = mutableStateOf(0)

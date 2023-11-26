@@ -19,10 +19,10 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import com.google.firebase.storage.StorageReference
+import com.joelkanyi.common.util.Resource
+import com.joelkanyi.common.util.imageUriToImageBitmap
+import com.joelkanyi.common.util.safeApiCall
 import com.kanyideveloper.addmeal.domain.repository.UploadImageRepository
-import com.kanyideveloper.core.util.Resource
-import com.kanyideveloper.core.util.imageUriToImageBitmap
-import com.kanyideveloper.core.util.safeApiCall
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream

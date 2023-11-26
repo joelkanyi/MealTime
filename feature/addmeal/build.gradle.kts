@@ -47,9 +47,10 @@ android {
 }
 
 dependencies {
-    implementation(projects.core)
-    implementation(projects.composeUi)
-    implementation(projects.coreDatabase)
+    implementation(projects.core.common)
+    implementation(projects.core.analytics)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.database)
 
     // RamCosta Navigation
     implementation(libs.compose.destinations.animations)

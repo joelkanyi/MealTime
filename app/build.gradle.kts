@@ -69,8 +69,9 @@ android {
 
 dependencies {
     // Modules
-    implementation(projects.core)
-    implementation(projects.composeUi)
+    implementation(projects.core.common)
+    implementation(projects.core.settings)
+    implementation(projects.core.designsystem)
     implementation(projects.feature.home.presentation)
     implementation(projects.feature.home.di)
     implementation(projects.feature.search.presentation)

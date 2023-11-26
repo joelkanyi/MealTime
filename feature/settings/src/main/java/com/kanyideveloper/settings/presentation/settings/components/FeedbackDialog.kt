@@ -122,7 +122,7 @@ fun FeedbackDialog(
                     Icon(
                         modifier = Modifier.size(14.dp),
                         painter = painterResource(
-                            id = com.kanyideveloper.mealtime.core.R.drawable.ic_warning
+                            id = com.joelkanyi.common.R.drawable.ic_warning
                         ),
                         contentDescription = null
                     )

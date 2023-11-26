@@ -16,7 +16,7 @@
 package com.joelkanyi.auth.domain.repository
 
 import com.joelkanyi.auth.domain.entity.AuthResult
-import com.kanyideveloper.core.util.Resource
+import com.joelkanyi.common.util.Resource
 
 interface AuthRepository {
     suspend fun registerUser(email: String, password: String, name: String): Resource<AuthResult>

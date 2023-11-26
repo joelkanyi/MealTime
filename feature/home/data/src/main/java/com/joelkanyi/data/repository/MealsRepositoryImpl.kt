@@ -15,25 +15,23 @@
  */
 package com.joelkanyi.data.repository
 
-import com.kanyideveloper.core.model.MealDetails
-import com.kanyideveloper.core.util.Resource
-import com.kanyideveloper.core.util.safeApiCall
-import com.kanyideveloper.core_database.dao.OnlineMealsDao
-import com.kanyideveloper.core_network.MealDbApi
+import com.joelkanyi.common.model.Category
+import com.joelkanyi.common.model.Meal
+import com.joelkanyi.common.model.MealDetails
+import com.joelkanyi.common.util.Resource
+import com.joelkanyi.common.util.safeApiCall
 import com.joelkanyi.data.mapper.toCategory
 import com.joelkanyi.data.mapper.toEntity
 import com.joelkanyi.data.mapper.toMeal
 import com.joelkanyi.domain.repository.MealsRepository
-import com.kanyideveloper.core.model.Category
-import com.kanyideveloper.core.model.Meal
 import kotlinx.coroutines.Dispatchers
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
 class MealsRepositoryImpl @Inject constructor(
-    private val mealDbApi: MealDbApi,
-    private val onlineMealsDao: OnlineMealsDao,
+    private val mealDbApi: com.joelkanyi.network.MealDbApi,
+    private val onlineMealsDao: com.joelkanyi.database.dao.OnlineMealsDao,
 ) : MealsRepository {
 
     override suspend fun getMealCategories(): Resource<List<Category>> {

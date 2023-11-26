@@ -21,37 +21,24 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.kanyideveloper.analytics.domain.repository.AnalyticsUtil
-import com.kanyideveloper.core.domain.SubscriptionRepository
-import com.kanyideveloper.core.domain.UserDataRepository
-import com.kanyideveloper.core.state.SubscriptionStatusUiState
-import com.kanyideveloper.core.state.TextFieldState
-import com.kanyideveloper.core.util.UiEvents
+import com.joelkanyi.analytics.domain.usecase.TrackUserEventUseCase
+import com.joelkanyi.common.state.TextFieldState
+import com.joelkanyi.common.util.UiEvents
+import com.kanyideveloper.settings.domain.usecase.SetCurrentThemeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val userDataRepository: UserDataRepository,
-    subscriptionRepository: SubscriptionRepository,
-    private val analyticsUtil: AnalyticsUtil,
+    private val trackUserEventUseCase: TrackUserEventUseCase,
+    private val setCurrentThemeUseCase: SetCurrentThemeUseCase,
 ) : ViewModel() {
-    fun analyticsUtil() = analyticsUtil
+    fun trackUserEvent(eventName: String) {
+        trackUserEventUseCase.invoke(eventName)
+    }
 
-    val isSubscribed: StateFlow<SubscriptionStatusUiState> =
-        subscriptionRepository.isSubscribed
-            .map(SubscriptionStatusUiState::Success)
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = SubscriptionStatusUiState.Loading
-            )
 
     private val _eventsFlow = MutableSharedFlow<UiEvents>()
     val eventsFlow = _eventsFlow
@@ -85,7 +72,7 @@ class SettingsViewModel @Inject constructor(
 
     fun updateTheme(themeValue: Int) {
         viewModelScope.launch {
-            userDataRepository.setTheme(themeValue = themeValue)
+            setCurrentThemeUseCase(themeValue)
             setShowThemesDialogState(false)
         }
     }

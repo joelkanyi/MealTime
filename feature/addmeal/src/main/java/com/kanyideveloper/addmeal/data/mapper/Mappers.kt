@@ -15,11 +15,10 @@
  */
 package com.kanyideveloper.addmeal.data.mapper
 
-import com.kanyideveloper.core.model.MealDetails
-import com.kanyideveloper.core_database.model.MealEntity
-import java.util.UUID
+import com.joelkanyi.common.model.MealDetails
+import com.joelkanyi.database.model.MealEntity
 
-internal fun MealDetails.toMealEntity(): MealEntity {
+internal fun MealDetails.toMealEntity(): com.joelkanyi.database.model.MealEntity {
     return MealEntity(
         name = name,
         imageUrl = imageUrl,

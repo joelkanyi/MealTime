@@ -5,6 +5,5 @@ interface AuthNavigator {
     fun openSignUp()
     fun openSignIn()
     fun switchNavGraphRoot()
-
     fun popBackStack()
 }

@@ -42,10 +42,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.compose_ui.theme.PrimaryColor
+import com.joelkanyi.common.util.UiEvents
 import com.joelkanyi.presentation.mealplanner.MealPlannerNavigator
-import com.kanyideveloper.core.util.UiEvents
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
 
@@ -112,7 +110,7 @@ private fun NumberOfPeopleScreenContent(
     onClickNavigateBack: () -> Unit,
 ) {
     Column(Modifier.fillMaxSize()) {
-        StandardToolbar(
+        com.joelkanyi.designsystem.components.StandardToolbar(
             navigate = onClickNavigateBack,
             title = {},
             showBackArrow = true,
@@ -125,7 +123,7 @@ private fun NumberOfPeopleScreenContent(
                         },
                     text = "Next",
                     style = MaterialTheme.typography.titleMedium,
-                    color = PrimaryColor
+                    color = com.joelkanyi.designsystem.theme.PrimaryColor
                 )
             }
         )

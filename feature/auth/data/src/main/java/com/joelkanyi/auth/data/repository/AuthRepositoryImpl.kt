@@ -18,17 +18,14 @@ package com.joelkanyi.auth.data.repository
 import com.joelkanyi.auth.data.mappers.toDomain
 import com.joelkanyi.auth.domain.entity.AuthResult
 import com.joelkanyi.auth.domain.repository.AuthRepository
-import com.kanyideveloper.core.util.Resource
-import com.kanyideveloper.core.util.safeApiCall
-import com.kanyideveloper.core_network.MealDbApi
-import com.kanyideveloper.core_network.model.LoginRequestDto
-import com.kanyideveloper.core_network.model.RegisterRequestDto
-import com.kanyideveloper.preferences.domain.MealtimeSettings
+import com.joelkanyi.common.util.Resource
+import com.joelkanyi.common.util.safeApiCall
+import com.joelkanyi.settings.domain.MealtimeSettings
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
-    private val mealDbApi: MealDbApi,
+    private val mealDbApi: com.joelkanyi.network.MealDbApi,
     private val mealtimeSettings: MealtimeSettings,
 ) : AuthRepository {
 
@@ -39,7 +36,7 @@ class AuthRepositoryImpl @Inject constructor(
     ): Resource<AuthResult> {
         return safeApiCall(Dispatchers.IO) {
             mealDbApi.registerUser(
-                RegisterRequestDto(
+                com.joelkanyi.network.model.RegisterRequestDto(
                     email = email,
                     password = password,
                     name = name
@@ -51,7 +48,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun loginUser(email: String, password: String): Resource<AuthResult> {
         return safeApiCall(Dispatchers.IO) {
             mealDbApi.loginUser(
-                LoginRequestDto(
+                com.joelkanyi.network.model.LoginRequestDto(
                     email = email,
                     password = password
                 )

@@ -47,8 +47,9 @@ android {
 }
 
 dependencies {
-    implementation(projects.composeUi)
-    implementation(projects.core)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.common)
+    implementation(projects.core.analytics)
     implementation(projects.feature.auth.domain)
 
     implementation(libs.compose.destinations.animations)

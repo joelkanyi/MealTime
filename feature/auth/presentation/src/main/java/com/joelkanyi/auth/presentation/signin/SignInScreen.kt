@@ -15,7 +15,6 @@
  */
 package com.joelkanyi.auth.presentation.signin
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -64,10 +63,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joelkanyi.auth.presentation.AuthNavigator
 import com.joelkanyi.auth.presentation.state.LoginState
-import com.kanyideveloper.compose_ui.theme.poppins
-import com.kanyideveloper.core.state.PasswordTextFieldState
-import com.kanyideveloper.core.state.TextFieldState
-import com.kanyideveloper.core.util.UiEvents
+import com.joelkanyi.common.state.PasswordTextFieldState
+import com.joelkanyi.common.state.TextFieldState
+import com.joelkanyi.common.util.UiEvents
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
 
@@ -321,7 +319,7 @@ private fun SignInScreenContent(
                                 append("Sign Up")
                             }
                         },
-                        fontFamily = poppins,
+                        fontFamily = com.joelkanyi.designsystem.theme.poppins,
                         textAlign = TextAlign.Center
                     )
                 }

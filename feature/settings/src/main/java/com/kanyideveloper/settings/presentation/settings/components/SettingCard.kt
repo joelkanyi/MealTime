@@ -31,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.kanyideveloper.mealtime.core.R
 
 @Composable
 fun SettingCard(onClick: (String) -> Unit, title: String, icon: Int) {
@@ -69,7 +68,7 @@ fun SettingCard(onClick: (String) -> Unit, title: String, icon: Int) {
             }
 
             Icon(
-                painter = painterResource(id = R.drawable.chevron_right),
+                painter = painterResource(id = com.joelkanyi.common.R.drawable.chevron_right),
                 contentDescription = null
             )
         }

@@ -18,7 +18,6 @@ package com.kanyideveloper.mealtime.component
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -44,7 +43,6 @@ import com.kanyideveloper.mealtime.navigation.NavGraphs
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.spec.NavGraphSpec
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StandardScaffold(
     navController: NavController,

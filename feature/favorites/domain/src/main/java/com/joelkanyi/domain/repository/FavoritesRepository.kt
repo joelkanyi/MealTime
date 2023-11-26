@@ -16,8 +16,8 @@
 package com.joelkanyi.domain.repository
 
 import androidx.lifecycle.LiveData
+import com.joelkanyi.common.util.Resource
 import com.joelkanyi.domain.entity.Favorite
-import com.kanyideveloper.core.util.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface FavoritesRepository {

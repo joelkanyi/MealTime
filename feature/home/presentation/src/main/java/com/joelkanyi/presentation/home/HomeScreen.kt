@@ -76,16 +76,11 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.compose_ui.theme.MealTimeTheme
-import com.kanyideveloper.compose_ui.theme.Shapes
-import com.kanyideveloper.compose_ui.theme.Theme
-import com.kanyideveloper.core.components.EmptyStateComponent
-import com.kanyideveloper.core.components.ErrorStateComponent
-import com.kanyideveloper.core.components.SwipeRefreshComponent
-import com.kanyideveloper.core.model.Category
-import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.mealtime.core.R
+import com.joelkanyi.common.model.Category
+import com.joelkanyi.common.model.Meal
+import com.joelkanyi.designsystem.components.EmptyStateComponent
+import com.joelkanyi.designsystem.components.ErrorStateComponent
+import com.joelkanyi.designsystem.components.SwipeRefreshComponent
 import com.ramcosta.composedestinations.annotation.Destination
 
 @Destination
@@ -192,7 +187,7 @@ fun OnlineMealScreenContent(
 ) {
     Scaffold(
         topBar = {
-            StandardToolbar(
+            com.joelkanyi.designsystem.components.StandardToolbar(
                 navigate = {},
                 title = {
                     Row(
@@ -211,8 +206,8 @@ fun OnlineMealScreenContent(
 
                         IconButton(onClick = onClickSettings) {
                             Icon(
-                                painterResource(id = R.drawable.ic_settings),
-                                contentDescription = stringResource(id = R.string.settings_strg),
+                                painterResource(id = com.joelkanyi.common.R.drawable.ic_settings),
+                                contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -309,13 +304,13 @@ fun RandomMealItem(
                 .padding(16.dp)
         ) {
             Text(
-                text = stringResource(R.string.what_should_i_eat_today),
+                text = "What should I eat today?",
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = stringResource(R.string.we_ve_all_faced_the_dilemma_of_deciding_what_to_eat_for_the_day_but_fret_not_click_the_button_below_and_let_the_decision_be_made_for_you_randomly),
+                text = "Deciding what to eat can be a chore. Let us help you out.",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -331,11 +326,11 @@ fun RandomMealItem(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_refresh),
-                        contentDescription = stringResource(R.string.random_meal_shuffle_icon),
+                        painter = painterResource(id = com.joelkanyi.common.R.drawable.ic_refresh),
+                        contentDescription = null,
                     )
                     Text(
-                        text = stringResource(R.string.get_a_random_meal),
+                        text = "Random Meal",
                         style = MaterialTheme.typography.labelMedium
                     )
                 }
@@ -374,7 +369,7 @@ fun MealItem(
                     ImageRequest.Builder(LocalContext.current)
                         .data(data = meal.imageUrl)
                         .apply(block = fun ImageRequest.Builder.() {
-                            placeholder(R.drawable.placeholder)
+                            placeholder(com.joelkanyi.common.R.drawable.placeholder)
                         }).build()
                 ),
                 contentScale = ContentScale.Crop
@@ -410,9 +405,9 @@ fun MealItem(
                         modifier = Modifier
                             .size(30.dp),
                         painter = if (favorite) {
-                            painterResource(id = R.drawable.filled_favorite)
+                            painterResource(id = com.joelkanyi.common.R.drawable.filled_favorite)
                         } else {
-                            painterResource(id = R.drawable.heart_plus)
+                            painterResource(id = com.joelkanyi.common.R.drawable.heart_plus)
                         },
                         contentDescription = null,
                         tint = if (favorite) {
@@ -505,7 +500,7 @@ fun SearchBox(
         modifier = modifier
             .fillMaxWidth()
             .clickable { onClick() },
-        shape = Shapes.medium,
+        shape = com.joelkanyi.designsystem.theme.Shapes.medium,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
@@ -518,12 +513,12 @@ fun SearchBox(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_search),
-                contentDescription = stringResource(id = R.string.search_strg),
+                painter = painterResource(id = com.joelkanyi.common.R.drawable.ic_search),
+                contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = stringResource(R.string.search_for_a_meal),
+                text = "Search for a meal",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 8.dp)
@@ -536,7 +531,7 @@ fun SearchBox(
 @Preview
 @Composable
 fun OnlineMealScreenContentPreview() {
-    MealTimeTheme(theme = Theme.FOLLOW_SYSTEM.themeValue) {
+    com.joelkanyi.designsystem.theme.MealTimeTheme(theme = com.joelkanyi.designsystem.theme.Theme.FOLLOW_SYSTEM.themeValue) {
         OnlineMealScreenContent(
             categoriesState = CategoriesState(
                 isLoading = false,

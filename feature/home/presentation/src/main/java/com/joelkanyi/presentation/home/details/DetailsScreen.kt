@@ -59,15 +59,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.kanyideveloper.compose_ui.theme.MealTimeTheme
-import com.kanyideveloper.compose_ui.theme.Theme
-import com.kanyideveloper.core.components.EmptyStateComponent
-import com.kanyideveloper.core.components.ErrorStateComponent
-import com.kanyideveloper.core.components.LoadingStateComponent
-import com.kanyideveloper.core.model.Ingredient
-import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core.model.MealDetails
-import com.kanyideveloper.mealtime.core.R
+import com.joelkanyi.common.model.Ingredient
+import com.joelkanyi.common.model.Meal
+import com.joelkanyi.common.model.MealDetails
+import com.joelkanyi.designsystem.components.EmptyStateComponent
+import com.joelkanyi.designsystem.components.ErrorStateComponent
+import com.joelkanyi.designsystem.components.LoadingStateComponent
 import com.joelkanyi.presentation.home.HomeNavigator
 import com.ramcosta.composedestinations.annotation.Destination
 import me.onebone.toolbar.CollapsingToolbarScaffold
@@ -160,7 +157,7 @@ private fun DetailsScreenContent(
                             ImageRequest.Builder(LocalContext.current)
                                 .data(data = meal.imageUrl)
                                 .apply(block = fun ImageRequest.Builder.() {
-                                    placeholder(R.drawable.placeholder)
+                                    placeholder(com.joelkanyi.common.R.drawable.placeholder)
                                 }).build()
                         ),
                         contentDescription = null,
@@ -239,9 +236,9 @@ private fun DetailsScreenContent(
                                         modifier = Modifier
                                             .size(30.dp),
                                         painter = if (favorite) {
-                                            painterResource(id = R.drawable.filled_favorite)
+                                            painterResource(id = com.joelkanyi.common.R.drawable.filled_favorite)
                                         } else {
-                                            painterResource(id = R.drawable.heart_plus)
+                                            painterResource(id = com.joelkanyi.common.R.drawable.heart_plus)
                                         },
                                         contentDescription = null,
                                         tint = if (favorite) {
@@ -352,21 +349,21 @@ fun MealProperties(
     ) {
         if (meal.cookingTime != null) {
             MealProperty(
-                icon = R.drawable.ic_clock,
+                icon = com.joelkanyi.common.R.drawable.ic_clock,
                 value = "${meal.cookingTime} min"
             )
         }
 
         if (meal.servingPeople != null) {
             MealProperty(
-                icon = R.drawable.users_three_light,
+                icon = com.joelkanyi.common.R.drawable.users_three_light,
                 value = "${meal.serving} serving"
             )
         }
 
         if (meal.cookingDifficulty != null) {
             MealProperty(
-                icon = R.drawable.ic_easy,
+                icon = com.joelkanyi.common.R.drawable.ic_easy,
                 value = "${meal.cookingDifficulty}"
             )
         }
@@ -374,12 +371,12 @@ fun MealProperties(
         // calories
         if (meal.calories != null) {
             MealProperty(
-                icon = R.drawable.fire_simple_bold,
+                icon = com.joelkanyi.common.R.drawable.fire_simple_bold,
                 value = "${meal.calories} Kcal"
             )
         }
         MealProperty(
-            icon = R.drawable.ic_food,
+            icon = com.joelkanyi.common.R.drawable.ic_food,
             value = meal.category
         )
     }
@@ -432,7 +429,7 @@ fun MealProperty(
 @Preview(showBackground = true)
 @Composable
 fun DetailsScreenContentPreview() {
-    MealTimeTheme(theme = Theme.LIGHT_THEME.themeValue) {
+    com.joelkanyi.designsystem.theme.MealTimeTheme(theme = com.joelkanyi.designsystem.theme.Theme.LIGHT_THEME.themeValue) {
         DetailsScreenContent(
             mealState = DetailsState(
                 mealDetails = sampleMealDetails,

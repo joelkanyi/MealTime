@@ -21,24 +21,18 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joelkanyi.analytics.domain.usecase.TrackUserEventUseCase
+import com.joelkanyi.common.model.Ingredient
+import com.joelkanyi.common.model.MealDetails
+import com.joelkanyi.common.state.TextFieldState
+import com.joelkanyi.common.util.Resource
+import com.joelkanyi.common.util.UiEvents
 import com.kanyideveloper.addmeal.domain.repository.SaveMealRepository
 import com.kanyideveloper.addmeal.domain.repository.UploadImageRepository
 import com.kanyideveloper.addmeal.presentation.addmeal.state.SaveMealState
-import com.kanyideveloper.analytics.domain.repository.AnalyticsUtil
-import com.kanyideveloper.core.domain.SubscriptionRepository
-import com.kanyideveloper.core.model.Ingredient
-import com.kanyideveloper.core.model.MealDetails
-import com.kanyideveloper.core.state.SubscriptionStatusUiState
-import com.kanyideveloper.core.state.TextFieldState
-import com.kanyideveloper.core.util.Resource
-import com.kanyideveloper.core.util.UiEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -46,19 +40,11 @@ import javax.inject.Inject
 class AddMealsViewModel @Inject constructor(
     private val uploadImageRepository: UploadImageRepository,
     private val saveMealRepository: SaveMealRepository,
-    subscriptionRepository: SubscriptionRepository,
-    private val analyticsUtil: AnalyticsUtil
+    private val trackUserEventUseCase: TrackUserEventUseCase,
 ) : ViewModel() {
-    fun analyticsUtil() = analyticsUtil
-
-    val isSubscribed: StateFlow<SubscriptionStatusUiState> =
-        subscriptionRepository.isSubscribed
-            .map(SubscriptionStatusUiState::Success)
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = SubscriptionStatusUiState.Loading
-            )
+    fun trackUserEvent(event: String) {
+        trackUserEventUseCase(event)
+    }
 
     private val _mealImageUri = mutableStateOf<Uri?>(null)
     val mealImageUri: State<Uri?> = _mealImageUri
@@ -176,6 +162,7 @@ class AddMealsViewModel @Inject constructor(
                         )
                     )
                 }
+
                 is Resource.Success -> {
                     val imageUrl = uploadResult.data.toString()
 
@@ -195,6 +182,7 @@ class AddMealsViewModel @Inject constructor(
                         isSubscribed = isSubscribed
                     )*/
                 }
+
                 else -> {
                     saveMeal
                 }
@@ -217,6 +205,7 @@ class AddMealsViewModel @Inject constructor(
                         )
                     )
                 }
+
                 is Resource.Success -> {
                     _saveMeal.value = saveMeal.value.copy(
                         isLoading = false,
@@ -235,6 +224,7 @@ class AddMealsViewModel @Inject constructor(
                         )
                     )
                 }
+
                 else -> {}
             }
         }

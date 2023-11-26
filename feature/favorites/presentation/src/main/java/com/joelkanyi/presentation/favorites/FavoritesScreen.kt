@@ -66,14 +66,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.joelkanyi.common.util.UiEvents
+import com.joelkanyi.designsystem.components.EmptyStateComponent
 import com.joelkanyi.domain.entity.Favorite
-import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.compose_ui.theme.MealTimeTheme
-import com.kanyideveloper.compose_ui.theme.Shapes
-import com.kanyideveloper.compose_ui.theme.Theme
-import com.kanyideveloper.core.components.EmptyStateComponent
-import com.kanyideveloper.core.util.UiEvents
-import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
 
@@ -148,7 +143,7 @@ private fun FavoritesScreenContent(
             )
         },
         topBar = {
-            StandardToolbar(
+            com.joelkanyi.designsystem.components.StandardToolbar(
                 navigate = {},
                 title = {
                     Text(text = "Favorite meals", fontSize = 18.sp)
@@ -176,7 +171,7 @@ private fun FavoritesScreenContent(
                             },
                             trailingIcon = {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.chevron_right),
+                                    painter = painterResource(id = com.joelkanyi.common.R.drawable.chevron_right),
                                     contentDescription = null
                                 )
                             }
@@ -226,7 +221,7 @@ fun FoodItem(
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(horizontal = 8.dp, vertical = 5.dp),
-        shape = Shapes.large,
+        shape = com.joelkanyi.designsystem.theme.Shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         onClick = {
             onClick(
@@ -244,7 +239,7 @@ fun FoodItem(
                     ImageRequest.Builder(LocalContext.current)
                         .data(data = favorite.mealImageUrl)
                         .apply(block = fun ImageRequest.Builder.() {
-                            placeholder(R.drawable.placeholder)
+                            placeholder(com.joelkanyi.common.R.drawable.placeholder)
                         }).build()
                 ),
                 contentScale = ContentScale.Crop
@@ -284,7 +279,7 @@ fun FoodItem(
 @Preview
 @Composable
 fun FavoritesScreenContentPreview() {
-    MealTimeTheme(theme = Theme.LIGHT_THEME.themeValue) {
+    com.joelkanyi.designsystem.theme.MealTimeTheme(theme = com.joelkanyi.designsystem.theme.Theme.LIGHT_THEME.themeValue) {
         FavoritesScreenContent(
             favorites = emptyList(),
             snackbarHostState = SnackbarHostState(),

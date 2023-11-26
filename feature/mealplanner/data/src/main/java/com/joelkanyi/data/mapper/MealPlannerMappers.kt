@@ -15,21 +15,18 @@
  */
 package com.joelkanyi.data.mapper
 
+import com.joelkanyi.common.model.Meal
 import com.joelkanyi.domain.entity.MealPlan
-import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core_database.model.MealEntity
-import com.kanyideveloper.core_database.model.MealPlanEntity
-import com.kanyideveloper.core_network.model.MealsResponseDto
 
-internal fun MealPlan.toEntity(): MealPlanEntity {
-    return MealPlanEntity(
+internal fun MealPlan.toEntity(): com.joelkanyi.database.model.MealPlanEntity {
+    return com.joelkanyi.database.model.MealPlanEntity(
         mealTypeName = mealTypeName,
         meals = meals,
         mealDate = date,
     )
 }
 
-internal fun MealPlanEntity.toMealPlan(): MealPlan {
+internal fun com.joelkanyi.database.model.MealPlanEntity.toMealPlan(): MealPlan {
     return MealPlan(
         mealTypeName = mealTypeName,
         meals = meals,
@@ -38,7 +35,7 @@ internal fun MealPlanEntity.toMealPlan(): MealPlan {
     )
 }
 
-internal fun MealsResponseDto.toOnlineMeal(): Meal {
+internal fun com.joelkanyi.network.model.MealsResponseDto.toOnlineMeal(): Meal {
     return Meal(
         name = name,
         imageUrl = image,
@@ -56,7 +53,7 @@ internal fun Meal.toGeneralMeal(): Meal {
     )
 }
 
-internal fun MealEntity.toMeal(): Meal {
+internal fun com.joelkanyi.database.model.MealEntity.toMeal(): Meal {
     return Meal(
         name = name,
         imageUrl = imageUrl,
@@ -64,41 +61,3 @@ internal fun MealEntity.toMeal(): Meal {
         mealId = mealId,
     )
 }
-
-/*
-internal fun MealDetailsResponse.Meal.toMeal(): Meal {
-    return Meal(
-        name = strMeal,
-        imageUrl = strMealThumb,
-        cookingTime = 0,
-        category = strCategory,
-        cookingDifficulty = "",
-        ingredients = listOf(
-            strIngredient1,
-            strIngredient2,
-            strIngredient3,
-            strIngredient4,
-            strIngredient5,
-            strIngredient6,
-            strIngredient7,
-            strIngredient8,
-            strIngredient9,
-            strIngredient10,
-            strIngredient11,
-            strIngredient12,
-            strIngredient13,
-            strIngredient14,
-            strIngredient15,
-            strIngredient16,
-            strIngredient17,
-            strIngredient18,
-            strIngredient19,
-            strIngredient20
-        ).filter { !it.isNullOrEmpty() },
-        cookingDirections = strInstructions.stringToList(),
-        favorite = false,
-        servingPeople = 0,
-        onlineMealId = idMeal
-    )
-}
-*/

@@ -15,16 +15,17 @@
  */
 package com.joelkanyi.data.mapper
 
-import com.kanyideveloper.core.model.MealDetails
-import com.kanyideveloper.core_database.model.OnlineMealCategoryEntity
-import com.kanyideveloper.core_database.model.OnlineMealEntity
-import com.kanyideveloper.core_network.model.CategoriesResponseDto
-import com.kanyideveloper.core_network.model.MealDetailsResponseDto
-import com.kanyideveloper.core_network.model.MealsResponseDto
-import com.kanyideveloper.core.model.Category
-import com.kanyideveloper.core.model.Meal
+import com.joelkanyi.common.model.Category
+import com.joelkanyi.common.model.Ingredient
+import com.joelkanyi.common.model.Meal
+import com.joelkanyi.common.model.MealDetails
+import com.joelkanyi.common.model.Review
+import com.joelkanyi.common.model.User
+import com.joelkanyi.database.model.OnlineMealCategoryEntity
+import com.joelkanyi.database.model.OnlineMealEntity
+import com.joelkanyi.network.model.MealDetailsResponseDto
 
-internal fun CategoriesResponseDto.toEntity() = OnlineMealCategoryEntity(
+internal fun com.joelkanyi.network.model.CategoriesResponseDto.toEntity() = OnlineMealCategoryEntity(
     id = id,
     name = name,
 )
@@ -34,21 +35,21 @@ internal fun OnlineMealCategoryEntity.toCategory() = Category(
     categoryName = name,
 )
 
-internal fun MealsResponseDto.toEntity() = OnlineMealEntity(
+internal fun com.joelkanyi.network.model.MealsResponseDto.toEntity() = OnlineMealEntity(
     idMeal = id,
     strMeal = name,
     strMealThumb = image,
     strCategory = category
 )
 
-internal fun OnlineMealEntity.toMeal() = Meal(
+internal fun com.joelkanyi.database.model.OnlineMealEntity.toMeal() = Meal(
     name = strMeal,
     imageUrl = strMealThumb,
     mealId = idMeal,
     category = strCategory
 )
 
-internal fun MealDetailsResponseDto.toMeal(): MealDetails {
+internal fun com.joelkanyi.network.model.MealDetailsResponseDto.toMeal(): MealDetails {
     return MealDetails(
         name = name,
         imageUrl = imageUrl,
@@ -70,20 +71,20 @@ internal fun MealDetailsResponseDto.toMeal(): MealDetails {
 }
 
 internal fun MealDetailsResponseDto.IngredientDto.toIngredient() =
-    com.kanyideveloper.core.model.Ingredient(
+    Ingredient(
         name = name,
         quantity = quantity,
         id = id
     )
 
-internal fun MealDetailsResponseDto.ReviewDto.toReview() = com.kanyideveloper.core.model.Review(
+internal fun MealDetailsResponseDto.ReviewDto.toReview() = Review(
     comment = comment,
     rating = rating,
     user = user.toUser(),
     id = id
 )
 
-internal fun MealDetailsResponseDto.ReviewDto.UserDto.toUser() = com.kanyideveloper.core.model.User(
+internal fun MealDetailsResponseDto.ReviewDto.UserDto.toUser() = User(
     email = email,
     firstName = firstName,
     id = id,

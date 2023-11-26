@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.compose.destinations.animations)
     ksp(libs.compose.destinations.ksp)
 
-    implementation(projects.composeUi)
-    implementation(projects.core)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.common)
+    implementation(projects.core.analytics)
 }

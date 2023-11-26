@@ -15,10 +15,10 @@
  */
 package com.joelkanyi.data.mapper
 
-import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core_network.model.MealsResponseDto
+import com.joelkanyi.common.model.Meal
 
-internal fun MealsResponseDto.toOnlineMeal(): Meal {
+
+internal fun com.joelkanyi.network.model.MealsResponseDto.toOnlineMeal(): Meal {
     return Meal(
         name = name,
         imageUrl = image,

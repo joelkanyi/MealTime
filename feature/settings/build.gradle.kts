@@ -62,8 +62,10 @@ kotlin {
 }
 
 dependencies {
-    implementation(projects.composeUi)
-    implementation(projects.core)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.common)
+    implementation(projects.core.analytics)
+    implementation(projects.core.settings)
 
     implementation(libs.compose.destinations.animations)
     ksp(libs.compose.destinations.ksp)

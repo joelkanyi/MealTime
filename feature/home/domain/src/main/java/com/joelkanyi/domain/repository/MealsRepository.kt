@@ -1,9 +1,10 @@
 package com.joelkanyi.domain.repository
 
-import com.kanyideveloper.core.model.Category
-import com.kanyideveloper.core.model.MealDetails
-import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core.util.Resource
+import com.joelkanyi.common.model.Category
+import com.joelkanyi.common.model.Meal
+import com.joelkanyi.common.model.MealDetails
+import com.joelkanyi.common.util.Resource
+
 
 interface MealsRepository {
     suspend fun getMealCategories(): Resource<List<Category>>

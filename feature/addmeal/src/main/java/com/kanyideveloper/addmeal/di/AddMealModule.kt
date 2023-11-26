@@ -24,7 +24,7 @@ import com.kanyideveloper.addmeal.data.repository.SaveMealRepositoryImpl
 import com.kanyideveloper.addmeal.data.repository.UploadImageRepositoryImpl
 import com.kanyideveloper.addmeal.domain.repository.SaveMealRepository
 import com.kanyideveloper.addmeal.domain.repository.UploadImageRepository
-import com.kanyideveloper.core_database.MealTimeDatabase
+import com.joelkanyi.database.MealTimeDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -51,7 +51,7 @@ object AddMealModule {
     @Provides
     @Singleton
     fun provideSaveMealRepository(
-        mealTimeDatabase: MealTimeDatabase,
+        mealTimeDatabase: com.joelkanyi.database.MealTimeDatabase,
         databaseReference: DatabaseReference,
         firebaseAuth: FirebaseAuth
     ): SaveMealRepository {

@@ -16,11 +16,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Done
-import androidx.compose.material.icons.outlined.EditCalendar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -34,12 +29,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.kanyidev.searchable_dropdown.SearchableExpandedDropDownMenu
-import com.kanyideveloper.compose_ui.components.BloomDropDown
-import com.kanyideveloper.core.components.LoadingStateComponent
-import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core.util.LottieAnim
-import com.kanyideveloper.mealtime.core.R
+import com.joelkanyi.common.model.Meal
+import com.joelkanyi.designsystem.components.LoadingStateComponent
+import com.joelkanyi.designsystem.components.LottieAnim
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -108,7 +100,7 @@ fun SelectMealBottomSheet(
                                 style = MaterialTheme.typography.labelMedium
                             )
 
-                            BloomDropDown(
+                            com.joelkanyi.designsystem.components.BloomDropDown(
                                 modifier = Modifier.fillMaxWidth(),
                                 options = sources,
                                 onOptionSelected = { item ->
@@ -130,7 +122,7 @@ fun SelectMealBottomSheet(
                                     style = MaterialTheme.typography.labelMedium
                                 )
 
-                                BloomDropDown(
+                                com.joelkanyi.designsystem.components.BloomDropDown(
                                     options = searchOptions,
                                     modifier = Modifier.fillMaxWidth(),
                                     onOptionSelected = { item ->
@@ -161,7 +153,7 @@ fun SelectMealBottomSheet(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 LottieAnim(
-                                    resId = R.raw.search_empty,
+                                    resId = com.joelkanyi.designsystem.R.raw.search_empty,
                                     height = 150.dp
                                 )
                                 Text(

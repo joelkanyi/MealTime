@@ -19,13 +19,15 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joelkanyi.analytics.domain.usecase.TrackUserEventUseCase
+import com.joelkanyi.common.model.Meal
+import com.joelkanyi.common.model.MealDetails
+import com.joelkanyi.common.util.Resource
+import com.joelkanyi.common.util.UiEvents
+import com.joelkanyi.domain.usecase.DeleteAFavoriteUseCase
 import com.joelkanyi.domain.usecase.GetMealDetailsUseCase
 import com.joelkanyi.domain.usecase.GetRandomMealUseCase
-import com.kanyideveloper.analytics.domain.usecase.TrackUserEventUseCase
-import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core.model.MealDetails
-import com.kanyideveloper.core.util.Resource
-import com.kanyideveloper.core.util.UiEvents
+import com.joelkanyi.domain.usecase.InsertAFavoriteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -38,8 +40,8 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     private val trackUserEventUseCase: TrackUserEventUseCase,
-    private val deleteAFavoriteUseCase: com.joelkanyi.domain.usecase.DeleteAFavoriteUseCase,
-    private val insertAFavoriteUseCase: com.joelkanyi.domain.usecase.InsertAFavoriteUseCase,
+    private val deleteAFavoriteUseCase: DeleteAFavoriteUseCase,
+    private val insertAFavoriteUseCase: InsertAFavoriteUseCase,
     private val getRandomMealUseCase: GetRandomMealUseCase,
     private val getMealDetailsUseCase: GetMealDetailsUseCase,
     getFavoritesUseCase: com.joelkanyi.domain.usecase.GetFavoritesUseCase,

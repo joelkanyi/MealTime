@@ -40,8 +40,9 @@ android {
 }
 
 dependencies {
-    implementation(projects.core)
-    implementation(projects.coreDatabase)
-    implementation(projects.coreNetwork)
+    implementation(projects.core.common)
+    implementation(projects.core.database)
+    implementation(projects.core.network)
+    implementation(projects.core.settings)
     implementation(projects.feature.auth.domain)
 }

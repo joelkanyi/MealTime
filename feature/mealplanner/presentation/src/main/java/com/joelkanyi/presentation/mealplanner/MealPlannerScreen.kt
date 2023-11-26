@@ -60,17 +60,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.joelkanyi.common.model.Meal
+import com.joelkanyi.common.util.UiEvents
+import com.joelkanyi.common.util.calendarLocalDates
+import com.joelkanyi.common.util.prettyPrintedMonthAndYear
+import com.joelkanyi.designsystem.components.EmptyStateComponent
+import com.joelkanyi.designsystem.components.SwipeRefreshComponent
 import com.joelkanyi.domain.entity.MealPlan
-import com.joelkanyi.horizontalcalendar.HorizontalCalendarView
 import com.joelkanyi.presentation.mealplanner.components.MealPlanItem
 import com.joelkanyi.presentation.mealplanner.components.SelectMealBottomSheet
-import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.core.components.EmptyStateComponent
-import com.kanyideveloper.core.components.SwipeRefreshComponent
-import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core.util.UiEvents
-import com.kanyideveloper.core.util.calendarLocalDates
-import com.kanyideveloper.core.util.prettyPrintedMonthAndYear
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -268,7 +266,7 @@ private fun MealPlannerScreenContent(
                 Scaffold(
                     snackbarHost = { SnackbarHost(snackbarHostState) },
                     topBar = {
-                        StandardToolbar(
+                        com.joelkanyi.designsystem.components.StandardToolbar(
                             navigate = onClickNavigateBack,
                             title = {
                                 Text(text = "Meal Planner", fontSize = 18.sp)

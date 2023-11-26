@@ -49,8 +49,10 @@ android {
 dependencies {
     implementation(projects.feature.mealplanner.domain)
     implementation(projects.feature.search.domain)
-    implementation(projects.core)
-    implementation(projects.composeUi)
+    implementation(projects.core.common)
+    implementation(projects.core.analytics)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.settings)
 
     implementation(libs.compose.destinations.animations)
     ksp(libs.compose.destinations.ksp)

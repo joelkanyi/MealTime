@@ -41,8 +41,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.mealtime.core.R
+import com.joelkanyi.common.model.Meal
+import com.joelkanyi.mealplanner.presentation.R
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -84,7 +84,7 @@ fun MealPlanItem(
                 }) {
                     Icon(
                         modifier = Modifier.size(32.dp),
-                        painter = painterResource(id = R.drawable.add_circle),
+                        painter = painterResource(id = com.joelkanyi.common.R.drawable.add_circle),
                         contentDescription = null
                     )
                 }

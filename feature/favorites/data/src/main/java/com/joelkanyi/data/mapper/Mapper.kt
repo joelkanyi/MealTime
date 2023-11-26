@@ -16,11 +16,11 @@
 package com.joelkanyi.data.mapper
 
 import com.joelkanyi.domain.entity.Favorite
-import com.kanyideveloper.core_database.model.FavoriteEntity
-import com.kanyideveloper.core_network.model.FavoritesResponseDto
+import com.joelkanyi.database.model.FavoriteEntity
+import com.joelkanyi.network.model.FavoritesResponseDto
 
 
-internal fun FavoritesResponseDto.toFavorite(): com.joelkanyi.domain.entity.Favorite {
+internal fun com.joelkanyi.network.model.FavoritesResponseDto.toFavorite(): com.joelkanyi.domain.entity.Favorite {
     return com.joelkanyi.domain.entity.Favorite(
         id = id,
         mealName = mealName,
@@ -29,7 +29,7 @@ internal fun FavoritesResponseDto.toFavorite(): com.joelkanyi.domain.entity.Favo
     )
 }
 
-internal fun FavoriteEntity.toFavorite(): com.joelkanyi.domain.entity.Favorite {
+internal fun com.joelkanyi.database.model.FavoriteEntity.toFavorite(): com.joelkanyi.domain.entity.Favorite {
     return com.joelkanyi.domain.entity.Favorite(
         id = id,
         mealName = mealName,
@@ -38,8 +38,8 @@ internal fun FavoriteEntity.toFavorite(): com.joelkanyi.domain.entity.Favorite {
     )
 }
 
-internal fun com.joelkanyi.domain.entity.Favorite.toEntity(): FavoriteEntity {
-    return FavoriteEntity(
+internal fun com.joelkanyi.domain.entity.Favorite.toEntity(): com.joelkanyi.database.model.FavoriteEntity {
+    return com.joelkanyi.database.model.FavoriteEntity(
         id = id,
         mealName = mealName,
         mealImageUrl = mealImageUrl,

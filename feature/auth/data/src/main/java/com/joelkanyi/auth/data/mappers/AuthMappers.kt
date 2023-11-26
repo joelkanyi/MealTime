@@ -2,14 +2,14 @@ package com.joelkanyi.auth.data.mappers
 
 import com.joelkanyi.auth.domain.entity.AuthResult
 import com.joelkanyi.auth.domain.entity.User
-import com.kanyideveloper.core_network.model.AuthResponseDto
+import com.joelkanyi.network.model.AuthResponseDto
 
-fun AuthResponseDto.toDomain() = AuthResult(
+fun com.joelkanyi.network.model.AuthResponseDto.toDomain() = AuthResult(
     accessToken = token,
     user = user.toDomain()
 )
 
-fun AuthResponseDto.UserDto.toDomain() = User(
+fun com.joelkanyi.network.model.AuthResponseDto.UserDto.toDomain() = User(
     id = userId,
     firstName = firstName,
     lastName = lastName,

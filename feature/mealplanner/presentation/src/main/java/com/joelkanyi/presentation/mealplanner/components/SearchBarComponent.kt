@@ -37,7 +37,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.kanyideveloper.mealtime.core.R
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -81,7 +80,7 @@ fun SearchBarComponent(
             Icon(
                 modifier = Modifier
                     .size(24.dp),
-                painter = painterResource(id = R.drawable.ic_search),
+                painter = painterResource(id = com.joelkanyi.common.R.drawable.ic_search),
                 contentDescription = null
             )
         }

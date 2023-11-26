@@ -19,13 +19,13 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joelkanyi.analytics.domain.usecase.TrackUserEventUseCase
 import com.joelkanyi.auth.domain.usecase.ForgotPasswordUseCase
 import com.joelkanyi.auth.presentation.destinations.SignInScreenDestination
 import com.joelkanyi.auth.presentation.state.LoginState
-import com.kanyideveloper.analytics.domain.usecase.TrackUserEventUseCase
-import com.kanyideveloper.core.state.TextFieldState
-import com.kanyideveloper.core.util.Resource
-import com.kanyideveloper.core.util.UiEvents
+import com.joelkanyi.common.state.TextFieldState
+import com.joelkanyi.common.util.Resource
+import com.joelkanyi.common.util.UiEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow

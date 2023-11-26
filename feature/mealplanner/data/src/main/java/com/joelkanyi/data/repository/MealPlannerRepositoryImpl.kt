@@ -15,35 +15,24 @@
  */
 package com.joelkanyi.data.repository
 
-import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core.model.MealPlanPreference
-import com.kanyideveloper.core.util.Resource
-import com.kanyideveloper.core.util.safeApiCall
-import com.kanyideveloper.core_database.dao.MealPlanDao
-import com.kanyideveloper.core_database.model.MealPlanEntity
-import com.kanyideveloper.core_network.MealDbApi
-import com.joelkanyi.data.mapper.toEntity
-import com.joelkanyi.data.mapper.toGeneralMeal
-import com.joelkanyi.data.mapper.toMeal
+import com.joelkanyi.common.model.Meal
+import com.joelkanyi.common.util.Resource
+import com.joelkanyi.common.util.safeApiCall
 import com.joelkanyi.data.mapper.toMealPlan
-import com.joelkanyi.data.mapper.toOnlineMeal
 import com.joelkanyi.domain.entity.MealPlan
 import com.joelkanyi.domain.repository.MealPlannerRepository
-import com.kanyideveloper.preferences.domain.MealtimeSettings
+import com.joelkanyi.settings.domain.MealtimeSettings
+import com.joelkanyi.settings.domain.model.MealPlanPreference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
-import java.util.UUID
 import javax.inject.Inject
 
 class MealPlannerRepositoryImpl @Inject constructor(
     private val mealtimeSettings: MealtimeSettings,
-    private val mealPlanDao: MealPlanDao,
-    private val mealDbApi: MealDbApi,
+    private val mealPlanDao: com.joelkanyi.database.dao.MealPlanDao,
+    private val mealDbApi: com.joelkanyi.network.MealDbApi,
 ) : MealPlannerRepository {
 
     override fun mealPlanPref(): Flow<MealPlanPreference?> {
@@ -89,7 +78,7 @@ class MealPlannerRepositoryImpl @Inject constructor(
         date: String
     ) {
         mealPlanDao.insertMealPlan(
-            MealPlanEntity(
+            com.joelkanyi.database.model.MealPlanEntity(
                 mealTypeName = mealTypeName,
                 mealDate = date,
                 meals = listOf(

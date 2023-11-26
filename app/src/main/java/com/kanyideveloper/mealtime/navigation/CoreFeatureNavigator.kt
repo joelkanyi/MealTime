@@ -44,7 +44,6 @@ import com.ramcosta.composedestinations.spec.NavGraphSpec
 class CoreFeatureNavigator(
     private val navGraph: NavGraphSpec,
     private val navController: NavController,
-    private val subscribe: () -> Unit
 ) : HomeNavigator,
     SearchNavigator,
     FavoritesNavigator,
@@ -140,7 +139,6 @@ class CoreFeatureNavigator(
     }
 
     override fun subscribe() {
-        subscribe.invoke()
     }
 
     override fun openSettings() {

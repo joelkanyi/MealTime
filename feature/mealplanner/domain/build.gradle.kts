@@ -41,5 +41,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.core)
+    implementation(projects.core.common)
+    implementation(projects.core.settings)
 }
