@@ -22,6 +22,7 @@ import androidx.lifecycle.viewModelScope
 import com.joelkanyi.analytics.domain.usecase.TrackUserEventUseCase
 import com.joelkanyi.auth.domain.usecase.LoginUserUseCase
 import com.joelkanyi.auth.domain.usecase.SaveAccessTokenUseCase
+import com.joelkanyi.auth.domain.usecase.SaveUserIdUseCase
 import com.joelkanyi.auth.presentation.state.LoginState
 import com.joelkanyi.common.state.PasswordTextFieldState
 import com.joelkanyi.common.state.TextFieldState
@@ -36,6 +37,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val saveAccessTokenUseCase: SaveAccessTokenUseCase,
+    private val saveUserIdUseCase: SaveUserIdUseCase,
     private val loginUserUseCase: LoginUserUseCase,
     private val trackUserEventUseCase: TrackUserEventUseCase,
 ) : ViewModel() {
@@ -104,9 +106,7 @@ class SignInViewModel @Inject constructor(
                         data = result.data
                     )
                     result.data?.accessToken?.let { saveAccessTokenUseCase(it) }
-                    _eventFlow.emit(
-                        UiEvents.SnackbarEvent(message = "Login Successfully")
-                    )
+                    result.data?.user?.id?.let { saveUserIdUseCase(it) }
                     _eventFlow.emit(
                         UiEvents.NavigationEvent("")
                     )

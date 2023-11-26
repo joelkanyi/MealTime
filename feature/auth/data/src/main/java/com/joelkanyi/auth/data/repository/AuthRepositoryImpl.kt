@@ -79,4 +79,8 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun saveAccessToken(accessToken: String) {
         mealtimeSettings.saveAccessToken(accessToken)
     }
+
+    override suspend fun saveUserId(userId: String) {
+        mealtimeSettings.saveUserId(userId)
+    }
 }

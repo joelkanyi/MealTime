@@ -25,4 +25,5 @@ interface AuthRepository {
     suspend fun logoutUser()
     suspend fun signInWithGoogle(idToken: String): Resource<AuthResult>
     suspend fun saveAccessToken(accessToken: String)
+    suspend fun saveUserId(userId: String)
 }
