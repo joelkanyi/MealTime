@@ -17,20 +17,19 @@ package com.kanyideveloper.addmeal.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
+import com.joelkanyi.common.model.MealDetails
+import com.joelkanyi.common.util.Resource
 import com.kanyideveloper.addmeal.data.mapper.toMealEntity
 import com.kanyideveloper.addmeal.domain.repository.SaveMealRepository
-import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core.util.Resource
-import com.kanyideveloper.core_database.MealTimeDatabase
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
 
 class SaveMealRepositoryImpl(
-    private val mealTimeDatabase: MealTimeDatabase,
+    private val mealTimeDatabase: com.joelkanyi.database.MealTimeDatabase,
     private val databaseReference: DatabaseReference,
     private val firebaseAuth: FirebaseAuth
 ) : SaveMealRepository {
-    override suspend fun saveMeal(meal: Meal, isSubscribed: Boolean): Resource<Boolean> {
+    override suspend fun saveMeal(meal: MealDetails, isSubscribed: Boolean): Resource<Boolean> {
         return if (isSubscribed) {
             saveMealToRemoteDatasource(meal)
         } else {
@@ -41,7 +40,7 @@ class SaveMealRepositoryImpl(
         }
     }
 
-    private suspend fun saveMealToRemoteDatasource(meal: Meal): Resource<Boolean> {
+    private suspend fun saveMealToRemoteDatasource(meal: MealDetails): Resource<Boolean> {
         return try {
             databaseReference
                 .child("mymeals")

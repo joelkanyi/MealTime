@@ -77,13 +77,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.joelkanyi.common.util.compressImage
+import com.joelkanyi.common.util.createImageFile
+import com.joelkanyi.common.util.imageUriToImageBitmap
+import com.joelkanyi.common.util.isNumeric
+import com.joelkanyi.common.util.saveImage
 import com.kanyidev.searchable_dropdown.SearchableExpandedDropDownMenu
-import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.core.util.compressImage
-import com.kanyideveloper.core.util.createImageFile
-import com.kanyideveloper.core.util.imageUriToImageBitmap
-import com.kanyideveloper.core.util.isNumeric
-import com.kanyideveloper.core.util.saveImage
 import com.mr0xf00.easycrop.CropError
 import com.mr0xf00.easycrop.CropResult
 import com.mr0xf00.easycrop.crop
@@ -107,7 +106,6 @@ fun AddMealScreen(
     val cookingTime = viewModel.cookingTime.value
 
     val context = LocalContext.current
-    val analyticsUtil = viewModel.analyticsUtil()
 
     val imageCropper = rememberImageCropper()
     val scope = rememberCoroutineScope()
@@ -221,9 +219,9 @@ fun AddMealScreen(
 
     Scaffold(
         topBar = {
-            StandardToolbar(
+            com.joelkanyi.designsystem.components.StandardToolbar(
                 navigate = {
-                    analyticsUtil.trackUserEvent("Go back from add meal screen")
+                    viewModel.trackUserEvent("Go back from add meal screen")
                     navigator.popBackStack()
                 },
                 title = {
@@ -249,7 +247,7 @@ fun AddMealScreen(
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                         .height(200.dp)
                         .clickable {
-                            analyticsUtil.trackUserEvent("Add meal image clicked by camera")
+                            viewModel.trackUserEvent("Add meal image clicked by camera")
                             val photoFile = createImageFile(context)
 
                             if (photoFile != null) {
@@ -313,7 +311,7 @@ fun AddMealScreen(
                         modifier = Modifier
                             .padding(8.dp)
                             .clickable(MutableInteractionSource(), null) {
-                                analyticsUtil.trackUserEvent("Add meal image clicked by gallery")
+                                viewModel.trackUserEvent("Add meal image clicked by gallery")
                                 galleryLauncher.launch("image/*")
                             },
                         horizontalArrangement = Arrangement.End,
@@ -613,7 +611,7 @@ fun AddMealScreen(
                             complexity = complexity.text,
                             category = category.text
                         )
-                        analyticsUtil.trackUserEvent("add_meal_next_button_clicked")
+                        viewModel.trackUserEvent("add_meal_next_button_clicked")
                     },
                     shape = RoundedCornerShape(4.dp)
                 ) {

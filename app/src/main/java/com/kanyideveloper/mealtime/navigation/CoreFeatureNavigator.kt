@@ -17,29 +17,26 @@ package com.kanyideveloper.mealtime.navigation
 
 import android.net.Uri
 import androidx.navigation.NavController
+import com.joelkanyi.auth.presentation.AuthNavigator
 import com.joelkanyi.auth.presentation.destinations.ForgotPasswordScreenDestination
 import com.joelkanyi.auth.presentation.destinations.SignInScreenDestination
 import com.joelkanyi.auth.presentation.destinations.SignUpScreenDestination
-import com.joelkanyi.auth.presentation.landing.AuthNavigator
+import com.joelkanyi.presentation.favorites.FavoritesNavigator
+import com.joelkanyi.presentation.home.HomeNavigator
+import com.joelkanyi.presentation.home.destinations.DetailsScreenDestination
+import com.joelkanyi.presentation.home.destinations.HomeScreenDestination
+import com.joelkanyi.presentation.mealplanner.MealPlannerNavigator
+import com.joelkanyi.presentation.mealplanner.destinations.AllergiesScreenDestination
+import com.joelkanyi.presentation.mealplanner.destinations.MealPlannerScreenDestination
+import com.joelkanyi.presentation.mealplanner.destinations.MealTypesScreenDestination
+import com.joelkanyi.presentation.mealplanner.destinations.NumberOfPeopleScreenDestination
+import com.joelkanyi.presentation.search.SearchNavigator
+import com.joelkanyi.presentation.search.destinations.SearchScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.AddMealNavigator
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
-import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.favorites.presentation.favorites.presentation.FavoritesNavigator
-import com.kanyideveloper.mealplanner.MealPlannerNavigator
-import com.kanyideveloper.mealplanner.destinations.AllergiesScreenDestination
-import com.kanyideveloper.mealplanner.destinations.MealPlannerScreenDestination
-import com.kanyideveloper.mealplanner.destinations.MealTypesScreenDestination
-import com.kanyideveloper.mealplanner.destinations.NumberOfPeopleScreenDestination
-import com.kanyideveloper.presentation.destinations.DetailsScreenDestination
-import com.kanyideveloper.presentation.destinations.HomeScreenDestination
-import com.kanyideveloper.presentation.destinations.OnlineMealDetailsScreenDestination
-import com.kanyideveloper.presentation.destinations.RandomOnlineMealDetailsScreenDestination
-import com.kanyideveloper.presentation.home.HomeNavigator
-import com.kanyideveloper.search.presentation.search.SearchNavigator
-import com.kanyideveloper.search.presentation.search.destinations.SearchScreenDestination
-import com.kanyideveloper.settings.presentation.SettingsNavigator
-import com.kanyideveloper.settings.presentation.destinations.SettingsScreenDestination
+import com.kanyideveloper.settings.presentation.settings.SettingsNavigator
+import com.kanyideveloper.settings.presentation.settings.destinations.SettingsScreenDestination
 import com.ramcosta.composedestinations.dynamic.within
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.spec.NavGraphSpec
@@ -47,7 +44,6 @@ import com.ramcosta.composedestinations.spec.NavGraphSpec
 class CoreFeatureNavigator(
     private val navGraph: NavGraphSpec,
     private val navController: NavController,
-    private val subscribe: () -> Unit
 ) : HomeNavigator,
     SearchNavigator,
     FavoritesNavigator,
@@ -63,6 +59,10 @@ class CoreFeatureNavigator(
         navController.navigate(HomeScreenDestination within navGraph)
     }
 
+    override fun openMealDetails(mealId: String?) {
+        navController.navigate(DetailsScreenDestination(mealId = mealId) within navGraph)
+    }
+
     override fun switchNavGraphRoot() {
         navController.navigate(
             NavGraphs.home
@@ -71,10 +71,6 @@ class CoreFeatureNavigator(
                 inclusive = false
             }
         }
-    }
-
-    override fun openMealDetails(meal: Meal) {
-        navController.navigate(DetailsScreenDestination(meal = meal) within navGraph)
     }
 
     override fun openNextAddMealScreen(
@@ -134,16 +130,8 @@ class CoreFeatureNavigator(
         navController.navigate(MealPlannerScreenDestination within navGraph)
     }
 
-    override fun openOnlineMealDetails(mealId: String) {
-        navController.navigate(OnlineMealDetailsScreenDestination(mealId = mealId) within navGraph)
-    }
-
     override fun navigateToSettings() {
         navController.navigate(SettingsScreenDestination within navGraph)
-    }
-
-    override fun openRandomMeals() {
-        navController.navigate(RandomOnlineMealDetailsScreenDestination within navGraph)
     }
 
     override fun onSearchClick() {
@@ -151,7 +139,10 @@ class CoreFeatureNavigator(
     }
 
     override fun subscribe() {
-        subscribe.invoke()
+    }
+
+    override fun openSettings() {
+        navController.navigate(SettingsScreenDestination within navGraph)
     }
 
     override fun logout() {

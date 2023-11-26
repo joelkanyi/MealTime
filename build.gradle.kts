@@ -1,7 +1,4 @@
-buildscript {
-    dependencies {
-    }
-}
+@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
@@ -13,6 +10,7 @@ plugins {
     alias(libs.plugins.spotless)
     alias(libs.plugins.kapt) apply false
     alias(libs.plugins.parcelize) apply false
+    alias(libs.plugins.ksp) apply false
 }
 
 subprojects {

@@ -1,3 +1,4 @@
+@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.android.kotlin)
@@ -68,17 +69,22 @@ android {
 
 dependencies {
     // Modules
-    implementation(project(Modules.core))
-    implementation(project(Modules.composeUi))
-
-    implementation(project(Modules.home))
-    implementation(project(Modules.search))
-    implementation(project(Modules.favorites))
-    implementation(project(Modules.settings))
-    implementation(project(Modules.addMeal))
-    implementation(project(Modules.mealPlanner))
-    implementation(project(Modules.kitchenTimer))
-    implementation(project(Modules.auth))
+    implementation(projects.core.common)
+    implementation(projects.core.settings)
+    implementation(projects.core.designsystem)
+    implementation(projects.feature.home.presentation)
+    implementation(projects.feature.home.di)
+    implementation(projects.feature.search.presentation)
+    implementation(projects.feature.search.di)
+    implementation(projects.feature.favorites.presentation)
+    implementation(projects.feature.favorites.di)
+    implementation(projects.feature.settings)
+    implementation(projects.feature.addmeal)
+    implementation(projects.feature.mealplanner.presentation)
+    implementation(projects.feature.mealplanner.di)
+    implementation(projects.feature.kitchenTimer)
+    implementation(projects.feature.auth.presentation)
+    implementation(projects.feature.auth.di)
 
     // RamCosta Navigation
     implementation(libs.compose.destinations.animations)

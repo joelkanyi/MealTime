@@ -48,7 +48,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -63,12 +62,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.joelkanyi.common.R
+import com.joelkanyi.common.model.Ingredient
+import com.joelkanyi.common.state.TextFieldState
+import com.joelkanyi.common.util.UiEvents
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
-import com.kanyideveloper.compose_ui.components.StandardToolbar
-import com.kanyideveloper.core.state.SubscriptionStatusUiState
-import com.kanyideveloper.core.state.TextFieldState
-import com.kanyideveloper.core.util.UiEvents
-import com.kanyideveloper.mealtime.core.R
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
 
@@ -94,15 +92,13 @@ fun NextAddMealScreen(
     val direction = viewModel.direction.value
     val ingredient = viewModel.ingredient.value
 
-    val isSubscribed = viewModel.isSubscribed.collectAsState().value
-    val analyticsUtil = viewModel.analyticsUtil()
-
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvents.SnackbarEvent -> {
                     scaffoldState.snackbarHostState.showSnackbar(message = event.message)
                 }
+
                 is UiEvents.NavigationEvent -> {
                     navigator.navigateBackToHome()
                 }
@@ -110,82 +106,77 @@ fun NextAddMealScreen(
         }
     }
 
-    when (isSubscribed) {
-        is SubscriptionStatusUiState.Success -> {
-            Column(Modifier.fillMaxSize()) {
-                StandardToolbar(
-                    navigate = {
-                        analyticsUtil.trackUserEvent("Next Add Meal Screen -Back Button clicked")
-                        navigator.popBackStack()
-                    },
-                    title = {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(text = "Add meal", fontSize = 18.sp)
-                            SaveTextButtonContent(
-                                isLoading = viewModel.saveMeal.value.isLoading,
-                                onClick = {
-                                    analyticsUtil.trackUserEvent("save my meal button clicked - $mealName")
-                                    keyboardController?.hide()
-                                    viewModel.saveMeal(
-                                        imageUri = imageUri,
-                                        mealName = mealName,
-                                        cookingTime = cookingTime,
-                                        servingPeople = servingPeople,
-                                        complexity = complexity,
-                                        category = category,
-                                        isSubscribed = true // isSubscribed.isSubscribed
-                                    )
-                                }
+    Column(Modifier.fillMaxSize()) {
+        com.joelkanyi.designsystem.components.StandardToolbar(
+            navigate = {
+                viewModel.trackUserEvent("Next Add Meal Screen -Back Button clicked")
+                navigator.popBackStack()
+            },
+            title = {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = "Add meal", fontSize = 18.sp)
+                    SaveTextButtonContent(
+                        isLoading = viewModel.saveMeal.value.isLoading,
+                        onClick = {
+                            viewModel.trackUserEvent("save my meal button clicked - $mealName")
+                            keyboardController?.hide()
+                            viewModel.saveMeal(
+                                imageUri = imageUri,
+                                mealName = mealName,
+                                cookingTime = cookingTime,
+                                servingPeople = servingPeople,
+                                complexity = complexity,
+                                category = category,
+                                isSubscribed = true // isSubscribed.isSubscribed
                             )
                         }
-                    },
-                    showBackArrow = true
-                )
-
-                LazyColumn(
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    item {
-                        IngredientComponent(ingredient, viewModel, keyboardController)
-                    }
-
-                    items(viewModel.ingredientsList) { ingredient ->
-                        IngredientItem(
-                            ingredient = ingredient,
-                            viewModel = viewModel
-                        )
-                    }
-
-                    item {
-                        Spacer(modifier = Modifier.height(24.dp))
-                    }
-
-                    item {
-                        DirectionComponent(direction, viewModel, keyboardController)
-                    }
-
-                    items(viewModel.directionsList) { direction ->
-                        DirectionItem(
-                            direction = direction,
-                            viewModel = viewModel,
-                            onClick = {
-                                Toast.makeText(
-                                    context,
-                                    "Feature in development",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        )
-                    }
+                    )
                 }
+            },
+            showBackArrow = true
+        )
+
+        LazyColumn(
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            item {
+                IngredientComponent(ingredient, viewModel, keyboardController)
+            }
+
+            items(viewModel.ingredientsList) { ingredient ->
+                IngredientItem(
+                    ingredient = ingredient.name,
+                    viewModel = viewModel
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+
+            item {
+                DirectionComponent(direction, viewModel, keyboardController)
+            }
+
+            items(viewModel.directionsList) { direction ->
+                DirectionItem(
+                    direction = direction,
+                    viewModel = viewModel,
+                    onClick = {
+                        Toast.makeText(
+                            context,
+                            "Feature in development",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                )
             }
         }
-        else -> {}
     }
 }
 
@@ -295,7 +286,13 @@ private fun IngredientComponent(
             trailingIcon = {
                 IconButton(onClick = {
                     keyboardController?.hide()
-                    viewModel.insertIngredients(ingredient.text)
+                    viewModel.insertIngredients(
+                        Ingredient(
+                            name = ingredient.text,
+                            quantity = null,
+                            id = 0
+                        )
+                    )
                 }) {
                     Icon(
                         imageVector = Icons.Outlined.Add,
@@ -344,7 +341,13 @@ fun IngredientItem(ingredient: String, viewModel: AddMealsViewModel) {
             )
 
             IconButton(onClick = {
-                viewModel.removeIngredient(ingredient)
+                viewModel.removeIngredient(
+                    Ingredient(
+                        name = ingredient,
+                        quantity = null,
+                        id = 0
+                    )
+                )
             }) {
                 Icon(
                     imageVector = Icons.Outlined.Close,

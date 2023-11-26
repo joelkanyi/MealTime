@@ -19,8 +19,8 @@ dependencies {
 
     // Dagger - Hilt
     implementation(libs.dagger.hilt.android)
-    kapt(libs.dagger.hilt.android.compiler)
-    kapt(libs.hilt.compiler)
+    ksp(libs.dagger.hilt.android.compiler)
+    ksp(libs.hilt.compiler)
 
     // UI
     implementation(libs.activity.compose)
@@ -121,4 +121,5 @@ dependencies {
 
     // Mixpanel
     api(libs.mixpanel)
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
 }

@@ -19,22 +19,18 @@ import com.joelkanyi.auth.presentation.destinations.ForgotPasswordScreenDestinat
 import com.joelkanyi.auth.presentation.destinations.LandingPageScreenDestination
 import com.joelkanyi.auth.presentation.destinations.SignInScreenDestination
 import com.joelkanyi.auth.presentation.destinations.SignUpScreenDestination
-import com.joelkanyi.kitchen_timer.presentation.destinations.KitchenTimerScreenDestination
+import com.joelkanyi.kitchen_timer.presentation.timer.destinations.KitchenTimerScreenDestination
+import com.joelkanyi.presentation.favorites.destinations.FavoritesScreenDestination
+import com.joelkanyi.presentation.home.destinations.DetailsScreenDestination
+import com.joelkanyi.presentation.home.destinations.HomeScreenDestination
+import com.joelkanyi.presentation.mealplanner.destinations.AllergiesScreenDestination
+import com.joelkanyi.presentation.mealplanner.destinations.MealPlannerScreenDestination
+import com.joelkanyi.presentation.mealplanner.destinations.MealTypesScreenDestination
+import com.joelkanyi.presentation.mealplanner.destinations.NumberOfPeopleScreenDestination
+import com.joelkanyi.presentation.search.destinations.SearchScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
-import com.kanyideveloper.favorites.presentation.favorites.presentation.destinations.FavoritesScreenDestination
-import com.kanyideveloper.mealplanner.destinations.AllergiesScreenDestination
-import com.kanyideveloper.mealplanner.destinations.MealPlannerScreenDestination
-import com.kanyideveloper.mealplanner.destinations.MealTypesScreenDestination
-import com.kanyideveloper.mealplanner.destinations.NumberOfPeopleScreenDestination
-import com.kanyideveloper.presentation.destinations.DetailsScreenDestination
-import com.kanyideveloper.presentation.destinations.HomeScreenDestination
-import com.kanyideveloper.presentation.destinations.MyMealScreenDestination
-import com.kanyideveloper.presentation.destinations.OnlineMealDetailsScreenDestination
-import com.kanyideveloper.presentation.destinations.OnlineMealScreenDestination
-import com.kanyideveloper.presentation.destinations.RandomOnlineMealDetailsScreenDestination
-import com.kanyideveloper.search.presentation.search.destinations.SearchScreenDestination
-import com.kanyideveloper.settings.presentation.destinations.SettingsScreenDestination
+import com.kanyideveloper.settings.presentation.settings.destinations.SettingsScreenDestination
 import com.ramcosta.composedestinations.dynamic.routedIn
 import com.ramcosta.composedestinations.spec.DestinationSpec
 import com.ramcosta.composedestinations.spec.NavGraphSpec
@@ -63,15 +59,16 @@ object NavGraphs {
 
         override val destinationsByRoute = listOf<DestinationSpec<*>>(
             HomeScreenDestination,
-            MyMealScreenDestination,
-            OnlineMealScreenDestination,
-            OnlineMealDetailsScreenDestination,
             DetailsScreenDestination,
             AddMealScreenDestination,
             NextAddMealScreenDestination,
-            RandomOnlineMealDetailsScreenDestination,
             SearchScreenDestination,
-            LandingPageScreenDestination
+            LandingPageScreenDestination,
+            SettingsScreenDestination,
+            AllergiesScreenDestination,
+            NumberOfPeopleScreenDestination,
+            MealTypesScreenDestination,
+            MealPlannerScreenDestination,
         ).routedIn(this)
             .associateBy { it.route }
     }
@@ -83,7 +80,6 @@ object NavGraphs {
 
         override val destinationsByRoute = listOf<DestinationSpec<*>>(
             SearchScreenDestination,
-            OnlineMealDetailsScreenDestination
         ).routedIn(this)
             .associateBy { it.route }
     }
@@ -106,7 +102,6 @@ object NavGraphs {
 
         override val destinationsByRoute = listOf<DestinationSpec<*>>(
             FavoritesScreenDestination,
-            OnlineMealDetailsScreenDestination,
             DetailsScreenDestination
         ).routedIn(this)
             .associateBy { it.route }
@@ -122,7 +117,6 @@ object NavGraphs {
             AllergiesScreenDestination,
             NumberOfPeopleScreenDestination,
             MealTypesScreenDestination,
-            OnlineMealDetailsScreenDestination,
             DetailsScreenDestination
         ).routedIn(this)
             .associateBy { it.route }

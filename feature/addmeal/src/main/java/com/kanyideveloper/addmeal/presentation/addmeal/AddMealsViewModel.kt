@@ -21,44 +21,30 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joelkanyi.analytics.domain.usecase.TrackUserEventUseCase
+import com.joelkanyi.common.model.Ingredient
+import com.joelkanyi.common.model.MealDetails
+import com.joelkanyi.common.state.TextFieldState
+import com.joelkanyi.common.util.Resource
+import com.joelkanyi.common.util.UiEvents
 import com.kanyideveloper.addmeal.domain.repository.SaveMealRepository
 import com.kanyideveloper.addmeal.domain.repository.UploadImageRepository
 import com.kanyideveloper.addmeal.presentation.addmeal.state.SaveMealState
-import com.kanyideveloper.core.analytics.AnalyticsUtil
-import com.kanyideveloper.core.domain.SubscriptionRepository
-import com.kanyideveloper.core.model.Meal
-import com.kanyideveloper.core.state.SubscriptionStatusUiState
-import com.kanyideveloper.core.state.TextFieldState
-import com.kanyideveloper.core.util.Resource
-import com.kanyideveloper.core.util.UiEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
 class AddMealsViewModel @Inject constructor(
     private val uploadImageRepository: UploadImageRepository,
     private val saveMealRepository: SaveMealRepository,
-    subscriptionRepository: SubscriptionRepository,
-    private val analyticsUtil: AnalyticsUtil
+    private val trackUserEventUseCase: TrackUserEventUseCase,
 ) : ViewModel() {
-    fun analyticsUtil() = analyticsUtil
-
-    val isSubscribed: StateFlow<SubscriptionStatusUiState> =
-        subscriptionRepository.isSubscribed
-            .map(SubscriptionStatusUiState::Success)
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = SubscriptionStatusUiState.Loading
-            )
+    fun trackUserEvent(event: String) {
+        trackUserEventUseCase(event)
+    }
 
     private val _mealImageUri = mutableStateOf<Uri?>(null)
     val mealImageUri: State<Uri?> = _mealImageUri
@@ -176,26 +162,27 @@ class AddMealsViewModel @Inject constructor(
                         )
                     )
                 }
+
                 is Resource.Success -> {
                     val imageUrl = uploadResult.data.toString()
 
-                    val meal = Meal(
-                        id = UUID.randomUUID().toString(),
+                    /*val meal = MealDetails(
                         name = mealName,
                         imageUrl = imageUrl,
                         cookingTime = cookingTime,
-                        cookingDirections = directionsList,
-                        cookingDifficulty = complexity,
+                        servingPeople = servingPeople,
                         category = category,
+                        cookingDifficulty = complexity,
                         ingredients = ingredientsList,
-                        servingPeople = servingPeople
+                        cookingDirections = directionsList
                     )
 
                     saveMyMeal(
                         meal = meal,
                         isSubscribed = isSubscribed
-                    )
+                    )*/
                 }
+
                 else -> {
                     saveMeal
                 }
@@ -203,7 +190,7 @@ class AddMealsViewModel @Inject constructor(
         }
     }
 
-    private fun saveMyMeal(meal: Meal, isSubscribed: Boolean) {
+    private fun saveMyMeal(meal: MealDetails, isSubscribed: Boolean) {
         viewModelScope.launch {
             when (
                 val result = saveMealRepository.saveMeal(
@@ -218,6 +205,7 @@ class AddMealsViewModel @Inject constructor(
                         )
                     )
                 }
+
                 is Resource.Success -> {
                     _saveMeal.value = saveMeal.value.copy(
                         isLoading = false,
@@ -236,16 +224,17 @@ class AddMealsViewModel @Inject constructor(
                         )
                     )
                 }
+
                 else -> {}
             }
         }
     }
 
-    private val _ingredientsList = mutableStateListOf<String>()
-    val ingredientsList: List<String> = _ingredientsList
+    private val _ingredientsList = mutableStateListOf<Ingredient>()
+    val ingredientsList: List<Ingredient> = _ingredientsList
 
-    fun insertIngredients(value: String) {
-        if (value.isEmpty()) {
+    fun insertIngredients(value: Ingredient) {
+        if (value.name.isEmpty()) {
             _ingredient.value = ingredient.value.copy(
                 error = "Ingredient cannot be empty"
             )
@@ -255,7 +244,7 @@ class AddMealsViewModel @Inject constructor(
         setIngredientState("")
     }
 
-    fun removeIngredient(value: String) {
+    fun removeIngredient(value: Ingredient) {
         _ingredientsList.remove(value)
     }
 
