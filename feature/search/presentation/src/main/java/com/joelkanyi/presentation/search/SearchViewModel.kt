@@ -57,7 +57,6 @@ class SearchViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
-
     private val _selectedSearchOption = mutableStateOf("Meal Name")
     val selectedSearchOption: State<String> = _selectedSearchOption
     fun setSelectedSearchOption(value: String) {
@@ -163,7 +162,6 @@ class SearchViewModel @Inject constructor(
         }
     }
 }
-
 
 data class SearchState(
     val isLoading: Boolean = false,

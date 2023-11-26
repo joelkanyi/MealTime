@@ -106,7 +106,6 @@ class FavoritesViewModel @Inject constructor(
     private val _singleMeal = MutableLiveData<LiveData<MealDetails?>>()
     val singleMeal: LiveData<LiveData<MealDetails?>> = _singleMeal
 
-
     fun deleteAFavorite(favorite: Favorite) {
         viewModelScope.launch {
             deleteAFavoriteUseCase(favorite.mealId)

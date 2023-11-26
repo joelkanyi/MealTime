@@ -74,7 +74,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
@@ -92,7 +91,6 @@ fun MealPlannerScreen(
     val coroutineScope = rememberCoroutineScope()
     val calendarPagerState = rememberLazyListState()
     val selectedDay = viewModel.selectedDay.collectAsState().value
-
 
     LaunchedEffect(key1 = true, block = {
         calendarPagerState.animateScrollToItem(
@@ -228,7 +226,6 @@ fun MealPlannerScreen(
             navigator.openAllergiesScreen()
         }
     )
-
 }
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)

@@ -15,10 +15,9 @@
  */
 package com.joelkanyi.data.mapper
 
-import com.joelkanyi.domain.entity.Favorite
 import com.joelkanyi.database.model.FavoriteEntity
+import com.joelkanyi.domain.entity.Favorite
 import com.joelkanyi.network.model.FavoritesResponseDto
-
 
 internal fun com.joelkanyi.network.model.FavoritesResponseDto.toFavorite(): com.joelkanyi.domain.entity.Favorite {
     return com.joelkanyi.domain.entity.Favorite(

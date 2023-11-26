@@ -436,7 +436,6 @@ fun OnlineMealItem(
     }
 }
 
-
 @Preview
 @Composable
 fun SearchScreenContentPreview() {

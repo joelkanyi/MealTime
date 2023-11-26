@@ -165,7 +165,6 @@ fun SettingsScreen(navigator: SettingsNavigator, viewModel: SettingsViewModel = 
             )
         }
 
-
         SettingsScreenContent(
             paddingValues = paddingValues,
             navigator = navigator,

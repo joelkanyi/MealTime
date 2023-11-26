@@ -204,7 +204,6 @@ fun IngredientsSuccessState(
     }
 }
 
-
 @Preview
 @Composable
 fun AllergiesScreenContentPreview() {

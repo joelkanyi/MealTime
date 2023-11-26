@@ -39,7 +39,6 @@ class SettingsViewModel @Inject constructor(
         trackUserEventUseCase.invoke(eventName)
     }
 
-
     private val _eventsFlow = MutableSharedFlow<UiEvents>()
     val eventsFlow = _eventsFlow
 

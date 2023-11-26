@@ -19,9 +19,9 @@ import android.content.Context
 import androidx.room.Room
 import com.google.gson.Gson
 import com.joelkanyi.database.Constants
-import com.joelkanyi.database.converters.Converters
 import com.joelkanyi.database.DatabaseMigrations.migration_1_3
 import com.joelkanyi.database.MealTimeDatabase
+import com.joelkanyi.database.converters.Converters
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

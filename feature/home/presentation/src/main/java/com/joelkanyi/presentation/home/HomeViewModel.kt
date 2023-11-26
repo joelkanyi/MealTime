@@ -63,7 +63,6 @@ class HomeViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
-
     fun insertAFavorite(
         meal: Meal
     ) {

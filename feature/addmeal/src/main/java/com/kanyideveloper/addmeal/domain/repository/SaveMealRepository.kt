@@ -18,7 +18,6 @@ package com.kanyideveloper.addmeal.domain.repository
 import com.joelkanyi.common.model.MealDetails
 import com.joelkanyi.common.util.Resource
 
-
 interface SaveMealRepository {
     suspend fun saveMeal(meal: MealDetails, isSubscribed: Boolean): Resource<Boolean>
 }

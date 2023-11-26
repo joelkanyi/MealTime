@@ -105,7 +105,6 @@ fun SignUpScreen(
         }
     }
 
-
     SignUpScreenContent(
         snackbarHostState = snackbarHostState,
         userName = userName,

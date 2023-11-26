@@ -45,12 +45,12 @@ import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.android.play.core.review.ReviewManagerFactory
+import com.joelkanyi.designsystem.theme.MealTimeTheme
+import com.joelkanyi.designsystem.theme.Theme
 import com.joelkanyi.kitchen_timer.presentation.timer.destinations.KitchenTimerScreenDestination
 import com.joelkanyi.presentation.favorites.destinations.FavoritesScreenDestination
 import com.joelkanyi.presentation.home.destinations.HomeScreenDestination
 import com.joelkanyi.presentation.mealplanner.destinations.MealPlannerScreenDestination
-import com.joelkanyi.designsystem.theme.MealTimeTheme
-import com.joelkanyi.designsystem.theme.Theme
 import com.kanyideveloper.mealtime.component.StandardScaffold
 import com.kanyideveloper.mealtime.component.navGraph
 import com.kanyideveloper.mealtime.navigation.CoreFeatureNavigator
@@ -184,7 +184,7 @@ class MainActivity : ComponentActivity() {
                         scaleInPopEnterTransition()
                     },
                     popExitTransition = {
-                       scaleOutPopExitTransition()
+                        scaleOutPopExitTransition()
                     }
                 ),
                 NavGraphs.search to NestedNavGraphDefaultAnimations(

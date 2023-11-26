@@ -48,7 +48,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -63,11 +62,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.joelkanyi.common.R
 import com.joelkanyi.common.model.Ingredient
 import com.joelkanyi.common.state.TextFieldState
 import com.joelkanyi.common.util.UiEvents
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
-import com.joelkanyi.common.R
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
 
@@ -92,7 +91,6 @@ fun NextAddMealScreen(
 
     val direction = viewModel.direction.value
     val ingredient = viewModel.ingredient.value
-
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->

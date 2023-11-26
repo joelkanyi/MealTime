@@ -17,10 +17,9 @@ package com.joelkanyi.auth.presentation.landing
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.joelkanyi.auth.domain.usecase.SignInWithGoogleUseCase
-import com.joelkanyi.analytics.domain.repository.AnalyticsUtil
 import com.joelkanyi.analytics.domain.usecase.SetUserProfileUseCase
 import com.joelkanyi.analytics.domain.usecase.TrackUserEventUseCase
+import com.joelkanyi.auth.domain.usecase.SignInWithGoogleUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.json.JSONObject

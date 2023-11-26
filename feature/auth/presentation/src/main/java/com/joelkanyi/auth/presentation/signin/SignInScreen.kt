@@ -104,7 +104,6 @@ fun SignInScreen(
         }
     }
 
-
     SignInScreenContent(
         snackbarHostState = snackbarHostState,
         emailState = emailState,

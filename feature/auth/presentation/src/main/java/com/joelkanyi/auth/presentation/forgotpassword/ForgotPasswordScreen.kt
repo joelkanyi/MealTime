@@ -15,7 +15,6 @@
  */
 package com.joelkanyi.auth.presentation.forgotpassword
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -83,7 +82,6 @@ fun ForgotPasswordScreen(
         }
     }
 
-
     ForgotPasswordScreenContent(
         snackbarHostState = snackbarHostState,
         currentEmailText = viewModel.emailState.value.text,
@@ -99,7 +97,6 @@ fun ForgotPasswordScreen(
             navigator.popBackStack()
         }
     )
-
 }
 
 @Composable

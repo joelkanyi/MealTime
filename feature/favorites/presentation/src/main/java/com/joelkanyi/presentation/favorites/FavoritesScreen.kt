@@ -97,7 +97,6 @@ fun FavoritesScreen(
         }
     })
 
-
     FavoritesScreenContent(
         snackbarHostState = snackbarHostState,
         favorites = favorites,
@@ -274,7 +273,6 @@ fun FoodItem(
         }
     }
 }
-
 
 @Preview
 @Composable

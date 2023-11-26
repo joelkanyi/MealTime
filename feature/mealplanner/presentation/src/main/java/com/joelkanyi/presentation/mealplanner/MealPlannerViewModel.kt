@@ -29,10 +29,10 @@ import com.joelkanyi.common.util.UiEvents
 import com.joelkanyi.common.util.getTodaysDate
 import com.joelkanyi.domain.entity.MealPlan
 import com.joelkanyi.domain.usecase.AddMealToMealPlanUseCase
-import com.joelkanyi.domain.usecase.UserMealPlannerPrefsUseCase
 import com.joelkanyi.domain.usecase.GetMealsInMealPlanUseCase
 import com.joelkanyi.domain.usecase.RemoveMealFromMealPlanUseCase
 import com.joelkanyi.domain.usecase.SearchMealsUseCase
+import com.joelkanyi.domain.usecase.UserMealPlannerPrefsUseCase
 import com.joelkanyi.settings.domain.model.MealPlanPreference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow

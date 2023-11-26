@@ -128,7 +128,6 @@ private fun DetailsScreenContent(
             val favorite = isFavorite(meal.mealId)
             val textSize = (18 + (30 - 18) * state.toolbarState.progress).sp
 
-
             CollapsingToolbarScaffold(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -317,7 +316,6 @@ private fun DetailsScreenContent(
             }
         }
 
-
         // Loading data
         if (mealState.isLoading) {
             LoadingStateComponent()
@@ -334,7 +332,6 @@ private fun DetailsScreenContent(
         }
     }
 }
-
 
 @Preview
 @Composable
@@ -424,7 +421,6 @@ fun MealProperty(
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

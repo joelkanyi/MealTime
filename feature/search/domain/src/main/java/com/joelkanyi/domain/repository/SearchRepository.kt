@@ -18,7 +18,6 @@ package com.joelkanyi.domain.repository
 import com.joelkanyi.common.model.Meal
 import com.joelkanyi.common.util.Resource
 
-
 interface SearchRepository {
     suspend fun search(searchOption: String, searchParam: String): Resource<List<Meal>>
 }

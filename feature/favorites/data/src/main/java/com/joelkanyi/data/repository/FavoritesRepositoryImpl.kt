@@ -32,7 +32,7 @@ class FavoritesRepositoryImpl @Inject constructor(
     private val mealtimeSettings: MealtimeSettings
 ) : com.joelkanyi.domain.repository.FavoritesRepository {
 
-    override fun getFavorites(): Flow<List<com.joelkanyi.domain.entity.Favorite>>{
+    override fun getFavorites(): Flow<List<com.joelkanyi.domain.entity.Favorite>> {
         /*safeApiCall(Dispatchers.IO) {
             val response = mealDbApi.getFavorites(
                 // userId = mealTimePreferences.getUserId().first()

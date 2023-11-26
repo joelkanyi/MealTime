@@ -17,7 +17,6 @@ package com.joelkanyi.data.mapper
 
 import com.joelkanyi.common.model.Meal
 
-
 internal fun com.joelkanyi.network.model.MealsResponseDto.toOnlineMeal(): Meal {
     return Meal(
         name = name,
