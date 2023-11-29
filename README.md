@@ -13,10 +13,6 @@ We use GitHub for bug tracking. Please search the existing issues for your bug a
 https://github.com/JoelKanyi/MealTime/issues
 
 
-
-## Modules
-<img src="screenshots/mealtime_modules.jpeg" width="1000"/>
-
 ## Demo
 
 ### Authentication
@@ -28,26 +24,14 @@ https://github.com/JoelKanyi/MealTime/issues
 
 <img src="screenshots/forgotpass-light.jpeg" width="250"/> <img src="screenshots/forgotpass-dark.jpeg" width="250"/>
 
-### Online Meals
-<img src="screenshots/online-light.jpeg" width="250"/> <img src="screenshots/online-dark.jpeg" width="250"/>
-
-### My Meals
-<img src="screenshots/mymeal-light.jpeg" width="250"/> <img src="screenshots/mymeal-dark.jpeg" width="250"/>
+### Meals
+<img src="screenshots/meals-light.jpeg" width="250"/> <img src="screenshots/meals-dark.jpeg" width="250"/>
 
 ### Meal Details
 <img src="screenshots/meal_details.jpeg" width="250"/>
 
 ### Kitchen Timer
 <img src="screenshots/timer-light.jpeg" width="250"/> <img src="screenshots/timer-dark.jpeg" width="250"/>
-
-### Meal Planner
-<img src="screenshots/meal_planner_empty.jpeg" width="250"/> <img src="screenshots/allergies.jpeg" width="250"/>
-
-<img src="screenshots/number_of_people.jpeg" width="250"/> <img src="screenshots/dish_types.jpeg" width="250"/>
-
-<img src="screenshots/meal_planner_light.jpeg" width="250"/> <img src="screenshots/search_meal_plan_items.jpeg" width="250"/> <img src="screenshots/meal_planner_items.jpeg" width="250"/>
-
-<img src="screenshots/meal_planner_dark.jpeg" width="250"/>
 
 ### Search
 <img src="screenshots/search_empty.jpeg" width="250"/> <img src="screenshots/search_items.jpeg" width="250"/>

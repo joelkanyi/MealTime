@@ -80,8 +80,6 @@ dependencies {
     implementation(projects.feature.favorites.di)
     implementation(projects.feature.settings)
     implementation(projects.feature.addmeal)
-    implementation(projects.feature.mealplanner.presentation)
-    implementation(projects.feature.mealplanner.di)
     implementation(projects.feature.kitchenTimer)
     implementation(projects.feature.auth.presentation)
     implementation(projects.feature.auth.di)

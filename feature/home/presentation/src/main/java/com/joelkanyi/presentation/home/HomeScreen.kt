@@ -79,6 +79,7 @@ import com.joelkanyi.common.model.Category
 import com.joelkanyi.common.model.Meal
 import com.joelkanyi.designsystem.components.EmptyStateComponent
 import com.joelkanyi.designsystem.components.ErrorStateComponent
+import com.joelkanyi.designsystem.components.StandardToolbar
 import com.joelkanyi.designsystem.components.SwipeRefreshComponent
 import com.ramcosta.composedestinations.annotation.Destination
 
@@ -156,17 +157,12 @@ fun HomeScreen(
             viewModel.trackUserEvent("home_screen_click_search")
             navigator.onSearchClick()
         },
-        onClickSettings = {
-            viewModel.trackUserEvent("home_screen_click_settings")
-            navigator.openSettings()
-        },
         isFavorite = { mealId ->
             favorites.any { it.mealId == mealId }
         }
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @VisibleForTesting
 @Composable
 fun OnlineMealScreenContent(
@@ -182,35 +178,18 @@ fun OnlineMealScreenContent(
     openRandomMeal: () -> Unit,
     onRefreshData: () -> Unit,
     onClickSearch: () -> Unit,
-    onClickSettings: () -> Unit,
 ) {
     Scaffold(
         topBar = {
-            com.joelkanyi.designsystem.components.StandardToolbar(
+            StandardToolbar(
                 navigate = {},
                 title = {
-                    Row(
+                    SearchBox(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(end = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-
-                        SearchBox(
-                            modifier = Modifier
-                                .fillMaxWidth(0.9f),
-                            onClick = onClickSearch
-                        )
-
-                        IconButton(onClick = onClickSettings) {
-                            Icon(
-                                painterResource(id = com.joelkanyi.common.R.drawable.ic_settings),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
+                            .padding(end = 16.dp)
+                            .fillMaxWidth(),
+                        onClick = onClickSearch
+                    )
                 },
                 showBackArrow = false,
                 navActions = {}
@@ -505,7 +484,7 @@ fun SearchBox(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -548,7 +527,6 @@ fun OnlineMealScreenContentPreview() {
             onRefreshData = {},
             snackbarHostState = SnackbarHostState(),
             onClickSearch = {},
-            onClickSettings = {},
             isFavorite = { false }
         )
     }

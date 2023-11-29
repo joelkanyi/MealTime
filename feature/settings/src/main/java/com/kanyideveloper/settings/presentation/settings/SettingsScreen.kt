@@ -167,7 +167,6 @@ fun SettingsScreen(navigator: SettingsNavigator, viewModel: SettingsViewModel = 
 
         SettingsScreenContent(
             paddingValues = paddingValues,
-            navigator = navigator,
             context = context,
             logoutState = viewModel.logoutState.value,
             onChangeTheme = {
@@ -196,7 +195,6 @@ fun SettingsScreen(navigator: SettingsNavigator, viewModel: SettingsViewModel = 
 @Composable
 private fun SettingsScreenContent(
     paddingValues: PaddingValues,
-    navigator: SettingsNavigator,
     context: Context,
     onChangeTheme: () -> Unit,
     onReportOrSuggest: () -> Unit,
@@ -217,10 +215,6 @@ private fun SettingsScreenContent(
                         when (settingsOption) {
                             "Change Your Theme" -> {
                                 onChangeTheme()
-                            }
-
-                            "Edit Meal Plan Preferences" -> {
-                                navigator.openAllergiesScreen(editMealPlanPreference = true)
                             }
 
                             "Suggest or Report Anything" -> {
@@ -326,10 +320,6 @@ private val settingsOptions = listOf(
     Setting(
         title = "Change Your Theme",
         icon = com.joelkanyi.common.R.drawable.dark_mode
-    ),
-    Setting(
-        title = "Edit Meal Plan Preferences",
-        icon = com.joelkanyi.common.R.drawable.ic_plan_edit
     ),
     Setting(
         title = "Suggest or Report Anything",

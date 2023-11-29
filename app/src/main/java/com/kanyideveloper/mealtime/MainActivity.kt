@@ -50,7 +50,6 @@ import com.joelkanyi.designsystem.theme.Theme
 import com.joelkanyi.kitchen_timer.presentation.timer.destinations.KitchenTimerScreenDestination
 import com.joelkanyi.presentation.favorites.destinations.FavoritesScreenDestination
 import com.joelkanyi.presentation.home.destinations.HomeScreenDestination
-import com.joelkanyi.presentation.mealplanner.destinations.MealPlannerScreenDestination
 import com.kanyideveloper.mealtime.component.StandardScaffold
 import com.kanyideveloper.mealtime.component.navGraph
 import com.kanyideveloper.mealtime.navigation.CoreFeatureNavigator
@@ -131,8 +130,8 @@ class MainActivity : ComponentActivity() {
                     val bottomBarItems = listOf(
                         BottomNavItem.Home,
                         BottomNavItem.KitchenTimer,
-                        BottomNavItem.MealPlanner,
                         BottomNavItem.Favorites,
+                        BottomNavItem.Settings,
                     )
 
                     StandardScaffold(
@@ -142,7 +141,6 @@ class MainActivity : ComponentActivity() {
                         showBottomBar = route in listOf(
                             "home/${HomeScreenDestination.route}",
                             "kitchen-timer/${KitchenTimerScreenDestination.route}",
-                            "meal_planner/${MealPlannerScreenDestination.route}",
                             "favorites/${FavoritesScreenDestination.route}",
                             "settings/${SettingsScreenDestination.route}"
                         )
@@ -216,20 +214,6 @@ class MainActivity : ComponentActivity() {
                     }
                 ),
                 NavGraphs.settings to NestedNavGraphDefaultAnimations(
-                    enterTransition = {
-                        scaleInEnterTransition()
-                    },
-                    exitTransition = {
-                        scaleOutExitTransition()
-                    },
-                    popEnterTransition = {
-                        scaleInPopEnterTransition()
-                    },
-                    popExitTransition = {
-                        scaleOutPopExitTransition()
-                    }
-                ),
-                NavGraphs.mealPlanner to NestedNavGraphDefaultAnimations(
                     enterTransition = {
                         scaleInEnterTransition()
                     },

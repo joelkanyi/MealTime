@@ -23,10 +23,6 @@ import com.joelkanyi.kitchen_timer.presentation.timer.destinations.KitchenTimerS
 import com.joelkanyi.presentation.favorites.destinations.FavoritesScreenDestination
 import com.joelkanyi.presentation.home.destinations.DetailsScreenDestination
 import com.joelkanyi.presentation.home.destinations.HomeScreenDestination
-import com.joelkanyi.presentation.mealplanner.destinations.AllergiesScreenDestination
-import com.joelkanyi.presentation.mealplanner.destinations.MealPlannerScreenDestination
-import com.joelkanyi.presentation.mealplanner.destinations.MealTypesScreenDestination
-import com.joelkanyi.presentation.mealplanner.destinations.NumberOfPeopleScreenDestination
 import com.joelkanyi.presentation.search.destinations.SearchScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
@@ -65,10 +61,6 @@ object NavGraphs {
             SearchScreenDestination,
             LandingPageScreenDestination,
             SettingsScreenDestination,
-            AllergiesScreenDestination,
-            NumberOfPeopleScreenDestination,
-            MealTypesScreenDestination,
-            MealPlannerScreenDestination,
         ).routedIn(this)
             .associateBy { it.route }
     }
@@ -107,21 +99,6 @@ object NavGraphs {
             .associateBy { it.route }
     }
 
-    val mealPlanner = object : NavGraphSpec {
-        override val route = "meal_planner"
-
-        override val startRoute = MealPlannerScreenDestination routedIn this
-
-        override val destinationsByRoute = listOf<DestinationSpec<*>>(
-            MealPlannerScreenDestination,
-            AllergiesScreenDestination,
-            NumberOfPeopleScreenDestination,
-            MealTypesScreenDestination,
-            DetailsScreenDestination
-        ).routedIn(this)
-            .associateBy { it.route }
-    }
-
     val settings = object : NavGraphSpec {
         override val route = "settings"
 
@@ -129,10 +106,6 @@ object NavGraphs {
 
         override val destinationsByRoute = listOf<DestinationSpec<*>>(
             SettingsScreenDestination,
-            AllergiesScreenDestination,
-            NumberOfPeopleScreenDestination,
-            MealTypesScreenDestination,
-            MealPlannerScreenDestination,
             LandingPageScreenDestination
         ).routedIn(this)
             .associateBy { it.route }
@@ -146,7 +119,6 @@ object NavGraphs {
             auth,
             home,
             search,
-            mealPlanner,
             favorites,
             settings,
             kitchenTimer

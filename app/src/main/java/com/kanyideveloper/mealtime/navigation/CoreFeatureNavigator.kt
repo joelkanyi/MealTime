@@ -25,11 +25,6 @@ import com.joelkanyi.presentation.favorites.FavoritesNavigator
 import com.joelkanyi.presentation.home.HomeNavigator
 import com.joelkanyi.presentation.home.destinations.DetailsScreenDestination
 import com.joelkanyi.presentation.home.destinations.HomeScreenDestination
-import com.joelkanyi.presentation.mealplanner.MealPlannerNavigator
-import com.joelkanyi.presentation.mealplanner.destinations.AllergiesScreenDestination
-import com.joelkanyi.presentation.mealplanner.destinations.MealPlannerScreenDestination
-import com.joelkanyi.presentation.mealplanner.destinations.MealTypesScreenDestination
-import com.joelkanyi.presentation.mealplanner.destinations.NumberOfPeopleScreenDestination
 import com.joelkanyi.presentation.search.SearchNavigator
 import com.joelkanyi.presentation.search.destinations.SearchScreenDestination
 import com.kanyideveloper.addmeal.presentation.addmeal.AddMealNavigator
@@ -49,7 +44,6 @@ class CoreFeatureNavigator(
     FavoritesNavigator,
     SettingsNavigator,
     AddMealNavigator,
-    MealPlannerNavigator,
     AuthNavigator {
     override fun openAddMeal() {
         navController.navigate(AddMealScreenDestination within navGraph)
@@ -95,43 +89,6 @@ class CoreFeatureNavigator(
 
     override fun popBackStack() {
         navController.popBackStack()
-    }
-
-    override fun openAllergiesScreen(editMealPlanPreference: Boolean) {
-        navController.navigate(
-            AllergiesScreenDestination(editMealPlanPreference = editMealPlanPreference) within navGraph
-        )
-    }
-
-    override fun openNoOfPeopleScreen(allergies: String, editMealPlanPreference: Boolean) {
-        navController.navigate(
-            NumberOfPeopleScreenDestination(
-                allergies = allergies,
-                editMealPlanPreference = editMealPlanPreference
-            ) within navGraph
-        )
-    }
-
-    override fun openMealTypesScreen(
-        allergies: String,
-        noOfPeople: String,
-        editMealPlanPreference: Boolean
-    ) {
-        navController.navigate(
-            MealTypesScreenDestination(
-                allergies = allergies,
-                numberOfPeople = noOfPeople,
-                editMealPlanPreference = editMealPlanPreference
-            ) within navGraph
-        )
-    }
-
-    override fun openMealPlanner() {
-        navController.navigate(MealPlannerScreenDestination within navGraph)
-    }
-
-    override fun navigateToSettings() {
-        navController.navigate(SettingsScreenDestination within navGraph)
     }
 
     override fun onSearchClick() {
