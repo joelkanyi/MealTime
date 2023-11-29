@@ -25,7 +25,7 @@ https://github.com/JoelKanyi/MealTime/issues
 <img src="screenshots/forgotpass-light.jpeg" width="250"/> <img src="screenshots/forgotpass-dark.jpeg" width="250"/>
 
 ### Meals
-<img src="screenshots/meals-light.jpeg" width="250"/> <img src="screenshots/meals-dark.jpeg" width="250"/>
+<img src="screenshots/meals-light.png" width="250"/> <img src="screenshots/meals-dark.png" width="250"/>
 
 ### Meal Details
 <img src="screenshots/meal_details.jpeg" width="250"/>
