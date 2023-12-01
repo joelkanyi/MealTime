@@ -25,7 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
-    private val mealDbApi: com.joelkanyi.network.MealDbApi,
+    private val mealtimeApiService: com.joelkanyi.network.MealtimeApiService,
     private val mealtimePreferences: MealtimePreferences,
 ) : AuthRepository {
 
@@ -35,7 +35,7 @@ class AuthRepositoryImpl @Inject constructor(
         name: String
     ): Resource<AuthResult> {
         return safeApiCall(Dispatchers.IO) {
-            mealDbApi.registerUser(
+            mealtimeApiService.registerUser(
                 com.joelkanyi.network.model.RegisterRequestDto(
                     email = email,
                     password = password,
@@ -47,7 +47,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun loginUser(email: String, password: String): Resource<AuthResult> {
         return safeApiCall(Dispatchers.IO) {
-            mealDbApi.loginUser(
+            mealtimeApiService.loginUser(
                 com.joelkanyi.network.model.LoginRequestDto(
                     email = email,
                     password = password
@@ -58,7 +58,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun forgotPassword(email: String): Resource<Any> {
         return safeApiCall(Dispatchers.IO) {
-            mealDbApi.forgotPassword(
+            mealtimeApiService.forgotPassword(
                 email = email
             )
         }
@@ -70,7 +70,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun signInWithGoogle(idToken: String): Resource<AuthResult> {
         return safeApiCall(Dispatchers.IO) {
-            mealDbApi.signInWithGoogle(
+            mealtimeApiService.signInWithGoogle(
                 idToken = idToken
             ).toDomain()
         }

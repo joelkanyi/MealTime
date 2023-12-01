@@ -22,7 +22,7 @@ import com.joelkanyi.common.util.Resource
 
 interface MealsRepository {
     suspend fun getMealCategories(): Resource<List<Category>>
-    suspend fun getMeals(category: String): Resource<List<Meal>>
+    suspend fun getMeals(category: String?): Resource<List<Meal>>
     suspend fun getMealDetails(mealId: String): Resource<MealDetails>
     suspend fun getRandomMeal(): Resource<MealDetails>
 }

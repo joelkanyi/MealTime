@@ -15,6 +15,8 @@
  */
 package com.kanyideveloper.mealtime.navigation
 
+import com.joelkanyi.admeal.presentation.destinations.AddMealScreenDestination
+import com.joelkanyi.admeal.presentation.destinations.NextAddMealScreenDestination
 import com.joelkanyi.auth.presentation.destinations.ForgotPasswordScreenDestination
 import com.joelkanyi.auth.presentation.destinations.LandingPageScreenDestination
 import com.joelkanyi.auth.presentation.destinations.SignInScreenDestination
@@ -24,8 +26,6 @@ import com.joelkanyi.presentation.favorites.destinations.FavoritesScreenDestinat
 import com.joelkanyi.presentation.home.destinations.DetailsScreenDestination
 import com.joelkanyi.presentation.home.destinations.HomeScreenDestination
 import com.joelkanyi.presentation.search.destinations.SearchScreenDestination
-import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
-import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
 import com.kanyideveloper.settings.presentation.settings.destinations.SettingsScreenDestination
 import com.ramcosta.composedestinations.dynamic.routedIn
 import com.ramcosta.composedestinations.spec.DestinationSpec

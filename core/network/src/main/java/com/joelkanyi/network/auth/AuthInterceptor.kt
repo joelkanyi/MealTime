@@ -16,7 +16,7 @@
 package com.joelkanyi.network.auth
 
 import com.joelkanyi.network.Constants
-import com.joelkanyi.network.MealDbApi
+import com.joelkanyi.network.MealtimeApiService
 import com.joelkanyi.network.model.RefreshTokenRequestDto
 import com.joelkanyi.settings.domain.MealtimePreferences
 import kotlinx.coroutines.flow.first
@@ -92,9 +92,9 @@ class AuthInterceptor(
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        val mealDbApi = retrofit.create(MealDbApi::class.java)
+        val mealtimeApiService = retrofit.create(MealtimeApiService::class.java)
 
-        return mealDbApi.refreshToken(
+        return mealtimeApiService.refreshToken(
             RefreshTokenRequestDto(savedToken)
         )?.token
     }

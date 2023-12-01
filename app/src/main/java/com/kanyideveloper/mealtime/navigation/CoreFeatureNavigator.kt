@@ -17,6 +17,9 @@ package com.kanyideveloper.mealtime.navigation
 
 import android.net.Uri
 import androidx.navigation.NavController
+import com.joelkanyi.admeal.presentation.AddMealNavigator
+import com.joelkanyi.admeal.presentation.destinations.AddMealScreenDestination
+import com.joelkanyi.admeal.presentation.destinations.NextAddMealScreenDestination
 import com.joelkanyi.auth.presentation.AuthNavigator
 import com.joelkanyi.auth.presentation.destinations.ForgotPasswordScreenDestination
 import com.joelkanyi.auth.presentation.destinations.SignInScreenDestination
@@ -27,9 +30,6 @@ import com.joelkanyi.presentation.home.destinations.DetailsScreenDestination
 import com.joelkanyi.presentation.home.destinations.HomeScreenDestination
 import com.joelkanyi.presentation.search.SearchNavigator
 import com.joelkanyi.presentation.search.destinations.SearchScreenDestination
-import com.kanyideveloper.addmeal.presentation.addmeal.AddMealNavigator
-import com.kanyideveloper.addmeal.presentation.addmeal.destinations.AddMealScreenDestination
-import com.kanyideveloper.addmeal.presentation.addmeal.destinations.NextAddMealScreenDestination
 import com.kanyideveloper.settings.presentation.settings.SettingsNavigator
 import com.kanyideveloper.settings.presentation.settings.destinations.SettingsScreenDestination
 import com.ramcosta.composedestinations.dynamic.within

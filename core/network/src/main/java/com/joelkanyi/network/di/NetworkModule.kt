@@ -19,7 +19,7 @@ import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.joelkanyi.network.Constants.BASE_URL
-import com.joelkanyi.network.MealDbApi
+import com.joelkanyi.network.MealtimeApiService
 import com.joelkanyi.network.auth.AuthInterceptor
 import com.joelkanyi.settings.domain.MealtimePreferences
 import dagger.Module
@@ -96,7 +96,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideMealDbApi(retrofit: Retrofit): MealDbApi {
+    fun provideMealDbApi(retrofit: Retrofit): MealtimeApiService {
         return retrofit.create()
     }
 }

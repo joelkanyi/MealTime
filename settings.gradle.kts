@@ -21,7 +21,6 @@ dependencyResolutionManagement {
 }
 rootProject.name = "MealTime"
 include(":app")
-include(":feature:addmeal")
 include(":feature:settings")
 include(":feature:kitchen-timer")
 include(":feature:home:data")
@@ -46,3 +45,7 @@ include(":core:database")
 include(":core:network")
 include(":core:analytics")
 include(":core:preferences")
+include(":feature:addmeal:di")
+include(":feature:addmeal:data")
+include(":feature:addmeal:domain")
+include(":feature:addmeal:presentation")

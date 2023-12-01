@@ -21,6 +21,7 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.VisibleForTesting
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -39,13 +40,18 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -66,6 +72,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -80,6 +87,7 @@ import com.joelkanyi.designsystem.components.EmptyStateComponent
 import com.joelkanyi.designsystem.components.ErrorStateComponent
 import com.joelkanyi.designsystem.components.StandardToolbar
 import com.joelkanyi.designsystem.components.SwipeRefreshComponent
+import com.joelkanyi.home.presentation.R
 import com.ramcosta.composedestinations.annotation.Destination
 
 @Destination
@@ -93,6 +101,7 @@ fun HomeScreen(
     val categoriesState = viewModel.categories.value
     val selectedCategory = viewModel.selectedCategory.value
     val snackbarHostState = remember { SnackbarHostState() }
+    val lazyVerticalGridState = rememberLazyGridState()
     val favorites = viewModel.favorites.collectAsState().value
 
     var hasCamPermission by remember {
@@ -122,11 +131,12 @@ fun HomeScreen(
         }
     })
 
-    OnlineMealScreenContent(
+    HomeScreenScreenContent(
         categoriesState = categoriesState,
         selectedCategory = selectedCategory,
         mealsUiState = mealsState,
         snackbarHostState = snackbarHostState,
+        lazyVerticalGridState = lazyVerticalGridState,
         onMealClick = { mealId ->
             viewModel.trackUserEvent("home_screen_open_meal_details")
             navigator.openMealDetails(mealId = mealId)
@@ -158,17 +168,21 @@ fun HomeScreen(
         },
         isFavorite = { mealId ->
             favorites.any { it.mealId == mealId }
+        },
+        onClickAddMeal = {
+            navigator.openAddMeal()
         }
     )
 }
 
 @VisibleForTesting
 @Composable
-fun OnlineMealScreenContent(
+fun HomeScreenScreenContent(
     categoriesState: CategoriesState,
     selectedCategory: String,
     mealsUiState: MealsUiState,
     snackbarHostState: SnackbarHostState,
+    lazyVerticalGridState: LazyGridState,
     onSelectCategory: (category: String) -> Unit,
     onMealClick: (mealId: String) -> Unit,
     addToFavorites: (meal: Meal) -> Unit,
@@ -177,6 +191,7 @@ fun OnlineMealScreenContent(
     openRandomMeal: () -> Unit,
     onRefreshData: () -> Unit,
     onClickSearch: () -> Unit,
+    onClickAddMeal: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -193,6 +208,31 @@ fun OnlineMealScreenContent(
                 showBackArrow = false,
                 navActions = {}
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                containerColor = MaterialTheme.colorScheme.primary,
+                onClick = onClickAddMeal,
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Add,
+                        contentDescription = null,
+                    )
+                    AnimatedVisibility(visible = lazyVerticalGridState.isScrollInProgress.not()) {
+                        Text(
+                            text = stringResource(R.string.add),
+                            style = MaterialTheme.typography.labelMedium,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+                }
+            }
         },
         snackbarHost = {
             SnackbarHost(
@@ -211,6 +251,7 @@ fun OnlineMealScreenContent(
             ) {
                 if (mealsUiState.meals.isNotEmpty()) {
                     LazyVerticalGrid(
+                        state = lazyVerticalGridState,
                         columns = GridCells.Fixed(2),
                         contentPadding = PaddingValues(16.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -504,9 +545,9 @@ fun SearchBox(
 
 @Preview
 @Composable
-fun OnlineMealScreenContentPreview() {
+fun HomeScreenScreenContentPreview() {
     com.joelkanyi.designsystem.theme.MealTimeTheme(theme = com.joelkanyi.designsystem.theme.Theme.FOLLOW_SYSTEM.themeValue) {
-        OnlineMealScreenContent(
+        HomeScreenScreenContent(
             categoriesState = CategoriesState(
                 isLoading = false,
                 error = null,
@@ -525,8 +566,10 @@ fun OnlineMealScreenContentPreview() {
             openRandomMeal = {},
             onRefreshData = {},
             snackbarHostState = SnackbarHostState(),
+            lazyVerticalGridState = rememberLazyGridState(),
             onClickSearch = {},
-            isFavorite = { false }
+            isFavorite = { false },
+            onClickAddMeal = {}
         )
     }
 }

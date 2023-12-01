@@ -28,13 +28,13 @@ import javax.inject.Inject
 
 class FavoritesRepositoryImpl @Inject constructor(
     private val favoritesDao: com.joelkanyi.database.dao.FavoritesDao,
-    private val mealDbApi: com.joelkanyi.network.MealDbApi,
+    private val mealtimeApiService: com.joelkanyi.network.MealtimeApiService,
     private val mealtimePreferences: MealtimePreferences
 ) : com.joelkanyi.domain.repository.FavoritesRepository {
 
     override fun getFavorites(): Flow<List<com.joelkanyi.domain.entity.Favorite>> {
         /*safeApiCall(Dispatchers.IO) {
-            val response = mealDbApi.getFavorites(
+            val response = mealtimeApiService.getFavorites(
                 // userId = mealTimePreferences.getUserId().first()
                 userId = "a2fb5562-871b-4346-9cab-2cd4f4922738"
             )
@@ -71,7 +71,7 @@ class FavoritesRepositoryImpl @Inject constructor(
         return try {
             val newFavorites = withTimeoutOrNull(10000L) {
                 // fetch from the remote database
-                val favoritesRemote = mealDbApi.getFavorites(
+                val favoritesRemote = mealtimeApiService.getFavorites(
                     // userId = mealTimePreferences.getUserId().first()
                     userId = "a2fb5562-871b-4346-9cab-2cd4f4922738"
                 )
@@ -165,7 +165,7 @@ class FavoritesRepositoryImpl @Inject constructor(
         mealId: String,
     ): Resource<Boolean> {
         /*return safeApiCall(Dispatchers.IO) {
-            mealDbApi.saveFavorite(
+            mealtimeApiService.saveFavorite(
                 CreateFavoriteRequestDto(
                     mealId = mealId,
                     // userId = mealTimePreferences.getUserId().first(),
@@ -188,7 +188,7 @@ class FavoritesRepositoryImpl @Inject constructor(
         mealId: String
     ): Resource<Boolean> {
         return safeApiCall(Dispatchers.IO) {
-            mealDbApi.deleteFavorite(
+            mealtimeApiService.deleteFavorite(
                 mealId = mealId,
                 // userId = mealTimePreferences.getUserId().first(),
                 userId = "a2fb5562-871b-4346-9cab-2cd4f4922738",

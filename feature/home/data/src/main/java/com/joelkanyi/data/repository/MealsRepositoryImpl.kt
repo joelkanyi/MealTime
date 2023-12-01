@@ -30,14 +30,14 @@ import java.io.IOException
 import javax.inject.Inject
 
 class MealsRepositoryImpl @Inject constructor(
-    private val mealDbApi: com.joelkanyi.network.MealDbApi,
+    private val mealtimeApiService: com.joelkanyi.network.MealtimeApiService,
     private val onlineMealsDao: com.joelkanyi.database.dao.OnlineMealsDao,
 ) : MealsRepository {
 
     override suspend fun getMealCategories(): Resource<List<Category>> {
         val cachedCategories = onlineMealsDao.getOnlineMealCategories().map { it.toCategory() }
         return try {
-            val response = mealDbApi.getCategories()
+            val response = mealtimeApiService.getCategories()
             onlineMealsDao.deleteOnlineMealCategories()
             onlineMealsDao.insertOnlineMealCategories(response.map { it.toEntity() })
             Resource.Success(
@@ -55,10 +55,10 @@ class MealsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getMeals(category: String): Resource<List<Meal>> {
+    override suspend fun getMeals(category: String?): Resource<List<Meal>> {
         val cachedMeals = onlineMealsDao.getOnlineMeals().map { it.toMeal() }
         return try {
-            val response = mealDbApi.getMeals()
+            val response = mealtimeApiService.getMeals(category)
             onlineMealsDao.deleteOnlineMeals()
             onlineMealsDao.insertOnlineMeals(response.map { it.toEntity() })
             Resource.Success(data = onlineMealsDao.getOnlineMeals().map { it.toMeal() })
@@ -76,14 +76,14 @@ class MealsRepositoryImpl @Inject constructor(
 
     override suspend fun getMealDetails(mealId: String): Resource<MealDetails> {
         return safeApiCall(Dispatchers.IO) {
-            val response = mealDbApi.getMealDetails(mealId = mealId)
+            val response = mealtimeApiService.getMealDetails(mealId = mealId)
             response.toMeal()
         }
     }
 
     override suspend fun getRandomMeal(): Resource<MealDetails> {
         return safeApiCall(Dispatchers.IO) {
-            val response = mealDbApi.getRandomMeal()
+            val response = mealtimeApiService.getRandomMeal()
             response.toMeal()
         }
     }

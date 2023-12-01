@@ -21,5 +21,5 @@ import javax.inject.Inject
 class GetMealsUseCase @Inject constructor(
     private val mealsRepository: MealsRepository
 ) {
-    suspend operator fun invoke(category: String) = mealsRepository.getMeals(category)
+    suspend operator fun invoke(category: String?) = mealsRepository.getMeals(category)
 }

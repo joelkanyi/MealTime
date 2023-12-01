@@ -25,7 +25,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class SearchRepositoryImpl @Inject constructor(
-    private val mealDbApi: com.joelkanyi.network.MealDbApi
+    private val mealtimeApiService: com.joelkanyi.network.MealtimeApiService
 ) : SearchRepository {
     override suspend fun search(
         searchOption: String,
@@ -34,7 +34,7 @@ class SearchRepositoryImpl @Inject constructor(
         return when (searchOption) {
             "Meal Name" -> {
                 return safeApiCall(Dispatchers.IO) {
-                    val response = mealDbApi.searchMeals(name = searchParam)
+                    val response = mealtimeApiService.searchMeals(name = searchParam)
                     Timber.e("Response for meal name: $response")
                     response.map { it.toOnlineMeal() }
                 }
@@ -42,7 +42,7 @@ class SearchRepositoryImpl @Inject constructor(
 
             "Ingredient" -> {
                 return safeApiCall(Dispatchers.IO) {
-                    val response = mealDbApi.searchMeals(ingredient = searchParam)
+                    val response = mealtimeApiService.searchMeals(ingredient = searchParam)
 
                     response.map { it.toOnlineMeal() }
                 }
@@ -50,7 +50,7 @@ class SearchRepositoryImpl @Inject constructor(
 
             "Meal Category" -> {
                 return safeApiCall(Dispatchers.IO) {
-                    val response = mealDbApi.searchMeals(category = searchParam)
+                    val response = mealtimeApiService.searchMeals(category = searchParam)
 
                     response.map { it.toOnlineMeal() }
                 }

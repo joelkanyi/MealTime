@@ -31,6 +31,10 @@
             <option value="$PROJECT_DIR$/core/preferences" />
             <option value="$PROJECT_DIR$/feature" />
             <option value="$PROJECT_DIR$/feature/addmeal" />
+            <option value="$PROJECT_DIR$/feature/addmeal/data" />
+            <option value="$PROJECT_DIR$/feature/addmeal/di" />
+            <option value="$PROJECT_DIR$/feature/addmeal/domain" />
+            <option value="$PROJECT_DIR$/feature/addmeal/presentation" />
             <option value="$PROJECT_DIR$/feature/auth" />
             <option value="$PROJECT_DIR$/feature/auth/data" />
             <option value="$PROJECT_DIR$/feature/auth/di" />
