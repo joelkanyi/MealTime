@@ -49,4 +49,6 @@ android {
 
 dependencies {
     implementation(libs.appcompat)
+    // Preferences DataStore
+    implementation(libs.datastore.preferences)
 }
