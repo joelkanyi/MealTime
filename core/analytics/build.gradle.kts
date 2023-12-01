@@ -48,5 +48,6 @@ android {
 }
 
 dependencies {
-    implementation(libs.appcompat)
+    // Mixpanel
+    implementation(libs.mixpanel)
 }

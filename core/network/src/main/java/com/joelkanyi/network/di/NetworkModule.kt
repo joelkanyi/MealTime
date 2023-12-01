@@ -21,7 +21,7 @@ import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.joelkanyi.network.Constants.BASE_URL
 import com.joelkanyi.network.MealDbApi
 import com.joelkanyi.network.auth.AuthInterceptor
-import com.joelkanyi.settings.domain.MealtimeSettings
+import com.joelkanyi.settings.domain.MealtimePreferences
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -58,10 +58,10 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideAuthInterceptor(
-        mealtimeSettings: MealtimeSettings
+        mealtimePreferences: MealtimePreferences
     ): AuthInterceptor {
         return AuthInterceptor(
-            mealtimeSettings,
+            mealtimePreferences,
         )
     }
 

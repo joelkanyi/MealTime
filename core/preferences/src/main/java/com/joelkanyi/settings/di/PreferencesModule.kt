@@ -20,8 +20,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
-import com.joelkanyi.settings.data.MealtimeSettingsImpl
-import com.joelkanyi.settings.domain.MealtimeSettings
+import com.joelkanyi.settings.data.MealtimePreferencesImpl
+import com.joelkanyi.settings.domain.MealtimePreferences
 import com.joelkanyi.settings.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -32,7 +32,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object PreferenceModule {
+object PreferencesModule {
     @Provides
     @Singleton
     fun provideDatastorePreferences(@ApplicationContext context: Context): DataStore<Preferences> =
@@ -44,6 +44,6 @@ object PreferenceModule {
 
     @Provides
     @Singleton
-    fun provideMealtimeSettings(dataStore: DataStore<Preferences>): MealtimeSettings =
-        MealtimeSettingsImpl(dataStore)
+    fun provideMealtimeSettings(dataStore: DataStore<Preferences>): MealtimePreferences =
+        MealtimePreferencesImpl(dataStore)
 }

@@ -70,7 +70,7 @@ android {
 dependencies {
     // Modules
     implementation(projects.core.common)
-    implementation(projects.core.settings)
+    implementation(projects.core.preferences)
     implementation(projects.core.designsystem)
     implementation(projects.feature.home.presentation)
     implementation(projects.feature.home.di)

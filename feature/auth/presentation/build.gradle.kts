@@ -56,6 +56,9 @@ dependencies {
     ksp(libs.compose.destinations.ksp)
 
     implementation(libs.play.services.auth)
+
+    // Compose One Tap
+    implementation(libs.one.tap.compose)
 }
 
 kotlin {

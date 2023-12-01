@@ -15,11 +15,11 @@
  */
 package com.joelkanyi.settings.domain.usecase
 
-import com.joelkanyi.settings.domain.MealtimeSettings
+import com.joelkanyi.settings.domain.MealtimePreferences
 import javax.inject.Inject
 
 class GetIfUserIsLoggedInUseCase @Inject constructor(
-    private val mealtimeSettings: MealtimeSettings
+    private val mealtimePreferences: MealtimePreferences
 ) {
-    operator fun invoke() = mealtimeSettings.getUserId()
+    operator fun invoke() = mealtimePreferences.getUserId()
 }

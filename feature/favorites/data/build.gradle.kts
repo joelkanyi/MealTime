@@ -43,6 +43,6 @@ dependencies {
     implementation(projects.core.common)
     implementation(projects.core.database)
     implementation(projects.core.network)
-    implementation(projects.core.settings)
+    implementation(projects.core.preferences)
     implementation(projects.feature.favorites.domain)
 }

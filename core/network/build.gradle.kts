@@ -48,7 +48,7 @@ android {
 
 dependencies {
     implementation(projects.core.common)
-    implementation(projects.core.settings)
+    implementation(projects.core.preferences)
 
     // Retrofit
     implementation(libs.squareup.retrofit)

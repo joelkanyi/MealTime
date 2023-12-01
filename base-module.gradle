@@ -75,20 +75,11 @@ dependencies {
     // Lottie
     api(libs.lottie.compose)
 
-    // Preferences DataStore
-    implementation(libs.datastore.preferences)
-
     // Compose Paging
     implementation(libs.paging.runtime)
 
     // Compose Image Cropper
     implementation(libs.easycrop)
-
-    // Billing
-    implementation(libs.billing)
-
-    // Qonversion
-    implementation(libs.qonversion.sdk)
 
     // Firebase
     implementation(platform(libs.firebase.bom))
@@ -105,9 +96,6 @@ dependencies {
     // Firebase Database
     implementation(libs.firebase.database.ktx)
 
-    // Compose One Tap
-    implementation(libs.one.tap.compose)
-
     // In app updates
     implementation(libs.play.app.update)
     implementation(libs.play.app.update.ktx)
@@ -119,7 +107,6 @@ dependencies {
     // Material Extended Icons
     implementation(libs.compose.material.icons.extended)
 
-    // Mixpanel
-    api(libs.mixpanel)
+    // Kotlinx DateTime
     implementation(libs.kotlinx.datetime)
 }

@@ -18,7 +18,7 @@ package com.joelkanyi.network.auth
 import com.joelkanyi.network.Constants
 import com.joelkanyi.network.MealDbApi
 import com.joelkanyi.network.model.RefreshTokenRequestDto
-import com.joelkanyi.settings.domain.MealtimeSettings
+import com.joelkanyi.settings.domain.MealtimePreferences
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
@@ -27,12 +27,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class AuthInterceptor(
-    private val mealtimeSettings: MealtimeSettings,
+    private val mealtimePreferences: MealtimePreferences,
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val savedToken = runBlocking {
-            mealtimeSettings.getAccessToken().first()
+            mealtimePreferences.getAccessToken().first()
         }
 
         if (savedToken?.isNotEmpty() == true) {
@@ -53,7 +53,7 @@ class AuthInterceptor(
                     saveNewToken(generatedToken)
 
                     // Make the request again with the new token
-                    val newToken = mealtimeSettings.getAccessToken().first()
+                    val newToken = mealtimePreferences.getAccessToken().first()
                     makeRequest(
                         chain = chain,
                         token = newToken
@@ -82,7 +82,7 @@ class AuthInterceptor(
 
     private suspend fun saveNewToken(generatedToken: String?) {
         if (generatedToken != null) {
-            mealtimeSettings.saveAccessToken(generatedToken)
+            mealtimePreferences.saveAccessToken(generatedToken)
         }
     }
 

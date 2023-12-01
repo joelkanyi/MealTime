@@ -18,7 +18,7 @@ package com.joelkanyi.settings.domain
 import com.joelkanyi.settings.domain.model.MealPlanPreference
 import kotlinx.coroutines.flow.Flow
 
-interface MealtimeSettings {
+interface MealtimePreferences {
     fun mealPlanPreferences(): Flow<MealPlanPreference?>
     suspend fun saveAllergies(allergies: List<String>)
     suspend fun saveNumberOfPeople(numberOfPeople: String)

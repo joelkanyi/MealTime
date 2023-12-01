@@ -19,16 +19,16 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import com.joelkanyi.settings.domain.MealtimeSettings
+import com.joelkanyi.settings.domain.MealtimePreferences
 import com.joelkanyi.settings.domain.model.MealPlanPreference
 import com.joelkanyi.settings.utils.Constants
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class MealtimeSettingsImpl @Inject constructor(
+class MealtimePreferencesImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>,
-) : MealtimeSettings {
+) : MealtimePreferences {
     override fun mealPlanPreferences(): Flow<MealPlanPreference?> {
         return dataStore.data.map { preferences ->
             MealPlanPreference(

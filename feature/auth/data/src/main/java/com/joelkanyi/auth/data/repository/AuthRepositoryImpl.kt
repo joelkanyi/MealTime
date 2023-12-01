@@ -20,13 +20,13 @@ import com.joelkanyi.auth.domain.entity.AuthResult
 import com.joelkanyi.auth.domain.repository.AuthRepository
 import com.joelkanyi.common.util.Resource
 import com.joelkanyi.common.util.safeApiCall
-import com.joelkanyi.settings.domain.MealtimeSettings
+import com.joelkanyi.settings.domain.MealtimePreferences
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val mealDbApi: com.joelkanyi.network.MealDbApi,
-    private val mealtimeSettings: MealtimeSettings,
+    private val mealtimePreferences: MealtimePreferences,
 ) : AuthRepository {
 
     override suspend fun registerUser(
@@ -65,7 +65,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun logoutUser() {
-        mealtimeSettings.clear()
+        mealtimePreferences.clear()
     }
 
     override suspend fun signInWithGoogle(idToken: String): Resource<AuthResult> {
@@ -77,10 +77,10 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveAccessToken(accessToken: String) {
-        mealtimeSettings.saveAccessToken(accessToken)
+        mealtimePreferences.saveAccessToken(accessToken)
     }
 
     override suspend fun saveUserId(userId: String) {
-        mealtimeSettings.saveUserId(userId)
+        mealtimePreferences.saveUserId(userId)
     }
 }
