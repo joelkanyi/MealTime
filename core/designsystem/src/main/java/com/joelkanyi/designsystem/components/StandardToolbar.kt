@@ -51,7 +51,7 @@ fun StandardToolbar(
             }
         },
         actions = navActions,
-        colors = TopAppBarDefaults.smallTopAppBarColors(
+        colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background
         )
     )

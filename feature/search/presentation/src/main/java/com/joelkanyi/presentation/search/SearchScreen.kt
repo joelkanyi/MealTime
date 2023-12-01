@@ -325,7 +325,7 @@ fun SearchBar(
             keyboardController?.hide()
             onSearch(currentSearchString)
         },
-        colors = TextFieldDefaults.textFieldColors(
+        colors = TextFieldDefaults.colors(
             disabledTextColor = Color.Transparent,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,

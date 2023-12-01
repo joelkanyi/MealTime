@@ -39,7 +39,6 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -198,7 +197,7 @@ private fun SaveTextButtonContent(isLoading: Boolean, onClick: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun DirectionComponent(
     direction: TextFieldState,
@@ -222,8 +221,9 @@ private fun DirectionComponent(
             placeholder = {
                 Text(text = "Enter instruction")
             },
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.Transparent
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent
             ),
             trailingIcon = {
                 IconButton(onClick = {
@@ -256,7 +256,7 @@ private fun DirectionComponent(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun IngredientComponent(
     ingredient: TextFieldState,
@@ -280,8 +280,9 @@ private fun IngredientComponent(
             placeholder = {
                 Text(text = "Enter ingredient")
             },
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.Transparent
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent
             ),
             trailingIcon = {
                 IconButton(onClick = {

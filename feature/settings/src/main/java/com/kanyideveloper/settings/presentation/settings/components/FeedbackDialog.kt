@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -42,7 +41,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedbackDialog(
     onDismiss: () -> Unit,
@@ -83,7 +81,7 @@ fun FeedbackDialog(
                         onValueChange = {
                             onFeedbackChange(it)
                         },
-                        colors = TextFieldDefaults.outlinedTextFieldColors(),
+                        colors = TextFieldDefaults.colors(),
                         placeholder = {
                             Text(
                                 text = "Feedback...",

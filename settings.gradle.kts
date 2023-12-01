@@ -12,6 +12,11 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven(url = "https://jitpack.io")
+        maven("https://androidx.dev/storage/compose-compiler/repository/") {
+            content {
+                includeGroup("androidx.compose.compiler")
+            }
+        }
     }
 }
 rootProject.name = "MealTime"

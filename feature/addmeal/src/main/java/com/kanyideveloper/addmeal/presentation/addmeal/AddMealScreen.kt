@@ -346,7 +346,7 @@ fun AddMealScreen(
                         onValueChange = {
                             viewModel.setMealNameState(value = it)
                         },
-                        colors = TextFieldDefaults.outlinedTextFieldColors(),
+                        colors = TextFieldDefaults.colors(),
                         placeholder = {
                             Text(
                                 text = "Meal Name",
@@ -431,7 +431,7 @@ fun AddMealScreen(
                             },
                             parentTextFieldCornerRadius = 4.dp,
                             isError = complexity.error != null,
-                            colors = TextFieldDefaults.outlinedTextFieldColors()
+                            colors = TextFieldDefaults.colors()
                         )
 
                         if (complexity.error != null) {
@@ -468,7 +468,7 @@ fun AddMealScreen(
                             onValueChange = {
                                 viewModel.setCookingTime(value = it)
                             },
-                            colors = TextFieldDefaults.outlinedTextFieldColors(),
+                            colors = TextFieldDefaults.colors(),
                             placeholder = {
                                 Text(
                                     text = "Cooking Time",
@@ -507,7 +507,7 @@ fun AddMealScreen(
                             onValueChange = {
                                 viewModel.setPeopleServing(value = it)
                             },
-                            colors = TextFieldDefaults.outlinedTextFieldColors(),
+                            colors = TextFieldDefaults.colors(),
                             placeholder = {
                                 Text(
                                     text = "People Serving",

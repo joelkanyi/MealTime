@@ -6,7 +6,6 @@ plugins {
     alias(libs.plugins.jvm) apply false
     alias(libs.plugins.hilt.android) apply false
     alias(libs.plugins.google.services) apply false
-    alias(libs.plugins.ktlint)
     alias(libs.plugins.spotless)
     alias(libs.plugins.kapt) apply false
     alias(libs.plugins.parcelize) apply false
@@ -47,19 +46,5 @@ subprojects {
 
     repositories {
         mavenCentral()
-    }
-
-    apply(plugin = "org.jlleitschuh.gradle.ktlint")
-    ktlint {
-        android.set(true)
-        verbose.set(true)
-        debug.set(true)
-        outputToConsole.set(true)
-        outputColorName.set("RED")
-        ignoreFailures.set(true)
-        enableExperimentalRules.set(true)
-        filter {
-            exclude { element -> element.file.path.contains("generated/") }
-        }
     }
 }

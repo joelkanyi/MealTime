@@ -91,7 +91,7 @@ dependencies {
     implementation(libs.qonversion.sdk)
 
     // Firebase
-    implementation(libs.firebase.bom)
+    implementation(platform(libs.firebase.bom))
 
     // Firebase Storage
     implementation(libs.firebase.storage.ktx)
@@ -121,5 +121,5 @@ dependencies {
 
     // Mixpanel
     api(libs.mixpanel)
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
+    implementation(libs.kotlinx.datetime)
 }

@@ -164,7 +164,7 @@ class AddMealsViewModel @Inject constructor(
                 }
 
                 is Resource.Success -> {
-                    val imageUrl = uploadResult.data.toString()
+                    // val imageUrl = uploadResult.data.toString()
 
                     /*val meal = MealDetails(
                         name = mealName,
