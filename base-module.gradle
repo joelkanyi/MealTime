@@ -107,6 +107,9 @@ dependencies {
     // Material Extended Icons
     implementation(libs.compose.material.icons.extended)
 
+    // Konsist
+    testImplementation(libs.konsist)
+
     // Kotlinx DateTime
     implementation(libs.kotlinx.datetime)
 }

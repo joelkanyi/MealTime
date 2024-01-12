@@ -56,6 +56,6 @@ dependencies {
     implementation(libs.squareup.logging.interceptor)
 
     // Chucker
-    debugImplementation("com.github.chuckerteam.chucker:library:4.0.0")
-    releaseImplementation("com.github.chuckerteam.chucker:library-no-op:4.0.0")
+    debugImplementation(libs.chucker.debug)
+    releaseImplementation(libs.chucker.release)
 }
