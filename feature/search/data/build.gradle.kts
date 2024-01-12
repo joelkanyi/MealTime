@@ -17,7 +17,6 @@ android {
 
     defaultConfig {
         minSdk = AndroidConfig.minSDK
-        targetSdk = AndroidConfig.targetSDK
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -32,7 +31,7 @@ android {
     kotlinOptions {
         jvmTarget = AndroidConfig.jvmTarget
     }
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }

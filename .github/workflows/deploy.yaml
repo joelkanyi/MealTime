@@ -55,7 +55,7 @@ jobs:
 
       - name: Deploy to Play Store
         id: deploy
-        uses: r0adkll/upload-google-play@v1.0.15
+        uses: r0adkll/upload-google-play@v1.1.2
         with:
           serviceAccountJson: service_account.json
           packageName: com.kanyideveloper.mealtime

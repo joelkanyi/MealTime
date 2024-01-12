@@ -13,12 +13,10 @@ plugins {
 }
 
 subprojects {
-
     apply(plugin = "com.diffplug.spotless")
     spotless {
         kotlin {
             target("**/*.kt")
-            ktlint().userData(mapOf("disabled_rules" to "filename"))
             licenseHeaderFile(
                 rootProject.file("${project.rootDir}/spotless/copyright.kt"),
                 "^(package|object|import|interface)"
@@ -42,9 +40,5 @@ subprojects {
         groovyGradle {
             target("**/*.gradle")
         }
-    }
-
-    repositories {
-        mavenCentral()
     }
 }
