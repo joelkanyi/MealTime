@@ -120,7 +120,7 @@ class KitchenTimerRepositoryImpl(
 
     private fun showNotification() {
         val builder = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
-            .setSmallIcon(com.kanyideveloper.mealtime.core.R.drawable.fork_knife_bold)
+            .setSmallIcon(com.joelkanyi.common.R.drawable.fork_knife_bold)
             .setContentTitle("Kitchen Timer").setContentText("Time's up!")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setSound(

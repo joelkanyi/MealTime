@@ -16,10 +16,6 @@
 package com.kanyideveloper.mealtime
 
 import android.app.Application
-import com.kanyideveloper.core.util.Constants.QONVERSION_PROJECT_KEY
-import com.qonversion.android.sdk.Qonversion
-import com.qonversion.android.sdk.QonversionConfig
-import com.qonversion.android.sdk.dto.QLaunchMode
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
@@ -28,14 +24,6 @@ class MealTimeApp : Application() {
     override fun onCreate() {
         super.onCreate()
         setupTimber()
-
-        // Initialize Qonversion
-        val qonversionConfig = QonversionConfig.Builder(
-            this,
-            QONVERSION_PROJECT_KEY,
-            QLaunchMode.SubscriptionManagement
-        ).build()
-        Qonversion.initialize(qonversionConfig)
     }
 }
 
