@@ -15,7 +15,7 @@
  */
 package com.joelkanyi.network.auth
 
-import com.joelkanyi.network.Constants
+import com.joelkanyi.network.utils.Constants
 import com.joelkanyi.network.MealtimeApiService
 import com.joelkanyi.network.model.RefreshTokenRequestDto
 import com.joelkanyi.settings.domain.MealtimePreferences

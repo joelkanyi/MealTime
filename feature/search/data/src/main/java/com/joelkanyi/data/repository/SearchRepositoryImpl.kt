@@ -17,11 +17,9 @@ package com.joelkanyi.data.repository
 
 import com.joelkanyi.common.model.Meal
 import com.joelkanyi.common.util.Resource
-import com.joelkanyi.common.util.safeApiCall
 import com.joelkanyi.data.mapper.toOnlineMeal
 import com.joelkanyi.domain.repository.SearchRepository
-import kotlinx.coroutines.Dispatchers
-import timber.log.Timber
+import com.joelkanyi.network.utils.safeApiCall
 import javax.inject.Inject
 
 class SearchRepositoryImpl @Inject constructor(
@@ -33,25 +31,22 @@ class SearchRepositoryImpl @Inject constructor(
     ): Resource<List<Meal>> {
         return when (searchOption) {
             "Meal Name" -> {
-                return safeApiCall(Dispatchers.IO) {
+                return safeApiCall {
                     val response = mealtimeApiService.searchMeals(name = searchParam)
-                    Timber.e("Response for meal name: $response")
                     response.map { it.toOnlineMeal() }
                 }
             }
 
             "Ingredient" -> {
-                return safeApiCall(Dispatchers.IO) {
+                return safeApiCall {
                     val response = mealtimeApiService.searchMeals(ingredient = searchParam)
-
                     response.map { it.toOnlineMeal() }
                 }
             }
 
             "Meal Category" -> {
-                return safeApiCall(Dispatchers.IO) {
+                return safeApiCall {
                     val response = mealtimeApiService.searchMeals(category = searchParam)
-
                     response.map { it.toOnlineMeal() }
                 }
             }

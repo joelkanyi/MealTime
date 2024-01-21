@@ -20,11 +20,10 @@ import com.google.firebase.storage.StorageReference
 import com.joelkanyi.admeal.domain.repository.AddMealRepository
 import com.joelkanyi.common.model.Ingredient
 import com.joelkanyi.common.util.Resource
-import com.joelkanyi.common.util.safeApiCall
 import com.joelkanyi.network.MealtimeApiService
 import com.joelkanyi.network.model.CreateMealRequestDto
+import com.joelkanyi.network.utils.safeApiCall
 import com.joelkanyi.settings.domain.MealtimePreferences
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
@@ -50,7 +49,7 @@ class AddMealRepositoryImpl @Inject constructor(
         serving: Int?,
         youtubeUrl: String?
     ): Resource<Unit> {
-        return safeApiCall(Dispatchers.IO) {
+        return safeApiCall {
             val request = CreateMealRequestDto(
                 calories = calories,
                 category = category,
@@ -80,7 +79,7 @@ class AddMealRepositoryImpl @Inject constructor(
     }
 
     override suspend fun uploadImage(imageBitmap: Bitmap): Resource<String> {
-        return safeApiCall(Dispatchers.IO) {
+        return safeApiCall {
             val fileStorageReference = storageReference.child("${UUID.randomUUID()}${imageBitmap.hashCode()}}")
 
             val byteArrayOutputStream = ByteArrayOutputStream()

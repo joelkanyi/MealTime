@@ -19,12 +19,11 @@ import com.joelkanyi.common.model.Category
 import com.joelkanyi.common.model.Meal
 import com.joelkanyi.common.model.MealDetails
 import com.joelkanyi.common.util.Resource
-import com.joelkanyi.common.util.safeApiCall
 import com.joelkanyi.data.mapper.toCategory
 import com.joelkanyi.data.mapper.toEntity
 import com.joelkanyi.data.mapper.toMeal
 import com.joelkanyi.domain.repository.MealsRepository
-import kotlinx.coroutines.Dispatchers
+import com.joelkanyi.network.utils.safeApiCall
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -75,14 +74,14 @@ class MealsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getMealDetails(mealId: String): Resource<MealDetails> {
-        return safeApiCall(Dispatchers.IO) {
+        return safeApiCall {
             val response = mealtimeApiService.getMealDetails(mealId = mealId)
             response.toMeal()
         }
     }
 
     override suspend fun getRandomMeal(): Resource<MealDetails> {
-        return safeApiCall(Dispatchers.IO) {
+        return safeApiCall {
             val response = mealtimeApiService.getRandomMeal()
             response.toMeal()
         }

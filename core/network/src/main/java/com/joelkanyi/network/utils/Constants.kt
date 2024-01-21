@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.joelkanyi.network
+package com.joelkanyi.network.utils
 
 object Constants {
     const val BASE_URL = "https://mealtime-api-production.up.railway.app/api/"

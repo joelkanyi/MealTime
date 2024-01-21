@@ -19,9 +19,8 @@ import com.joelkanyi.auth.data.mappers.toDomain
 import com.joelkanyi.auth.domain.entity.AuthResult
 import com.joelkanyi.auth.domain.repository.AuthRepository
 import com.joelkanyi.common.util.Resource
-import com.joelkanyi.common.util.safeApiCall
+import com.joelkanyi.network.utils.safeApiCall
 import com.joelkanyi.settings.domain.MealtimePreferences
-import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
@@ -34,7 +33,7 @@ class AuthRepositoryImpl @Inject constructor(
         password: String,
         name: String
     ): Resource<AuthResult> {
-        return safeApiCall(Dispatchers.IO) {
+        return safeApiCall {
             mealtimeApiService.registerUser(
                 com.joelkanyi.network.model.RegisterRequestDto(
                     email = email,
@@ -46,7 +45,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun loginUser(email: String, password: String): Resource<AuthResult> {
-        return safeApiCall(Dispatchers.IO) {
+        return safeApiCall {
             mealtimeApiService.loginUser(
                 com.joelkanyi.network.model.LoginRequestDto(
                     email = email,
@@ -57,7 +56,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun forgotPassword(email: String): Resource<Any> {
-        return safeApiCall(Dispatchers.IO) {
+        return safeApiCall {
             mealtimeApiService.forgotPassword(
                 email = email
             )
@@ -69,7 +68,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun signInWithGoogle(idToken: String): Resource<AuthResult> {
-        return safeApiCall(Dispatchers.IO) {
+        return safeApiCall {
             mealtimeApiService.signInWithGoogle(
                 idToken = idToken
             ).toDomain()
