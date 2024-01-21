@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="change_your_theme">Change Your Theme</string>
+    <string name="suggest_or_report_anything">Suggest or Report Anything</string>
+    <string name="rate_us_on_play_store">Rate Us on Play Store</string>
+    <string name="share_the_app_with_friends">Share the App with Friends</string>
+    <string name="logout">Logout</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="app_version">App Version: %1$s</string>
+    <string name="made_with_by_joel_kanyi">Made with ❤️ by Joel Kanyi 🇰🇪</string>
+</resources>

@@ -16,14 +16,8 @@
 package com.joelkanyi.database
 
 object Constants {
-    const val MIXPANEL_TOKEN = "befbaa0a69fb8d4b9824e1a2391a8540"
     const val MEAL_TABLE = "meal_table"
-    const val CATEGORIES_TABLE = "categories_table"
     const val MEALTIME_DATABASE = "meal_time_database"
     const val FAVORITES_TABLE = "favorites_table"
     const val MEAL_PLAN_TABLE = "meal_plan_table"
-
-    val PURCHASE_ID = "product_premium_subscription"
-    val QONVERSION_PROJECT_KEY = "fuin-2K_eXiH5zYAUIlXaIPEn0BDiWI9"
-    val CLIENT_ID = "185726691445-ke95p4s6bk7315ni58ek2m718nkk6bal.apps.googleusercontent.com"
 }

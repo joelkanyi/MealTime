@@ -27,6 +27,9 @@ import com.joelkanyi.common.util.UiEvents
 import com.kanyideveloper.settings.domain.usecase.SetCurrentThemeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,50 +42,50 @@ class SettingsViewModel @Inject constructor(
         trackUserEventUseCase.invoke(eventName)
     }
 
+    private val _settingsUiState = MutableStateFlow(SettingsUiState())
+    val settingsUiState = _settingsUiState.asStateFlow()
+
     private val _eventsFlow = MutableSharedFlow<UiEvents>()
     val eventsFlow = _eventsFlow
 
-    private val _shouldShowThemesDialog = mutableStateOf(false)
-    val shouldShowThemesDialog: State<Boolean> = _shouldShowThemesDialog
-    fun setShowThemesDialogState(value: Boolean) {
-        _shouldShowThemesDialog.value = value
+    fun setShowThemesDialogState() {
+        _settingsUiState.update {
+            it.copy(
+                shouldShowThemesDialog = !it.shouldShowThemesDialog
+            )
+        }
     }
 
-    private val _shouldShowSubscriptionDialog = mutableStateOf(false)
-    val shouldShowSubscriptionDialog: State<Boolean> = _shouldShowSubscriptionDialog
-    fun setShowSubscriptionDialogState(value: Boolean) {
-        _shouldShowSubscriptionDialog.value = value
+    fun setShowFeedbackDialogState() {
+        _settingsUiState.update {
+            it.copy(
+                shouldShowFeedbackDialog = !it.shouldShowFeedbackDialog
+            )
+        }
     }
 
-    private val _shouldShowFeedbackDialog = mutableStateOf(false)
-    val shouldShowFeedbackDialog: State<Boolean> = _shouldShowFeedbackDialog
-    fun setShowFeedbackDialogState(value: Boolean) {
-        _shouldShowFeedbackDialog.value = value
-    }
 
-    private val _feedback = mutableStateOf(TextFieldState())
-    val feedback: State<TextFieldState> = _feedback
-    fun setFeedbackState(value: String) {
-        _feedback.value = feedback.value.copy(
-            text = value,
-            error = null
-        )
+    fun setFeedbackState(
+        value: String,
+        error: String? = null
+    ) {
+        _settingsUiState.update {
+            it.copy(
+                feedbackState = it.feedbackState.copy(
+                    text = value,
+                    error = error
+                )
+            )
+        }
     }
 
     fun updateTheme(themeValue: Int) {
         viewModelScope.launch {
             setCurrentThemeUseCase(themeValue)
-            setShowThemesDialogState(false)
+            setShowThemesDialogState()
         }
     }
 
-    fun validateFeedbackTextfield(message: String) {
-        if (message.isEmpty()) {
-            _feedback.value = feedback.value.copy(
-                error = "Feedback cannot be empty"
-            )
-        }
-    }
 
     private val _logoutState = mutableStateOf(LogoutState())
     val logoutState: State<LogoutState> = _logoutState
