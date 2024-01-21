@@ -29,6 +29,7 @@ import com.joelkanyi.network.model.RegisterRequestDto
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -82,21 +83,25 @@ interface MealtimeApiService {
     @POST("auth/google")
     fun signInWithGoogle(idToken: String): AuthResponseDto
 
+    @Headers("Authorization: No-Auth")
     @POST("auth/refresh")
     suspend fun refreshToken(
         @Body refreshTokenRequestDto: RefreshTokenRequestDto
     ): AuthResponseDto?
 
+    @Headers("No-Authentication: true")
     @POST("auth/login")
     suspend fun loginUser(
         @Body loginRequestDto: LoginRequestDto
     ): AuthResponseDto
 
+    @Headers("Authorization: No-Auth")
     @POST("auth/register")
     suspend fun registerUser(
         @Body registerRequestDto: RegisterRequestDto
     ): AuthResponseDto
 
+    @Headers("Authorization: No-Auth")
     @POST("auth/forgot-password")
     suspend fun forgotPassword(email: String)
 }

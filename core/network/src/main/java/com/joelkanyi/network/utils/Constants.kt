@@ -16,5 +16,5 @@
 package com.joelkanyi.network.utils
 
 object Constants {
-    const val BASE_URL = "https://mealtime-api-production.up.railway.app/api/"
+    const val BASE_URL = "https://mealtime-api.onrender.com"
 }
