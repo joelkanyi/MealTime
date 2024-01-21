@@ -15,13 +15,13 @@
  */
 package com.joelkanyi.analytics.domain.usecase
 
-import com.joelkanyi.analytics.domain.repository.AnalyticsUtil
+import com.joelkanyi.analytics.domain.repository.AnalyticsRepository
 import org.json.JSONObject
 import javax.inject.Inject
 
 class SetUserProfileUseCase @Inject constructor(
-    private val analyticsUtil: AnalyticsUtil
+    private val analyticsRepository: AnalyticsRepository
 ) {
     operator fun invoke(userID: String, userProperties: JSONObject?) =
-        analyticsUtil.setUserProfile(userID, userProperties)
+        analyticsRepository.setUserProfile(userID, userProperties)
 }

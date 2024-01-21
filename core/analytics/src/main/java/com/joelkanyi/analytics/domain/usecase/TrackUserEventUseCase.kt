@@ -15,11 +15,11 @@
  */
 package com.joelkanyi.analytics.domain.usecase
 
-import com.joelkanyi.analytics.domain.repository.AnalyticsUtil
+import com.joelkanyi.analytics.domain.repository.AnalyticsRepository
 import javax.inject.Inject
 
 class TrackUserEventUseCase @Inject constructor(
-    private val analyticsUtil: AnalyticsUtil
+    private val analyticsRepository: AnalyticsRepository
 ) {
-    operator fun invoke(name: String) = analyticsUtil.trackUserEvent(name)
+    operator fun invoke(name: String) = analyticsRepository.trackUserEvent(name)
 }

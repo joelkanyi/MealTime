@@ -16,8 +16,9 @@
 package com.joelkanyi.analytics.di
 
 import android.content.Context
-import com.joelkanyi.analytics.data.repository.AnalyticsUtilImpl
-import com.joelkanyi.analytics.domain.repository.AnalyticsUtil
+import com.joelkanyi.analytics.BuildConfig
+import com.joelkanyi.analytics.data.repository.AnalyticsRepositoryImpl
+import com.joelkanyi.analytics.domain.repository.AnalyticsRepository
 import com.mixpanel.android.mpmetrics.MixpanelAPI
 import dagger.Module
 import dagger.Provides
@@ -33,14 +34,12 @@ object AnalyticsModule {
     @Singleton
     @Provides
     fun providesMixPaneApi(@ApplicationContext context: Context): MixpanelAPI {
-        return MixpanelAPI.getInstance(context, MIXPANEL_TOKEN, false)
+        return MixpanelAPI.getInstance(context, BuildConfig.MIXPANEL_TOKEN, false)
     }
 
     @Singleton
     @Provides
-    fun providesAnalyticsUtil(mixpanelAPI: MixpanelAPI): AnalyticsUtil {
-        return AnalyticsUtilImpl(mixpanelAPI)
+    fun providesAnalyticsRepository(mixpanelAPI: MixpanelAPI): AnalyticsRepository {
+        return AnalyticsRepositoryImpl(mixpanelAPI)
     }
-
-    private const val MIXPANEL_TOKEN = "befbaa0a69fb8d4b9824e1a2391a8540"
 }

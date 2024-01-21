@@ -32,6 +32,9 @@ jobs:
       - name: Make gradle executable
         run: chmod +x ./gradlew
 
+      - name: Get local.properties from secrets
+        run: echo "${{secrets.LOCAL_PROPERTIES }}" > $GITHUB_WORKSPACE/local.properties
+
       - name: Build app
         run: ./gradlew assemble --stacktrace
 

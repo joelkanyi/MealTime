@@ -54,7 +54,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.joelkanyi.auth.presentation.AuthNavigator
-import com.joelkanyi.common.util.Constants.CLIENT_ID
+import com.joelkanyi.auth.presentation.BuildConfig
 import com.ramcosta.composedestinations.annotation.Destination
 import com.stevdzasan.onetap.OneTapSignInWithGoogle
 import com.stevdzasan.onetap.rememberOneTapSignInState
@@ -76,7 +76,7 @@ fun LandingPageScreen(
     val oneTapSignInState = rememberOneTapSignInState()
     OneTapSignInWithGoogle(
         state = oneTapSignInState,
-        clientId = CLIENT_ID,
+        clientId = BuildConfig.GOOGLE_CLIENT_ID,
         onTokenIdReceived = { tokenId ->
             val firebaseCredential = GoogleAuthProvider.getCredential(tokenId, null)
             CoroutineScope(Dispatchers.Main).launch {

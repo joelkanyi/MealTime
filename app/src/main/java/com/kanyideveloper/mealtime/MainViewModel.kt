@@ -27,8 +27,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getAppThemeUseCase: GetAppThemeUseCase,
-    private val getIfUserIsLoggedInUseCase: GetIfUserIsLoggedInUseCase
+    getAppThemeUseCase: GetAppThemeUseCase,
+    getIfUserIsLoggedInUseCase: GetIfUserIsLoggedInUseCase
 ) : ViewModel() {
     val isLoggedIn = getIfUserIsLoggedInUseCase()
         .map { it != null }
